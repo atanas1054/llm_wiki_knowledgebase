@@ -1,8 +1,8 @@
 ---
 title: VLM Domain Adaptation for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/uniugp.md, sources/senna2.md, sources/reasoning-vla.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/uniugp.md, sources/senna2.md, sources/reasoning-vla.md, sources/hermes.md, sources/autovla.md, sources/automot.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md]
 created: 2026-04-05
 updated: 2026-04-05
 confidence: high
@@ -147,6 +147,273 @@ Zero-shot evaluation (train on NAVSIM/Waymo/KITTI/ONCE, test on unseen nuScenes/
 - Unified training outperforms nuScenes-only fine-tuning on closed-loop NeuroNCAP
 
 **Key finding**: generalist models trained on the unified dataset outperform specialist models fine-tuned only on the target dataset in closed-loop evaluation — generalization generalizes.
+
+## HERMES: Offline VLM Annotation as Safety Distillation
+
+**HERMES** ([[sources/hermes.md]]) introduces a qualitatively different pattern: the VLM is not adapted or fine-tuned at all — it is used as a **structured offline annotator** that generates safety-critical knowledge, which is then distilled into a lightweight student planner via text embeddings.
+
+### Teacher-Student Distillation Pattern
+
+| Stage | System | Role | Timing |
+|-------|--------|------|--------|
+| Annotation | Qwen3-VL-Flash (cloud) | Generates structured safety annotations per frame | **Offline, once** |
+| Encoding | BGE-M3 | Encodes annotations to fixed vectors | Offline |
+| Planning | Tri-Modal Driving Module (ViT + transformer) | Consumes embeddings at training and inference | **Online** |
+
+The cloud VLM never runs at inference time. This makes deployment practical (48ms-class latency for a ViT backbone) while still benefiting from billion-parameter reasoning.
+
+### Structured 5-Field Annotation Protocol
+
+The VLM is prompted to produce exactly five fields, organized into two semantic groups:
+
+**Long-Tail Scene Context** (one field):
+- Per-viewpoint hazard descriptions (front/rear/side-L/side-R)
+- Explicitly targets: occlusions, abnormal agent behaviors, rare objects, adverse weather, compound edge cases
+
+**Long-Tail Planning Context** (four fields):
+- **Risk level**: Low / Medium / High — based on VRU presence, collision likelihood, reaction time
+- **Intention**: Go straight / Turn left / Turn right / Stop
+- **High-level plan**: concise directive grounded in observable scene elements
+- **Plan rationale**: causal explanation (no unobserved inference allowed)
+
+Strict 5-field output format ensures consistent downstream integration.
+
+### Risk-Controlled Injection (α-scaled residual)
+
+Rather than hard-conditioning the planner on VLM instructions, HERMES uses a **scaled residual** in the Risk Planning Cross-Attention module:
+
+$$\text{plan\_context\_ctrl} = \text{LN}(\text{plan\_context\_intent} + \alpha \cdot c), \quad \alpha = 0.3$$
+
+This limits VLM influence in common driving conditions while allowing semantic modulation in long-tail cases. The α parameter is fixed — a limitation, as the explicitly annotated risk level (low/medium/high) is not used to dynamically scale α.
+
+The offline-only pattern sacrifices adaptability to truly novel test scenarios (the VLM cannot respond to new hazards it never annotated) in exchange for deployment efficiency and decoupled scaling. For the full cross-wiki strategy comparison, see the table in the AdaThinkDrive section below.
+
+### Long-Tail as an Adaptation Axis
+
+HERMES establishes a distinct axis in the VLM-for-AD design space: rather than improving general driving intelligence, it targets **rare and safety-critical scenario types** as a first-class objective. The WOD-E2E dataset is curated specifically for long-tail mixed-traffic (VRUs, cut-ins, construction zones, FOD). Ablation confirms that removing VLM semantic embeddings causes −0.60 RFS (the safety-aligned metric), but removing historical motion state causes −1.30 RFS — geometry still dominates semantics in terms of raw trajectory accuracy.
+
+## AutoVLA: Dual-Mode SFT + Adaptive Reasoning via RFT
+
+**AutoVLA** ([[sources/autovla.md]]) introduces two distinct adaptation contributions: a **dual-mode SFT** strategy and an **adaptive reasoning via RFT** approach.
+
+### Dual-Mode SFT
+
+AutoVLA trains on a mixture of fast (action-only) and slow (CoT) samples in the same SFT pass:
+
+- **Fast samples**: short fixed prefix ("reasoning not needed") + action tokens — teaches direct trajectory generation
+- **Slow samples**: 4-stage CoT (scene description → critical object ID → intention reasoning → decision + meta-action) + action tokens — teaches deliberate reasoning
+
+Per-sample weighting: λ_cot=40 for slow samples (upweights CoT to compensate for fewer examples), λ_a=1 for action loss. Both loss components ($\mathcal{L}_{LM}$ + $\mathcal{L}_{action}$) are applied.
+
+**Data scaling finding**: CoT underperforms action-only at < 50k training samples; it surpasses action-only only at larger data regimes. nuScenes (simple scenarios): action-only dominates throughout — domain difficulty determines CoT value.
+
+### CoT Data Collection Pipeline
+
+Qwen2.5-VL-72B annotates 4-stage CoT with **GT meta-action as hint** in the prompt, ensuring causal explanations link decisions directly to observable scene elements. 88.8% human quality score (3,000 sampled). Total: 45.6k nuPlan + 7.2k Waymo E2E + reformatted DriveLM.
+
+**Key difference from other CoT pipelines**:
+| Approach | Annotation model | Scale | Quality mechanism |
+|----------|-----------------|-------|------------------|
+| ReCogDrive | Qwen2.5-VL (various) | 3.1M QA pairs | Explicit quality scoring + filtering |
+| Reasoning-VLA | Qwen2.5-VL | 75K CoT clips | Rule-based + human verification |
+| UniUGP | Frontier VLM | Custom curated | Manual calibration |
+| **AutoVLA** | **Qwen2.5-VL-72B** | **52.8k CoT** | **GT meta-action hint + 88.8% human check** |
+
+### Adaptive Reasoning (learned via RFT)
+
+The adaptive switching between fast/slow thinking is **not hardcoded** at inference — it is *learned* via the CoT length penalty in GRPO. The SFT stage provides the dual-mode capability; the RFT stage learns when each mode is appropriate based on reward signals. This is qualitatively different from DriveVLM's hard fast/slow separation (two separate modules). See [[concepts/rl-for-ad.md]] for full RFT details.
+
+## AutoDrive-R²: Self-Reflection CoT and Minimal-Data SFT
+
+**AutoDrive-R²** ([[sources/autodrive-r2.md]]) introduces the **nuScenesR²-6K** dataset — the first AD CoT dataset explicitly modeling a self-reflection step for trajectory validation — and shows that 6K curated samples with structured reasoning outperforms methods trained on 103K+ unstructured data.
+
+### nuScenesR²-6K Dataset
+
+6,000 image-trajectory pairs from nuScenes, annotated by Qwen2.5-VL-72B with GT trajectory as hint. Produces structured 4-step CoT in `<think>...</think><answer>...</answer>` format.
+
+**Four-step chain** (Visualization → Calculation → Logic → Reflection):
+
+| Step | Content | Key outputs |
+|------|---------|-------------|
+| 1. Visual Analysis | Obstacle/lane detection, traffic signals | Scene state (locations, signal status) |
+| 2. Physics Calculation | Kinematic extrapolation: $x(t+1)=x_n + v_x\Delta t + \frac{1}{2}a_{avg}\Delta t^2$ | Predicted positions at each future step |
+| 3. Logic Synthesis | Traffic rules, intersection handling, safety checks | Recommended action (stop/continue/slow) |
+| 4. **Self-Reflection** | **Backward-check**: can predicted trajectory be achieved given vehicle's acceleration history? Flag contradictions, correct if needed | Validated or corrected trajectory |
+
+The self-reflection step is structurally analogous to backward-checking in mathematical proof verification — the model re-examines its own prediction for physical consistency rather than treating the chain as strictly forward.
+
+**"Aha Moment" (emergent)**: the model spontaneously self-corrects during reasoning in the reflection step, catching physics violations (e.g., implied impossible acceleration) and revising the trajectory. This behavior is not explicitly trained but emerges from the structured prompt design.
+
+**Ablation**: both structured components are necessary:
+- w/o 4-step structure: 0.25m avg L2 (+31.5% vs. full 0.19m)
+- w/o self-reflection: 0.23m (+21.1%)
+
+### Minimal-Data SFT Scaling
+
+AutoDrive-R² achieves 0.19m L2 on nuScenes with only 6K SFT samples vs. EMMA+'s ~103K internal dataset (which achieves 0.29m). This confirms that **CoT structure quality outweighs data volume** for trajectory planning:
+- Qwen2.5-VL-7B baseline (no SFT): 1.45m — VLMs without AD SFT perform poorly
+- After nuScenesR²-6K SFT: 0.27m — 81.4% improvement from 6K structured samples
+- After SFT + GRPO RL: 0.19m — further 29.6% improvement
+
+**Comparison with other CoT approaches** in the wiki:
+
+| Approach | CoT steps | Self-reflection? | Annotation model | Scale |
+|----------|-----------|-----------------|-----------------|-------|
+| ReCogDrive | Unstructured QA | ✗ | Various VLMs | 3.1M pairs |
+| Reasoning-VLA | 4 (scene→physics→intent→trajectory) | ✗ | Qwen2.5-VL | 75K clips |
+| UniUGP | 4 (scene→objects→intent→action) | ✗ | Frontier VLM | Custom curated |
+| AutoVLA | 4 (scene→objects→intent→action) | ✗ | Qwen2.5-VL-72B | 52.8K |
+| **AutoDrive-R²** | **4 (visual→calc→logic→reflection)** | **✓ (backward-check)** | **Qwen2.5-VL-72B** | **6K** |
+| Alpamayo-R1 | 3 (decision→components→causal trace) | ✗ | GPT-5 + 2-stage human | 700K |
+| AdaThinkDrive | 4 (road→agents→action→scene) | ✗ | Qwen2.5-VL-72B + rule-based | NAVSIM-scale |
+
+The **self-reflection validation step** is unique across all wiki papers. All others produce forward-only CoT chains; AutoDrive-R² adds an explicit backward verification phase.
+
+## AutoMoT: The Frozen VLM Case — Empirical Evidence of Catastrophic Forgetting
+
+**AutoMoT** ([[sources/automot.md]]) makes the strongest empirical argument in the wiki for **not fine-tuning** VLMs on AD data, providing systematic evidence of catastrophic forgetting (Table 4):
+
+| Benchmark | Task | Frozen UE | AD Fine-tuned UE | Δ |
+|-----------|------|-----------|-----------------|---|
+| LingoQA | AD scene understanding | 67.00 | 67.20 | +0.2 |
+| OmniDrive | Counterfactual planning | 18.20 | **67.80** | +49.6 |
+| ScienceQA | General knowledge | 88.60 | 87.80 | −0.8 |
+| FigureQA | General knowledge | 97.60 | 91.20 | −6.4 |
+| TallyQA | Multi-step general reasoning | **81.40** | 52.40 | **−35.3%** |
+| InfographicVQA | Compositional general reasoning | **89.30** | 50.20 | **−43.8%** |
+| VizWiz | Multi-step general reasoning | **75.60** | 50.20 | **−33.6%** |
+
+**Pattern**: fine-tuning degrades simple tasks marginally (ScienceQA −0.8, FigureQA −6.4) but destroys complex multi-step reasoning (TallyQA −35%, InfoVQA −44%). AD scene understanding (LingoQA) sees only +0.2 gain — essentially no benefit. Counterfactual planning (OmniDrive +49.6) is the only clear win, confirming that action-level tasks genuinely require fine-tuning.
+
+**Functional boundary principle** (AutoMoT's conclusion): pre-trained VLMs already support competitive AD scene understanding through semantic prompting alone; fine-tuning should be restricted to action-level components.
+
+**Counterpoint**: Despite frozen UE, AutoMoT still achieves competitive planning (L2_avg 0.32) and best collision rate (0.07) on nuScenes, beating fine-tuned methods like AutoVLA (0.40 L2). This demonstrates that frozen scene understanding can effectively inform action-level learning via joint attention — the VLM doesn't need to be adapted to transfer its knowledge.
+
+**Comparison with OpenEMMA** (also no VLM fine-tuning): OpenEMMA gets 2.81 L2 vs. AutoMoT's 0.32. The gap confirms that the improvement comes from the AE policy learning, not just from prompt-based VLM use — domain-specific adaptation at the *action level* remains essential.
+
+## Alpamayo-R1: Physical AI Pre-Training + CoC Structured Reasoning
+
+**Alpamayo-R1** ([[sources/alpamayo-r1.md]]) introduces two distinct contributions to VLM domain adaptation: a **domain-specific Physical AI backbone** (Cosmos-Reason) and a **structured causal reasoning dataset** (Chain of Causation, CoC) with hybrid labeling.
+
+### Physical AI Backbone: Cosmos-Reason
+
+Rather than adapting a general-purpose VLM (Qwen2.5-VL, InternVL), AR1 uses Cosmos-Reason — a VLM post-trained specifically on Physical AI data: 3.7M general VQA + 24.7K driving VQA grounded in physical dynamics and spatial causality. This is the first wiki paper to leverage a driving-optimized *pre-trained backbone* rather than fine-tuning a generic backbone on AD data.
+
+**LingoQA zero-shot comparison** (Table 10):
+
+| Model | Lingo-Judge |
+|---|---|
+| DeepSeek-VL-7B | 46.4 |
+| Qwen2-VL-7B | 52.6 |
+| InternVL3.5-8B | 58.6 |
+| GPT-4V | 59.6 |
+| Qwen2.5-VL-7B | 62.2 |
+| **Cosmos-Reason-7B** | **66.2** |
+
++6.4% vs. Qwen2.5-VL-7B of the same size — achieved purely from Physical AI pre-training, not AD fine-tuning at this stage.
+
+**Complementarity with AutoMoT's finding**: AutoMoT showed that fine-tuning general VLMs yields only +0.2 LingoQA with catastrophic forgetting on multi-step general reasoning. Cosmos-Reason avoids this by starting from a domain-aligned backbone, suggesting that the correct level to inject AD knowledge is pre-training or Physical AI SFT — not task-specific fine-tuning of general models.
+
+### Chain of Causation (CoC) Dataset
+
+700K video segments annotated with structured causal reasoning traces. CoC is designed around three desiderata:
+- **Decision-grounding**: reasoning anchored to a closed 14-type decision set (prevents vague or unverifiable statements)
+- **Causal locality**: evidence drawn only from observable history (no forward-leaking inference)
+- **Annotation economy**: hybrid pipeline scales with auto-labeling
+
+**Hybrid labeling pipeline**:
+
+| Stage | Actor | Window | Goal |
+|---|---|---|---|
+| Stage I | Human | 0–2s observation only | Identify meta-action from closed decision set; limited window prevents retrospective rationalization |
+| Stage II | Human | 0–8s full context | Compose causal trace from critical scene components |
+| Auto-labeling | GPT-5 | Full | Scale to 700K; 92% LLM-human alignment |
+
+**Quality outcome**: +132.8% causal relationship score vs. free-form reasoning baseline.
+
+### CoT Comparison with Other Wiki Papers
+
+| Approach | CoT steps | Self-reflection? | Causal locality? | Decision grounding? | Annotation model | Scale |
+|----------|-----------|-----------------|-----------------|---------------------|-----------------|-------|
+| ReCogDrive | Unstructured QA | ✗ | ✗ | ✗ | Various VLMs | 3.1M pairs |
+| Reasoning-VLA | 4 (scene→physics→intent→trajectory) | ✗ | ✗ | ✗ | Qwen2.5-VL | 75K clips |
+| UniUGP | 4 (scene→objects→intent→action) | ✗ | ✗ | ✗ | Frontier VLM | Custom |
+| AutoVLA | 4 (scene→objects→intent→action) | ✗ | ✗ | ✗ | Qwen2.5-VL-72B | 52.8K |
+| AutoDrive-R² | 4 (visual→calc→logic→reflection) | ✓ (backward-check) | ✗ | ✗ | Qwen2.5-VL-72B | 6K |
+| **Alpamayo-R1** | **3 (decision→components→causal trace)** | **✗** | **✓ (observable history only)** | **✓ (closed 14-type set)** | **GPT-5 + 2-stage human** | **700K** |
+
+CoC is the only approach with explicit causal locality enforcement and closed-set decision grounding. AutoDrive-R² has backward-check self-reflection but no causal locality constraint.
+
+### Updated Strategy Comparison Table
+
+| Approach | VLM role | VLM fine-tuned? | Data | Backbone | Deployment |
+|----------|----------|----------------|------|----------|-----------|
+| ReCogDrive | Fine-tuned feature extractor | ✓ | 3.1M QA pairs | InternVL3 | At inference |
+| Reasoning-VLA | Unified multi-dataset SFT + GRPO | ✓ | 75K CoT clips | Qwen2.5-VL | At inference |
+| UniUGP | Expert co-training, 4-stage | ✓ | Mixed video + QA | Qwen2.5-VL-3B | At inference |
+| Senna-2 | Consistency-aligned dual-system | ✓ | NAVSIM + proprietary | LLaVA-NeXT | At inference |
+| HERMES | Offline annotator only | ✗ | WOD-E2E + VLM annotations | Qwen3-VL-Flash | Not at inference |
+| AutoMoT | Frozen scene understanding expert | ✗ | NuSync + nuScenes + CARLA | Qwen3-VL-4B | At inference (async) |
+| AutoDrive-R² | SFT + GRPO on structured CoT | ✓ | 6K curated samples | Qwen2.5-VL-7B | At inference |
+| **Alpamayo-R1** | **3-stage: inject→SFT(CoC)→RL** | **✓ (from Physical AI base)** | **700K CoC + 80K hr driving** | **Cosmos-Reason** | **At inference** |
+
+## AdaThinkDrive: Scene-Complexity-Aware Dual-Mode SFT
+
+**AdaThinkDrive** ([[sources/adathinkdrive.md]]) introduces the most explicit scene-complexity-aware adaptation strategy in the wiki: training on the same queries in two reasoning modes and using RL to teach the model when each mode is appropriate.
+
+### Empirical Finding: CoT Hurts in Simple Scenarios
+
+Study on InternVL3-8B/2B across 3 scene complexity levels establishes that CoT reasoning is not universally beneficial — it degrades performance in simple scenes (Level 1) while helping in complex ones (Levels 2–3). This motivates all subsequent design choices.
+
+### Scene Complexity Categorization
+
+Scenes are labeled with 3 complexity levels based on two binary geometric conditions:
+
+| Level | Boundary proximity? | Critical objects? |
+|---|---|---|
+| 1 (Simple, $\mathcal{D}^-$) | ✗ | ✗ |
+| 2 (Moderate) | One of two | — |
+| 3 (Challenging, $\mathcal{D}^+$) | ✓ | ✓ |
+
+**Critical objects** are classified into three types:
+- CIPO-1: Closest In-Path Object (in ego lane)
+- CIPO-2: Likely to merge (lane geometry + relative position)
+- Motion Interaction: Predicted trajectory intersects ego path
+
+These labels serve as cold-start initialization for RL's Adaptive Think Reward.
+
+### Dual-Mode SFT: Same Query, Two Outputs
+
+Unlike AutoVLA (which mixes separate fast/slow samples), AdaThinkDrive generates **both** Think and Non-Think outputs for the **same query** $q$:
+
+$$\mathcal{D}^{SFT} = \{\{q, o^{Think}\}, \{q, o^{Non\text{-}Think}\}\}_{q \in \mathcal{Q}}$$
+
+The model is supervised on both via standard CE loss, with no bias toward either style. This ensures both modes are available for any input — a prerequisite for the RL stage to select between them.
+
+**Key contrast with AutoVLA's dual-mode SFT**:
+
+| Aspect | AutoVLA | AdaThinkDrive |
+|---|---|---|
+| SFT data structure | Separate fast/slow samples (different queries) | Same query → both modes |
+| Mode weighting | λ_cot=40 (upweights slow CoT) | Uniform (no bias) |
+| Complexity labeling | None | 3-level (boundary + critical objects) |
+| RL mechanism | Length penalty | Mode-comparison per scene |
+| Adaptive goal | How *short* to reason | Whether to reason at all |
+
+### Updated Strategy Comparison Table
+
+| Approach | VLM role | VLM fine-tuned? | Data | Backbone | Deployment |
+|----------|----------|----------------|------|----------|-----------|
+| ReCogDrive | Fine-tuned feature extractor | ✓ | 3.1M QA pairs | InternVL3 | At inference |
+| Reasoning-VLA | Unified multi-dataset SFT + GRPO | ✓ | 75K CoT clips | Qwen2.5-VL | At inference |
+| UniUGP | Expert co-training, 4-stage | ✓ | Mixed video + QA | Qwen2.5-VL-3B | At inference |
+| Senna-2 | Consistency-aligned dual-system | ✓ | NAVSIM + proprietary | LLaVA-NeXT | At inference |
+| HERMES | Offline annotator only | ✗ | WOD-E2E + VLM annotations | Qwen3-VL-Flash | Not at inference |
+| AutoMoT | Frozen scene understanding expert | ✗ | NuSync + nuScenes + CARLA | Qwen3-VL-4B | At inference (async) |
+| AutoVLA | Dual-mode SFT + CoT length penalty RFT | ✓ | 52.8K CoT (nuPlan+Waymo) | InternVL2.5 | At inference |
+| AutoDrive-R² | SFT + GRPO on structured CoT | ✓ | 6K curated samples | Qwen2.5-VL-7B | At inference |
+| Alpamayo-R1 | 3-stage: inject→SFT(CoC)→RL | ✓ (from Physical AI base) | 700K CoC + 80K hr driving | Cosmos-Reason | At inference |
+| **AdaThinkDrive** | **Dual-mode SFT + complexity-aware RL** | **✓** | **NAVSIM + open-source QA** | **InternVL3-8B** | **At inference** |
 
 ## Related Systems
 

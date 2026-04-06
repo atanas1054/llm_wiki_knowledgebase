@@ -1,8 +1,8 @@
 ---
 title: Diffusion-Based Trajectory Planner
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/orion.md, sources/linkvla.md, sources/drivefine.md, sources/autovla.md, sources/alpamayo-r1.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md]
 created: 2026-04-05
 updated: 2026-04-05
 confidence: high
@@ -80,15 +80,35 @@ The ARM (Action Refinement Module) then refines the parallel outputs via MLP + a
 
 ### Design Space Comparison
 
-| Paradigm | Steps | Parallel? | Continuous output? | Inpainting? | Speed |
-|----------|-------|-----------|-------------------|-------------|-------|
-| Continuous diffusion (ReCogDrive) | ~20 | Partial | Yes | Via guidance | Moderate |
-| DFM / CTMC (WAM-Flow) | 5 | Yes | No (tokens) | Non-trivial | Fast |
-| Masked diffusion (ReflectDrive) | 1 + reflection | Partial | No (tokens) | Native | Moderate |
-| Continuous FM (UniUGP) | Multiple | Partial | Yes | No | Moderate |
-| **Learnable queries (Reasoning-VLA)** | **1** | **Yes** | **Yes** | **No** | **Fastest** |
+| Paradigm                              | Steps          | Parallel? | Continuous output? | Inpainting?  | Speed       |
+| ------------------------------------- | -------------- | --------- | ------------------ | ------------ | ----------- |
+| Continuous diffusion (ReCogDrive)     | ~20            | Partial   | Yes                | Via guidance | Moderate    |
+| DFM / CTMC (WAM-Flow)                 | 5              | Yes       | No (tokens)        | Non-trivial  | Fast        |
+| Masked diffusion (ReflectDrive)       | 1 + reflection | Partial   | No (tokens)        | Native       | Moderate    |
+| Continuous FM (UniUGP)                | Multiple       | Partial   | Yes                | No           | Moderate    |
+| **Learnable queries (Reasoning-VLA)** | **1**          | **Yes**   | **Yes**            | **No**       | **Fastest** |
+| VAE + GRU (ORION)                     | 1              | Yes       | Yes                | No           | Fast        |
+| Shared codebook C2F (LinkVLA)         | 2              | Step 2 Yes | No (tokens)       | No           | Fast (48ms) |
+| Block-MoE masked diffusion (DriveFine) | s + 1         | Yes (gen) + 1 refine | No (tokens) | Native (refinement expert) | Moderate |
+| AR over physical codebook (AutoVLA) | T (AR steps) | No | No (codebook tokens) | No | Moderate (1 Hz w/ CoT) |
+| FM action expert + discrete training (AR1) | 5 (Euler) | Yes (expert) | Yes (continuous) | No | Fast (8.75ms) |
 
 **Trade-off**: learnable queries are the fastest paradigm but lack iterative refinement. Quality is bounded by single-pass prediction; complex multimodal scenarios (e.g., intersection turns) may produce averaged trajectories without multi-modal diversity mechanisms.
+
+## Perception-Aligned Action Decoding (Percept-WAM)
+
+**Percept-WAM** ([[sources/percept-wam.md]]) introduces yet another paradigm: a **four-query MLP decoder** where each query set attends exclusively to one input modality, preventing over-reliance on any single representation.
+
+| Query | Attends to | Purpose |
+|---|---|---|
+| Q_ego | Ego-state tokens | Kinematic grounding |
+| Q_pv | World-PV tokens | Semantic/appearance context |
+| Q_bev | World-BEV tokens | 3D spatial context |
+| Q_full | All tokens | Final trajectory output |
+
+All four decoded in parallel via Smooth-L1 loss during training; only Q_full used at inference. Unlike Reasoning-VLA's single query set with unrestricted cross-attention, Percept-WAM's attention masking enforces that each modality contributes independently.
+
+The trajectory decoder reuses World-PV and World-BEV tokens computed during perception prefill — no extra forward pass. See [[concepts/perception-for-planning.md]] for the full treatment of how perception tasks improve planning representations.
 
 ## Discrete Flow Matching: A Related Paradigm
 
@@ -131,6 +151,35 @@ This inpainting-as-repair property is the architectural foundation for ReflectDr
 | RL training | Denoising chain as MDP | GRPO on parallel outputs | Not used (inference-time fix) |
 | Inference steps | ~10–20 | 5 (competitive at 1) | Iterative (1–5 reflection cycles) |
 
+## VAE-Based Reasoning-Action Alignment (ORION)
+
+**ORION** ([[sources/orion.md]]) takes a fundamentally different approach from all diffusion-family methods: it uses a **VAE** to align the VLM reasoning space with the trajectory action space, bypassing iterative denoising entirely.
+
+### The Core Idea
+
+All previous paradigms produce trajectories from noise or learned queries. ORION starts from a **planning token** $s$ — the final hidden state of the LLM after processing the full driving reasoning chain — and enforces that $s$ encodes sufficient information to reconstruct the ground-truth trajectory:
+
+$$p(z_s \mid s) \sim \mathcal{N}(\mu_s, \sigma_s^2), \quad p(z_t \mid t) \sim \mathcal{N}(\mu_t, \sigma_t^2)$$
+
+$$\mathcal{L}_{vae} = D_{KL}(p(z \mid s), \, p(z \mid t))$$
+
+At inference, $z \sim p(z_s \mid s)$ is decoded by a GRU into a **6-mode trajectory** (one per navigation command). No noise, no iterative steps, no token sampling.
+
+### Why VAE over Diffusion?
+
+ORION empirically compares VAE vs. a diffusion planner (K-means anchors, 20 modes) on Bench2Drive:
+
+| Planner | DS ↑ | SR (%) ↑ | Avg. Col ↓ |
+|---------|-------|----------|-----------|
+| Diffusion | 71.97 | 46.54 | 0.96 |
+| **VAE (Ours)** | **77.74** | **54.62** | **0.47** |
+
+The paper attributes the gap to: (1) VAE's direct latent alignment is more effective than conditional denoising for this problem; (2) VAE training is more stable, enabling better reasoning-action co-optimization.
+
+### Relationship to Other Paradigms
+
+ORION's VAE planner is philosophically closest to learnable action queries (Reasoning-VLA) — both produce trajectories in a single forward pass from VLM features. The key difference is **what the VLM contributes**: in Reasoning-VLA, VLM hidden states are attended to by learned queries; in ORION, the VLM itself generates a special planning token whose *distribution* in latent space is constrained to match the trajectory distribution. This makes the alignment tighter and end-to-end differentiable through both LLM and planner.
+
 ## Continuous Flow Matching for Planning (UniUGP)
 
 **UniUGP** ([[sources/uniugp.md]]) uses **continuous** flow matching (not discrete) for its Planning Expert, coupled with a VLM via a **Mixture-of-Transformers (MoT)** architecture:
@@ -141,3 +190,124 @@ This inpainting-as-repair property is the architectural foundation for ReflectDr
 **MoT coupling (tighter than cross-attention)**: understanding tokens (from Qwen2.5-VL-3B) and planning tokens attend together in shared multi-head self-attention at every layer, then diverge into modality-specific FFNs. Compare to ReCogDrive, where the VLM hidden states condition the DiT planner via cross-attention — a one-directional, shallower coupling.
 
 **World model co-training** further improves planning: UniUGP's generation expert (Wan2.1 DiT), conditioned on planned trajectories, back-propagates a video consistency signal into the shared representation. This forces the planner to attend to causally relevant distant objects. Planning L2 improves 1.72→1.45 on the long-tail benchmark when the generation expert is added. See [[concepts/world-model-for-ad.md]].
+
+## Block-MoE Refinement on Masked Diffusion (DriveFine)
+
+**DriveFine** ([[sources/drivefine.md]]) identifies a fundamental asymmetry in the two main paradigms and addresses it with a plug-and-play refinement module on top of a masked diffusion LLM:
+
+| Paradigm failure mode | Root cause | DriveFine solution |
+|----------------------|------------|--------------------|
+| Diffusion (ReCogDrive): loses EPDMS under PDMS GRPO | Weak coupling between diffusion planner and VLM → reward hacking | Use unified masked diffusion (no separate planner) |
+| Token-based (AutoVLA): irreversible decoding errors | Committed tokens cannot be revised; noncausal ordering creates outliers | Block-MoE refinement expert reads completed sequence and corrects errors |
+
+### Block-MoE Architecture
+
+LLaDA-8B base (32 blocks) is split:
+- **Blocks 0–27** (shared): run once, produce common contextual representation for both tasks
+- **Blocks 28–31** (expert): replicated into two parallel sets:
+  - **Generation expert**: input = masked tokens `[M]`; learns standard masked NLL
+  - **Refinement expert**: input = fully unmasked tokens; learns to correct completed trajectories
+
+Gradient isolation: refinement branch gradients are **strictly blocked** from reaching shared or generation blocks. This is the critical design choice — it preserves the foundational masked-LLM training paradigm of the generation expert exactly as pretrained.
+
+**Inference**: s=12 masked diffusion steps (generation expert) → 1 refinement step (refinement expert).
+
+**Parameter cost**: n=4 refinement blocks = +1B on 8B base. Even n=1 (+250M, +0.4 PDMS) is cost-effective.
+
+### Relationship to ReflectDrive
+
+Both DriveFine and ReflectDrive ([[sources/reflectdrive.md]]) use masked discrete diffusion (LLaDA/LLaDA-V backbone) and exploit the inpainting-as-repair property. The key architectural difference:
+
+| | ReflectDrive | DriveFine |
+|--|---|---|
+| Safety correction | External scoring + Manhattan token search + inpaint anchor | Block-MoE: dedicated refinement blocks with gradient isolation |
+| Correction trigger | Safety violations detected at inference (gradient-free) | Always applied: one refinement step after s generation steps |
+| Training | Refinement not explicitly trained; emerges from masked NLL | Refinement expert explicitly trained with hybrid offline+online RL |
+| Scope | Safety-focused (DAC, TTC violations) | General quality (smooth outlier correction + trajectory fluency) |
+
+## Shared Codebook Coarse-to-Fine Generation (LinkVLA)
+
+**LinkVLA** ([[sources/linkvla.md]]) introduces yet another paradigm: a **unified discrete codebook** shared by language tokens and action tokens, combined with a **coarse-to-fine (C2F) two-pass decoder** that eliminates sequential AR overhead.
+
+### Unified Token Space
+
+Action waypoints are quantized into a BEV grid using a **log coordinate transform** that prioritizes near-field resolution:
+
+$$z' = \text{sign}(z) \cdot \log(1 + k \cdot |z|), \quad k = 5$$
+
+The resulting 56×101 grid yields 5,656 action tokens, merged with the text vocabulary into one codebook $\mathcal{C}$ of size $K_\text{text} + 5{,}656$. Both language and action are processed by the same VLM with no separate action head.
+
+**Spatial soft-labeling** replaces one-hot targets with a 2D Gaussian over grid neighbors ($\sigma=1.2$, $R=10$), embedding spatial continuity into the training loss.
+
+### Bidirectional Training Objective
+
+The key alignment innovation: LinkVLA trains on **both directions** of the language-action mapping:
+- **Generation**: $p(A \mid V, L)$ — predict trajectory from instruction (conventional)
+- **Understanding**: $p(L \mid V, A)$ — **caption the trajectory back into language** (novel auxiliary task)
+
+Same decoder handles both by swapping $L$ and $A$ as the target. No extra data needed. This forces action token embeddings to be semantically grounded in language, verifiably closing the modality gap.
+
+### C2F Inference (Two Passes)
+
+1. **Pass 1**: Predict final endpoint $\hat{w}_T$ via a special goal token → construct coarse path by linear interpolation: $w_i^\text{coarse} = w_0 + \frac{i}{T}(\hat{w}_T - w_0)$
+2. **Pass 2**: Tokenized coarse path → VLM predicts all $T$ fine waypoints **in parallel**
+
+Result: 361ms (AR) → **48ms** (C2F), **86% reduction**.
+
+### Positioning vs. Other Paradigms
+
+LinkVLA is the only paradigm that treats language and action as **the same modality** at the token level. Compare:
+- ReflectDrive (masked diffusion): separate trajectory token sequence, inpainting-capable but discrete
+- WAM-Flow (DFM/CTMC): separate discrete trajectory codebook, multi-step transport
+- Reasoning-VLA (learnable queries): continuous output, no shared vocabulary
+- **LinkVLA**: shared vocabulary, bidirectional objective, C2F — optimized for instruction following and deployment latency
+
+**Results (Bench2Drive)**: 91.01 DS / 74.55% SR — current Bench2Drive SOTA, surpassing ORION (77.74) and SimLingo (85.07).
+
+## Continuous Flow Matching with Unicycle Dynamics (Alpamayo-R1)
+
+**Alpamayo-R1** ([[sources/alpamayo-r1.md]]) uses conditional flow matching for its **action expert** — a separate smaller transformer that takes VLM KV-cache as conditioning and decodes physically interpretable trajectories via unicycle dynamics control representation.
+
+### Unicycle Control Representation
+
+Unlike raw (x, y) waypoints, AR1 represents trajectories as control sequences: 64 waypoints at 10 Hz (6 s horizon), each parameterized by acceleration $a^i$ and curvature $\kappa^i$:
+
+$$\kappa^i = \frac{\phi^{i+1} - \phi^i}{s^{i+1} - s^i}, \quad a^i = \frac{v^{i+1} - v^i}{s^{i+1} - s^i}$$
+
+Derived from GT via least-squares + Tikhonov regularization. This representation enforces physical plausibility by design — impossible accelerations and turning radii are structurally excluded.
+
+### Flow Matching Formulation
+
+Gaussian OT conditional flow matching:
+
+$$L_\text{cfm}(\Theta) = \mathbb{E}_{t, (\mathbf{o},\textsc{Reason}) \sim \mathcal{D}} \|\mathbf{v}_\Theta(\mathbf{a}_t, \mathbf{o}, \textsc{Reason}) - (\mathbf{a} - \boldsymbol{\epsilon})\|$$
+
+$$\mathbf{a}_t = t\mathbf{a} + (1-t)\boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$$
+
+Inference via Euler integration in 5 steps ($\delta_t = 0.2$): $\mathbf{a}_{t+\delta_t} = \mathbf{a}_t + \delta_t \, \mathbf{v}_\Theta(\mathbf{a}_t, \mathbf{o}, \textsc{Reason})$.
+
+### Dual Representation: Discrete Training + Continuous Inference
+
+The action expert runs at inference. During *training*, trajectories are additionally tokenized into 128 discrete tokens (2 × 64: quantized $a^i$, $\kappa^i$) for unified AR cross-entropy loss. This dual representation provides three benefits:
+1. **Unified token space**: language and action share the same AR training objective, coupling reasoning and trajectory prediction
+2. **GRPO compatibility**: discrete tokens allow policy gradient to directly compute advantages and gradients
+3. **Inference efficiency**: FM decodes 5 Euler steps (8.75ms) vs. 127 AR tokens (222ms)
+
+A **stop-gradient** is applied to the VLM KV-cache before the action expert — the expert cannot back-propagate into VLM weights.
+
+### FM vs. AR Decoding (Table 11)
+
+| Strategy | minADE₆@6s↓ | AlpaSim Score (at fault)↑ | Comfort (Accel)↑ | Rel. Speed↑ |
+|---|---|---|---|---|
+| Auto-Regressive | 0.6811 | 0.59 ± 0.17 | 44.05% | 1.00× |
+| **Flow Matching** | **0.6440** | **1.27 ± 0.34** | **97.38%** | **1.16×** |
+
+FM wins on all metrics. The comfort gap (97% vs. 44%) is striking — AR trajectory decoding produces kinematically incoherent sequences due to non-causal ordering; FM integrates smoothly in physical space, yielding trajectories that are nearly always within comfort acceleration bounds.
+
+### Comparison with UniUGP's FM
+
+Both UniUGP and AR1 use continuous flow matching, but differ in coupling architecture:
+- **UniUGP**: MoT — planning tokens attend jointly with understanding tokens in *shared* self-attention at every layer; bidirectional coupling
+- **AR1**: action expert attends to VLM KV-cache via cross-attention; VLM does not see action expert states; stop-gradient; modular and separately trainable
+
+UniUGP's coupling is tighter (shared layers); AR1's is more modular (allows async updates and GRPO on discrete tokens at training).

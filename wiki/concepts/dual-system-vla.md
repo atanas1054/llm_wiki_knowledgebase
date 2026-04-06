@@ -1,8 +1,8 @@
 ---
 title: Dual-System VLA for Autonomous Driving
 type: concept
-sources: [raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md]
-related: [sources/senna2.md, sources/recogdrive.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md]
+sources: [raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md]
+related: [sources/senna2.md, sources/recogdrive.md, sources/automot.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md]
 created: 2026-04-05
 updated: 2026-04-05
 confidence: high
@@ -58,15 +58,17 @@ Two mechanisms in Senna-2:
 
 ## Comparison of Dual-System Designs
 
-| Feature | Senna (v1) | Senna-2 | ReCogDrive |
-|---------|-----------|---------|-----------|
-| VLM backbone | — | Qwen2.5-VL-3B | InternVL3-8B |
-| Decision type | Meta-actions | Meta-actions (4×5) | Text trajectory + reasoning |
-| Planner | E2E (diffusion) | DiT (residual diffusion) | DiT (cross-attention to VLM) |
-| VLM→planner bridge | Decision conditioning | Decision Adapter (tokens + AdaLN) | Cross-attention to hidden states |
-| Explicit consistency | ✗ | ✓ (kinematic mapping + selective loss) | ✗ |
-| RL alignment | ✗ | ✓ (HRL with 3DGS) | ✓ (GRPO with NAVSIM) |
-| System type | Dual | Dual | Single (tight coupling) |
+| Feature              | Senna (v1)            | Senna-2                                | ReCogDrive                       | AutoMoT                                      |
+| -------------------- | --------------------- | -------------------------------------- | -------------------------------- | -------------------------------------------- |
+| VLM backbone         | —                     | Qwen2.5-VL-3B                          | InternVL3-8B                     | Qwen3-VL-4B                                  |
+| VLM training         | Fine-tuned            | Fine-tuned                             | Fine-tuned                       | **Frozen**                                   |
+| Decision type        | Meta-actions          | Meta-actions (4×5)                     | Text + reasoning                 | Meta-actions (20 combos)                     |
+| Planner              | E2E (diffusion)       | DiT (residual diffusion)               | DiT (cross-attention)            | AE from scratch + optional diffusion refiner |
+| VLM→planner bridge   | Decision conditioning | Decision Adapter (tokens + AdaLN)      | Cross-attention to hidden states | Layer-wise shared KV cache                   |
+| Explicit consistency | ✗                     | ✓ (kinematic mapping + selective loss) | ✗                                | ✗                                            |
+| RL alignment         | ✗                     | ✓ (HRL with 3DGS)                      | ✓ (GRPO with NAVSIM)             | ✗                                            |
+| Async execution      | Heuristic cache       | Heuristic cache                        | No                               | ✓ Layer-wise KV cache (7.6× speedup)         |
+| System type          | Dual                  | Dual                                   | Single (tight)                   | Dual (MoT)                                   |
 
 ## Consistency Alignment Methods
 
@@ -112,6 +114,11 @@ Contrasts with NAVSIM-based GRPO (WAM-Flow, ReCogDrive):
 
 ## Asynchronous Operation
 In practice, the VLM cannot run at the E2E policy's frequency (10 Hz) on edge hardware. Solution: a **memory bank** caches VLM features; the E2E planner uses cached features at full speed. VLM refreshes less frequently. This introduces a **staleness tradeoff** — VLM decision may be from an older frame, but the trajectory remains current.
+
+**AutoMoT** ([[sources/automot.md]]) implements the most principled version of this pattern using a **layer-wise shared KV cache**. Rather than caching final-layer VLM outputs, AutoMoT caches the UE's per-layer key-value pairs $\mathcal{C}^{\tau(t)} = \{K^l_{scene}(\tau(t)), V^l_{scene}(\tau(t))\}_{l=1}^L$ and concatenates them into the AE's attention computation at every layer:
+$$\tilde{K}^l(t)=[K^l_{scene}(\tau(t))\;\|\;K^l_{act}(t)], \quad \mathrm{Attn}^l(t)=\mathrm{softmax}\!\left(\frac{Q^l_{act}(t)\,\tilde{K}^l(t)^\top}{\sqrt{d}}\right)\tilde{V}^l(t)$$
+
+This enables AE to run at high frequency (0.05s latency) while UE updates at low frequency — **86.8% latency reduction (7.6× speedup)** vs. synchronous execution with only +1.24% L2 degradation. AutoMoT also trains on *asynchronous samples* (UE context 0.5–1s ahead of AE step), teaching the AE to tolerate temporal misalignment explicitly.
 
 ## State of the Art (as of April 2026)
 

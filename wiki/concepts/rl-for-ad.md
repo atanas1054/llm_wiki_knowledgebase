@@ -1,8 +1,8 @@
 ---
 title: Reinforcement Learning for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md]
 created: 2026-04-05
 updated: 2026-04-05
 confidence: high
@@ -134,6 +134,341 @@ Only inconsistent cases (VLM decision ≠ trajectory's kinematic category) are p
 **Advantage**: GT-based rewards can be computed for any dataset with trajectory labels, enabling RL over a diverse 8-dataset corpus. **Limitation**: cannot detect collision with other agents or drivable-area violations not captured by kinematic constraints.
 
 **RL contribution**: ablations show +0.03 avg L2 improvement over SFT alone, consistent across all model variants. Smaller absolute gain than NAVSIM GRPO (+2.8 PDMS in ReCogDrive) but provides kinematic feasibility guarantees across diverse environments.
+
+## DriveFine: Hybrid Offline+Online RL for Refinement
+
+**DriveFine** ([[sources/drivefine.md]]) introduces two RL contributions: an empirical finding about reward hacking in diffusion planners, and a novel hybrid RL strategy for a dedicated refinement expert.
+
+### Reward Hacking in Diffusion-Based Planners
+
+**Key finding**: when PDMS-oriented RFT is applied:
+- **Token-based VLAs** (InternVL backbone): PDMS ↑, EPDMS ↑ — both metrics improve
+- **Diffusion-based planners** (ReCogDrive, DiffusionDrive): PDMS ↑, **EPDMS ↓** — reward hacking
+
+Root cause: the separately-coupled diffusion planner is weakly bound to the VLM's pretrained weights. GRPO optimizes the planner's trajectory generation while causing it to lose generalizable patterns, degrading extended metrics (lane keeping, extended comfort, driving direction compliance). Token-based VLAs avoid this because language and action tokens share the same embedding space — RL fine-tuning updates representations that are simultaneously used for language understanding, preventing narrow specialization.
+
+**Implication**: for multi-metric robustness, token-based VLAs are more GRPO-stable than weakly-coupled diffusion planners.
+
+### GRPO for Generation Expert (masked dLLM)
+
+Standard GRPO adapted for masked diffusion: G=10 candidate trajectories, $s$-step progressive sampling, $\tau$-step aggregation:
+$$\hat{A}_i = r_i - \text{mean}(\{r_i\}_{i=1}^G)$$
+Reward from NAVSIM simulator. KL penalty $\beta$ against reference policy.
+
+### Hybrid Offline+Online RL for Refinement Expert
+
+The block-MoE refinement expert requires its own RL strategy, since standard GRPO provides a fixed upper bound (the best generated trajectory). DriveFine introduces a hybrid approach:
+
+**Offline advantage** — pairwise reward differences over GRPO samples (no extra sampling):
+$$\hat{A}^{of}_{ij} = r_i - r_j, \quad \forall i,j \in G$$
+- Zero mean by construction (simultaneously encourages improvements and penalizes degradations)
+- Denser signal than group-average baseline
+- Requires no additional rollouts
+
+**Online advantage** — K=6 active refinements per anchor trajectory:
+$$\hat{A}^{on}_{ik} = \hat{r}_{ik} - r_i, \quad \forall i \in G, k \in K$$
+- Breaks the offline upper bound by allowing the refiner to discover better trajectories not in the GRPO sample set
+- Provides exploration signal beyond what was generated by the generation expert
+
+Both computed and combined in a hybrid loss, with generation and refinement experts trained synchronously.
+
+**RL impact on DriveFine** (ablation):
+
+| Config | PDMS |
+|--------|------|
+| SFT only | 86.7 |
+| +GRPO (generation) | 89.6 (+2.9) |
+| +Offline-RFT (refinement) | 90.3 (+0.7) |
+| **+Online-RFT (refinement)** | **90.8 (+0.5)** |
+
+## Curious-VLA: The Narrow Policy Problem and Diversity-Aware RL
+
+**Curious-VLA** ([[sources/curious-vla.md]]) identifies a fundamental systemic flaw in the standard IL→RL pipeline that all prior methods implicitly suffer from: **Narrow Policy (NP)**.
+
+### The Narrow Policy Problem
+
+IL (SFT) over-exploits GT trajectories, collapsing policy diversity and starving RL of useful feedback. Three root causes:
+
+**(1) Optimization Objective Mismatch** — Cross-entropy loss treats all non-GT tokens as equally wrong, with no spatial proximity signal. Gradient:
+$$\frac{\partial\mathcal{L}_{\text{SFT}}}{\partial z_{t}}=\pi_{\theta}(y_{k}|\mathbf{y}^{*}_{<t},\mathcal{X})-\mathbb{I}(\hat{y}_{t}=y_{t}^{*})$$
+This encourages overconfidence in $\mathbf{y}^*$, collapsing the policy distribution around one mode.
+
+**(2) Horizon Physical Scale Mismatch** — Future waypoints in ego-centric coordinates have orders-of-magnitude larger variance at $t=4s$ vs. $t=0.5s$. Far-horizon losses dominate, suppressing near-horizon steering diversity.
+
+**(3) Advantage Collapse in RL** — When IL produces a narrow policy, GRPO samples are nearly identical → rewards nearly identical → $\sigma_R \to 0$ → advantages vanish:
+$$\lim_{\sigma_{R}\to 0}A_{i}=\frac{R(\mathbf{y}_{i})-\mu_{R}}{\sigma_{R}+\xi}\to 0$$
+Result: vanishing gradients and premature RL saturation. Empirically confirmed: both QwenVL-2.5 and ReCogDrive show severely collapsed diversity (pADE = 0.090–0.148) after IL.
+
+### Behavioral Diagnostics
+
+A framework for quantifying NP, evaluated at $k=8$ samples per scenario:
+
+| Metric | Measures | Desired |
+|--------|---------|---------|
+| Diversity | Mean pairwise ADE/FDE across all sampled trajectories | ↑ high |
+| Quality | Min ADE/FDE to GT across $k$ samples (best feasible) | ↓ low |
+| Performance | Mean PDMS@$k$ | ↑ high |
+
+Collapse signature: low Diversity + stagnant Quality = NP bottleneck confirmed.
+
+### Feasible Trajectory Expansion (FTE) — IL Stage Fix
+
+Three sub-components that address NP in IL:
+
+1. **Exploratory Data Expansion (DE)**: 12k challenging segments → ReCogDrive diffusion (perturbed latents) → 142k diverse samples (within-intent + across-intent). Safety-filtered by PDMS scorer.
+
+2. **Chain-of-Thought (CoT)**: 4-stage reasoning (perception → explanation → meta-behavior → trajectory), synthesized by Qwen2.5-VL-72B. Two-stage SFT: (i) align LLM to CoT format (vision frozen), (ii) full end-to-end fine-tuning.
+
+3. **Step-wise Normalization (SN)**: normalize each prediction step independently:
+$$\tilde{w}_{t}=\frac{w_{t}-\mu_{t}}{\sigma_{t}}, \quad \hat{w}_{t}=\hat{\tilde{w}}_{t}\sigma_{t}+\mu_{t}$$
+Equalizes gradient magnitudes across horizons. **Critical finding**: DE alone hurts (85.2 vs. 85.6 CoT-only baseline); SN is the necessary catalyst (DE+CoT+SN = 87.6 best SFT).
+
+### Adaptive Diversity-Aware Sampling (ADAS) — RL Stage Fix
+
+Filters training scenarios to ensure sufficient reward variance for GRPO. Uses a Bernoulli approximation: each rollout is a binary trial with success probability $\hat{p} = \mu_R / R_{max}$.
+
+**Inclusion conditions** (both must hold):
+$$\hat{p}^{G}+(1-\hat{p})^{G}<\epsilon_{\text{div}}$$
+$$|\sigma_{R}-\sqrt{\hat{p}(1-\hat{p})}R_{\text{range}}|<\epsilon_{\text{conf}}$$
+
+Condition 1: ensures not all $G$ rollouts are identical. Condition 2: validates Bernoulli consistency (filters noisy scenarios).
+
+**Critical negative result**: difficulty-based sampling causes **training collapse** (35.2 PDMS) — harder scenarios are not what's needed; *diverse-outcome* scenarios are.
+
+| Strategy | PDMS |
+|----------|------|
+| Human Difficulty | 35.2 (collapse) |
+| Reject Unimodal | 88.8 |
+| ADAS (1x) | 89.6 |
+| ADAS (3x) | 90.1 |
+| ADAS (3x) + SDR | **90.3** |
+
+### Spanning Driving Reward (SDR)
+
+Focal-loss style reward transformation to amplify sensitivity near the quality boundary:
+$$R_{\text{span}}=\prod_{c\in C}c\cdot\frac{\sum_{m\in M}w^{\prime}_{m}\cdot(1-(1-m)^{\gamma_{m}})}{\sum_{m\in M}w^{\prime}_{m}}$$
+
+The focal term $(1-(1-m)^{\gamma_m})$ compresses ceiling effects at high scores and amplifies gradients at lower scores — improves RL sensitivity to incremental driving quality improvements.
+
+**ADAS (3x) + SDR = 90.3 PDMS** (Qwen2.5-VL-3B, 1xC) and **BoN-6 = 94.8** matching human GT — evidence that FTE+DARL successfully unlocks the exploration potential.
+
+## AutoDrive-R²: Physics-Grounded Reward with Four Kinematic Components
+
+**AutoDrive-R²** ([[sources/autodrive-r2.md]]) extends the GT-based GRPO approach (cf. Reasoning-VLA) with a richer four-component physics reward and confirms the SFT-cold-start necessity through a DeepSeek-R1-Zero-style ablation.
+
+### Physics-Grounded Reward
+
+$$r_{acc} = \lambda_{pos} r_{pos} + \lambda_{ste} r_{ste} + \lambda_{vel} r_{vel} + \lambda_{tem} r_{tem}, \quad r_i = r_{acc}^i + r_{format}^i$$
+
+All λ=1 in experiments.
+
+| Component | Formula | Physics constraint |
+|-----------|---------|-------------------|
+| $r_{pos}$ | $\frac{1}{N}\sum_i (x^i - x_{gt}^i)^2 + (y^i - y_{gt}^i)^2$ | Spatial path adherence |
+| $r_{ste}$ | $\frac{1}{N}\sum_j (\theta^j - \theta_{gt}^j)^2$ | Steering kinematics (no abrupt turns) |
+| $r_{vel}$ | $\frac{1}{N}\sum_k (v^k - v_{gt}^k)^2$ | Velocity compliance |
+| $r_{tem}$ | $\frac{1}{N}\sum_j (\theta^j - \theta^{j-1})^2 + \sum_k (v^k - v^{k-1})^2$ | Temporal smoothness (suppress oscillations) |
+
+**Contrast with Reasoning-VLA**: Reasoning-VLA uses binary pass/fail constraints (steering angle ≤ 40°, acceleration ≤ 0.6g). AutoDrive-R²'s components are continuous MSE terms against GT — providing denser gradient signal at the cost of requiring GT steering and velocity labels.
+
+**Reward ablation** (nuScenes avg L2):
+| Removed component | L2 | Δ |
+|------------------|----|---|
+| w/o $r_{pos}$ | 0.53 | **+179% (near-collapse)** |
+| w/o $r_{tem}$ | 0.24 | +26.3% |
+| w/o $r_{vel}$ | 0.22 | +15.8% |
+| w/o $r_{ste}$ | 0.21 | +10.5% |
+| Full | **0.19** | — |
+
+Spatial alignment is indispensable; temporal smoothness is next most critical.
+
+### SFT Cold Start Necessity (empirical confirmation)
+
+Inspired by DeepSeek-R1-Zero, the authors attempted RL-only training — directly applying GRPO without SFT:
+
+| Config | Avg L2 |
+|--------|--------|
+| RL only (no SFT) | 0.33 |
+| SFT only | 0.27 |
+| **SFT + RL** | **0.19** |
+
+RL alone underperforms SFT alone by 22.2%. Root cause: RL cannot explore the high-dimensional reasoning space for multi-step kinematic calculation and contextual logic without a structured initialization. This independently corroborates Curious-VLA's finding (DE without SN hurts; diversity without structure is harmful) from a different angle.
+
+### Comparison of GT-Based GRPO Reward Designs
+
+| Method | Reward type | Kinematic components | Dense/binary |
+|--------|------------|---------------------|-------------|
+| Reasoning-VLA | Trajectory accuracy + binary constraints | Steering ≤40°, acc ≤0.6g | Binary constraints |
+| **AutoDrive-R²** | **4-component MSE** | **$r_{pos}$, $r_{ste}$, $r_{vel}$, $r_{tem}$** | **Dense (continuous MSE)** |
+| AutoVLA | PDMS or ADE + CoT length penalty | None explicit | Simulator/ADE |
+
+## AutoVLA: Adaptive Reasoning via CoT Length Penalty
+
+**AutoVLA** ([[sources/autovla.md]]) introduces a novel GRPO reward design that trains a single model to *choose* when to reason — without a separate fast/slow architecture.
+
+**Reward function**:
+$$r = r_{\text{Driving}} - \lambda_r \cdot r_{\text{CoT}}$$
+
+where $r_{\text{CoT}}$ is a CoT **length penalty** — explicitly discourages unnecessarily long reasoning chains. $r_{\text{Driving}}$ = PDMS (nuPlan/NAVSIM) or ADE (Waymo E2E).
+
+**Effect**: in straightforward scenarios (clear road, simple turn), the model learns to emit a short "reasoning not needed" prefix and proceed directly to action tokens. In complex scenarios (intersections, construction zones, occluded agents), the model emits full 4-stage CoT before the action. This switching behavior is learned via RL — the SFT stage initializes dual-mode capability but the *adaptive selection* comes from RFT.
+
+**Results**:
+- +10.6% PDMS improvement over SFT (NAVSIM)
+- −66.8% average runtime reduction (500 test scenarios)
+- Group size ablation: larger G → better convergence via broader exploration
+
+The CoT length penalty trains adaptive fast/slow selection implicitly — the model learns to emit shorter CoT only when the length penalty outweighs the PDMS gain. For the full cross-wiki GRPO reward comparison, see the table in the Alpamayo-R1 section below.
+
+## AdaThinkDrive: Adaptive Think Reward via Mode-Comparison GRPO
+
+**AdaThinkDrive** ([[sources/adathinkdrive.md]]) provides the clearest empirical evidence in the wiki that CoT is **harmful** in simple scenarios, and introduces an **Adaptive Think Reward** that teaches the model when to reason by comparing Think vs. Non-Think rollout quality within the same scene.
+
+### Empirical Motivation
+
+InternVL3-8B/2B study on 3 complexity levels shows:
+- **Level 1 (simple)**: Non-Think PDMS > Think PDMS — over-reasoning hurts
+- **Levels 2–3 (challenging)**: Think PDMS > Non-Think PDMS — reasoning helps
+
+The optimal reasoning mode is complexity-dependent. Always-Think and Never-Think are both suboptimal.
+
+### Four-Component GRPO Reward
+
+| Component | Signal | Design |
+|---|---|---|
+| $\mathcal{R}_{traj}$ | PDMS from NAVSIM | Discrete 0–1 |
+| $\mathcal{R}_{fmt}$ | Tag format compliance | Discrete violation penalty |
+| $\mathcal{R}_{endpoint}$ | L1 to GT endpoint | Piecewise: 1.0 (<2m), 0.8 (<4m), 0.6 (<6m), 0.4 (<10m), 0.2 (<15m), 0.0 |
+| $\mathcal{R}_{adaptive}$ | **Mode-switching via rollout comparison** | Dynamic (see below) |
+
+### Adaptive Think Reward (Algorithm 1) — Dynamic Relabeling
+
+For each scene with complexity label $D$ and rollout group split into Think/Non-Think sub-groups:
+
+**Case D=0 (Simple)**: If Think rollouts outperform Non-Think ($S_{Think} > S_{NoThink}$) AND $S_{Think} > T=0.9$ AND $C_{Think} > C_{NoThink}$:
+→ Scene relabeled Challenging → reward Think; otherwise reward Non-Think.
+
+**Case D=1 (Challenging)**: Mirror: if Non-Think wins with high confidence → relabel Simple → reward Non-Think; else reward Think.
+
+**Key property**: initial scene labels from SFT (based on boundary proximity + critical object presence) are anchors only. The reward corrects stale labels based on the *current* policy's rollout behavior. As the policy improves, a formerly-challenging scene may no longer need explicit reasoning — the reward adapts dynamically.
+
+**Threshold T=0.9**: a strict confidence requirement — relabeling only when one mode dominates clearly. Prevents noisy reward signals from triggering premature mode switches.
+
+### Results: Mode-Comparison vs. Fixed Modes
+
+| Model | PDMS |
+|---|---|
+| Non-Think RL (never CoT) | 88.3 |
+| Think RL (always CoT) | 88.9 |
+| **AdaThinkDrive (adaptive)** | **90.3** |
+
++2.0 vs. Never-Think; +1.4 vs. Always-Think. Per-level:
+- Level 1 (simple): AdaThinkDrive 90.7 vs. Non-Think RL 88.5 (+2.2)
+- Level 3 (challenging): AdaThinkDrive 89.8 vs. Think RL 87.8 (+2.0)
+
+**Behavioral confirmation**: 84% Non-Think in Level 1; 96% Think in Level 3.
+
+**Inference time**: 0.74s — +9% vs. Non-Think RL (0.68s), −14% vs. Think RL (0.86s).
+
+### Reward Ablation (Table VI)
+
+| PDMS+Format | +Endpoint | +Adaptive Think | PDMS |
+|---|---|---|---|
+| ✓ | | | 88.1 |
+| ✓ | ✓ | | 89.1 |
+| ✓ | ✓ | ✓ | **90.3** |
+
+Adaptive Think adds +1.2 beyond other reward components.
+
+### AdaThinkDrive vs. AutoVLA: Two Approaches to Adaptive Reasoning
+
+| Aspect | AutoVLA | AdaThinkDrive |
+|---|---|---|
+| Mechanism | CoT length penalty ($r - \lambda \cdot \text{len}$) | Mode-comparison rollout ($S_{Think}$ vs. $S_{NoThink}$) |
+| Signal | Continuous — discourages long CoT | Binary — rewards correct mode per scene |
+| Learning | How *short* to reason | Whether to reason at all |
+| Scene awareness | None (no complexity labels) | Explicit 3-level categorization + dynamic relabeling |
+| Adaptive trigger | Learned implicitly from penalty | Learned explicitly from mode reward |
+| Inference cost | Shorter CoT sequences | Skip CoT entirely in simple scenes |
+
+Both achieve adaptive reasoning but via fundamentally different reward structures. AutoVLA optimizes CoT *length*; AdaThinkDrive optimizes CoT *presence*.
+
+## Alpamayo-R1: LRM-as-Critic and Three-Component GRPO
+
+**Alpamayo-R1** ([[sources/alpamayo-r1.md]]) introduces the most compositionally complex reward design in the wiki: three complementary signals optimized jointly via GRPO, including a **large reasoning model (LRM) as a critic** and a **binary reasoning-action consistency reward**.
+
+### LRM-as-Critic (Reasoning Quality Reward)
+
+Rather than using a learned reward model or simulator metric, AR1 employs a frontier LRM (DeepSeek-R1 or Cosmos-Reason) to grade each rollout's reasoning trace against the GT CoC annotation:
+
+| Score | Meaning |
+|---|---|
+| 5 | Behavior & causal reasoning fully consistent with GT |
+| 4 | Behavior correct; causal reasoning mostly consistent |
+| 3 | Behavior roughly correct but incomplete or slightly wrong reasoning |
+| 2 | Behavior partially incorrect or reasoning largely inconsistent |
+| 1 | Behavior wrong or contradicts GT |
+| 0 | Completely unrelated or opposite |
+
+The motivation is the **generation-verification gap**: LRMs may struggle to *generate* valid driving reasoning (limited embodiment priors) but can reliably *evaluate* logical soundness and causal consistency. This makes them asymmetrically useful as critics — even without driving experience, they can check if a reasoning trace is internally consistent and matches the scene.
+
+**Result**: reasoning score improves ~45% (3.1 → 4.5) when $r_\text{reason}$ is applied.
+
+### CoC–Action Consistency Reward (Binary)
+
+A rule-based reward that checks whether the model's reasoning trace describes behavior consistent with its own predicted trajectory:
+1. Convert predicted trajectory → meta-actions (longitudinal: acceleration/braking; lateral: steering direction)
+2. Parse reasoning trace → intended driving decision (from closed 14-type decision set)
+3. If both axes match → $r_\text{consistency} = 1$; otherwise $0$. Unparseable traces → $0$
+
+### Trajectory Quality Reward
+
+$$r_\text{traj} = \lambda_\text{L2} \|x_\text{pred} - x_\text{expert}\|_2^2 + \lambda_\text{coll} \mathbb{I}[\text{collision}(x_\text{pred})] + \lambda_\text{jerk} J(x_\text{pred})$$
+
+L2 imitation + binary collision + jerk regularization.
+
+### Critical Finding: Reasoning-Only RL Hurts Action Quality (Table 9)
+
+| Training | ADE↓ | Reasoning↑ | Consistency↑ | Close Enc.↓ |
+|---|---|---|---|---|
+| SFT | 2.12m | 3.1 | 0.62 | 6.9% |
+| SFT + RL ($r_\text{reason}$) | **2.19m** | **4.5** | **0.53** | 5.8% |
+| SFT + RL ($r_\text{reason}$ + $r_\text{cons}$) | **1.92m** | 4.5 | **0.85** | 6.2% |
+| SFT + RL (full, all 3) | 1.94m | 4.4 | 0.83 | **3.7%** |
+
+Reasoning-only RL improves the reasoning score but **degrades ADE from 2.12m to 2.19m** and **lowers consistency from 0.62 to 0.53**. The model learns fluent but causally disconnected explanations that fail to translate into coherent actions. The consistency reward is the essential anchor: adding it restores ADE to 1.92m (−9.4%) and boosts consistency to 0.85 (+37%). The safety reward further reduces close encounter rate (6.2% → 3.7%) without compromising other metrics.
+
+This is the strongest evidence in the wiki that **reasoning quality and action quality are not automatically aligned** — they require an explicit coupling reward.
+
+### RL Data Curation: Boltzmann Disagreement
+
+To avoid prohibitive compute, AR1 curates a high-information-gain RL dataset by prioritizing samples where model logits disagree with the reward signal. For each rollout batch, a Boltzmann distribution is computed from rewards:
+
+$$p_\text{reward}(\tau_i) = \frac{\exp(\beta r_i)}{\sum_j \exp(\beta r_j)}$$
+
+Samples with high KL divergence between model logit distribution and $p_\text{reward}$ are prioritized. Mixed with uniform random samples (same proportion) to preserve diversity. This focuses gradient updates on cases where the model's implicit preference conflicts with the explicit reward — maximizing alignment efficiency.
+
+### GRPO Formulation
+
+$$\mathcal{L}_\text{GRPO}(\theta) = -\mathbb{E}_{\tau_i \sim \pi_\theta} \left[ \frac{\exp(\beta A_i)}{\sum_j \exp(\beta A_j)} \left( \log \pi_\theta(\tau_i) - \lambda_\text{KL} \text{KL}[\pi_\theta(\tau_i) \| \pi_\text{ref}(\tau_i)] \right) \right], \quad A_i = r_i - \bar{r}$$
+
+KL regularization to SFT reference policy prevents over-optimization on noisy reward signals and preserves pre-trained priors.
+
+### Comparison: All GRPO Reward Designs in the Wiki
+
+| Method | Reward | Simulator needed? | Reasoning reward? | Adaptive reasoning? |
+|--------|--------|-------------------|-------------------|---------------------|
+| ReCogDrive | PDMS (NAVSIM) | Yes | No | No |
+| WAM-Flow | Safety-gated PDMS | Yes | No | No |
+| Reasoning-VLA | GT-trajectory + binary kinematics | No | No | No |
+| DriveFine | PDMS + pairwise/online for refiner | Yes | No | No |
+| Curious-VLA | SDR (focal-style PDMS) | Yes | No | No |
+| AutoVLA | PDMS − λ·CoT length | Yes | No | Yes (length penalty) |
+| AutoDrive-R² | 4-component physics MSE | No | No | No |
+| Alpamayo-R1 | LRM-graded reasoning + binary consistency + L2/collision/jerk | No | Yes (LRM-as-critic) | No |
+| **AdaThinkDrive** | **PDMS + format + endpoint + Adaptive Think** | **Yes** | **No** | **Yes (mode-comparison rollout)** |
+
+AR1 is the only method in the wiki with explicit reasoning evaluation as a reward component. It is also the only one with a consistency reward that directly penalizes reasoning-action misalignment.
 
 ## Connection to LLM RL (GRPO / DeepSeek-R1)
 

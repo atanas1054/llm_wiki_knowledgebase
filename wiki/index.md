@@ -6,14 +6,25 @@ Master catalog of all wiki pages. Updated on every ingest.
 
 ## Sources
 
-| Page                                      | Description                                                                                                                                           |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [ReCogDrive](sources/recogdrive.md)       | VLM + diffusion planner + RL for end-to-end AD; PDMS 89.6 on NAVSIM-v1                                                                                |
-| [WAM-Flow](sources/wam-flow.md)           | Discrete flow matching VLA for AD; PDMS 90.3 SOTA on NAVSIM-v1; 1 camera only                                                                         |
-| [UniUGP](sources/uniugp.md)               | Unified VLA + world model; CoT + video generation + FM trajectory; SOTA nuScenes FID/FVD and DriveLM                                                  |
-| [Senna-2](sources/senna2.md)              | Dual-system VLM + E2E alignment; 3DGS HRL; +19.3% consistency F1; EPDMS 86.6 SOTA on NAVSIM-v2                                                        |
-| [ReflectDrive](sources/reflectdrive.md)   | Masked discrete diffusion + gradient-free reflective inference; goal-conditioned NMS + safety anchor inpainting; claims >AutoVLA on NAVSIM-v1         |
-| [Reasoning-VLA](sources/reasoning-vla.md) | Learnable action queries (1-step parallel); unified 8-dataset corpus; GT-based GRPO; 91.7 PDMS claimed (comparison scope limited); 61× faster than AR |
+| Page                                      | Description                                                                                                                                                                          |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [ReCogDrive](sources/recogdrive.md)       | VLM + diffusion planner + RL for end-to-end AD; PDMS 89.6 on NAVSIM-v1                                                                                                               |
+| [WAM-Flow](sources/wam-flow.md)           | Discrete flow matching VLA for AD; PDMS 90.3 SOTA on NAVSIM-v1; 1 camera only                                                                                                        |
+| [UniUGP](sources/uniugp.md)               | Unified VLA + world model; CoT + video generation + FM trajectory; SOTA nuScenes FID/FVD and DriveLM                                                                                 |
+| [Senna-2](sources/senna2.md)              | Dual-system VLM + E2E alignment; 3DGS HRL; +19.3% consistency F1; EPDMS 86.6 SOTA on NAVSIM-v2                                                                                       |
+| [ReflectDrive](sources/reflectdrive.md)   | Masked discrete diffusion + gradient-free reflective inference; goal-conditioned NMS + safety anchor inpainting; claims >AutoVLA on NAVSIM-v1                                        |
+| [Reasoning-VLA](sources/reasoning-vla.md) | Learnable action queries (1-step parallel); unified 8-dataset corpus; GT-based GRPO; 91.7 PDMS claimed (comparison scope limited); 61× faster than AR                                |
+| [Percept-WAM](sources/percept-wam.md)     | World-PV/BEV tokens unify 2D/3D perception + planning in one VLM; IoU-aware confidence; four-query trajectory decoder; 90.2 PDMS; 707ms latency                                      |
+| [ORION](sources/orion.md)                 | QT-Former + Vicuna LLM + VAE generative planner; reasoning-action latent alignment; 77.74 DS / 54.62% SR on Bench2Drive (+14.28 DS vs. SOTA at time)                                 |
+| [LinkVLA](sources/linkvla.md)             | Shared language-action codebook; bidirectional alignment (action captioning); C2F 2-pass decoder; 91.01 DS / 74.55% SR Bench2Drive SOTA; 48ms latency                                |
+| [HERMES](sources/hermes.md)               | Offline VLM annotation → BGE-M3 embeddings → risk-aware Tri-Modal student; WOD-E2E long-tail SOTA 6.81 RFS; no closed-loop eval                                                      |
+| [DriveFine](sources/drivefine.md)         | Block-MoE masked diffusion (LLaDA-8B) + hybrid offline/online RL; 90.7/91.8 PDMS NAVSIM-v1; 89.7 EPDMS (bug-fixed) NAVSIM-v2                                                         |
+| [Curious-VLA](sources/curious-vla.md)     | Narrow Policy diagnosis (IL→RL diversity collapse); FTE + ADAS + SDR; 90.3 PDMS / 85.3 EPDMS; BoN-6 94.8 matching human GT; Qwen2.5-VL-3B 1xC                                        |
+| [AutoVLA](sources/autovla.md)             | K-Disk physical action codebook (K=2048); dual-mode SFT + GRPO with CoT length penalty; adaptive fast/slow reasoning; 89.11 PDMS / 92.12 BoN; 3xC                                    |
+| [AutoMoT](sources/automot.md)             | Frozen Qwen3-VL-4B UE + 1.6B AE from scratch; layer-wise KV cache async (7.6× speedup); 87.34 DS Bench2Drive; catastrophic forgetting evidence for VLM fine-tuning                   |
+| [AutoDrive-R²](sources/autodrive-r2.md)   | 4-step CoT with self-reflection (backward-check) + physics GRPO (pos/steering/vel/temporal); 0.19m nuScenes / 0.20m Waymo zero-shot; 6K training samples                             |
+| [Alpamayo-R1](sources/alpamayo-r1.md)     | Cosmos-Reason backbone + CoC dataset (700K, hybrid labeling) + FM action expert (unicycle dynamics); 3-reward GRPO (LRM-as-critic + consistency + safety); 99ms; internal evals only |
+| [AdaThinkDrive](sources/adathinkdrive.md) | Adaptive Think Reward GRPO (mode-comparison per scene); dual-mode SFT (Think+NonThink same query); 90.3 PDMS / 93.0 BoN-4; InternVL3-8B; 1 camera; 14% faster than always-Think |
 
 ---
 
@@ -29,6 +40,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [World Models for Autonomous Driving](concepts/world-model-for-ad.md) | Video generation as visual causal learning; integration with VLA planners; FID/FVD metrics |
 | [Dual-System VLA](concepts/dual-system-vla.md) | VLM for decisions + E2E for trajectory; decision adapter; kinematic mapping; consistency alignment |
 | [Inference-Time Safety](concepts/inference-time-safety.md) | Gradient-free safety correction at inference; discrete token search + inpainting-as-repair; taxonomy vs. guidance/RL/anchors |
+| [Perception-Enhanced Planning](concepts/perception-for-planning.md) | World-PV/BEV tokens; grid-conditioned parallel AR detection; IoU-aware confidence calibration; perception → action alignment |
 
 ---
 
