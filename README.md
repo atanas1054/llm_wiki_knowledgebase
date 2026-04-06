@@ -16,29 +16,41 @@ wiki/
 CLAUDE.md      # Workflow instructions for the LLM assistant
 ```
 
-## Papers Ingested
+## Papers Ingested (17)
 
-| Paper | Venue | Key Contribution |
-|-------|-------|-----------------|
-| [ReCogDrive](wiki/sources/recogdrive.md) | 2025 | VLM + DiT diffusion planner + GRPO RL; 89.6 PDMS on NAVSIM-v1 |
-| [WAM-Flow](wiki/sources/wam-flow.md) | 2025 | Discrete flow matching (CTMC) + GRPO; 90.3 PDMS with 1 camera |
-| [UniUGP](wiki/sources/uniugp.md) | 2025 | Unified VLA + world model; MoT architecture; SOTA nuScenes FID/FVD |
-| [Senna-2](wiki/sources/senna2.md) | 2025 | Dual-system VLM+E2E consistency alignment; 3DGS HRL; 86.6 EPDMS |
-| [ReflectDrive](wiki/sources/reflectdrive.md) | 2025 | Masked discrete diffusion + gradient-free reflective inference |
-| [Reasoning-VLA](wiki/sources/reasoning-vla.md) | 2025 | Learnable action queries (1-step parallel); unified 8-dataset corpus |
+| Paper | Org | Key Contribution | Benchmark |
+|-------|-----|-----------------|-----------|
+| [ReCogDrive](wiki/sources/recogdrive.md) | — | VLM + DiT diffusion planner + GRPO RL | 89.6 PDMS NAVSIM-v1 |
+| [WAM-Flow](wiki/sources/wam-flow.md) | — | Discrete flow matching (CTMC) + GRPO; 1 camera | 90.3 PDMS NAVSIM-v1 |
+| [UniUGP](wiki/sources/uniugp.md) | — | Unified VLA + world model; MoT; SOTA nuScenes FID/FVD | nuScenes + DriveLM |
+| [Senna-2](wiki/sources/senna2.md) | — | Dual-system VLM+E2E consistency alignment; 3DGS HRL | 86.6 EPDMS NAVSIM-v2 |
+| [ReflectDrive](wiki/sources/reflectdrive.md) | — | Masked discrete diffusion + gradient-free reflective inference | NAVSIM-v1 |
+| [Reasoning-VLA](wiki/sources/reasoning-vla.md) | — | Learnable action queries (1-step parallel); unified 8-dataset GRPO | 91.7 PDMS (claimed) |
+| [Percept-WAM](wiki/sources/percept-wam.md) | — | World-PV/BEV tokens unify perception + planning; IoU-aware confidence | 90.2 PDMS NAVSIM-v1 |
+| [ORION](wiki/sources/orion.md) | — | VLM + VAE generative planner; reasoning-action latent alignment | 77.74 DS Bench2Drive |
+| [LinkVLA](wiki/sources/linkvla.md) | — | Shared language-action codebook; C2F 2-pass decoder; 48ms | 91.01 DS Bench2Drive SOTA |
+| [HERMES](wiki/sources/hermes.md) | — | Offline VLM annotation → risk-aware student; no VLM at inference | 6.81 RFS WOD-E2E |
+| [DriveFine](wiki/sources/drivefine.md) | — | Block-MoE masked diffusion + hybrid offline/online RL | 90.7 PDMS NAVSIM-v1 |
+| [Curious-VLA](wiki/sources/curious-vla.md) | — | Narrow Policy diagnosis; FTE + ADAS + SDR; BoN-6 matches human GT | 90.3 PDMS / 94.8 BoN-6 |
+| [AutoVLA](wiki/sources/autovla.md) | — | K-Disk physical action codebook; adaptive CoT via length-penalty GRPO | 89.11 PDMS NAVSIM-v1 |
+| [AutoMoT](wiki/sources/automot.md) | — | Frozen VLM + trained action expert; async KV cache (7.6× speedup) | 87.34 DS Bench2Drive |
+| [AutoDrive-R²](wiki/sources/autodrive-r2.md) | Alibaba AMAP | 4-step CoT with self-reflection + physics GRPO; 6K samples beats 103K | 0.19m L2 nuScenes |
+| [Alpamayo-R1](wiki/sources/alpamayo-r1.md) | NVIDIA | Cosmos-Reason + CoC dataset (700K) + FM action expert; 3-reward GRPO | 99ms; internal evals |
+| [AdaThinkDrive](wiki/sources/adathinkdrive.md) | Xiaomi EV | Adaptive Think Reward: mode-comparison GRPO learns when to reason | 90.3 PDMS / 93.0 BoN-4 |
 
-## Concept Pages
+## Concept Pages (9)
 
 | Concept | Description |
 |---------|-------------|
-| [Diffusion-Based Trajectory Planner](wiki/concepts/diffusion-planner.md) | Continuous diffusion, DFM, masked diffusion, FM, and learnable-query paradigms compared |
-| [Discrete Flow Matching](wiki/concepts/discrete-flow-matching.md) | CTMC-based DFM theory; WAM-Flow vs. masked diffusion distinction |
-| [RL for Autonomous Driving](wiki/concepts/rl-for-ad.md) | GRPO variants: simulator-based, GT-based, hierarchical (3DGS) |
-| [VLM Domain Adaptation](wiki/concepts/vlm-domain-adaptation.md) | Data curation, CoT integration, multi-dataset generalization strategies |
-| [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md) | PDMS/EPDMS metrics; current SOTA table |
-| [World Models for AD](wiki/concepts/world-model-for-ad.md) | Video generation as causal learning; FID/FVD metrics |
-| [Dual-System VLA](wiki/concepts/dual-system-vla.md) | VLM decisions + E2E trajectory; consistency alignment |
+| [Diffusion-Based Trajectory Planner](wiki/concepts/diffusion-planner.md) | Continuous diffusion, DFM, masked diffusion, FM action expert, and learnable-query paradigms compared |
+| [Discrete Flow Matching](wiki/concepts/discrete-flow-matching.md) | CTMC-based DFM theory; WAM-Flow vs. masked diffusion vs. continuous FM |
+| [RL for Autonomous Driving](wiki/concepts/rl-for-ad.md) | GRPO variants: simulator, GT-based, hierarchical (3DGS), adaptive Think, LRM-as-critic |
+| [VLM Domain Adaptation](wiki/concepts/vlm-domain-adaptation.md) | Data curation, CoT integration, dual-mode SFT, frozen VLM, Physical AI pre-training |
+| [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md) | PDMS/EPDMS metrics; SOTA table with caveats; Navhard OOD results |
+| [World Models for AD](wiki/concepts/world-model-for-ad.md) | Video generation as causal learning; UniUGP generation expert; FID/FVD |
+| [Dual-System VLA](wiki/concepts/dual-system-vla.md) | VLM decisions + E2E trajectory; consistency alignment; async KV cache |
 | [Inference-Time Safety](wiki/concepts/inference-time-safety.md) | Gradient-free safety correction; inpainting-as-repair pattern |
+| [Perception-Enhanced Planning](wiki/concepts/perception-for-planning.md) | World-PV/BEV tokens; grid-conditioned AR detection; IoU-aware confidence |
 
 ## Workflow
 
