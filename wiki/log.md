@@ -4,6 +4,136 @@ Append-only log of all wiki operations.
 
 ---
 
+## 2026-04-07 — Ingest: FLARE
+
+**Source**: `raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md`  
+**arXiv**: 2601.05611v2  
+**Org**: OpenDriveLab + Li Auto
+
+**Pages created**:
+- `wiki/sources/flare.md`
+
+**Pages updated**:
+- `wiki/concepts/world-model-for-ad.md` — added Pattern 8: DINOv2 semantic feature prediction as self-supervised auxiliary loss; action-conditional FFP; prediction target ablation; contrast with DriveVLA-W0 (VAE latents) and FSDrive (visual CoT); updated open questions
+- `wiki/concepts/rl-for-ad.md` — added FLARE's BC-regularized GRPO section; BC vs. KL comparison; updated GRPO reward comparison table (now 10 methods)
+- `wiki/concepts/vlm-domain-adaptation.md` — added annotation-free adaptation section; positioning table (FLARE vs. DriveVLA-W0 as only annotation-free methods); updated strategy table (now 13 rows)
+- `wiki/concepts/navsim-benchmark.md` — added FLARE SFT (86.9) and RFT (91.4) rows; updated EPDMS table (86.3, EC=87.5); updated SOTA statement (FLARE 91.4 best single-sample VLM-based, caveat: no head-to-head with DriveFine/WAM-Flow)
+- `wiki/index.md` — added FLARE row
+
+**Key concepts**:
+- Annotation-free paradigm: no VQA/CoT needed; DINOv2 patch features as dense self-supervision
+- Future Feature Predictor (FFP): spatial queries modulated by action vector z → cross-attention on visual latents → predict DINOv2 patches of next frame
+- Action-conditional prediction: FFP conditioned on z simulates how planned action changes the scene
+- Prediction target hierarchy: spatial DINO (86.9) > global DINO (85.9) > pixels (84.7) > none (83.4)
+- BC regularization instead of KL divergence in GRPO Stage 2 (motivated by DriveFine reward hacking finding)
+- NAVSIM-v1: 86.9 SFT (best VLM SFT, no external data), 91.4 RFT (best single-sample VLM)
+- NAVSIM-v2: 86.3 EPDMS (comparison scope excludes Senna-2 86.6 and DDP 88.7); EC=87.5 (healthy)
+- Two-stage MAP fusion: visual MAP → N_v latents; ego-state-conditioned action MAP → single decision vector z
+
+---
+
+## 2026-04-07 — Ingest: UniDriveVLA
+
+**Source**: `raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md`  
+**arXiv**: 2604.02190v1  
+**Org**: HUST + Xiaomi EV + University of Macau
+
+**Pages created**:
+- `wiki/sources/unidrivevla.md`
+
+**Pages updated**:
+- `wiki/concepts/dual-system-vla.md` — added MoT as third structural paradigm; UniDriveVLA + AutoMoT design comparison; Masked Joint Attention pattern; MoT ablation table; updated master comparison table (now 5 methods)
+- `wiki/concepts/perception-for-planning.md` — added sparse query-based perception section; cosine similarity collapse evidence; perception–reasoning conflict diagnosis; updated comparison table (now 6 approaches including UniDriveVLA)
+- `wiki/concepts/vlm-domain-adaptation.md` — added UniDriveVLA section: interference diagnosis, MoT fix, 3-stage progressive training, general VQA degradation data; updated strategy comparison table (now 12 approaches)
+- `wiki/index.md` — added UniDriveVLA row; updated perception-for-planning description
+
+**Key concepts**:
+- Perception–reasoning conflict: cosine similarity → 1 in shared-weight decoder = feature collapse
+- MoT: decoupled und/per/act experts; und causally masked from per/act; per reads und; act reads both
+- Sparse perception: K-Means instance banks; 5-task unified decoder (det/map/ego/motion/occ); two-pass enrichment via masked joint attention
+- 3-stage training: full VLM SFT → LoRA + 0.5× LR joint → VLM frozen specialization
+- MoT ablation: +14.4pp General VQA, +4.1pp DriveBench, −0.108m L2 vs. shared-weight
+- General VQA after adaptation still −19.7pp vs. base Qwen3-VL (MoT reduces but doesn't eliminate forgetting)
+- Bench2Drive: 78.37 DS best w/o PDM-Lite; 11.78 comfort (lowest in table)
+- nuScenes: 0.51m avg L2 no-ego (Large, best shown); with-ego 0.42m (FSDrive at 0.28m is better)
+
+---
+
+## 2026-04-07 — Ingest: DriveVLA-W0
+
+**Source**: `raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md`  
+**arXiv**: 2510.12796v1  
+**Org**: CASIA + Yinwang Intelligent Technology
+
+**Pages created**:
+- `wiki/sources/drivevla-w0.md`
+
+**Pages updated**:
+- `wiki/concepts/world-model-for-ad.md` — added Pattern 7: training-time-only world modeling for data scaling; supervision deficit framing; VQ AR vs. diffusion WM design; generalization and scaling findings
+- `wiki/concepts/navsim-benchmark.md` — added DriveVLA-W0 (90.2★ anchor-based, 93.0 BoN-6); v2 table updated (86.1 EPDMS, EC=58.9); added caveat on anchor-based 90.2
+- `wiki/concepts/diffusion-planner.md` — added action decoder scaling reversal section (FM vs. AR vs. query-based at 103k vs. 70M frames)
+- `wiki/index.md` — added DriveVLA-W0 row
+
+**Key concepts**:
+- Supervision deficit: sparse action signal wastes VLA capacity; future image prediction as dense self-supervision
+- AR world model (VQ/Emu3): predicts current frame tokens; diffusion WM (ViT/Qwen2.5-VL): predicts future frame $I_{t+1}$
+- World modeling unlocks cross-dataset generalization; action-only VLAs overfit and degrade (VLA-VQ: −9.5%)
+- 70M-frame scaling: WM adds +28.8% ADE (VQ), +15.9% collision (ViT) vs. action-only at scale
+- Action decoder reversal: FM > AR at 103k frames; AR > FM at 70M frames
+- 90.2 PDMS uses trajectory anchors (not single-sample); single-sample query-based = 88.4 PDMS
+- EC = 58.9 on NAVSIM-v2 (lowest in wiki)
+
+---
+
+## 2026-04-07 — Ingest: DriveDreamer-Policy
+
+**Source**: `raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md`  
+**arXiv**: 2604.01765v1  
+**Org**: GigaAI + University of Toronto + CUHK MMLab
+
+**Pages created**:
+- `wiki/sources/drivedreamer-policy.md`
+
+**Pages updated**:
+- `wiki/concepts/world-model-for-ad.md` — added Pattern 6: geometry-grounded causal WAM (depth→video→action); added NAVSIM FVD table; updated Open Questions
+- `wiki/concepts/navsim-benchmark.md` — added DDP (89.2 PDMS, 88.7 EPDMS new SOTA); updated NAVSIM-v2 SOTA table with DDP; added caveat on comparison scope and ReCogDrive IL-only baseline issue
+- `wiki/index.md` — added DriveDreamer-Policy row
+
+**Key concepts**:
+- Causal depth→video→action ordering: single LLM forward pass, no iterative cross-branch refinement
+- Depth as geometric scaffold: reduces FVD −18.6% for video; +0.5 PDMS for planning alone
+- Depth+video combined: +1.2 PDMS over action-only baseline (88.0→89.2)
+- NAVSIM-v2 88.7 EPDMS (EC=79.4): new apparent SOTA, surpasses Senna-2 (86.6) by +2.1
+- No RL; single-stage multi-task training; pseudo-label depth from DA3
+- Comparison gaps: excludes DriveFine (90.7), WAM-Flow (90.3), uses IL-only ReCogDrive (86.5)
+
+---
+
+## 2026-04-07 — Ingest: FutureSightDrive
+
+**Source**: `raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md`  
+**arXiv**: 2505.17685v3  
+**Org**: Xi'an Jiaotong University + Amap (Alibaba Group)
+
+**Pages created**:
+- `wiki/sources/futuresightdrive.md`
+
+**Pages updated**:
+- `wiki/concepts/world-model-for-ad.md` — added Pattern 5: Visual CoT as Planning Intermediate (FSDrive); updated nuScenes FID and planning SOTA tables; updated Open Questions
+- `wiki/concepts/vlm-domain-adaptation.md` — added FSDrive section (vocabulary expansion, visual CoT modality, modality gap ablation); updated CoT design space table (8 rows); updated strategy comparison table (11 rows)
+- `wiki/concepts/navsim-benchmark.md` — added FSDrive (85.1 PDMS) to SOTA table; added caveat on comparison scope
+- `wiki/index.md` — added FutureSightDrive row
+
+**Key concepts**:
+- Visual spatio-temporal CoT: generated unified future frame (red lane dividers + 3D boxes) as planning intermediate
+- Dual-role VLA: world model (generates visual CoT) + inverse dynamics model (plans from current obs + visual CoT)
+- Vocabulary expansion: VQ-VAE tokens appended to text vocabulary, no architectural change, ~0.3% of prior methods' data
+- Progressive generation: lane dividers → 3D boxes → full frame enforces physical laws before appearance
+- CoT ablation: visual ST-CoT reduces collision 31% vs. no CoT; text CoT only 8.6%
+- 85.1 PDMS NAVSIM (pre-2025 comparisons only); 0.96m L2 nuScenes (no ego status, 2B); FID 10.1
+
+---
+
 ## 2026-04-06 — Ingest: AdaThinkDrive
 
 **Source**: `raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md`

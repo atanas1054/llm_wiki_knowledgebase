@@ -1,10 +1,10 @@
 ---
 title: Reinforcement Learning for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-04-07
 confidence: high
 ---
 
@@ -454,21 +454,53 @@ $$\mathcal{L}_\text{GRPO}(\theta) = -\mathbb{E}_{\tau_i \sim \pi_\theta} \left[ 
 
 KL regularization to SFT reference policy prevents over-optimization on noisy reward signals and preserves pre-trained priors.
 
+## FLARE: BC-Regularized GRPO for Diffusion Planners
+
+**FLARE** ([[sources/flare.md]]) introduces a variant of GRPO that replaces the standard KL divergence penalty with **Behavior Cloning (BC) regularization**. This is motivated by DriveFine's finding that weakly-coupled diffusion planners suffer reward hacking under KL-penalized GRPO (PDMS improves but EPDMS degrades).
+
+### FLARE's GRPO Formulation
+
+Standard clipped PPO objective with BC regularization:
+$$\mathcal{L}_\text{total} = -\frac{1}{G}\sum_i \min(r_i(\theta)A_i, \text{clip}(r_i(\theta), 1-\epsilon, 1+\epsilon)A_i) + \lambda \mathcal{L}_\text{BC}$$
+
+where $r_i(\theta) = \pi_\theta(\tau_i|\mathbf{z}) / \pi_\text{ref}(\tau_i|\mathbf{z})$ is the likelihood ratio and $\mathcal{L}_\text{BC}$ anchors the current policy to the Stage 1 frozen reference policy.
+
+**BC vs. KL regularization for diffusion planners**:
+
+| Aspect | KL divergence (standard) | BC regularization (FLARE) |
+|--------|-------------------------|--------------------------|
+| Constraint type | Distribution-level divergence | Sample-level imitation |
+| Target | Any policy within KL ball | Specific Stage 1 checkpoint |
+| Strength | Soft (increasing KL gradually) | Hard anchor to reference |
+| Rationale | Prevent over-optimization | Prevent policy collapse for DiT |
+
+The paper claims BC is more reliable for preventing collapse in diffusion planners because the DiT's trajectory log-probability (required for KL) is approximated by summing Gaussian transition log-probs across the denoising chain — a potentially noisy estimate. BC directly anchors to the reference policy without requiring log-probability estimation.
+
+### GRPO Hyperparameters (FLARE Stage 2)
+
+- G = 16 trajectory samples per scene (vs. G=3 in WAM-Flow, G=10 in DriveFine)
+- DDIM with T'=5 denoising steps (fast inference for group sampling)
+- VLM backbone **frozen**; only fusion module + DiT planner updated
+- λ_BC = 0.1; lr = 2×10⁻⁵; 15 epochs; 8×H100
+
+**Result**: SFT 86.9 → RFT 91.4 PDMS (+4.5 PDMS); EC = 87.5 on NAVSIM-v2 — no reward hacking observed (contrast with DriveFine finding for KL-penalized diffusion planners).
+
 ### Comparison: All GRPO Reward Designs in the Wiki
 
-| Method | Reward | Simulator needed? | Reasoning reward? | Adaptive reasoning? |
-|--------|--------|-------------------|-------------------|---------------------|
-| ReCogDrive | PDMS (NAVSIM) | Yes | No | No |
-| WAM-Flow | Safety-gated PDMS | Yes | No | No |
-| Reasoning-VLA | GT-trajectory + binary kinematics | No | No | No |
-| DriveFine | PDMS + pairwise/online for refiner | Yes | No | No |
-| Curious-VLA | SDR (focal-style PDMS) | Yes | No | No |
-| AutoVLA | PDMS − λ·CoT length | Yes | No | Yes (length penalty) |
-| AutoDrive-R² | 4-component physics MSE | No | No | No |
-| Alpamayo-R1 | LRM-graded reasoning + binary consistency + L2/collision/jerk | No | Yes (LRM-as-critic) | No |
-| **AdaThinkDrive** | **PDMS + format + endpoint + Adaptive Think** | **Yes** | **No** | **Yes (mode-comparison rollout)** |
+| Method | Reward | Simulator needed? | Reasoning reward? | Adaptive reasoning? | Regularization |
+|--------|--------|-------------------|-------------------|---------------------|----------------|
+| ReCogDrive | PDMS (NAVSIM) | Yes | No | No | BC (λ=0.01) |
+| WAM-Flow | Safety-gated PDMS | Yes | No | No | KL |
+| Reasoning-VLA | GT-trajectory + binary kinematics | No | No | No | KL |
+| DriveFine | PDMS + pairwise/online for refiner | Yes | No | No | KL |
+| Curious-VLA | SDR (focal-style PDMS) | Yes | No | No | KL |
+| AutoVLA | PDMS − λ·CoT length | Yes | No | Yes (length penalty) | KL |
+| AutoDrive-R² | 4-component physics MSE | No | No | No | KL |
+| Alpamayo-R1 | LRM-graded reasoning + binary consistency + L2/collision/jerk | No | Yes (LRM-as-critic) | No | KL |
+| AdaThinkDrive | PDMS + format + endpoint + Adaptive Think | Yes | No | Yes (mode-comparison rollout) | KL |
+| **FLARE** | **PDM-Score (R_progress + R_safety + R_comfort)** | **Yes** | **No** | **No** | **BC (λ=0.1)** |
 
-AR1 is the only method in the wiki with explicit reasoning evaluation as a reward component. It is also the only one with a consistency reward that directly penalizes reasoning-action misalignment.
+AR1 is the only method with explicit reasoning evaluation as a reward component. FLARE is the only method using BC (not KL) regularization for a diffusion planner — motivated by avoiding reward hacking found in KL-penalized DiT GRPO (DriveFine's finding).
 
 ## Connection to LLM RL (GRPO / DeepSeek-R1)
 

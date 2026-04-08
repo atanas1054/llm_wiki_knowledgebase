@@ -1,10 +1,10 @@
 ---
 title: Dual-System VLA for Autonomous Driving
 type: concept
-sources: [raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md]
-related: [sources/senna2.md, sources/recogdrive.md, sources/automot.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md]
+sources: [raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
+related: [sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-04-07
 confidence: high
 ---
 
@@ -16,6 +16,8 @@ A dual-system vision-language-action (VLA) model separates autonomous driving in
 2. **Low-level system (E2E policy)**: generates a continuous trajectory guided by the VLM's decision
 
 This contrasts with **single-system** approaches (WAM-Flow, UniUGP planning expert) where a single model predicts the trajectory directly, and with **unified** approaches (ReCogDrive) where the VLM's hidden states are used as a conditioning signal without explicit decision alignment.
+
+A third structural paradigm has emerged: **Mixture-of-Transformers (MoT)** (AutoMoT, UniDriveVLA), where a single model hosts multiple expert streams with decoupled parameters but shared global attention. This is neither purely dual-system (no separate VLM + E2E modules) nor shared-weight single-system (parameters are decoupled per task). See [MoT Paradigm](#mot-paradigm-automot-unidrivevla) below.
 
 ## The Consistency Gap Problem
 
@@ -56,19 +58,6 @@ Two mechanisms in Senna-2:
 - **AdaLN** (Adaptive Layer Norm): VLM condition globally modulates the planner — sets the "tone" for the whole trajectory
 - **Cross-attention**: E2E perception features provide fine-grained spatial grounding
 
-## Comparison of Dual-System Designs
-
-| Feature              | Senna (v1)            | Senna-2                                | ReCogDrive                       | AutoMoT                                      |
-| -------------------- | --------------------- | -------------------------------------- | -------------------------------- | -------------------------------------------- |
-| VLM backbone         | —                     | Qwen2.5-VL-3B                          | InternVL3-8B                     | Qwen3-VL-4B                                  |
-| VLM training         | Fine-tuned            | Fine-tuned                             | Fine-tuned                       | **Frozen**                                   |
-| Decision type        | Meta-actions          | Meta-actions (4×5)                     | Text + reasoning                 | Meta-actions (20 combos)                     |
-| Planner              | E2E (diffusion)       | DiT (residual diffusion)               | DiT (cross-attention)            | AE from scratch + optional diffusion refiner |
-| VLM→planner bridge   | Decision conditioning | Decision Adapter (tokens + AdaLN)      | Cross-attention to hidden states | Layer-wise shared KV cache                   |
-| Explicit consistency | ✗                     | ✓ (kinematic mapping + selective loss) | ✗                                | ✗                                            |
-| RL alignment         | ✗                     | ✓ (HRL with 3DGS)                      | ✓ (GRPO with NAVSIM)             | ✗                                            |
-| Async execution      | Heuristic cache       | Heuristic cache                        | No                               | ✓ Layer-wise KV cache (7.6× speedup)         |
-| System type          | Dual                  | Dual                                   | Single (tight)                   | Dual (MoT)                                   |
 
 ## Consistency Alignment Methods
 
@@ -132,9 +121,72 @@ This enables AE to run at high frequency (0.05s latency) while UE updates at low
 
 Senna-2 beats both RL-only (RAD) and the original dual-system (Senna) — the alignment strategy contributes beyond RL alone.
 
+## MoT Paradigm: AutoMoT + UniDriveVLA {#mot-paradigm-automot-unidrivevla}
+
+Mixture-of-Transformers provides a third structural path: instead of a separate VLM + E2E pipeline, a single model hosts multiple expert transformer streams that attend to each other via controlled masking. Parameters are decoupled across streams but computation is unified in a single forward pass.
+
+### Why MoT?
+
+The core motivation differs between papers:
+- **AutoMoT**: efficiency — frozen UE runs at low frequency, lightweight AE runs at high frequency using cached KV pairs; avoids catastrophic forgetting
+- **UniDriveVLA**: accuracy — joint optimization of spatial perception and semantic reasoning in shared weights causes representation interference (cosine similarity → 1); expert decoupling eliminates this conflict
+
+### UniDriveVLA's MoT Design
+
+Three experts: Understanding (und), Perception (per), Action (act). Each has its own QKV projections, FFN, and normalization. All tokens attend globally via Masked Joint Attention with asymmetric visibility:
+
+| Expert | Sees | Purpose |
+|--------|------|---------|
+| und | Causal self only | Preserves VLM pretraining; semantic reasoning |
+| per | und + self | Acquires semantic context for spatial queries |
+| act | und + per + self | Aggregates both for trajectory generation |
+
+**Key insight**: und is fully protected from per and act — the VLM's causal language modeling is never disrupted by spatial perception gradients.
+
+**Evidence of benefit** (Table 7 of UniDriveVLA):
+
+| Architecture | General VQA↑ | DriveBench↑ | L2(m)↓ | CR(%)↓ |
+|---|---|---|---|---|
+| Shared-Weight | 31.1% | 50.8% | 0.641 | 0.175 |
+| **MoT** | **45.5%** | **54.9%** | **0.533** | **0.140** |
+| **Δ** | **+14.4pp** | **+4.1pp** | **−0.108m** | **−0.035** |
+
+General VQA improvement (+14.4pp) is primarily driven by preventing feature collapse in the understanding expert — the expert streams maintain low cosine similarity across layers rather than collapsing to shared representations.
+
+### Comparison: MoT Designs
+
+| Feature | AutoMoT | UniDriveVLA |
+|---------|---------|------------|
+| # experts | 2 (UE + AE) | 3 (und + per + act) |
+| VLM training | Frozen | LoRA Stage 2; frozen Stage 3 |
+| Motivation | Efficiency (async) | Accuracy (anti-interference) |
+| Async execution | ✓ layer-wise KV cache (7.6×) | ✗ |
+| Perception stream | ✗ | ✓ (sparse queries) |
+| Evaluation | Bench2Drive | Bench2Drive + nuScenes |
+| Result | 87.34 DS | 78.37 DS |
+
+AutoMoT achieves higher DS partly because it uses KV-cache async execution and a purpose-built 1.6B action expert; UniDriveVLA adds a perception stream but is newer and uses Bench2Drive Think2Drive demonstrations.
+
+## Comparison of Dual-System and MoT Designs
+
+| Feature              | Senna (v1)            | Senna-2                                | ReCogDrive                       | AutoMoT                                      | UniDriveVLA                          |
+| -------------------- | --------------------- | -------------------------------------- | -------------------------------- | -------------------------------------------- | ------------------------------------ |
+| VLM backbone         | —                     | Qwen2.5-VL-3B                          | InternVL3-8B                     | Qwen3-VL-4B                                  | Qwen3-VL-2B/8B                       |
+| VLM training         | Fine-tuned            | Fine-tuned                             | Fine-tuned                       | **Frozen**                                   | LoRA→Frozen                          |
+| Decision type        | Meta-actions          | Meta-actions (4×5)                     | Text + reasoning                 | Meta-actions (20 combos)                     | Continuous FM trajectory             |
+| Planner              | E2E (diffusion)       | DiT (residual diffusion)               | DiT (cross-attention)            | AE from scratch + optional diffusion refiner | FM action expert (act stream)        |
+| VLM→planner bridge   | Decision conditioning | Decision Adapter (tokens + AdaLN)      | Cross-attention to hidden states | Layer-wise shared KV cache                   | Masked Joint Attention               |
+| Explicit consistency | ✗                     | ✓ (kinematic mapping + selective loss) | ✗                                | ✗                                            | ✗                                    |
+| RL alignment         | ✗                     | ✓ (HRL with 3DGS)                      | ✓ (GRPO with NAVSIM)             | ✗                                            | ✗                                    |
+| Async execution      | Heuristic cache       | Heuristic cache                        | No                               | ✓ Layer-wise KV cache (7.6× speedup)         | ✗                                    |
+| Perception stream    | ✗                     | ✗                                      | ✗                                | ✗                                            | ✓ (sparse 5-task queries)            |
+| System type          | Dual                  | Dual                                   | Single (tight)                   | MoT (dual)                                   | MoT (unified 3-expert)               |
+
 ## Open Questions
 
 - Can the kinematic mapping $f_K$ be learned (soft/continuous) rather than rule-based, to avoid category-boundary noise?
 - Does dual-system consistency generalize to more fine-grained decision spaces (beyond 20 meta-actions)?
 - Can the VLM be distilled into the E2E policy after alignment training, eliminating the runtime VLM latency?
 - How does dual-system alignment interact with GRPO-style reward shaping (used in WAM-Flow/ReCogDrive)?
+- Does MoT's anti-interference benefit hold at larger scales (>8B) where shared-weight models also benefit from more parameters?
+- Can UniDriveVLA's perception + action MoT be combined with Senna-2's consistency alignment for further gains?

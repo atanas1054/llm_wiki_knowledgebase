@@ -1,10 +1,10 @@
 ---
 title: Perception-Enhanced Planning in VLA Models
 type: concept
-sources: [raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md]
-related: [sources/percept-wam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md]
+sources: [raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
+related: [sources/percept-wam.md, sources/unidrivevla.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-04-07
 confidence: high
 ---
 
@@ -80,16 +80,52 @@ Percept-WAM's grid-conditioned approach:
 
 This is structurally similar to WAM-Flow's parallel DFM decoding, but applied to object detection rather than trajectory generation.
 
+## Sparse Query-Based Perception: UniDriveVLA
+
+**UniDriveVLA** ([[sources/unidrivevla.md]]) introduces a different paradigm: instead of dense BEV tokens inserted into a shared-weight VLM (as in OmniDrive, OpenDriveVLA, Percept-WAM), it uses **sparse query-based perception** inside a dedicated MoT Perception expert.
+
+### The Perception–Reasoning Conflict
+
+UniDriveVLA provides the strongest empirical evidence yet for why naive perception injection hurts VLMs. In a shared-weight decoder, cosine similarity between LLM tokens and perception tokens progressively increases toward 1 across layers — indicating **feature collapse** where spatial and semantic representations become indistinguishable. The consequence is that improving spatial perception directly degrades semantic reasoning and vice versa.
+
+MoT solves this by decoupling parameters: the Understanding expert (und) never sees perception tokens, so its representations cannot collapse. The Perception expert (per) attends to und tokens but not vice versa — a one-way semantic enrichment channel. Quantitative evidence:
+
+| Architecture | General VQA↑ | DriveBench↑ | L2(m)↓ | CR(%)↓ |
+|---|---|---|---|---|
+| Shared-Weight | 31.1% | 50.8% | 0.641 | 0.175 |
+| MoT | 45.5% | 54.9% | 0.533 | 0.140 |
+| Δ | **+14.4pp** | **+4.1pp** | **−0.108m** | **−0.035** |
+
+### Sparse Perception Design
+
+- **Task-specific queries**: K-Means instance bank initialization (dataset-level clustering) for 3D detection, HD map, ego-status, motion forecasting, and occupancy (5 tasks in one decoder)
+- **Two-pass enrichment**: first decoder pass → projection into VLM hidden space → Masked Joint Attention (per attends und) → project back → second refinement pass. Perception is not a one-shot extractor; it benefits from the VLM's semantic understanding
+- **No dense BEV**: no PointPillars, no BEV grid construction, no view-lifting from multi-camera — spatial geometry is extracted directly from multi-scale 2D visual features via deformable attention
+
+### Perception vs. Planning Gains (Table 5 ablation)
+
+| Added component | ΔL2 | ΔCR |
+|----------------|-----|-----|
+| Ego-state | −0.14m | −0.06 |
+| Detection | −0.03m | **−0.11** |
+| Map | 0.00m | +0.04 |
+| Occupancy | **−0.05m** | 0.00 |
+| Motion | +0.01m | +0.03 |
+
+Detection is most critical for safety (CR halved: 0.21→0.10). Occupancy gives the best trajectory accuracy (0.58→0.53). Map and motion add no consistent gains in the current nuScenes open-loop regime — possibly because map supervision overlaps with what detection already provides, and motion prediction is still far behind specialized models.
+
 ## Comparison: Perception Integration Approaches in AD VLMs
 
-| Approach | Spatial supervision | World state type | Planning benefit |
-|---|---|---|---|
-| QA-style (EMMA, DriveVLM) | Indirect (language) | None — ephemeral text | Indirect reasoning only |
-| Multi-task E2E (UniAD) | Direct (detection heads) | BEV occupancy, motion | Strong (planning-oriented) |
-| **World tokens (Percept-WAM)** | **Direct (token-level)** | **World-PV + World-BEV tokens** | **Shared representation + modality-aligned decoding** |
-| World model (UniUGP) | Video generation | Future frame prediction | Causal feature grounding |
+| Approach | Spatial supervision | World state type | Shared params? | Planning benefit |
+|---|---|---|---|---|
+| QA-style (EMMA, DriveVLM) | Indirect (language) | None — ephemeral text | ✓ | Indirect reasoning only |
+| Multi-task E2E (UniAD) | Direct (detection heads) | BEV occupancy, motion | ✓ | Strong (planning-oriented) |
+| **World tokens (Percept-WAM)** | **Direct (token-level)** | **World-PV + World-BEV tokens** | **✓** | **Shared representation + modality-aligned decoding** |
+| Dense spatial injection (OmniDrive, OpenDriveVLA) | Direct (3D Q-Former / BEV) | BEV features | ✓ | Improved spatial precision, impaired reasoning |
+| **Sparse MoT (UniDriveVLA)** | **Direct (sparse queries)** | **K-Means instance banks (5 tasks)** | **✗ (decoupled)** | **Spatial precision + preserved reasoning** |
+| World model (UniUGP) | Video generation | Future frame prediction | ✓ | Causal feature grounding |
 
-UniAD's planning-oriented multi-task learning is the closest philosophical predecessor — Percept-WAM instantiates this idea inside a VLM backbone rather than a specialized E2E architecture.
+UniAD's planning-oriented multi-task learning is the closest philosophical predecessor to both Percept-WAM and UniDriveVLA. The key architectural divergence: Percept-WAM uses shared-weight tokens with a four-query decoder; UniDriveVLA uses decoupled MoT experts with sparse queries. Both share the insight that explicit spatial supervision improves planning, but they resolve the perception–reasoning conflict differently.
 
 ## Four-Query Trajectory Decoder
 

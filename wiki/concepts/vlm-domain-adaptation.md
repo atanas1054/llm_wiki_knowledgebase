@@ -1,10 +1,10 @@
 ---
 title: VLM Domain Adaptation for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/uniugp.md, sources/senna2.md, sources/reasoning-vla.md, sources/hermes.md, sources/autovla.md, sources/automot.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/uniugp.md, sources/senna2.md, sources/reasoning-vla.md, sources/hermes.md, sources/autovla.md, sources/automot.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/futuresightdrive.md, sources/unidrivevla.md, sources/flare.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/perception-for-planning.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-04-07
 confidence: high
 ---
 
@@ -414,6 +414,181 @@ The model is supervised on both via standard CE loss, with no bias toward either
 | AutoDrive-R² | SFT + GRPO on structured CoT | ✓ | 6K curated samples | Qwen2.5-VL-7B | At inference |
 | Alpamayo-R1 | 3-stage: inject→SFT(CoC)→RL | ✓ (from Physical AI base) | 700K CoC + 80K hr driving | Cosmos-Reason | At inference |
 | **AdaThinkDrive** | **Dual-mode SFT + complexity-aware RL** | **✓** | **NAVSIM + open-source QA** | **InternVL3-8B** | **At inference** |
+
+## FutureSightDrive: Visual CoT via Vocabulary Expansion
+
+**FutureSightDrive** ([[sources/futuresightdrive.md]]) takes the most radical departure from textual CoT in the wiki: it replaces the entire CoT modality with a **generated future image frame** (visual spatio-temporal CoT), using vocabulary expansion to activate image generation in an existing MLLM without architectural change.
+
+### Modality Gap Argument
+
+FSDrive claims that textual CoT compresses continuous visual spatio-temporal relationships into lossy symbolic representations, creating a "modality gap" between perception and planning. Ablation evidence:
+
+| CoT Type | Avg Collision ↓ | Improvement |
+|---|---|---|
+| None | 0.58 | — |
+| Text CoT | 0.53 | −8.6% |
+| Image-text CoT | 0.50 | −13.8% |
+| **Visual ST-CoT** | **0.40** | **−31.0%** |
+
+Text CoT and image-text CoT show diminishing gains; the unified visual representation captures spatial and temporal structure that text cannot.
+
+### Vocabulary Expansion (Core Mechanism)
+
+MoVQGAN VQ-VAE tokens are appended to the MLLM's existing text vocabulary. No encoder, decoder, or attention architecture is modified. The model predicts image tokens autoregressively using the same next-token prediction objective as text. This activates generation capability using ~0.3% of the data used by prior unified understanding+generation approaches (e.g., Janus, VILA-U) which train from scratch.
+
+**Two-stage training**:
+1. **Unified pre-training**: VQA + future frame generation (with progressive curriculum: lane dividers → 3D boxes → full frame) on nuScenes
+2. **SFT**: DriveLM GVQA + nuScenes trajectory planning using visual CoT
+
+### Positioning in the CoT Design Space
+
+| Approach | CoT modality | Self-reflection? | Physical constraint? | Annotation model | Scale |
+|----------|-------------|-----------------|---------------------|-----------------|-------|
+| ReCogDrive | Text (unstructured QA) | ✗ | ✗ | Various VLMs | 3.1M pairs |
+| AutoDrive-R² | Text (4-step + backward-check) | ✓ | Kinematic extrapolation | Qwen2.5-VL-72B | 6K |
+| Alpamayo-R1 | Text (3-step causal) | ✗ | ✓ (causal locality) | GPT-5 + human | 700K |
+| AdaThinkDrive | Text (4-step adaptive) | ✗ | ✗ | Qwen2.5-VL-72B + rule | NAVSIM-scale |
+| **FSDrive** | **Visual image (future frame)** | **✗** | **✓ (physical priors overlaid)** | **nuScenes annotations** | **200K frames** |
+
+FSDrive is the only wiki paper using image-modality CoT. Its physical constraint enforcement is architectural (lane dividers + 3D boxes as visual priors in the generated frame) rather than textual reasoning about physics.
+
+## UniDriveVLA: MoT as Structural Solution to Representation Interference
+
+**UniDriveVLA** ([[sources/unidrivevla.md]]) makes the strongest architectural argument in the wiki that VLM fine-tuning failures are not just a data or training recipe problem — they are a structural problem caused by **representation interference** when spatial perception and semantic reasoning share parameters.
+
+### The Interference Diagnosis
+
+UniDriveVLA measures cosine similarity between LLM tokens and perception tokens across transformer layers in a shared-weight decoder. The similarity progressively increases toward 1, indicating **feature collapse**: spatial perception tokens and semantic reasoning tokens converge to identical representations, causing each to undermine the other. This is not fixed by careful data mixing or learning rate schedules — it is an inherent consequence of joint optimization in shared parameter space.
+
+**Comparison with AutoMoT's catastrophic forgetting evidence**:
+- AutoMoT: fine-tuning degrades TallyQA −35%, InfoVQA −44% (temporal multi-step reasoning) while LingoQA gains only +0.2 — forgetting is task-specific and affects complex reasoning most
+- UniDriveVLA: feature collapse is spatial and occurs at representation level, not just behavior level — the cause is geometric (shared-weight parameter conflict) rather than just data imbalance
+
+Both papers converge on the same conclusion from different angles: **spatial perception and semantic reasoning should not share parameters** if both are needed at high quality simultaneously.
+
+### MoT as the Fix
+
+Three expert streams — Understanding (und), Perception (per), Action (act) — with asymmetric Masked Joint Attention:
+
+```
+und: causal self-attention only (never sees per or act tokens)
+per: attends to und + self
+act: attends to und + per + self
+```
+
+The und expert is fully protected from perception gradient interference. Per is enriched by und semantics but does not pollute und. Act aggregates both.
+
+**Quantitative impact** (Table 7):
+
+| Architecture | General VQA(%)↑ | DriveBench(%)↑ | L2(m)↓ | CR(%)↓ |
+|---|---|---|---|---|
+| Shared-Weight | 31.1 | 50.8 | 0.641 | 0.175 |
+| MoT | **45.5** | **54.9** | **0.533** | **0.140** |
+| Δ | **+14.4pp** | **+4.1pp** | **−0.108m** | **−0.035** |
+
+### Three-Stage Progressive Training
+
+| Stage | What changes | Key mechanism |
+|-------|-------------|---------------|
+| Stage 1 | Full VLM fine-tune | 3:7 driving-to-general ratio; lr=4e-5; 3 epochs — anchors semantic capability |
+| Stage 2 | VLM (LoRA) + Per/Act experts | LoRA limits VLM drift; 0.5× VLM LR multiplier; 30 epochs joint optimization |
+| Stage 3 | Per + Act experts only | VLM frozen; motion objective added; 15 epochs — final task specialization |
+
+LoRA in Stage 2 combined with the reduced VLM learning rate explicitly limits how much perception and action gradients can modify the VLM representations. This is the most fine-grained LR control in the wiki, complementing ReCogDrive's single-LR approach and AutoMoT's frozen-VLM approach.
+
+**Comparison of VLM protection strategies across wiki**:
+
+| Approach | VLM parameter update | Protection mechanism |
+|---------|---------------------|---------------------|
+| AutoMoT | None (frozen) | Complete isolation |
+| UniDriveVLA Stage 2 | LoRA, 0.5× LR | Partial — limited capacity + reduced rate |
+| UniDriveVLA Stage 3 | None (frozen) | Complete isolation |
+| ReCogDrive, AutoVLA | Full fine-tune | None — data quality as only protection |
+| Alpamayo-R1 | Full fine-tune from Physical AI base | Domain-aligned starting point reduces forgetting |
+
+### General VQA Degradation: Residual Even With MoT
+
+Despite MoT's +14.4pp General VQA improvement vs. shared-weight, the adaptation still significantly degrades general reasoning relative to the base Qwen3-VL:
+
+| Benchmark | Qwen3-VL-8B (base) | UniDriveVLA (after adaptation) | Δ |
+|-----------|--------------------|-------------------------------|---|
+| MMStar | 63.0 | 43.3 | **−19.7pp** |
+| MMMU | 52.8 | 47.3 | −5.5pp |
+| RealWorldQA | 69.0 | 49.9 | −19.1pp |
+| VLMsAreBlind | 61.9 | 26.6 | **−35.3pp** |
+| MME | 2364 | 1876 | −488 |
+
+MoT substantially reduces the degradation that would occur with a shared-weight decoder (estimated base 31.1% General VQA → 45.5%), but the gap to the base model (63.0%) remains large. This suggests MoT is **necessary but not sufficient**: it prevents active interference, but driving SFT still displaces some general-domain knowledge.
+
+**VLMsAreBlind** degradation (61.9→26.6, −35.3pp) is particularly striking — this benchmark tests basic visual grounding that the base model handles well. Driving-specific visual tokenization or attention patterns may specifically harm low-level visual reasoning.
+
+### Updated Strategy Comparison Table
+
+| Approach | VLM role | VLM fine-tuned? | Data | Backbone | Deployment |
+|----------|----------|----------------|------|----------|-----------|
+| ReCogDrive | Fine-tuned feature extractor | ✓ | 3.1M QA pairs | InternVL3 | At inference |
+| Reasoning-VLA | Unified multi-dataset SFT + GRPO | ✓ | 75K CoT clips | Qwen2.5-VL | At inference |
+| UniUGP | Expert co-training, 4-stage | ✓ | Mixed video + QA | Qwen2.5-VL-3B | At inference |
+| Senna-2 | Consistency-aligned dual-system | ✓ | NAVSIM + proprietary | LLaVA-NeXT | At inference |
+| HERMES | Offline annotator only | ✗ | WOD-E2E + VLM annotations | Qwen3-VL-Flash | Not at inference |
+| AutoMoT | Frozen scene understanding expert | ✗ | NuSync + nuScenes + CARLA | Qwen3-VL-4B | At inference (async) |
+| AutoVLA | Dual-mode SFT + CoT length penalty RFT | ✓ | 52.8K CoT (nuPlan+Waymo) | InternVL2.5 | At inference |
+| AutoDrive-R² | SFT + GRPO on structured CoT | ✓ | 6K curated samples | Qwen2.5-VL-7B | At inference |
+| Alpamayo-R1 | 3-stage: inject→SFT(CoC)→RL | ✓ (from Physical AI base) | 700K CoC + 80K hr driving | Cosmos-Reason | At inference |
+| AdaThinkDrive | Dual-mode SFT + complexity-aware RL | ✓ | NAVSIM + open-source QA | InternVL3-8B | At inference |
+| FSDrive | Vocabulary expansion + visual CoT generation | ✓ | 200K nuScenes + DriveLM | Qwen2-VL-2B | At inference (sequential gen→plan) |
+| **UniDriveVLA** | **MoT: LoRA Stage 2 → frozen Stage 3; decoupled per/act experts** | **✓ (LoRA then frozen)** | **3:7 driving-to-general SFT** | **Qwen3-VL-2B/8B** | **At inference** |
+
+## FLARE: Annotation-Free VLM Adaptation via Future Feature Prediction
+
+**FLARE** ([[sources/flare.md]]) represents a fundamentally different adaptation paradigm: instead of using any language supervision (VQA, CoT, scene descriptions), it adapts a VLM-based planner entirely through **self-supervised spatial feature prediction**. This is the only wiki paper that requires zero language annotations for VLM driving adaptation.
+
+### The Annotation-Free Argument
+
+FLARE's core claim: language annotation pipelines (VQA, CoT) have three structural problems:
+1. **Cost with diminishing returns**: scaling QA pairs past ~3M provides marginal gains (ReCogDrive ablation evidence)
+2. **Semantic bias**: language descriptions of scenes introduce biases that misalign with actual driving decisions
+3. **Modality mismatch**: discrete tokens compress continuous visual dynamics, creating a gap between text reasoning and trajectory generation
+
+**Alternative**: reconstruct DINOv2 semantic patch features of the future frame as an auxiliary loss — dense, continuous, annotation-free, scalable to unlabeled video. The supervision signal is 100× denser than trajectory waypoints alone (all spatial patches of the future frame vs. 6 waypoints).
+
+### Training Recipe
+
+No VQA/caption dataset required. Two-stage:
+1. **SFT**: LoRA fine-tune on NAVSIM navtrain trajectory data + future DINOv2 prediction loss (λ=0.1). LR=3e-5 for LoRA, 1e-4 for fusion heads. 80 epochs.
+2. **RFT**: VLM frozen; GRPO with PDM-Score reward; G=16 samples; BC regularization (not KL).
+
+**Baseline comparison**: QwenVL3-4B trained on navtrain trajectories only (same data, no feature prediction) achieves 80.8 PDMS. FLARE achieves 86.9 SFT (+6.1 PDMS) from the same backbone and data — the entire delta comes from the future feature prediction auxiliary task.
+
+### Positioning in Adaptation Design Space
+
+| Approach | Language annotations? | External driving data? | What supervises VLM? |
+|---------|----------------------|----------------------|---------------------|
+| ReCogDrive | ✓ (3.1M VQA pairs) | ✓ | VQA + scene description |
+| AutoVLA | ✓ (52.8K CoT) | ✓ | 4-stage CoT |
+| HERMES | ✓ (VLM-generated) | — | Safety annotations (offline) |
+| **FLARE** | **✗** | **✗** | **Future DINOv2 patch features** |
+| DriveVLA-W0 | ✗ | ✓ (70M frames) | Future VAE pixel latents |
+
+FLARE and DriveVLA-W0 are the two annotation-free approaches. DriveVLA-W0 relies on a massive proprietary dataset for data scaling; FLARE achieves competitive results on the standard NAVSIM navtrain (103K frames) alone.
+
+### Updated Strategy Comparison Table
+
+| Approach | VLM role | VLM fine-tuned? | Data | Backbone | Deployment |
+|----------|----------|----------------|------|----------|-----------|
+| ReCogDrive | Fine-tuned feature extractor | ✓ | 3.1M QA pairs | InternVL3 | At inference |
+| Reasoning-VLA | Unified multi-dataset SFT + GRPO | ✓ | 75K CoT clips | Qwen2.5-VL | At inference |
+| UniUGP | Expert co-training, 4-stage | ✓ | Mixed video + QA | Qwen2.5-VL-3B | At inference |
+| Senna-2 | Consistency-aligned dual-system | ✓ | NAVSIM + proprietary | LLaVA-NeXT | At inference |
+| HERMES | Offline annotator only | ✗ | WOD-E2E + VLM annotations | Qwen3-VL-Flash | Not at inference |
+| AutoMoT | Frozen scene understanding expert | ✗ | NuSync + nuScenes + CARLA | Qwen3-VL-4B | At inference (async) |
+| AutoVLA | Dual-mode SFT + CoT length penalty RFT | ✓ | 52.8K CoT (nuPlan+Waymo) | InternVL2.5 | At inference |
+| AutoDrive-R² | SFT + GRPO on structured CoT | ✓ | 6K curated samples | Qwen2.5-VL-7B | At inference |
+| Alpamayo-R1 | 3-stage: inject→SFT(CoC)→RL | ✓ (from Physical AI base) | 700K CoC + 80K hr driving | Cosmos-Reason | At inference |
+| AdaThinkDrive | Dual-mode SFT + complexity-aware RL | ✓ | NAVSIM + open-source QA | InternVL3-8B | At inference |
+| FSDrive | Vocabulary expansion + visual CoT generation | ✓ | 200K nuScenes + DriveLM | Qwen2-VL-2B | At inference (sequential gen→plan) |
+| UniDriveVLA | MoT: LoRA Stage 2 → frozen Stage 3; decoupled per/act experts | ✓ (LoRA then frozen) | 3:7 driving-to-general SFT | Qwen3-VL-2B/8B | At inference |
+| **FLARE** | **LoRA SFT on trajectories + future DINOv2 feature prediction (no language annotations)** | **✓ (LoRA)** | **NAVSIM navtrain (trajectories only)** | **Qwen3-VL-4B** | **At inference** |
 
 ## Related Systems
 

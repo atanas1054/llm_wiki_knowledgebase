@@ -25,6 +25,11 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [AutoDrive-R²](sources/autodrive-r2.md)   | 4-step CoT with self-reflection (backward-check) + physics GRPO (pos/steering/vel/temporal); 0.19m nuScenes / 0.20m Waymo zero-shot; 6K training samples                             |
 | [Alpamayo-R1](sources/alpamayo-r1.md)     | Cosmos-Reason backbone + CoC dataset (700K, hybrid labeling) + FM action expert (unicycle dynamics); 3-reward GRPO (LRM-as-critic + consistency + safety); 99ms; internal evals only |
 | [AdaThinkDrive](sources/adathinkdrive.md) | Adaptive Think Reward GRPO (mode-comparison per scene); dual-mode SFT (Think+NonThink same query); 90.3 PDMS / 93.0 BoN-4; InternVL3-8B; 1 camera; 14% faster than always-Think |
+| [FutureSightDrive](sources/futuresightdrive.md) | Visual spatio-temporal CoT (VQ-VAE AR future frame with lane dividers + 3D boxes); dual-role VLA (world model + inverse dynamics); 85.1 PDMS NAVSIM; 0.96m L2 nuScenes; FID 10.1; Qwen2-VL-2B |
+| [DriveDreamer-Policy](sources/drivedreamer-policy.md) | Geometry-grounded WAM; causal depth→video→action FM generators; Qwen3-VL-2B; 89.2 PDMS NAVSIM-v1; 88.7 EPDMS NAVSIM-v2 (new SOTA); FVD 53.59 |
+| [DriveVLA-W0](sources/drivevla-w0.md) | Supervision deficit framing; AR + diffusion world models (training-time only); MoE action expert; 90.2★ PDMS (anchors) / 93.0 BoN-6; scaling reversal FM→AR at 70M frames |
+| [UniDriveVLA](sources/unidrivevla.md) | HUST + Xiaomi EV; MoT 3-expert (und/per/act) + masked joint attention; sparse 5-task perception; 3-stage progressive training; 78.37 DS Bench2Drive (best w/o PDM-Lite); 0.51m L2 nuScenes no-ego |
+| [FLARE](sources/flare.md) | OpenDriveLab + Li Auto; annotation-free DINOv2 future feature prediction + DiT + BC-GRPO; 86.9 PDMS SFT / 91.4 PDMS RFT (best single-sample VLM-based); 1 camera |
 
 ---
 
@@ -40,7 +45,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [World Models for Autonomous Driving](concepts/world-model-for-ad.md) | Video generation as visual causal learning; integration with VLA planners; FID/FVD metrics |
 | [Dual-System VLA](concepts/dual-system-vla.md) | VLM for decisions + E2E for trajectory; decision adapter; kinematic mapping; consistency alignment |
 | [Inference-Time Safety](concepts/inference-time-safety.md) | Gradient-free safety correction at inference; discrete token search + inpainting-as-repair; taxonomy vs. guidance/RL/anchors |
-| [Perception-Enhanced Planning](concepts/perception-for-planning.md) | World-PV/BEV tokens; grid-conditioned parallel AR detection; IoU-aware confidence calibration; perception → action alignment |
+| [Perception-Enhanced Planning](concepts/perception-for-planning.md) | World-PV/BEV tokens; grid-conditioned parallel AR detection; IoU-aware confidence calibration; sparse MoT perception (UniDriveVLA); cosine similarity collapse evidence |
 
 ---
 

@@ -16,7 +16,7 @@ wiki/
 CLAUDE.md      # Workflow instructions for the LLM assistant
 ```
 
-## Papers Ingested (17)
+## Papers Ingested (22)
 
 | Paper | Org | Key Contribution | Benchmark |
 |-------|-----|-----------------|-----------|
@@ -37,6 +37,11 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [AutoDrive-R²](wiki/sources/autodrive-r2.md) | Alibaba AMAP | 4-step CoT with self-reflection + physics GRPO; 6K samples beats 103K | 0.19m L2 nuScenes |
 | [Alpamayo-R1](wiki/sources/alpamayo-r1.md) | NVIDIA | Cosmos-Reason + CoC dataset (700K) + FM action expert; 3-reward GRPO | 99ms; internal evals |
 | [AdaThinkDrive](wiki/sources/adathinkdrive.md) | Xiaomi EV | Adaptive Think Reward: mode-comparison GRPO learns when to reason | 90.3 PDMS / 93.0 BoN-4 |
+| [FutureSightDrive](wiki/sources/futuresightdrive.md) | Xi'an Jiaotong + Alibaba Amap | Visual ST-CoT: VQ-VAE AR future frame as planning intermediate; vocabulary expansion | 85.1 PDMS NAVSIM / 0.96m L2 nuScenes |
+| [DriveDreamer-Policy](wiki/sources/drivedreamer-policy.md) | GigaAI + U of Toronto | Causal depth→video→action WAM; geometry-grounded; 3 FM generators | 89.2 PDMS NAVSIM-v1 / 88.7 EPDMS NAVSIM-v2 |
+| [DriveVLA-W0](wiki/sources/drivevla-w0.md) | CASIA + Yinwang | Supervision deficit → world model self-supervision; AR/diffusion WM; MoE action expert; scaling law | 90.2★ PDMS (anchors) / 93.0 BoN-6 NAVSIM-v1 |
+| [UniDriveVLA](wiki/sources/unidrivevla.md) | HUST + Xiaomi EV + U Macau | MoT 3-expert (und/per/act) + masked joint attention; sparse 5-task perception; 3-stage progressive training | 78.37 DS Bench2Drive (best w/o PDM-Lite); 0.51m L2 nuScenes no-ego |
+| [FLARE](wiki/sources/flare.md) | OpenDriveLab + Li Auto | Annotation-free DINOv2 future feature prediction; BC-GRPO; 1 camera | 86.9 PDMS SFT / 91.4 PDMS RFT (single-sample) NAVSIM-v1 |
 
 ## Concept Pages (9)
 

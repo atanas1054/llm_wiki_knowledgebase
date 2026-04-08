@@ -163,13 +163,13 @@ Advantage $A_i$ is the normalized reward difference within the group.
 
 ### NAVSIM-v1 Benchmark (Table I)
 
-| Method | Camera | LiDAR | NC↑ | DAC↑ | TTC↑ | Comf↑ | EP↑ | PDMS↑ |
-|---|---|---|---|---|---|---|---|---|
-| Hydra-NeXt | ✓ | ✗ | 98.1 | 97.7 | 94.6 | 100 | 81.8 | 88.6 |
-| DiffusionDrive | ✓ | ✓ | 98.2 | 96.2 | 94.7 | 100 | 82.2 | 88.1 |
-| GoalFlow | ✓ | ✓ | 98.4 | 98.3 | 94.6 | 100 | 85.0 | 90.3 |
-| **AdaThinkDrive** | **✓** | **✗** | **98.4** | **97.8** | **95.2** | **100** | **84.4** | **90.3** |
-| AdaThinkDrive BoN-4 | ✓ | ✗ | 99.1 | 98.8 | 97.2 | 100 | 87.9 | **93.0** |
+| Method              | Camera | LiDAR | NC↑      | DAC↑     | TTC↑     | Comf↑   | EP↑      | PDMS↑    |
+| ------------------- | ------ | ----- | -------- | -------- | -------- | ------- | -------- | -------- |
+| Hydra-NeXt          | ✓      | ✗     | 98.1     | 97.7     | 94.6     | 100     | 81.8     | 88.6     |
+| DiffusionDrive      | ✓      | ✓     | 98.2     | 96.2     | 94.7     | 100     | 82.2     | 88.1     |
+| GoalFlow            | ✓      | ✓     | 98.4     | 98.3     | 94.6     | 100     | 85.0     | 90.3     |
+| **AdaThinkDrive**   | **✓**  | **✗** | **98.4** | **97.8** | **95.2** | **100** | **84.4** | **90.3** |
+| AdaThinkDrive BoN-4 | ✓      | ✗     | 99.1     | 98.8     | 97.2     | 100     | 87.9     | **93.0** |
 
 Vision-only SOTA at 90.3 PDMS, matching GoalFlow (camera+LiDAR). **Caveat**: Table I does not include WAM-Flow (90.3, 1 cam) or Curious-VLA (90.3, 1 cam) — all three independently claim 90.3 PDMS; direct head-to-head absent.
 

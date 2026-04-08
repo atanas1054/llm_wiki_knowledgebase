@@ -95,6 +95,21 @@ The ARM (Action Refinement Module) then refines the parallel outputs via MLP + a
 
 **Trade-off**: learnable queries are the fastest paradigm but lack iterative refinement. Quality is bounded by single-pass prediction; complex multimodal scenarios (e.g., intersection turns) may produce averaged trajectories without multi-modal diversity mechanisms.
 
+### Action Decoder Scaling Reversal (DriveVLA-W0)
+
+**DriveVLA-W0** ([[sources/drivevla-w0.md]]) systematically compares query-based, AR, and flow matching action decoders across data scales (103k vs. 70M frames), revealing a striking performance reversal:
+
+| Decoder | NAVSIM (103k) PDMS | 70M-frame ADE | 70M-frame Col. |
+|---|---|---|---|
+| Query-based | **88.4** | 1.124m | 4.53% |
+| Flow Matching (10 steps) | 87.2 | 1.036m | 3.98% |
+| Autoregressive | 85.3 | **1.007m** | **2.95%** |
+
+**Small scale**: query-based > FM > AR. Simple trajectory distribution — precision advantage of continuous decoders matters.  
+**Large scale (70M)**: AR > FM > query-based. Complex trajectory distribution — AR's teacher-forced training scales efficiently; FM is too sample-inefficient to converge; query-based hits a representational bottleneck.
+
+**Implication**: the diffusion/FM action paradigm's advantage over AR is scale-dependent. At academic benchmark scale, FM wins; at production-scale data (70M+ frames), AR may be the better choice. This challenges the assumption that FM action experts are universally superior to AR token decoders for trajectory generation.
+
 ## Perception-Aligned Action Decoding (Percept-WAM)
 
 **Percept-WAM** ([[sources/percept-wam.md]]) introduces yet another paradigm: a **four-query MLP decoder** where each query set attends exclusively to one input modality, preventing over-reliance on any single representation.
