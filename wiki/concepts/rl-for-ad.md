@@ -1,10 +1,10 @@
 ---
 title: Reinforcement Learning for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, sources/dreameraD.md, sources/nord.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md]
 created: 2026-04-05
-updated: 2026-04-07
+updated: 2026-04-15
 confidence: high
 ---
 
@@ -499,8 +499,122 @@ The paper claims BC is more reliable for preventing collapse in diffusion planne
 | Alpamayo-R1 | LRM-graded reasoning + binary consistency + L2/collision/jerk | No | Yes (LRM-as-critic) | No | KL |
 | AdaThinkDrive | PDMS + format + endpoint + Adaptive Think | Yes | No | Yes (mode-comparison rollout) | KL |
 | **FLARE** | **PDM-Score (R_progress + R_safety + R_comfort)** | **Yes** | **No** | **No** | **BC (λ=0.1)** |
+| **DreamerAD** | **Latent AD-RM (8 dims × 8 horizons, log-sigmoid safety)** | **Vocabulary filtering only** | **No** | **No** | **BC + KL** |
+| **NoRD** | **PDMS + format + length (all [0,1])** | **Yes** | **No** | **No** | **None (no KL)** |
 
-AR1 is the only method with explicit reasoning evaluation as a reward component. FLARE is the only method using BC (not KL) regularization for a diffusion planner — motivated by avoiding reward hacking found in KL-penalized DiT GRPO (DriveFine's finding).
+AR1 is the only method with explicit reasoning evaluation as a reward component. FLARE is the only method using BC (not KL) regularization for a diffusion planner. **DreamerAD is the only method where reward is computed from latent world model features** rather than a PDM simulator or GT trajectories — a fundamentally different reward source.
+
+## DreamerAD: RL within Latent World Model Imagination Space
+
+**DreamerAD** ([[sources/dreameraD.md]]) introduces the most architecturally distinct RL approach in the wiki: **performing RL entirely inside the latent space of a diffusion world model**, with rewards derived from learned latent representations — not from a PDM simulator.
+
+### Key Motivation
+
+All prior NAVSIM GRPO methods (ReCogDrive, WAM-Flow, DriveFine, FLARE, etc.) share the same reward pipeline: sample trajectories → execute in NavSim non-reactive simulator → receive PDMS score → optimize policy. This requires the simulator at every RL step and limits RL interaction speed to simulator throughput.
+
+DreamerAD replaces the simulator reward with a **learned Autoregressive Dense Reward Model (AD-RM)** that operates directly on latent features from a world model's diffusion process — enabling RL rollouts at 0.03s/frame vs. 2s/frame for pixel-level diffusion.
+
+### Shortcut Forcing (SF-WM)
+
+The prerequisite for latent RL: compress Epona's 100-step flow-matching inference to 1 step via recursive multi-resolution teacher-student distillation. Step sizes are powers of 2; for step size $d > d_{min}$:
+
+$$v_{target} = \text{sg}\left(\frac{v_1 + v_2}{2}\right), \quad \mathcal{L} = \mathbb{E}[\omega(t)\|\phi_\theta(x_t,t,d) - v_{target}\|^2]$$
+
+Single-step achieves 87.7 EPDMS (same as 16-step) at **0.03s latency** — 80× speedup. Critically, denoised latent features show structured spatial/semantic coherence (PCA-verified), validating that latent space is information-rich enough to support reward learning.
+
+### Autoregressive Dense Reward Model (AD-RM)
+
+Predicts 8 reward dimensions ($r_{NC}, r_{DAC}, r_{DDC}, r_{TLC}, r_{EP}, r_{TTC}, r_{LK}, r_{HC}$) × 8 temporal horizons (0–4s) from latent context. Autoregressively conditioned on historical latent features $\{z_{-3},\ldots,\hat{z}_t\}$ via query-based cross-attention.
+
+**Key property**: trained with as little as **20% of training data** to achieve near-full performance — the latent world model's structured representations provide rich enough supervision that reward learning converges quickly.
+
+**Contrast with simulator-based GRPO**: NavSim PDM simulator still required to annotate the vocabulary trajectories *before* RL training, but AD-RM completely replaces simulator calls *during* RL training.
+
+### Safety-First Log-Fusion Reward
+
+$$r_{total}^t = \underbrace{\sum_{i \in safe} w_i \log(\sigma(r_i))}_{L:\,\text{safety}} + \underbrace{\log\sum_{j \in task} w_j r_j}_{S:\,\text{task}}$$
+
+Collisions: $\log(\sigma(r_{NC})) \to -\infty$, dominating the total. Dense temporal aggregation:
+$$r_{final} = \sum_{t=1}^8 w_t \cdot r_{total}^t$$
+
+This provides both **safety dominance** (log-sigmoid gates) and **fine-grained credit assignment** (8 time steps × 8 dimensions).
+
+### Gaussian Vocabulary Sampling vs. WorldRFT vs. Flow-GRPO
+
+| Approach | Mechanism | Problem |
+|----------|-----------|---------|
+| WorldRFT | Random Gaussian noise on trajectory | Dynamic discontinuity → world model hallucinations |
+| Flow-GRPO | SDE forcing on ODE flow | Training/inference mismatch → jagged trajectories |
+| **DreamerAD** | **Mahalanobis distance ranking over 8192→256 vocabulary** | **Smooth, physically grounded, no OOD hallucination** |
+
+The vocabulary is filtered from 8192 candidates by proximity to GT end-states ($|\Delta y| \leq 5m$, $|\Delta x| \leq 10m$, $\Delta\theta \leq 20°$), then uniformly resampled to K=256 for lateral diversity. Mixed sampling ($g_1$ softmax-weighted + $g_2$ local-neighborhood) provides both diversity and local refinement.
+
+### Results and Position in the RL Landscape
+
+DreamerAD achieves **87.7 EPDMS on NAVSIM-v2** (+2.6 over Epona baseline), with largest gains in safety: NC +0.9, DAC +1.5, TTC +1.1. EP regression of −0.8 reflects the safety-efficiency tradeoff inherent in log-sigmoid safety dominance.
+
+**NAVSIM-v1**: 88.7 PDMS (best among world-model-class methods with similar encoders; below VLA SOTA at 90.7–91.4).
+
+**Unique position**: DreamerAD is the **only method in the wiki where RL rewards are computed from latent world model features at training time** — not simulator, not GT trajectories. This opens a path toward RL training that scales with world model quality rather than simulator speed.
+
+**Key tradeoff vs. simulator-based GRPO**: latent AD-RM rewards are learned approximations to simulator rewards — they may not perfectly reflect all safety conditions. The reward model is trained from simulator labels but generalizes within the world model's distribution. In exchange, RL training is 80× faster per rollout.
+
+## NoRD: Difficulty Bias in GRPO and Dr. GRPO
+
+**NoRD** ([[sources/nord.md]]) identifies and addresses a fundamental failure mode of GRPO when applied to **weak SFT policies** — policies trained on smaller, reasoning-free datasets. This is the first paper in the wiki to characterize this failure as **difficulty bias** in the AD domain.
+
+### Why Weak SFT + GRPO Fails
+
+NoRD trains a base model (Qwen-2.5VL-3B-Instruct) with SFT on only 80K NAVSIM samples and no reasoning annotations. GRPO post-training yields only +0.67% PDMS (76.66 → 77.18). The root cause is the **polarized reward distribution** induced by a weak SFT policy:
+
+| Reward region | Group-mean PDM | Intra-group std | Meaning |
+|---|---|---|---|
+| High (≥0.8) | High | **Low** | Simple scenarios — already solved |
+| Low (≤0.15) | Low | **Low** | Fully OOD — always fails |
+| Intermediate [0.2, 0.65] | Medium | **High** | Complex maneuvers — inconsistent |
+
+The **majority** of samples fall in the intermediate (high-variance) region — sharp turns, lane changes, intersections.
+
+**GRPO's disadvantage formula attenuates learning from exactly these samples:**
+$$\hat{A}_{i,t}^{\text{GRPO}} = \frac{r(o_i \mid x) - \bar{r}}{\text{std}(r)}$$
+
+When $\text{std}(r)$ is large (high-variance intermediate scenarios), the advantage is heavily attenuated → near-zero gradients → GRPO learns only from the small fraction of already-low-variance samples.
+
+**Connection to Curious-VLA**: Curious-VLA identifies advantage collapse ($\sigma_R \to 0$) as the failure mode when the SFT policy is too *narrow* (concentrated, low diversity). NoRD identifies the complementary failure: advantage attenuation when the policy is too *wide* (high variance per group) due to weak initialization. Both result in GRPO stagnation but from opposite distributional extremes.
+
+### Dr. GRPO: Removing the Std Normalization
+
+Dr. GRPO (originally from LLM reasoning domain) removes the std denominator:
+$$\hat{A}_{i,t}^{\text{DrGRPO}} = r(o_i \mid x) - \bar{r}$$
+
+All scenarios contribute gradient signal proportional to absolute reward advantage — complex, high-variance scenarios are no longer suppressed.
+
+**Additional design choices**:
+- DAPO-style **asymmetric clipping** ($\epsilon_l \neq \epsilon_h$): prevents entropy collapse
+- **No KL regularization** (following original Dr. GRPO paper)
+
+**Result**: NoRD-base + Dr. GRPO achieves 85.62 PDMS (+11.68% vs. +0.67% for GRPO).
+
+**Detailed sub-metric comparison** (NAVSIM test):
+
+| Method | PDMS | Collision | DAC | TTC | Comfort |
+|--------|------|-----------|-----|-----|---------|
+| NoRD-base | 76.66 | 96.45 | 86.37 | 90.37 | 99.97 |
+| +GRPO | 77.18 | 91.89 | 90.12 | 80.13 | 99.96 |
+| **+Dr. GRPO** | **85.62** | **97.56** | **94.92** | **93.53** | **100** |
+
+Dr. GRPO improves all safety-oriented metrics. Ego Progress is slightly lower than GRPO (+7.72 vs. +8.48) — the NC×DAC gate penalizes risky progress attempts.
+
+### Reward Design
+
+Format + length rewards (each 0.25) + PDM score (normalized):
+$$\text{PDMS} = \text{NC} \times \text{DAC} \times \frac{5 \cdot \text{TTC} + 2 \cdot C + 5 \cdot \text{EP}}{12}$$
+
+**Group size**: G=8; **temperature**: 1.0 for rollouts; 0.01 for validation (deterministic).
+
+### Position in the GRPO Landscape
+
+NoRD establishes that the SFT policy **strength** (not just size or reasoning content) determines whether GRPO is viable. A strong SFT policy (high mean reward, low variance) provides clear learning signal for GRPO. A weak policy (high variance, intermediate mean) starves GRPO even if the policy is expressive enough to eventually learn the task — the solution is fixing the optimizer, not adding more data or reasoning.
 
 ## Connection to LLM RL (GRPO / DeepSeek-R1)
 

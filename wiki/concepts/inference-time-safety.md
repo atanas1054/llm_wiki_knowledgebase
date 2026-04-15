@@ -1,10 +1,10 @@
 ---
 title: Inference-Time Safety for Trajectory Planning
 type: concept
-sources: [raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md]
-related: [sources/reflectdrive.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/rl-for-ad.md]
+sources: [raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md]
+related: [sources/reflectdrive.md, sources/drivefine.md, sources/diffusiondrive.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/rl-for-ad.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-04-15
 confidence: high
 ---
 
@@ -25,8 +25,11 @@ Training-time solutions (RL, reward shaping) are effective but require unsafe on
 | Diffusion guidance | Add safety reward gradient to denoising score | Yes | No |
 | **Reflective inference (ReflectDrive)** | Discrete token search + inpainting | **No** | No |
 | GRPO RL (WAM-Flow, ReCogDrive) | Optimize policy toward reward during training | No (inference) | Yes |
+| Block-MoE refinement (DriveFine) | Dedicated refinement expert corrects completed token sequences | No | Architecture + training change |
 
 ReflectDrive's approach is the only one in this table that operates entirely at inference time, requires no gradient computation, and requires no architectural changes or retraining.
+
+**DriveFine's Block-MoE refinement** ([[sources/drivefine.md]]) is a training-time analog: a separate set of blocks (gradient-isolated from the main masked-diffusion backbone) is trained to read a fully completed trajectory and correct errors. Unlike ReflectDrive's inference-time token search + inpaint loop, DriveFine's correction is a single extra forward pass baked into training. It addresses the same root cause (committed token errors in discrete diffusion) but embeds the fix in model weights rather than applying it post-hoc. Key trade-off: DriveFine requires retraining; ReflectDrive works on any already-trained masked diffusion model without modification.
 
 ## Reflective Inference (ReflectDrive)
 

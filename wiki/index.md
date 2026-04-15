@@ -30,6 +30,10 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [DriveVLA-W0](sources/drivevla-w0.md) | Supervision deficit framing; AR + diffusion world models (training-time only); MoE action expert; 90.2★ PDMS (anchors) / 93.0 BoN-6; scaling reversal FM→AR at 70M frames |
 | [UniDriveVLA](sources/unidrivevla.md) | HUST + Xiaomi EV; MoT 3-expert (und/per/act) + masked joint attention; sparse 5-task perception; 3-stage progressive training; 78.37 DS Bench2Drive (best w/o PDM-Lite); 0.51m L2 nuScenes no-ego |
 | [FLARE](sources/flare.md) | OpenDriveLab + Li Auto; annotation-free DINOv2 future feature prediction + DiT + BC-GRPO; 86.9 PDMS SFT / 91.4 PDMS RFT (best single-sample VLM-based); 1 camera |
+| [DreamerAD](sources/dreameraD.md) | Latent world model RL; SF-WM (80× speedup) + AD-RM (latent rewards) + Gaussian vocab sampling; 87.7 EPDMS NAVSIM-v2 / 88.7 PDMS NAVSIM-v1; Epona backbone |
+| [Vega](sources/vega.md) | Instruction-conditioned AR+Diffusion (Bagel-7B/MoT); InstructScene 100K; future image as dense supervision; 86.9 EPDMS / 89.4 BoN-6 NAVSIM-v2; open-ended NL instruction following |
+| [NoRD](sources/nord.md) | Reasoning-free VLA; k-disc tokens (2048); Dr. GRPO over GRPO (+11.68% vs +0.67%); 85.6 PDMS / 92.4 BoN-6 NAVSIM; 3rd RFS WaymoE2E with 6–17× less data; difficulty bias identification |
+| [DiffusionDrive](sources/diffusiondrive.md) | Truncated diffusion (20 anchors, 2 steps); cascade decoder (60M, 45 FPS); 88.1 PDMS NAVSIM; 74% mode diversity; canonical non-VLM diffusion baseline; ResNet-34 + C+L |
 
 ---
 
@@ -46,6 +50,9 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [Dual-System VLA](concepts/dual-system-vla.md) | VLM for decisions + E2E for trajectory; decision adapter; kinematic mapping; consistency alignment |
 | [Inference-Time Safety](concepts/inference-time-safety.md) | Gradient-free safety correction at inference; discrete token search + inpainting-as-repair; taxonomy vs. guidance/RL/anchors |
 | [Perception-Enhanced Planning](concepts/perception-for-planning.md) | World-PV/BEV tokens; grid-conditioned parallel AR detection; IoU-aware confidence calibration; sparse MoT perception (UniDriveVLA); cosine similarity collapse evidence |
+| [Best-of-N Sampling](concepts/best-of-n.md) | Oracle trajectory selection from N samples; NAVSIM-v1 saturated at BoN-6 (94.8 = human GT); implications for benchmark interpretation; DreamerAD as deployable BoN variant |
+| [Bench2Drive Benchmark](concepts/bench2drive.md) | CARLA V2 closed-loop; interactive agents; DS + SR metrics; SOTA LinkVLA 91.01 DS; PDM-Lite caveat; contrast with NAVSIM |
+| [Chain-of-Thought for AD](concepts/chain-of-thought-for-ad.md) | Text/visual/self-reflection CoT types; annotation methods (frontier VLM, GT-grounded, LRM-as-critic); adaptive CoT (AdaThinkDrive); NoRD challenges necessity; efficiency tradeoffs |
 
 ---
 

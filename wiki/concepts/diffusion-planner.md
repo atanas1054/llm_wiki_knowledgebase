@@ -1,10 +1,10 @@
 ---
 title: Diffusion-Based Trajectory Planner
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/orion.md, sources/linkvla.md, sources/drivefine.md, sources/autovla.md, sources/alpamayo-r1.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/orion.md, sources/linkvla.md, sources/drivefine.md, sources/autovla.md, sources/alpamayo-r1.md, sources/diffusiondrive.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-04-15
 confidence: high
 ---
 
@@ -58,13 +58,66 @@ The diffusion denoising chain $(x_T, x_{T-1}, \ldots, x_0)$ can be viewed as an 
 
 This allows standard policy gradient / GRPO-style RL to be applied directly to the diffusion planner. See [[concepts/rl-for-ad.md]].
 
-## Key Papers Using Diffusion for Planning
+## DiffusionDrive: Truncated Diffusion for Real-Time Planning
 
-- **Diffusion Policy** (Chi et al.) — extended diffusion to robot learning, handles multi-modal action distributions
-- **DiffusionDrive** — truncated diffusion policy for autonomous driving, mitigates mode collapse
-- **Diffusion Planner** — joint trajectory generation for planning + motion forecasting
-- **GR00T-N1** — VLM reasoning + DiT action module (robotics)
-- **ReCogDrive** — VLM + DiT planner + RL fine-tuning (autonomous driving)
+**DiffusionDrive** ([[sources/diffusiondrive.md]]) is the first paper to successfully apply diffusion models to real-time end-to-end AD. It uses traditional perception (ResNet-34 + Camera+LiDAR), no VLM, and achieves 88.1 PDMS on NAVSIM navtest — the canonical non-VLM diffusion baseline that all subsequent VLA papers compare against.
+
+### Two Failure Modes of Vanilla Diffusion for Driving
+
+**(1) Mode collapse**: Starting 20 trajectory samples from random Gaussian noise, all converge to near-identical trajectories. Road geometry constrains feasible trajectories far more tightly than robotics manipulation tasks, collapsing the distribution to a single mode (11% diversity score). Unlike robotic arms that can move freely in 3D space, vehicles must follow lane geometry — the mode collapse problem is structurally worse for driving.
+
+**(2) Inference speed**: Vanilla DDIM requires 20 steps × 6.5ms = 130ms → 7 FPS. Driving requires real-time (>10 FPS); 7 FPS is impractical.
+
+### Truncated Diffusion Policy
+
+**Key insight**: Human drivers follow structured patterns (straight, turn left, turn right, lane change). Rather than denoising from random Gaussian noise, start from an **anchored Gaussian distribution** centered on K-Means trajectory clusters.
+
+**Training**:
+1. Cluster training trajectories into $N_\text{anchor}$ = 20 anchors via K-Means
+2. Truncate the forward diffusion schedule to $T_\text{trunc}$ = 50 (out of 1000) steps — add only small noise around each anchor:
+$$\tau_k^i = \sqrt{\bar{\alpha}^i}\,\mathbf{a}_k + \sqrt{1-\bar{\alpha}^i}\,\boldsymbol{\epsilon}$$
+3. Train decoder to reconstruct GT from anchored Gaussian with L1 reconstruction + BCE classification loss
+
+**Inference**: start from anchored Gaussian, run only **2 DDIM steps**, select top-1 confidence trajectory. $N_\text{infer}$ can differ from $N_\text{anchor}$ — decouple training anchors from inference diversity.
+
+**Result**: 10× fewer denoising steps, mode diversity 11% → 74%, 7 FPS → 45 FPS.
+
+### Cascade Diffusion Decoder
+
+Replaces the UNet (101M params) with a lightweight transformer decoder (60M params, −39%):
+
+1. **Deformable spatial cross-attention**: trajectory coordinates attend to BEV/PV features at those positions
+2. **Agent/map cross-attention**: trajectory features attend to perception query outputs
+3. **Timestep Modulation**: inject diffusion step as a conditioning signal
+4. **MLP head**: predict confidence score $\hat{s}_k$ + coordinate offset
+5. **Cascade**: 2 stacked decoder layers with shared parameters across denoising steps
+
+**Ablation impact** (Table 3): removing spatial cross-attention collapses performance from 87.1 → 55.1 PDMS — it is the critical component. Adding agent/map cross-attention contributes +0.3; cascade adds +0.7.
+
+### Comparison Within DiffusionDrive Progression
+
+| Method | PDMS | Steps | Diversity | FPS | Params |
+|--------|------|-------|-----------|-----|--------|
+| Transfuser (det.) | 84.0 | 1 | 0% | 60 | 56M |
+| + Vanilla DP (UNet) | 84.6 | 20 | 11% | 7 | 101M |
+| + Truncated DP (UNet) | 85.7 | 2 | 70% | 27 | 102M |
+| **+ Cascade decoder** | **88.1** | **2** | **74%** | **45** | **60M** |
+
+The cascade decoder alone contributes +2.4 PDMS over truncated DP with UNet, while being 39% lighter.
+
+### DiffusionDrive vs. Later VLA Diffusion Methods
+
+DiffusionDrive uses ResNet-34 + Camera+LiDAR, no VLM. It predates the VLA wave and uses far simpler perception. Comparisons across paradigms:
+
+| Method | PDMS | Backbone | Sensors | Reasoning |
+|--------|------|----------|---------|-----------|
+| DiffusionDrive | 88.1 | ResNet-34 | C+L | None |
+| ReCogDrive | 89.6 | InternVL3 | 3-cam | VLM+CoT |
+| WAM-Flow | 90.3 | Custom | 1-cam | None |
+| DriveFine | 90.7 | LLaDA-8B | 1-cam | None |
+| FLARE | 91.4 | Qwen3-VL-4B | 1-cam | DINOv2 |
+
+DiffusionDrive (88.1) establishes the diffusion planner as a competitive architecture before VLM backbones were applied. The performance gap to VLA-era methods (88.1 → 90.7+) reflects the combination of better backbones and RL post-training, not diffusion vs. other architectures.
 
 ## Learnable Action Queries: A Non-Diffusion Parallel Alternative (Reasoning-VLA)
 
@@ -82,6 +135,7 @@ The ARM (Action Refinement Module) then refines the parallel outputs via MLP + a
 
 | Paradigm                              | Steps          | Parallel? | Continuous output? | Inpainting?  | Speed       |
 | ------------------------------------- | -------------- | --------- | ------------------ | ------------ | ----------- |
+| Truncated diffusion (DiffusionDrive)  | 2              | Yes       | Yes                | No           | Real-time (45 FPS) |
 | Continuous diffusion (ReCogDrive)     | ~20            | Partial   | Yes                | Via guidance | Moderate    |
 | DFM / CTMC (WAM-Flow)                 | 5              | Yes       | No (tokens)        | Non-trivial  | Fast        |
 | Masked diffusion (ReflectDrive)       | 1 + reflection | Partial   | No (tokens)        | Native       | Moderate    |
@@ -138,7 +192,7 @@ The trajectory decoder reuses World-PV and World-BEV tokens computed during perc
 | Inference steps for quality | Many (~20) | 5 steps competitive |
 | 1-step quality | Degenerate | 89.1 PDMS (competitive) |
 
-DFM achieves 90.3 PDMS vs. diffusion-based DiffusionDrive's 88.1 PDMS on NAVSIM-v1, using only 1 camera vs. 3 cameras + LiDAR. See [[concepts/discrete-flow-matching.md]] for full theoretical treatment.
+DFM achieves 90.3 PDMS vs. diffusion-based DiffusionDrive's 88.1 PDMS on NAVSIM-v1, using only 1 camera vs. 3 cameras + LiDAR. DiffusionDrive's advantage is real-time speed (45 FPS) and no VLM dependency. See [[sources/diffusiondrive.md]] for the full truncated diffusion treatment, and [[concepts/discrete-flow-matching.md]] for DFM theory.
 
 ## Masked Discrete Diffusion for Planning (ReflectDrive)
 

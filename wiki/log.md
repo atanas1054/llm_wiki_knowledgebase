@@ -4,6 +4,148 @@ Append-only log of all wiki operations.
 
 ---
 
+## 2026-04-15 — Lint + New Concept Pages
+
+**Lint fixes applied**:
+- `wiki/concepts/world-model-for-ad.md` — Pattern 8 (FLARE) was displaced after the SOTA tables (after Patterns 9 and 10); moved to its correct position between Pattern 7 (DriveVLA-W0) and Pattern 9 (DreamerAD). `updated` bumped to 2026-04-15.
+- `wiki/concepts/navsim-benchmark.md` — Added disambiguation dagger to ReCogDrive SOTA row: 89.6 (arXiv) vs. 90.8 (NeurIPS camera-ready as cited by DreamerAD).
+- `wiki/concepts/inference-time-safety.md` — Added DriveFine Block-MoE to taxonomy table with training-time vs. inference-time contrast; added `sources/drivefine.md` and `sources/diffusiondrive.md` to `related` and `sources` frontmatter; `updated` bumped to 2026-04-15.
+
+**New concept pages created**:
+- `wiki/concepts/best-of-n.md` — Oracle BoN sampling; NAVSIM-v1 saturation at BoN-6 (94.8 = human GT); DreamerAD vocabulary sampling as deployable variant; implications for benchmark interpretation
+- `wiki/concepts/bench2drive.md` — CARLA V2 closed-loop benchmark; DS + SR metrics; full SOTA table (LinkVLA 91.01 DS current SOTA); PDM-Lite caveat; contrast with NAVSIM
+- `wiki/concepts/chain-of-thought-for-ad.md` — Text/visual/self-reflection CoT taxonomy; 3 annotation strategies (frontier VLM, GT-grounded, LRM-as-critic); adaptive CoT (AdaThinkDrive); NoRD as reasoning-free counterpoint; efficiency tradeoff table
+
+**Index updated**: added 3 new concept rows.
+
+---
+
+## 2026-04-15 — Ingest: DiffusionDrive
+
+**Source**: `raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md`  
+**arXiv**: 2411.15139v1  
+**Org**: HUST (Institute of AI + School of EIC); Horizon Robotics  
+**Venue**: pre-VLA era (November 2024)
+
+**Pages created**:
+- `wiki/sources/diffusiondrive.md`
+
+**Pages updated**:
+- `wiki/concepts/diffusion-planner.md` — added full DiffusionDrive section: two failure modes of vanilla diffusion (mode collapse 11% diversity, 7 FPS), truncated diffusion policy (20 K-Means anchors, T_trunc=50/1000, 2 DDIM steps), cascade diffusion decoder (deformable spatial+agent/map cross-attention, 2 layers shared params, 60M/-39% params), progression table (Transfuser→DD), DiffusionDrive vs. VLA-era comparison; added DiffusionDrive as first row of design space table; updated DFM comparison to include source link; updated sources/related frontmatter
+- `wiki/concepts/navsim-benchmark.md` — filled in DiffusionDrive table row note (truncated diffusion, 20 anchors, 2 steps, ResNet-34, 45 FPS); added DiffusionDrive caveat (comparison scope limited to Transfuser-era; 88.1 PDMS SOTA at publication, superseded by VLA methods); added DiffusionDrive to sources/related frontmatter
+- `wiki/index.md` — added DiffusionDrive row
+
+**Assets embedded**:
+- `x1 19.png` — paradigm comparison (single-mode / vocab / vanilla diffusion / truncated diffusion)
+- `x2 17.png` — mode diversity visualization (vanilla diffusion mode collapse)
+- `x4 16.png` — truncated vs. vanilla diffusion schedule illustration
+- `x5 17.png` — overall DiffusionDrive architecture
+
+**Key findings**:
+- Vanilla diffusion policy applied to driving: 11% mode diversity (near-complete collapse), 7 FPS — both unacceptable
+- Truncated diffusion: start from anchored Gaussian (20 K-Means clusters), truncate forward schedule to 50/1000 steps, denoise in 2 steps → 74% diversity, 27 FPS
+- Cascade decoder (deformable BEV/PV + agent/map cross-attention, 2 layers shared, 60M) beats UNet (101M) by +2.4 PDMS at −39% params → 45 FPS
+- Spatial cross-attention is critical: removing it collapses PDMS from 87.1 to 55.1 (−32 PDMS)
+- Inference flexibility: N_infer decoupled from N_anchor — dynamically scale trajectory hypotheses
+- 88.1 PDMS was SOTA at publication; now the canonical non-VLM diffusion baseline, superseded by ReCogDrive (89.6), WAM-Flow (90.3), DriveFine (90.7), FLARE (91.4)
+- nuScenes: 0.57m avg L2 / 0.08 collision (beats VAD by −20.8% L2, −63.6% collision, 1.8× faster)
+
+---
+
+## 2026-04-15 — Ingest: NoRD
+
+**Source**: `raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md`  
+**arXiv**: 2602.21172v1  
+**Org**: Applied Intuition; Texas A&M University; UC Berkeley
+
+**Pages created**:
+- `wiki/sources/nord.md`
+
+**Pages updated**:
+- `wiki/concepts/rl-for-ad.md` — added NoRD section: difficulty bias identification (polarized reward distribution), GRPO attenuation mechanism (std normalization kills high-variance gradients), Dr. GRPO formulation (remove std, DAPO asymmetric clipping, no KL), reward design (format+length+PDMS), sub-metric comparison table, position in GRPO landscape; added NoRD row to GRPO reward comparison table
+- `wiki/concepts/vlm-domain-adaptation.md` — added NoRD section: reasoning-free hypothesis, adaptation design (no CoT at any stage), data efficiency finding, contrast with FLARE and AutoVLA; added NoRD row to strategy comparison table
+- `wiki/concepts/navsim-benchmark.md` — added NoRD (85.6 PDMS, no reasoning, no LiDAR, 3C, 80K samples) and NoRD-BoN (92.4, BoN-6, surpasses AutoVLA-BoN); added caveat on comparison scope and data efficiency framing
+- `wiki/index.md` — added NoRD row
+
+**Assets embedded** (all in raw/assets/):
+- `x1 18.png` — training pipeline comparison (existing vs. NoRD)
+- `difficulty_plot.png` — reward distribution for NoRD-base
+- `grpo_steps.png` — GRPO training step analysis
+- `comparison_figure.png` — GRPO vs. Dr. GRPO qualitative (sharp turn + lane change)
+- `nord.png` — model architecture
+- `x2 16.png` — NAVSIM Pareto frontier
+- `navsim_examples.png` — qualitative NAVSIM results
+- `waymo_results.png` — qualitative WaymoE2E results
+- `nord_efficient.png` — token and runtime efficiency
+- `contour_plots.png` — training improvement per variance group
+- `x4 15.png` — training and validation curves
+- `prompt_example.png` — inference example
+
+**Key findings**:
+- Standard GRPO fails on weak SFT policies because high intra-group variance attenuates GRPO advantages: +0.67% gain only
+- Dr. GRPO (remove std normalization + DAPO asymmetric clipping, no KL) achieves +11.68% from same weak base
+- Reasoning annotations are not the bottleneck: NoRD matches AutoVLA-BoN (92.4 vs. 92.1) with no CoT and 60% less data
+- WaymoE2E: best ADE@3 (1.2504) with 6–17× less training data than SOTA; 3rd RFS (7.709) without reasoning or ensembling
+- First identification of difficulty bias failure mode in autonomous driving domain
+- Connection: Curious-VLA identified advantage collapse (policy too narrow → $\sigma_R \to 0$); NoRD identifies advantage attenuation (policy too weak → $\sigma_R$ too large); both starve GRPO from opposite distributional extremes
+
+---
+
+## 2026-04-08 — Ingest: Vega
+
+**Source**: `raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md`  
+**arXiv**: 2603.25741v1  
+**Org**: Tsinghua University + GigaAI
+
+**Pages created**:
+- `wiki/sources/vega.md`
+
+**Pages updated**:
+- `wiki/concepts/world-model-for-ad.md` — added Pattern 10: Instruction-Conditioned World Model (Vega); updated World Model vs. VLA table to include NL instruction following row; updated sources/related frontmatter
+- `wiki/concepts/vlm-domain-adaptation.md` — added Vega section on instructional driving paradigm; added InstructScene annotation pipeline; updated final strategy comparison table (now 15 rows); updated sources/related frontmatter
+- `wiki/concepts/navsim-benchmark.md` — added Vega to NAVSIM-v1 (87.9 / 89.8 BoN-6) and NAVSIM-v2 (86.9 / 89.4 BoN-6) SOTA tables; updated SOTA note (Vega BoN-6 likely new NAVSIM-v2 wiki SOTA but no direct head-to-head); added Vega caveat note; updated frontmatter
+- `wiki/index.md` — added Vega row
+
+**Key concepts**:
+- Instructional driving: open-ended NL instruction → different trajectory in same scene (vs. imitation driving with fixed expert target)
+- InstructScene: 100K automated instruction annotations via Qwen2.5-VL-72B two-stage pipeline (scene understanding → instruction formulation) + rule-based ego-motion labels
+- Dense supervision bridge: future image prediction resolves instruction-to-action gap; action-only SFT fails catastrophically (51.8 PDMS); world modeling enables it (77.9→86.9 EPDMS)
+- Integrated AR+Diffusion transformer (Bagel-7B, MoT): all transformer params duplicated per understanding/generation module; no information bottleneck (vs. external diffuser)
+- Duplicate latent trick: noisy copy for denoising + clean copy for conditioning → joint multi-task training in single forward pass
+- Lightweight action expert (hidden=256): separate from understanding/generation modules; diffusion as action planner fails catastrophically (19.7 PDMS)
+- CFG: text/ViT/action tokens dropped during training → instruction guidance strength at inference
+- NAVSIM-v2: 86.9 EPDMS (single, no RL) / 89.4 BoN-6; NAVSIM-v1: 87.9 PDMS / 89.8 BoN-6; 1 camera only
+- EC = 76.3 (single) / 84.5 (BoN) — improved by instruction-consistent planning but not best-in-class
+
+---
+
+## 2026-04-08 — Ingest: DreamerAD
+
+**Source**: `raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md`  
+**arXiv**: 2603.24587v1  
+**Org**: Chongqing Chang'an Technology Co., Ltd.
+
+**Pages created**:
+- `wiki/sources/dreameraD.md`
+
+**Pages updated**:
+- `wiki/concepts/rl-for-ad.md` — added DreamerAD section (latent world model RL; SF-WM + AD-RM + Gaussian vocab sampling); added DreamerAD row to GRPO comparison table; clarified DreamerAD's unique position as only method using latent features (not simulator) as RL reward source; updated frontmatter sources/related
+- `wiki/concepts/world-model-for-ad.md` — added Pattern 9: Latent World Model as RL Reward Source; resolved open question "can world model provide RL rewards?" with DreamerAD evidence; updated frontmatter sources/related
+- `wiki/concepts/navsim-benchmark.md` — added DreamerAD to NAVSIM-v1 SOTA table (88.7 PDMS); added DreamerAD to NAVSIM-v2 SOTA table (87.7 EPDMS, EC=72.4); added DreamerAD caveat note; added contextual note that DreamerAD becomes second in wiki behind DDP; updated frontmatter
+- `wiki/index.md` — added DreamerAD row
+
+**Key concepts**:
+- First latent-space RL framework for AD: rewards from learned AD-RM on denoised Video DiT features, not PDM simulator (at RL time)
+- Shortcut Forcing (SF-WM): recursive multi-resolution teacher-student distillation; 100→1 step, 80× speedup, 0.03s/frame, no EPDMS degradation
+- PCA finding: denoised latent features show structured spatial/semantic coherence → sufficient for reward learning without decoding
+- AD-RM data efficiency: 20% training data ≈ 100% reward model performance; high-quality latent representations simplify reward learning
+- Safety-first log-sigmoid reward: collisions force log(σ(r)) → −∞, dominating total reward without manual safety weights
+- Gaussian vocabulary sampling: Mahalanobis ranking over 8192→256 filtered trajectories; avoids WorldRFT dynamic discontinuity and Flow-GRPO SDE mismatch
+- NAVSIM-v2 87.7 EPDMS: +2.6 over Epona; safety metrics NC +0.9, DAC +1.5, TTC +1.1; EP −0.8 (safety-efficiency tradeoff)
+- NAVSIM-v1 88.7 PDMS: best within world-model encoder class; below VLA SOTA (FLARE 91.4, RecogDrive 90.8) using stronger encoders
+
+---
+
 ## 2026-04-07 — Ingest: FLARE
 
 **Source**: `raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md`  

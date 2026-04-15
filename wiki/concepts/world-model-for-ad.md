@@ -1,10 +1,10 @@
 ---
 title: World Models for Autonomous Driving
 type: concept
-sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md]
-related: [sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md]
+sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md]
+related: [sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md]
 created: 2026-04-05
-updated: 2026-04-07
+updated: 2026-04-15
 confidence: high
 ---
 
@@ -129,73 +129,6 @@ The ViT variant predicts the *future* (not current) to avoid pure reconstruction
 
 **Comparison with UniUGP (Pattern 1)**: both use world modeling as training-time signal that improves planning representations. UniUGP's generation expert is optionally available at inference; DriveVLA-W0's world model is strictly training-time. UniUGP provides the world model signal via video consistency loss on annotated data; DriveVLA-W0 uses raw future frame prediction on unlabeled driving video — more scalable but less structured.
 
-## Key Challenges
-
-### 1. Coupling world model and trajectory planner
-The world model must receive the planned trajectory as a condition, but the trajectory is what we're trying to optimize. Solutions:
-- **Teacher forcing**: use ground-truth trajectories 50% of training time (UniUGP)
-- **Feedback conditioning**: the world model is conditioned on the planning expert's output, training the planner to generate trajectories consistent with realistic future video
-
-### 2. Computational cost
-Video generation models (DiT-based, e.g., Wan2.1) are expensive. Solutions:
-- Make generation expert optional at inference (UniUGP)
-- Use lower-resolution occupancy instead of video (OccWorld)
-
-### 3. Evaluation
-World model quality (FID, FVD) and planning quality (L2, collision rate) can improve independently or diverge. UniUGP is notable for improving both simultaneously.
-
-## Metrics for World Model Quality
-
-| Metric | Meaning |
-|--------|---------|
-| FID (Fréchet Inception Distance) | Distribution-level image quality; lower is better |
-| FVD (Fréchet Video Distance) | Distribution-level video quality; lower is better |
-
-Note: FID/FVD measure distributional realism, not planning-relevant accuracy. A model with excellent FID could still predict unrealistic trajectories for edge-case scenarios.
-
-## World Model vs. VLA: Complementary Strengths
-
-| Capability | World Model | VLA (autoregressive) |
-|-----------|-------------|----------------------|
-| Visual causal learning | ✓ (from unlabeled video) | ✗ (needs annotations) |
-| World knowledge / reasoning | ✗ | ✓ (pre-trained LLM) |
-| NL interaction | ✗ | ✓ |
-| Long-tail generalization | Partial | Partial |
-| **UniUGP** | **Both** | **Both** |
-
-## State of the Art (as of April 2026)
-
-### nuScenes Future Frame Generation (FID ↓)
-
-| Method       | Type                      | Resolution | FID ↓   | FVD ↓    |
-| ------------ | ------------------------- | ---------- | ------- | -------- |
-| DriveDreamer | Diffusion                 | 128×192    | 52.6    | 452.0    |
-| Drive-WM     | Diffusion                 | 192×384    | 15.8    | 122.7    |
-| Doe-1        | Autoregressive            | 384×672    | 15.9    | —        |
-| FSDrive      | Autoregressive            | 128×192    | 10.1    | —        |
-| Epona        | AR+Diffusion              | —          | 7.5     | 82.8     |
-| **UniUGP**   | **AR+Diffusion (Wan2.1)** | **—**      | **7.4** | **75.9** |
-
-Note: FID is resolution-dependent — methods at higher resolution (Doe-1 384×672) would achieve lower FID at lower resolution. FSDrive's 10.1 at 128×192 is competitive for its resolution tier and model size (2B).
-
-### NAVSIM Future Video Generation (FVD ↓, front-view)
-
-| Method | FVD ↓ | LPIPS ↓ | PSNR ↑ |
-|--------|-------|---------|--------|
-| PWM | 85.95 | 0.23 | 21.57 |
-| **DriveDreamer-Policy** | **53.59** | **0.20** | **21.05** |
-
-DDP substantially improves video coherence (−38% FVD) vs. PWM. The improvement is attributed to depth joint learning (−18.6% FVD alone) and LLM-conditioned generation. Note: front-view only for comparability with PWM (single-view model).
-
-### nuScenes Planning (front/multi-camera, no heavy supervision, UniAD metrics)
-
-| Method | Avg L2 (m) ↓ | Avg Collision (%) ↓ | Notes |
-|--------|------------|-------------------|-------|
-| Doe-1 | 1.26 | 0.53 | No ego status; Lumina-mGPT-7B |
-| **FSDrive** | **0.96** | **0.40** | **No ego status; Qwen2-VL-2B** |
-| Epona | 1.25 | 0.36 | — |
-| **UniUGP** | **1.23** | **0.33** | **multi-camera** |
-
 ### 8. Semantic Feature Prediction as Self-Supervised Objective (FLARE)
 
 **FLARE** ([[sources/flare.md]]) introduces a distinctly different approach: instead of generating future video frames (patterns 1–7), it predicts the DINOv2 **semantic patch features** of the next frame as an auxiliary loss. This bypasses pixel-level reconstruction entirely while still forcing the model to internalize scene dynamics.
@@ -239,10 +172,135 @@ Both avoid pixel-level generation overhead by predicting intermediate representa
 
 **Contrast with FSDrive (Pattern 5)**: FSDrive generates a full visual CoT frame at inference time (mandatory), conditioning the planner on it. FLARE uses future prediction purely as an auxiliary training signal — no generation at inference.
 
+### 9. Latent World Model as RL Reward Source (DreamerAD)
+
+**DreamerAD** ([[sources/dreameraD.md]]) answers the open question "can a world model provide a reward signal for RL?" with a definitive yes — and does so without pixel-level generation at RL training time.
+
+**Key insight**: denoised latent features from a Video DiT (Epona's flow-matching model) exhibit strong spatial and semantic coherence (confirmed via PCA), meaning these latent representations are rich enough to learn a reward model *without ever decoding to pixels*.
+
+**The latent RL cycle**:
+1. Candidate trajectories sampled from Gaussian-filtered vocabulary (physically constrained)
+2. Shortcut-forced world model (1-step inference, 0.03s/frame) predicts future latent states $\hat{z}_{1:T}$ conditioned on each candidate trajectory
+3. Autoregressive Dense Reward Model (AD-RM) scores each latent sequence → 8 reward dimensions × 8 time horizons
+4. GRPO policy optimization over reward advantage estimates
+
+**Contrast with all previous patterns**:
+| Pattern | World model used at... | RL reward from... |
+|---------|----------------------|------------------|
+| 1–6 (UniUGP, FSDrive, DDP) | Training + inference (some optional) | Not used for RL |
+| 7 (DriveVLA-W0) | Training only | Not used for RL |
+| 8 (FLARE) | Training auxiliary loss only | Not used for RL |
+| **9 (DreamerAD)** | **RL rollout (latent only)** | **Latent AD-RM (no simulator at RL time)** |
+
+**Shortcut Forcing** is the enabling mechanism: compress Epona's 100-step diffusion to 1-step via recursive teacher-student distillation over power-of-2 step sizes. Performance is unchanged (87.7 EPDMS at 1-step = 16-step).
+
+**AD-RM data efficiency**: 20% of labeled trajectories achieves 97% of full-data reward model performance — latent features are highly structured and reward learning converges rapidly.
+
+**Limitations relative to simulator-based RL**: AD-RM rewards are learned approximations; edge-case behaviors outside the training distribution may produce unreliable rewards. Also, vocabulary constraint (256 trajectories) limits exploration breadth compared to free-form GRPO.
+
+**Results**: 87.7 EPDMS (NAVSIM-v2), strongest safety gains among world-model methods (DAC +1.5, NC +0.9, TTC +1.1 over Epona). 80× faster RL rollouts than pixel-level diffusion world model baselines.
+
+### 10. Instruction-Conditioned World Model for Open-Ended NL Driving (Vega)
+
+**Vega** ([[sources/vega.md]]) extends world modeling to a new role: **dense supervision signal that bridges the instruction-to-action gap** — enabling open-ended natural language instruction following for the first time in the wiki.
+
+**Core motivation**: a baseline VLA (Qwen2.5-VL + planning head) trained on 100K instruction-annotated scenes achieves only ~60 PDMS. Sparse trajectory supervision cannot ground high-dimensional instruction+visual inputs to low-dimensional actions. World modeling (future frame prediction) provides the missing dense signal:
+
+| Training setting | PDMS | EPDMS |
+|-----------------|------|-------|
+| Action only | 51.8 | 48.9 |
+| Random future frame | 77.3 | 75.2 |
+| **Next frame (default)** | **77.9** | **76.0** |
+
+Note: exact choice of future frame matters little — the task structure is what helps. This generalizes DriveVLA-W0's insight (Pattern 7) to the instruction-following domain.
+
+**Unique contribution vs. Patterns 1–9**: all prior patterns use world modeling to improve *imitation* planning — they condition on expert trajectories. Vega conditions the world model on **user-specified instructions** → the generated future image must be *instruction-consistent*, not just expert-consistent. This enables multi-trajectory generation: same scene + different instructions → different valid trajectories + different future images.
+
+**Architecture**: Integrated AR+Diffusion transformer with Mixture-of-Transformers (MoT) — all parameters (attention + FFN) duplicated for understanding vs. generation, initialized from Bagel-7B. AR pipeline (Qwen2.5 backbone) handles visual+text; diffusion pipeline generates future image and trajectory. A lightweight action expert (hidden=256 vs. 3584) handles action planning separately.
+
+**InstructScene**: 100K automated annotation — Qwen2.5-VL-72B generates scene descriptions + driving instructions from future frames; rule-based ego-motion labels provide precision for ego-vehicle dynamics.
+
+**CFG (classifier-free guidance)**: drops text/ViT/action tokens randomly during training → enables instruction guidance strength at inference.
+
+**Results**: 86.9 EPDMS / 89.4 BoN-6 (NAVSIM-v2), 87.9 PDMS / 89.8 BoN-6 (NAVSIM-v1). No RL stage.
+
+**Contrast with FSDrive (Pattern 5)**: FSDrive uses visual CoT as inference-time reasoning intermediate (mandatory at inference). Vega uses future frame prediction as training-time dense supervision (bypassed at inference, similar to DriveVLA-W0). Both generate future images during training; only FSDrive uses them at inference.
+
+**Contrast with UniUGP (Pattern 1)**: UniUGP uses future video generation to improve expert imitation; Vega uses it to ground instruction-conditioned policy learning. UniUGP's generation expert is optionally available at inference; Vega's is training-time only.
+
+## Key Challenges
+
+### 1. Coupling world model and trajectory planner
+The world model must receive the planned trajectory as a condition, but the trajectory is what we're trying to optimize. Solutions:
+- **Teacher forcing**: use ground-truth trajectories 50% of training time (UniUGP)
+- **Feedback conditioning**: the world model is conditioned on the planning expert's output, training the planner to generate trajectories consistent with realistic future video
+
+### 2. Computational cost
+Video generation models (DiT-based, e.g., Wan2.1) are expensive. Solutions:
+- Make generation expert optional at inference (UniUGP)
+- Use lower-resolution occupancy instead of video (OccWorld)
+
+### 3. Evaluation
+World model quality (FID, FVD) and planning quality (L2, collision rate) can improve independently or diverge. UniUGP is notable for improving both simultaneously.
+
+## Metrics for World Model Quality
+
+| Metric | Meaning |
+|--------|---------|
+| FID (Fréchet Inception Distance) | Distribution-level image quality; lower is better |
+| FVD (Fréchet Video Distance) | Distribution-level video quality; lower is better |
+
+Note: FID/FVD measure distributional realism, not planning-relevant accuracy. A model with excellent FID could still predict unrealistic trajectories for edge-case scenarios.
+
+## World Model vs. VLA: Complementary Strengths
+
+| Capability | World Model | VLA (autoregressive) |
+|-----------|-------------|----------------------|
+| Visual causal learning | ✓ (from unlabeled video) | ✗ (needs annotations) |
+| World knowledge / reasoning | ✗ | ✓ (pre-trained LLM) |
+| NL interaction | ✗ (typically) | ✓ |
+| Open-ended NL instruction following | ✗ | ✗ (typically) |
+| Long-tail generalization | Partial | Partial |
+| **UniUGP** | **Both** | **Both** |
+| **Vega** | **World model as instruction bridge** | **Instruction-conditioned planning** |
+
+## State of the Art (as of April 2026)
+
+### nuScenes Future Frame Generation (FID ↓)
+
+| Method       | Type                      | Resolution | FID ↓   | FVD ↓    |
+| ------------ | ------------------------- | ---------- | ------- | -------- |
+| DriveDreamer | Diffusion                 | 128×192    | 52.6    | 452.0    |
+| Drive-WM     | Diffusion                 | 192×384    | 15.8    | 122.7    |
+| Doe-1        | Autoregressive            | 384×672    | 15.9    | —        |
+| FSDrive      | Autoregressive            | 128×192    | 10.1    | —        |
+| Epona        | AR+Diffusion              | —          | 7.5     | 82.8     |
+| **UniUGP**   | **AR+Diffusion (Wan2.1)** | **—**      | **7.4** | **75.9** |
+
+Note: FID is resolution-dependent — methods at higher resolution (Doe-1 384×672) would achieve lower FID at lower resolution. FSDrive's 10.1 at 128×192 is competitive for its resolution tier and model size (2B).
+
+### NAVSIM Future Video Generation (FVD ↓, front-view)
+
+| Method | FVD ↓ | LPIPS ↓ | PSNR ↑ |
+|--------|-------|---------|--------|
+| PWM | 85.95 | 0.23 | 21.57 |
+| **DriveDreamer-Policy** | **53.59** | **0.20** | **21.05** |
+
+DDP substantially improves video coherence (−38% FVD) vs. PWM. The improvement is attributed to depth joint learning (−18.6% FVD alone) and LLM-conditioned generation. Note: front-view only for comparability with PWM (single-view model).
+
+### nuScenes Planning (front/multi-camera, no heavy supervision, UniAD metrics)
+
+| Method | Avg L2 (m) ↓ | Avg Collision (%) ↓ | Notes |
+|--------|------------|-------------------|-------|
+| Doe-1 | 1.26 | 0.53 | No ego status; Lumina-mGPT-7B |
+| **FSDrive** | **0.96** | **0.40** | **No ego status; Qwen2-VL-2B** |
+| Epona | 1.25 | 0.36 | — |
+| **UniUGP** | **1.23** | **0.33** | **multi-camera** |
+
 ## Open Questions
 
 - Does trajectory-conditioned video generation improve **closed-loop** performance (NAVSIM PDMS), or only open-loop metrics? (FSDrive shows 85.1 PDMS, well below the NAVSIM SOTA of 90.7 — generation quality may not translate to closed-loop driving)
-- Can the world model provide a reward signal for RL (GRPO), replacing or augmenting the simulator?
+- **[Partially answered by DreamerAD]** Can the world model provide a reward signal for RL, replacing or augmenting the simulator? — DreamerAD shows a latent reward model can replace simulator calls *during* RL rollout (87.7 EPDMS), but still requires simulator for initial vocabulary annotation. True simulator-free RL from world model rewards remains open.
 - Does higher-resolution visual CoT (e.g., 512×768) substantially improve collision avoidance over FSDrive's 128×192?
 - FSDrive only generates a front-view CoT. Does generating surround-view visual CoT improve performance in lane-change and merge scenarios?
 - Can world model pre-training on massive unlabeled video (e.g., internet dashcam footage) bootstrap planning performance without any trajectory labels? (FLARE's FFP is designed for this but has not been tested at scale)

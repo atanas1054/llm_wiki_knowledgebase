@@ -1,10 +1,10 @@
 ---
 title: VLM Domain Adaptation for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/uniugp.md, sources/senna2.md, sources/reasoning-vla.md, sources/hermes.md, sources/autovla.md, sources/automot.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/futuresightdrive.md, sources/unidrivevla.md, sources/flare.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/perception-for-planning.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md]
+related: [sources/recogdrive.md, sources/uniugp.md, sources/senna2.md, sources/reasoning-vla.md, sources/hermes.md, sources/autovla.md, sources/automot.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/futuresightdrive.md, sources/unidrivevla.md, sources/flare.md, sources/vega.md, sources/nord.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/perception-for-planning.md]
 created: 2026-04-05
-updated: 2026-04-07
+updated: 2026-04-15
 confidence: high
 ---
 
@@ -589,6 +589,123 @@ FLARE and DriveVLA-W0 are the two annotation-free approaches. DriveVLA-W0 relies
 | FSDrive | Vocabulary expansion + visual CoT generation | ✓ | 200K nuScenes + DriveLM | Qwen2-VL-2B | At inference (sequential gen→plan) |
 | UniDriveVLA | MoT: LoRA Stage 2 → frozen Stage 3; decoupled per/act experts | ✓ (LoRA then frozen) | 3:7 driving-to-general SFT | Qwen3-VL-2B/8B | At inference |
 | **FLARE** | **LoRA SFT on trajectories + future DINOv2 feature prediction (no language annotations)** | **✓ (LoRA)** | **NAVSIM navtrain (trajectories only)** | **Qwen3-VL-4B** | **At inference** |
+
+## Vega: Instructional Driving via World Model as Dense Supervision Bridge
+
+**Vega** ([[sources/vega.md]]) introduces a novel VLM adaptation goal: instead of adapting for expert imitation, adapt for **open-ended natural language instruction following** — producing different trajectories in the same scene when given different user commands.
+
+### The Instruction-to-Action Gap
+
+A direct baseline (Qwen2.5-VL + planning head, same instruction-annotated data) achieves only ~60 PDMS. The gap arises because:
+- Trajectory supervision is sparse (6 waypoints) vs. visual input dimensionality
+- Language instructions introduce additional ambiguity that sparse action supervision cannot resolve
+- LLMs are unreliable at precise numerical trajectory prediction from natural language
+
+**Solution**: future image generation as dense supervision signal. This compels the model to learn the full causal chain: instruction → action → visual outcome.
+
+### InstructScene: Automated Instruction Annotation
+
+100K NAVSIM scenes annotated via two-stage automated pipeline:
+1. Qwen2.5-VL-72B converts future frames + actions into scene descriptions + driving behavior narrations
+2. Qwen2.5-VL-72B formulates concise driving instructions from those descriptions
+
+Rule-based supplement: speed/acceleration/turn-rate thresholds → NL ego-motion labels → combined with VLM instructions as auxiliary prompts for accuracy.
+
+This is the first instruction-annotated driving dataset at scale in the wiki; all other methods use scene-description or CoT annotations (not personalized user instructions).
+
+### Architecture: Integrated AR+Diffusion with MoT
+
+Vega uses an **Integrated Transformer** (not external diffuser) where understanding (AR, Qwen2.5-LLM) and generation (diffusion) share joint attention with separate weight sets via Mixture-of-Transformers. Initialized from Bagel-7B.
+
+Key adaptation mechanisms:
+- **Classifier-free guidance** (CFG): drops text/ViT/action tokens randomly during training → enables inference-time instruction guidance strength
+- **Duplicate latent trick**: noisy copy for denoising, clean copy for conditioning → enables joint multi-task training (action + image) in a single forward pass
+- **Lightweight action expert** (256-dim vs. 3584): separate from both understanding and generation modules
+
+### Positioning in the Adaptation Space
+
+| Dimension | Traditional VLA adaptation | Vega |
+|-----------|---------------------------|------|
+| Language role | Scene description, CoT reasoning | **User instruction (personalized)** |
+| Planning goal | Imitate expert trajectory | **Follow user command** |
+| Multi-trajectory | No (single expert) | **Yes (different instruction → different trajectory)** |
+| Supervision | Sparse (waypoints) | Dense (future image + waypoints) |
+| Dataset | Scene QA / CoT | **Instruction-annotated (InstructScene)** |
+
+### Updated Strategy Comparison Table (with Vega)
+
+| Approach | VLM role | VLM fine-tuned? | Data | Backbone | Deployment |
+|----------|----------|----------------|------|----------|-----------|
+| ReCogDrive | Fine-tuned feature extractor | ✓ | 3.1M QA pairs | InternVL3 | At inference |
+| Reasoning-VLA | Unified multi-dataset SFT + GRPO | ✓ | 75K CoT clips | Qwen2.5-VL | At inference |
+| UniUGP | Expert co-training, 4-stage | ✓ | Mixed video + QA | Qwen2.5-VL-3B | At inference |
+| Senna-2 | Consistency-aligned dual-system | ✓ | NAVSIM + proprietary | LLaVA-NeXT | At inference |
+| HERMES | Offline annotator only | ✗ | WOD-E2E + VLM annotations | Qwen3-VL-Flash | Not at inference |
+| AutoMoT | Frozen scene understanding expert | ✗ | NuSync + nuScenes + CARLA | Qwen3-VL-4B | At inference (async) |
+| AutoVLA | Dual-mode SFT + CoT length penalty RFT | ✓ | 52.8K CoT (nuPlan+Waymo) | InternVL2.5 | At inference |
+| AutoDrive-R² | SFT + GRPO on structured CoT | ✓ | 6K curated samples | Qwen2.5-VL-7B | At inference |
+| Alpamayo-R1 | 3-stage: inject→SFT(CoC)→RL | ✓ (from Physical AI base) | 700K CoC + 80K hr driving | Cosmos-Reason | At inference |
+| AdaThinkDrive | Dual-mode SFT + complexity-aware RL | ✓ | NAVSIM + open-source QA | InternVL3-8B | At inference |
+| FSDrive | Vocabulary expansion + visual CoT generation | ✓ | 200K nuScenes + DriveLM | Qwen2-VL-2B | At inference (sequential gen→plan) |
+| UniDriveVLA | MoT: LoRA Stage 2 → frozen Stage 3; decoupled per/act experts | ✓ (LoRA then frozen) | 3:7 driving-to-general SFT | Qwen3-VL-2B/8B | At inference |
+| FLARE | LoRA SFT on trajectories + future DINOv2 feature prediction (no language annotations) | ✓ (LoRA) | NAVSIM navtrain (trajectories only) | Qwen3-VL-4B | At inference |
+| **Vega** | **Integrated AR+Diffusion (Bagel-7B); NL instruction following via world model dense supervision** | **✓ (full fine-tune)** | **InstructScene 100K + NAVSIM** | **Qwen2.5-LLM + Bagel-7B** | **At inference (CFG)** |
+
+## NoRD: Reasoning-Free SFT as an Explicit Design Choice
+
+**NoRD** ([[sources/nord.md]]) is the only paper in the wiki that deliberately eliminates reasoning supervision as a principled design decision — not due to data constraints, but to test the "Reasoning-Planning Decoupling Hypothesis": that CoT reasoning may be a byproduct of planning, not a causal determinant.
+
+### The Reasoning-Free Hypothesis
+
+Prior work (EMMA, SimLingo, S4-Driver) showed that reasoning-free VLAs can achieve strong results on simple benchmarks (nuScenes). NoRD asks whether this extends to harder benchmarks (NAVSIM, WaymoE2E) that are currently dominated by reasoning-centric models.
+
+**Hypothesis**: if the RL optimizer is fixed (to handle the weaker SFT policy), a reasoning-free model can match reasoning-based performance — meaning reasoning provides no additional planning signal, only annotation cost and inference latency.
+
+### Adaptation Design
+
+- **Base**: Qwen-2.5VL-3B-Instruct
+- **SFT**: trajectory token prediction only — no `<think>` blocks, no CoT, no scene descriptions
+- **Data**: 80K NAVSIM samples (vs. 212K+ for reasoning-based SOTA)
+- **Output**: k-disc tokens (vocab=2048) representing trajectory clusters — no text waypoints, no reasoning tokens
+
+The reduction in token count (3× vs. reasoning VLAs) directly reduces training compute and inference latency.
+
+### Key Finding: Reasoning Annotations Are Not the Bottleneck
+
+NoRD's SFT-only baseline (76.66 PDMS) is weaker than reasoning-based models. But with Dr. GRPO post-training (85.62 PDMS), NoRD is competitive with AutoVLA (89.1) — which uses 2.65× more data and full CoT supervision. The remaining gap is closed by BoN-6 oracle selection (92.4 vs. AutoVLA-BoN 92.1).
+
+**Implication**: reasoning annotations inflate performance in the SFT stage, but RL post-training can compensate — provided the optimizer handles the weaker initialization correctly. The cost of reasoning annotations is not justified by the final post-RL performance.
+
+### Contrast with Other Reasoning Strategies
+
+| Approach | Reasoning at train? | Reasoning at inference? | Data needed |
+|----------|--------------------|-----------------------|------------|
+| AutoVLA | ✓ (4-stage CoT) | ✓ (adaptive) | 212K+ |
+| AdaThinkDrive | ✓ (Think+NonThink) | ✓ (adaptive) | NAVSIM-scale |
+| FLARE | ✗ (DINOv2 features) | ✗ | NAVSIM navtrain |
+| **NoRD** | **✗** | **✗** | **80K NAVSIM** |
+
+NoRD and FLARE both achieve no-reasoning at inference, but via different mechanisms: FLARE uses future visual features as auxiliary supervision; NoRD uses no auxiliary supervision at all — pure trajectory SFT + Dr. GRPO.
+
+### Updated Strategy Comparison Table (with NoRD)
+
+| Approach | VLM role | VLM fine-tuned? | Data | Backbone | Deployment |
+|----------|----------|----------------|------|----------|-----------|
+| ReCogDrive | Fine-tuned feature extractor | ✓ | 3.1M QA pairs | InternVL3 | At inference |
+| Reasoning-VLA | Unified multi-dataset SFT + GRPO | ✓ | 75K CoT clips | Qwen2.5-VL | At inference |
+| UniUGP | Expert co-training, 4-stage | ✓ | Mixed video + QA | Qwen2.5-VL-3B | At inference |
+| Senna-2 | Consistency-aligned dual-system | ✓ | NAVSIM + proprietary | LLaVA-NeXT | At inference |
+| HERMES | Offline annotator only | ✗ | WOD-E2E + VLM annotations | Qwen3-VL-Flash | Not at inference |
+| AutoMoT | Frozen scene understanding expert | ✗ | NuSync + nuScenes + CARLA | Qwen3-VL-4B | At inference (async) |
+| AutoVLA | Dual-mode SFT + CoT length penalty RFT | ✓ | 52.8K CoT (nuPlan+Waymo) | InternVL2.5 | At inference |
+| AutoDrive-R² | SFT + GRPO on structured CoT | ✓ | 6K curated samples | Qwen2.5-VL-7B | At inference |
+| Alpamayo-R1 | 3-stage: inject→SFT(CoC)→RL | ✓ (from Physical AI base) | 700K CoC + 80K hr driving | Cosmos-Reason | At inference |
+| AdaThinkDrive | Dual-mode SFT + complexity-aware RL | ✓ | NAVSIM + open-source QA | InternVL3-8B | At inference |
+| FSDrive | Vocabulary expansion + visual CoT generation | ✓ | 200K nuScenes + DriveLM | Qwen2-VL-2B | At inference (sequential gen→plan) |
+| UniDriveVLA | MoT: LoRA Stage 2 → frozen Stage 3; decoupled per/act experts | ✓ (LoRA then frozen) | 3:7 driving-to-general SFT | Qwen3-VL-2B/8B | At inference |
+| FLARE | LoRA SFT on trajectories + future DINOv2 feature prediction (no language annotations) | ✓ (LoRA) | NAVSIM navtrain (trajectories only) | Qwen3-VL-4B | At inference |
+| Vega | Integrated AR+Diffusion (Bagel-7B); NL instruction following via world model dense supervision | ✓ (full fine-tune) | InstructScene 100K + NAVSIM | Qwen2.5-LLM + Bagel-7B | At inference (CFG) |
+| **NoRD** | **Reasoning-free trajectory SFT + Dr. GRPO; no CoT at any stage** | **✓ (full fine-tune)** | **80K NAVSIM (no annotations)** | **Qwen-2.5VL-3B** | **At inference (fast, 3× fewer tokens)** |
 
 ## Related Systems
 
