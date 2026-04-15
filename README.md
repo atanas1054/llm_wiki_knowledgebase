@@ -16,7 +16,7 @@ wiki/
 CLAUDE.md      # Workflow instructions for the LLM assistant
 ```
 
-## Papers Ingested (22)
+## Papers Ingested (29)
 
 | Paper | Org | Key Contribution | Benchmark |
 |-------|-----|-----------------|-----------|
@@ -34,28 +34,35 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [Curious-VLA](wiki/sources/curious-vla.md) | — | Narrow Policy diagnosis; FTE + ADAS + SDR; BoN-6 matches human GT | 90.3 PDMS / 94.8 BoN-6 |
 | [AutoVLA](wiki/sources/autovla.md) | — | K-Disk physical action codebook; adaptive CoT via length-penalty GRPO | 89.11 PDMS NAVSIM-v1 |
 | [AutoMoT](wiki/sources/automot.md) | — | Frozen VLM + trained action expert; async KV cache (7.6× speedup) | 87.34 DS Bench2Drive |
-| [AutoDrive-R²](wiki/sources/autodrive-r2.md) | Alibaba AMAP | 4-step CoT with self-reflection + physics GRPO; 6K samples beats 103K | 0.19m L2 nuScenes |
+| [AutoDrive-R²](wiki/sources/autodrive-r2.md) | Alibaba AMAP | 4-step CoT with self-reflection + physics GRPO; 6K samples | 0.19m L2 nuScenes |
 | [Alpamayo-R1](wiki/sources/alpamayo-r1.md) | NVIDIA | Cosmos-Reason + CoC dataset (700K) + FM action expert; 3-reward GRPO | 99ms; internal evals |
 | [AdaThinkDrive](wiki/sources/adathinkdrive.md) | Xiaomi EV | Adaptive Think Reward: mode-comparison GRPO learns when to reason | 90.3 PDMS / 93.0 BoN-4 |
-| [FutureSightDrive](wiki/sources/futuresightdrive.md) | Xi'an Jiaotong + Alibaba Amap | Visual ST-CoT: VQ-VAE AR future frame as planning intermediate; vocabulary expansion | 85.1 PDMS NAVSIM / 0.96m L2 nuScenes |
+| [FutureSightDrive](wiki/sources/futuresightdrive.md) | Xi'an Jiaotong + Alibaba Amap | Visual ST-CoT: VQ-VAE AR future frame as planning intermediate | 85.1 PDMS NAVSIM / 0.96m L2 nuScenes |
 | [DriveDreamer-Policy](wiki/sources/drivedreamer-policy.md) | GigaAI + U of Toronto | Causal depth→video→action WAM; geometry-grounded; 3 FM generators | 89.2 PDMS NAVSIM-v1 / 88.7 EPDMS NAVSIM-v2 |
-| [DriveVLA-W0](wiki/sources/drivevla-w0.md) | CASIA + Yinwang | Supervision deficit → world model self-supervision; AR/diffusion WM; MoE action expert; scaling law | 90.2★ PDMS (anchors) / 93.0 BoN-6 NAVSIM-v1 |
-| [UniDriveVLA](wiki/sources/unidrivevla.md) | HUST + Xiaomi EV + U Macau | MoT 3-expert (und/per/act) + masked joint attention; sparse 5-task perception; 3-stage progressive training | 78.37 DS Bench2Drive (best w/o PDM-Lite); 0.51m L2 nuScenes no-ego |
-| [FLARE](wiki/sources/flare.md) | OpenDriveLab + Li Auto | Annotation-free DINOv2 future feature prediction; BC-GRPO; 1 camera | 86.9 PDMS SFT / 91.4 PDMS RFT (single-sample) NAVSIM-v1 |
+| [DriveVLA-W0](wiki/sources/drivevla-w0.md) | CASIA + Yinwang | Supervision deficit → world model self-supervision; scaling law | 90.2★ PDMS / 93.0 BoN-6 NAVSIM-v1 |
+| [UniDriveVLA](wiki/sources/unidrivevla.md) | HUST + Xiaomi EV | MoT 3-expert (und/per/act); sparse 5-task perception | 78.37 DS Bench2Drive; 0.51m L2 nuScenes |
+| [FLARE](wiki/sources/flare.md) | OpenDriveLab + Li Auto | Annotation-free DINOv2 future feature prediction; BC-GRPO | 91.4 PDMS RFT (single-sample SOTA) NAVSIM-v1 |
+| [DreamerAD](wiki/sources/dreameraD.md) | Chongqing Chang'an | Latent world model RL; shortcut forcing (80× speedup); latent reward model | 87.7 EPDMS NAVSIM-v2 |
+| [Vega](wiki/sources/vega.md) | Tsinghua + GigaAI | Instruction-conditioned AR+Diffusion; InstructScene 100K; NL instruction following | 86.9 EPDMS / 89.4 BoN-6 NAVSIM-v2 |
+| [NoRD](wiki/sources/nord.md) | Applied Intuition + TAMU + UCB | Reasoning-free VLA; Dr. GRPO fixes difficulty bias; data efficiency | 85.6 PDMS / 92.4 BoN-6 NAVSIM-v1 |
+| [DiffusionDrive](wiki/sources/diffusiondrive.md) | HUST + Horizon Robotics | Truncated diffusion (20 anchors, 2 steps); cascade decoder; 45 FPS | 88.1 PDMS NAVSIM-v1 (non-VLM baseline) |
 
-## Concept Pages (9)
+## Concept Pages (12)
 
 | Concept | Description |
 |---------|-------------|
 | [Diffusion-Based Trajectory Planner](wiki/concepts/diffusion-planner.md) | Continuous diffusion, DFM, masked diffusion, FM action expert, and learnable-query paradigms compared |
 | [Discrete Flow Matching](wiki/concepts/discrete-flow-matching.md) | CTMC-based DFM theory; WAM-Flow vs. masked diffusion vs. continuous FM |
-| [RL for Autonomous Driving](wiki/concepts/rl-for-ad.md) | GRPO variants: simulator, GT-based, hierarchical (3DGS), adaptive Think, LRM-as-critic |
-| [VLM Domain Adaptation](wiki/concepts/vlm-domain-adaptation.md) | Data curation, CoT integration, dual-mode SFT, frozen VLM, Physical AI pre-training |
-| [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md) | PDMS/EPDMS metrics; SOTA table with caveats; Navhard OOD results |
-| [World Models for AD](wiki/concepts/world-model-for-ad.md) | Video generation as causal learning; UniUGP generation expert; FID/FVD |
-| [Dual-System VLA](wiki/concepts/dual-system-vla.md) | VLM decisions + E2E trajectory; consistency alignment; async KV cache |
-| [Inference-Time Safety](wiki/concepts/inference-time-safety.md) | Gradient-free safety correction; inpainting-as-repair pattern |
-| [Perception-Enhanced Planning](wiki/concepts/perception-for-planning.md) | World-PV/BEV tokens; grid-conditioned AR detection; IoU-aware confidence |
+| [RL for Autonomous Driving](wiki/concepts/rl-for-ad.md) | GRPO variants: simulator, GT-based, hierarchical (3DGS), adaptive Think, LRM-as-critic, Dr. GRPO |
+| [VLM Domain Adaptation](wiki/concepts/vlm-domain-adaptation.md) | Data curation, CoT integration, dual-mode SFT, frozen VLM, reasoning-free adaptation |
+| [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md) | PDMS/EPDMS metrics; full SOTA table with caveats; Navhard OOD results |
+| [World Models for AD](wiki/concepts/world-model-for-ad.md) | 10 architecture patterns from cascaded generation to latent RL reward sources |
+| [Dual-System VLA](wiki/concepts/dual-system-vla.md) | VLM decisions + E2E trajectory; consistency alignment; async KV cache; MoT paradigm |
+| [Inference-Time Safety](wiki/concepts/inference-time-safety.md) | Gradient-free safety correction; inpainting-as-repair; DriveFine block-MoE contrast |
+| [Perception-Enhanced Planning](wiki/concepts/perception-for-planning.md) | World-PV/BEV tokens; grid-conditioned AR detection; IoU-aware confidence; sparse MoT |
+| [Best-of-N Sampling](wiki/concepts/best-of-n.md) | Oracle trajectory selection; NAVSIM-v1 saturated at BoN-6 (94.8 = human GT); deployable variants |
+| [Bench2Drive Benchmark](wiki/concepts/bench2drive.md) | CARLA V2 closed-loop; interactive agents; DS + SR metrics; SOTA LinkVLA 91.01 DS |
+| [Chain-of-Thought for AD](wiki/concepts/chain-of-thought-for-ad.md) | Text/visual/self-reflection CoT types; annotation methods; adaptive CoT; NoRD challenge |
 
 ## Workflow
 
