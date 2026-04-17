@@ -30,14 +30,14 @@ N is typically 4 or 6 in current AD papers. Comparing BoN scores across differen
 
 ### NAVSIM-v1 (PDMS)
 
-| Method | Single-sample PDMS | BoN PDMS | N | Gain |
-|--------|-------------------|----------|---|------|
-| **Curious-VLA** | 90.3 | **94.8** | 6 | +4.5 (= human GT) |
-| DriveVLA-W0★ | 90.2 | **93.0** | 6 | +2.8 |
-| AdaThinkDrive | 90.3 | **93.0** | 4 | +2.7 |
-| NoRD | 85.6 | **92.4** | 6 | +6.8 |
-| AutoVLA | 89.11 | **92.12** | 6 | +3.01 |
-| Vega | 87.9 | **89.8** | 6 | +1.9 |
+| Method          | Single-sample PDMS | BoN PDMS  | N   | Gain              |
+| --------------- | ------------------ | --------- | --- | ----------------- |
+| **Curious-VLA** | 90.3               | **94.8**  | 6   | +4.5 (= human GT) |
+| DriveVLA-W0★    | 90.2               | **93.0**  | 6   | +2.8              |
+| AdaThinkDrive   | 90.3               | **93.0**  | 4   | +2.7              |
+| NoRD            | 85.6               | **92.4**  | 6   | +6.8              |
+| AutoVLA         | 89.11              | **92.12** | 6   | +3.01             |
+| Vega            | 87.9               | **89.8**  | 6   | +1.9              |
 
 ★ DriveVLA-W0's "90.2" single-sample uses query-based expert with trajectory anchors (multi-candidate selection within the model); the underlying single-model output is 88.4 PDMS. BoN-6 adds oracle selection on top.
 

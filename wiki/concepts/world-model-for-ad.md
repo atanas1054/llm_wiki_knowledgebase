@@ -1,10 +1,10 @@
 ---
 title: World Models for Autonomous Driving
 type: concept
-sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md]
-related: [sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md]
+sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md]
+related: [sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md]
 created: 2026-04-05
-updated: 2026-04-15
+updated: 2026-04-17
 confidence: high
 ---
 
@@ -36,11 +36,33 @@ The world model is a separate module that follows the planner. It receives the p
 - During training, future video prediction loss back-propagates into the shared understanding representation
 
 ### 2. Autoregressive World Model + Diffusion Planner
-The world model predicts future occupancy or images autoregressively; trajectory planning is coupled via shared latent states.
+The world model predicts future states autoregressively; trajectory planning is coupled via a shared latent conditioned on the same history.
 
-**Example: Epona**
-- Autoregressive diffusion model unifies world modeling and planning
-- Flow matching trajectory output conditioned on world model's predicted future state
+**Example: Epona** ([[sources/epona.md]])
+
+Epona (ICCV 2025, 2.5B params) combines a GPT-style causal transformer with twin diffusion transformers to solve two simultaneous problems: long-horizon video generation and real-time trajectory planning.
+
+**Core insight**: instead of modeling all future frames jointly (video diffusion) or tokenizing frames (GPT-AR), Epona decomposes the problem: a causal MST extracts a compact latent F from T history frames, and two specialized DiTs consume F in parallel — TrajDiT for trajectory, VisDiT for the next frame. Both optimized via rectified flow loss. The shared F is the key: it must be predictive of future visual states *and* useful for trajectory planning simultaneously.
+
+**Three-module architecture**:
+
+| Module | Params | Role |
+|--------|--------|------|
+| **MST** (Multimodal Spatiotemporal Transformer) | 1.3B | Interleaved causal temporal + spatial attention → compact latent F |
+| **VisDiT** (Next-frame DiT) | 1.2B | Rectified flow over next frame, conditioned on F + action |
+| **TrajDiT** (Trajectory DiT) | 50M | Rectified flow over 3s trajectory, conditioned on F |
+
+**MST design**: interleaves `CausalTemporalLayer` (across T frames, causal mask) and `MultimodalSpatialLayer` (within each frame), with action tokens ($\Delta\theta$, $\Delta x$, $\Delta y$) concatenated to visual latent patches along the spatial dimension.
+
+**Chain-of-forward training** (key innovation for long-horizon generation): standard teacher-forcing creates a training/inference distribution mismatch that compounds into autoregressive drift past ~10–20 seconds. Fix: every 10 steps, run 3 forward passes using self-predicted frames as history — where the self-prediction uses a cheap 1-step velocity estimate $\hat{x}_{(0)} = x_{(t)} + t \cdot v_\Theta(x_{(t)}, t)$ rather than full denoising. This exposes the model to its own errors during training. Result: stable generation at 120s / 600 frames (Vista: 15s, DrivingWorld: 40s).
+
+**Why joint training matters for planning** (ablation): disabling VisDiT while keeping TrajDiT drops NAVSIM PDMS 86.2 → 78.1 (−8.1). The world model supervision forces F to encode richer scene dynamics than trajectory prediction alone can achieve.
+
+**Inference modes**: VisDiT can be deactivated → MST + TrajDiT runs at 20 Hz (0.05s, real-time planning). Full generation (+ VisDiT, 100 steps) takes ~2.3s/frame.
+
+**Results**: FVD 82.8 on NuScenes (SOTA at time of publication, −7.4% vs Vista 89.4); generation length 120s (8× Vista). NAVSIM v1 86.2 PDMS (camera-only, no auxiliary supervision); NuScenes avg L2 1.25m / avg collision 0.36% (front camera only, no annotations). Best 1s collision rate (0.01%) — traffic rules learned purely from next-frame prediction.
+
+**Successor**: DreamerAD ([[sources/dreameraD.md]]) adds latent RL on top of Epona (SF-WM + AD-RM + vocabulary sampling) to reach 88.7 PDMS and 87.7 EPDMS — making Epona the strongest pure-SFT world model planning baseline in the wiki.
 
 ### 3. Tokenized World Model
 Future states represented as discrete tokens; model predicts token sequences for both future video and trajectory.
@@ -274,7 +296,7 @@ Note: FID/FVD measure distributional realism, not planning-relevant accuracy. A 
 | Drive-WM     | Diffusion                 | 192×384    | 15.8    | 122.7    |
 | Doe-1        | Autoregressive            | 384×672    | 15.9    | —        |
 | FSDrive      | Autoregressive            | 128×192    | 10.1    | —        |
-| Epona        | AR+Diffusion              | —          | 7.5     | 82.8     |
+| [Epona](../sources/epona.md) | AR+Diffusion | — | 7.5 | 82.8 |
 | **UniUGP**   | **AR+Diffusion (Wan2.1)** | **—**      | **7.4** | **75.9** |
 
 Note: FID is resolution-dependent — methods at higher resolution (Doe-1 384×672) would achieve lower FID at lower resolution. FSDrive's 10.1 at 128×192 is competitive for its resolution tier and model size (2B).
@@ -294,7 +316,7 @@ DDP substantially improves video coherence (−38% FVD) vs. PWM. The improvement
 |--------|------------|-------------------|-------|
 | Doe-1 | 1.26 | 0.53 | No ego status; Lumina-mGPT-7B |
 | **FSDrive** | **0.96** | **0.40** | **No ego status; Qwen2-VL-2B** |
-| Epona | 1.25 | 0.36 | — |
+| [Epona](../sources/epona.md) | 1.25 | 0.36 | Front cam, no aux supervision |
 | **UniUGP** | **1.23** | **0.33** | **multi-camera** |
 
 ## Open Questions

@@ -79,17 +79,17 @@ Depth loss down-weighted (0.1) — geometry is auxiliary to planning and video.
 
 ### NAVSIM-v1 Planning (Table 1)
 
-| Method | Sensors | NC ↑ | DAC ↑ | TTC ↑ | C ↑ | EP ↑ | PDMS ↑ |
-|---|---|---|---|---|---|---|---|
-| AutoVLA | 3C | 98.4 | 95.6 | 98.0 | 99.9 | 81.9 | 89.1 |
-| **DriveDreamer-Policy** | **3C** | **98.4** | **97.1** | **95.1** | **100.0** | **83.5** | **89.2** |
-| DriveVLA-W0 | 1C | 98.7 | 96.2 | 95.5 | 100.0 | 82.2 | 88.4 |
-| WoTE | 3C+L | 98.5 | 96.8 | 94.4 | 99.9 | 81.9 | 88.3 |
-| PWM | 1C | 98.6 | 95.9 | 95.4 | 100.0 | 81.8 | 88.1 |
-| DiffusionDrive | 3C+L | 98.2 | 96.2 | 94.7 | 100.0 | 82.2 | 88.1 |
-| Epona | 3C | 97.9 | 95.1 | 93.8 | 99.9 | 80.4 | 86.2 |
-| ReCogDrive* (IL only) | 3C | 98.1 | 94.7 | 94.2 | 100.0 | 80.9 | 86.5 |
-| FSDrive | 3C | 98.2 | 93.8 | 93.3 | 99.9 | 80.1 | 85.1 |
+| Method                  | Sensors | NC ↑     | DAC ↑    | TTC ↑    | C ↑       | EP ↑     | PDMS ↑   |
+| ----------------------- | ------- | -------- | -------- | -------- | --------- | -------- | -------- |
+| AutoVLA                 | 3C      | 98.4     | 95.6     | 98.0     | 99.9      | 81.9     | 89.1     |
+| **DriveDreamer-Policy** | **3C**  | **98.4** | **97.1** | **95.1** | **100.0** | **83.5** | **89.2** |
+| DriveVLA-W0             | 1C      | 98.7     | 96.2     | 95.5     | 100.0     | 82.2     | 88.4     |
+| WoTE                    | 3C+L    | 98.5     | 96.8     | 94.4     | 99.9      | 81.9     | 88.3     |
+| PWM                     | 1C      | 98.6     | 95.9     | 95.4     | 100.0     | 81.8     | 88.1     |
+| DiffusionDrive          | 3C+L    | 98.2     | 96.2     | 94.7     | 100.0     | 82.2     | 88.1     |
+| Epona                   | 3C      | 97.9     | 95.1     | 93.8     | 99.9      | 80.4     | 86.2     |
+| ReCogDrive* (IL only)   | 3C      | 98.1     | 94.7     | 94.2     | 100.0     | 80.9     | 86.5     |
+| FSDrive                 | 3C      | 98.2     | 93.8     | 93.3     | 99.9      | 80.1     | 85.1     |
 
 **Caveat**: Table 1 excludes DriveFine (90.7), WAM-Flow (90.3), AdaThinkDrive (90.3), Curious-VLA (90.3) — all above 89.2. The paper categorizes against "world-model-based methods" only and claims SOTA within that category. The ReCogDrive entry (86.5 ★) is the **IL-only** version; the RL-trained version achieves 89.6 PDMS and is not included.
 

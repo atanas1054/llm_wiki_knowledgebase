@@ -30,10 +30,12 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [DriveVLA-W0](sources/drivevla-w0.md) | Supervision deficit framing; AR + diffusion world models (training-time only); MoE action expert; 90.2★ PDMS (anchors) / 93.0 BoN-6; scaling reversal FM→AR at 70M frames |
 | [UniDriveVLA](sources/unidrivevla.md) | HUST + Xiaomi EV; MoT 3-expert (und/per/act) + masked joint attention; sparse 5-task perception; 3-stage progressive training; 78.37 DS Bench2Drive (best w/o PDM-Lite); 0.51m L2 nuScenes no-ego |
 | [FLARE](sources/flare.md) | OpenDriveLab + Li Auto; annotation-free DINOv2 future feature prediction + DiT + BC-GRPO; 86.9 PDMS SFT / 91.4 PDMS RFT (best single-sample VLM-based); 1 camera |
+| [Epona](sources/epona.md) | AR+Diffusion WM (MST+TrajDiT+VisDiT, 2.5B); chain-of-forward training; FVD 82.8 NuScenes SOTA; 120s generation; 86.2 PDMS NAVSIM-v1 (pre-VLA baselines only); backbone for DreamerAD |
 | [DreamerAD](sources/dreameraD.md) | Latent world model RL; SF-WM (80× speedup) + AD-RM (latent rewards) + Gaussian vocab sampling; 87.7 EPDMS NAVSIM-v2 / 88.7 PDMS NAVSIM-v1; Epona backbone |
 | [Vega](sources/vega.md) | Instruction-conditioned AR+Diffusion (Bagel-7B/MoT); InstructScene 100K; future image as dense supervision; 86.9 EPDMS / 89.4 BoN-6 NAVSIM-v2; open-ended NL instruction following |
 | [NoRD](sources/nord.md) | Reasoning-free VLA; k-disc tokens (2048); Dr. GRPO over GRPO (+11.68% vs +0.67%); 85.6 PDMS / 92.4 BoN-6 NAVSIM; 3rd RFS WaymoE2E with 6–17× less data; difficulty bias identification |
 | [DiffusionDrive](sources/diffusiondrive.md) | Truncated diffusion (20 anchors, 2 steps); cascade decoder (60M, 45 FPS); 88.1 PDMS NAVSIM; 74% mode diversity; canonical non-VLM diffusion baseline; ResNet-34 + C+L |
+| [DiffusionDriveV2](sources/diffusiondrive-v2.md) | DiffusionDrive + Intra/Inter-Anchor GRPO + multiplicative exploration noise; 91.2 PDMS NAVSIM-v1 / 85.5 EPDMS NAVSIM-v2; highest non-VLM result; ResNet-34 + C+L |
 
 ---
 

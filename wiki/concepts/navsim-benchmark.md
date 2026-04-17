@@ -1,10 +1,10 @@
 ---
 title: NAVSIM Benchmark
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/percept-wam.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/adathinkdrive.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/nord.md, sources/diffusiondrive.md, concepts/rl-for-ad.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/percept-wam.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/adathinkdrive.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/nord.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/epona.md, concepts/rl-for-ad.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md]
 created: 2026-04-05
-updated: 2026-04-15
+updated: 2026-04-17
 confidence: high
 ---
 
@@ -59,15 +59,17 @@ NAVSIM's simulator does not model other agents reacting to the ego vehicle. This
 | FLARE-4B (SFT)            | 1 Cam        | 86.9               | DINOv2 feature prediction + DiT + LoRA; no external pretraining; best VLM-based SFT                       |
 | FLARE-4B (RFT)            | 1 Cam        | 91.4               | +GRPO with BC regularization; single-sample; best single-sample VLM-based RFT                             |
 | DreamerAD                 | C-Only       | 88.7               | Latent world model RL (SF-WM + AD-RM + vocab sampling); Epona backbone; best world-model-class RL         |
-| Vega                      | 1 Cam        | 87.9               | Instruction-conditioned AR+diffusion; InstructScene 100K; no RL; 1 camera                                  |
-| **Vega† (BoN-6)**         | **1 Cam**    | **89.8**           | **Best-of-6; instruction-conditioned**                                                                      |
+| Vega                      | 1 Cam        | 87.9               | Instruction-conditioned AR+diffusion; InstructScene 100K; no RL; 1 camera                                 |
+| **Vega† (BoN-6)**         | **1 Cam**    | **89.8**           | **Best-of-6; instruction-conditioned**                                                                    |
+| Epona                     | Camera       | 86.2               | AR+Diffusion WM; 2.5B; front cam, no aux supervision; comparison vs. pre-2025 baselines only; backbone for DreamerAD |
 | ARTEMIS                   | Camera+LiDAR | 87.0               |                                                                                                           |
 | DiffusionDrive            | Camera+LiDAR | 88.1               | Truncated diffusion (20 anchors, 2 steps); ResNet-34; 45 FPS; canonical non-VLM diffusion baseline        |
+| **DiffusionDriveV2**      | **Camera+LiDAR** | **91.2**       | **DiffusionDrive + Intra/Inter-Anchor GRPO + multiplicative noise; ResNet-34; highest non-VLM result; beats V2-99 methods** |
 | WoTE                      | Camera+LiDAR | 88.3               |                                                                                                           |
 | NoRD                      | 3 Cam        | 85.6               | No reasoning, no LiDAR; 80K samples; Dr. GRPO; data-efficiency frontier                                   |
-| **NoRD-BoN* (6)**         | **3 Cam**    | **92.4**           | **Best-of-6 oracle; no reasoning; surpasses AutoVLA-BoN (92.1)**                                         |
+| **NoRD-BoN* (6)**         | **3 Cam**    | **92.4**           | **Best-of-6 oracle; no reasoning; surpasses AutoVLA-BoN (92.1)**                                          |
 | AutoVLA                   | 3 Cam        | 89.1               | AR + GRPO                                                                                                 |
-| ReCogDrive                | 3 Cam        | 89.6†              | AR + Diffusion + GRPO; †DreamerAD's table cites 90.8 (NeurIPS camera-ready); earlier arXiv = 89.6        |
+| ReCogDrive                | 3 Cam        | 89.6†              | AR + Diffusion + GRPO; †DreamerAD's table cites 90.8 (NeurIPS camera-ready); earlier arXiv = 89.6         |
 | ReflectDrive              | 3 Cam        | >89.1 (claimed)    | Masked diffusion + reflective inference; exact number not in markdown                                     |
 | WAM-Flow (5-step)         | 1 Cam        | 90.3               | DFM + GRPO                                                                                                |
 | Percept-WAM\*             | Cam+LiDAR    | 90.2               | World-PV/BEV tokens + SFT; no RL; comparison vs. DiffusionDrive only                                      |
@@ -105,6 +107,10 @@ FLARE-4B RFT (91.4) is now the **highest single-sample VLM-based NAVSIM-v1 resul
 
 **Caveat on DreamerAD (88.7)**: Table 2 compares against WorldRFT (87.8), Epona (86.2), World4Drive (85.1), and VLA methods AutoVLA (89.1) and RecogDrive (90.8). AutoVLA (89.1) and RecogDrive (90.8) use stronger vision encoders; DreamerAD uses encoder pretrained exclusively on unsupervised video — making direct numerical comparison across encoder classes misleading. The 88.7 PDMS is the strongest result for Epona-class world-model methods. DreamerAD is not compared against FLARE (91.4), DriveFine (90.7), or WAM-Flow (90.3). See [[sources/dreameraD.md]].
 
+**Caveat on Epona (86.2 PDMS)**: NAVSIM table compares only against pre-2025 baselines (UniAD 83.4, PARA-Drive 84.6, LAW 84.6, TransFuser 84.0, DRAMA 85.5, VADv2 80.9). No head-to-head with DiffusionDrive (88.1), ReCogDrive (89.6), WAM-Flow (90.3), DriveFine (90.7), FLARE (91.4), or DiffusionDriveV2 (91.2) — all of which exceed it. Camera-only, front camera, no auxiliary supervision. Epona's primary contribution is world model quality (FVD 82.8 NuScenes SOTA) and long-horizon generation (120s), not NAVSIM planning. DreamerAD adds latent RL on top of Epona to reach 88.7 PDMS. No NAVSIM-v2 / EPDMS reported. See [[sources/epona.md]].
+
+**Caveat on DiffusionDriveV2 (91.2 PDMS / 85.5 EPDMS)**: NAVSIM v1 table compares against DriveSuprim (89.9), Hydra-MDP V2-99 (90.3), GoalFlow V2-99 (90.3), DIVER (88.3), WoTE (88.3) — fair comparison; no head-to-head with FLARE (91.4) or WAM-Flow (90.3) at the VLM-era frontier. NAVSIM v2 table only includes Transfuser, Hydra-MDP++, DriveSuprim, and ARTEMIS — excludes DriveDreamer-Policy (88.7), DreamerAD (87.7), and Senna-2 (86.6). DiffusionDriveV2 (85.5 EPDMS) is below all three omitted methods. EC = 91.0 is the highest in the wiki, suggesting the RL training strongly improves comfort and extended comfort specifically. Uses ResNet-34 + Camera+LiDAR, no VLM; 2 denoising steps at inference. See [[sources/diffusiondrive-v2.md]].
+
 **Caveat on DiffusionDrive (88.1)**: Table 1 compares against Transfuser-era baselines (UniAD 83.4, Transfuser 84.0, DRAMA 85.5, VADv2 80.9, Hydra-MDP-W-EP 86.5) — no VLA-era methods included. Uses Camera+LiDAR (ResNet-34); not comparable to camera-only VLMs. 88.1 PDMS was SOTA at publication (November 2024) but has been superseded by ReCogDrive (89.6), WAM-Flow (90.3), DriveFine (90.7), and FLARE (91.4). DiffusionDrive is now the canonical non-VLM diffusion baseline. See [[sources/diffusiondrive.md]].
 
 **Caveat on AutoVLA (89.11)**: Table 1 compares against Hydra-MDP (91.26), Centaur (92.10), TrajHF (93.95) — older non-VLM baselines — and does not include DriveFine, WAM-Flow, or Curious-VLA. AutoVLA post-RFT (89.11) is below the current single-sample SOTA (DriveFine 90.7). The 89.11 figure cross-validates with the "AutoVLA 89.1" entry in Curious-VLA's comparison table. See [[sources/autovla.md]].
@@ -113,21 +119,22 @@ FLARE-4B RFT (91.4) is now the **highest single-sample VLM-based NAVSIM-v1 resul
 
 ## NAVSIM-v2 SOTA (EPDMS)
 
-| Method                   | EPDMS    | EC   | Notable weakness / caveat                                      |
-| ------------------------ | -------- | ---- | -------------------------------------------------------------- |
-| Artemis                  | 83.1     | 89.1 | —                                                              |
-| RecogDrive               | 83.6     | 87.7 | —                                                              |
-| DiffusionDrive           | 84.5     | 87.7 | —                                                              |
-| WAM-Flow                 | 84.7     | 73.9 | Low EC (comfort); high safety metrics                          |
-| ResAD                    | 85.5     | —    | —                                                              |
-| Curious-VLA              | 85.3     | 81.5 | EC regression from exploration; thin v2 comparison set        |
-| Senna-2                  | 86.6     | —    | Requires separate NAVSIM fine-tune                             |
-| DriveVLA-W0              | 86.1     | 58.9 | Lowest EC in wiki; world model training-time only              |
-| **DriveDreamer-Policy**  | **88.7** | 79.4 | Thin comparison set (only DriveVLA-W0 as VLA baseline); low EC |
-| FLARE-4B                 | 86.3     | 87.5 | Omits Senna-2 (86.6) and DDP (88.7) from comparison; best EC among VLA wiki entries |
-| DreamerAD                | 87.7     | 72.4 | Latent world model RL; beats WorldRFT (86.7) and Senna-2 (86.6); compares directly vs. WorldRFT in table |
-| Vega (single)            | 86.9     | 76.3 | Instruction-conditioned; no RL; 1 camera; comparison vs. DriveVLA-W0 only                                 |
-| **Vega BoN-6**           | **89.4** | 84.5 | Best-of-6; likely surpasses DDP (88.7) but no direct head-to-head                                         |
+| Method                  | EPDMS    | EC   | Notable weakness / caveat                                                                                |
+| ----------------------- | -------- | ---- | -------------------------------------------------------------------------------------------------------- |
+| Artemis                 | 83.1     | 89.1 | —                                                                                                        |
+| RecogDrive              | 83.6     | 87.7 | —                                                                                                        |
+| DiffusionDrive          | 84.5     | 87.7 | —                                                                                                        |
+| WAM-Flow                | 84.7     | 73.9 | Low EC (comfort); high safety metrics                                                                    |
+| ResAD                   | 85.5     | —    | —                                                                                                        |
+| Curious-VLA             | 85.3     | 81.5 | EC regression from exploration; thin v2 comparison set                                                   |
+| Senna-2                 | 86.6     | —    | Requires separate NAVSIM fine-tune                                                                       |
+| DriveVLA-W0             | 86.1     | 58.9 | Lowest EC in wiki; world model training-time only                                                        |
+| **DriveDreamer-Policy** | **88.7** | 79.4 | Thin comparison set (only DriveVLA-W0 as VLA baseline); low EC                                           |
+| FLARE-4B                | 86.3     | 87.5 | Omits Senna-2 (86.6) and DDP (88.7) from comparison; best EC among VLA wiki entries                      |
+| DreamerAD               | 87.7     | 72.4 | Latent world model RL; beats WorldRFT (86.7) and Senna-2 (86.6); compares directly vs. WorldRFT in table |
+| Vega (single)           | 86.9     | 76.3 | Instruction-conditioned; no RL; 1 camera; comparison vs. DriveVLA-W0 only                                |
+| **Vega BoN-6**          | **89.4** | 84.5 | Best-of-6; likely surpasses DDP (88.7) but no direct head-to-head                                        |
+| DiffusionDriveV2        | 85.5     | 91.0 | DiffusionDrive + RL; EC = 91.0 (very strong); comparison table excludes DDP, DreamerAD, Senna-2          |
 
 DreamerAD ([[sources/dreameraD.md]]) achieves 87.7 EPDMS — surpasses Senna-2 (86.6), WorldRFT (86.7), and FLARE (86.3). Unlike DDP, DreamerAD compares directly against WorldRFT and Epona in its own table, strengthening its position.
 

@@ -4,6 +4,63 @@ Append-only log of all wiki operations.
 
 ---
 
+## 2026-04-17 — Ingest: Epona
+
+**Source**: `raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md`  
+**arXiv**: 2506.24113  
+**Org**: Horizon Robotics, Tsinghua, PKU, NJU, HKUST, NTU, Tencent  
+**Venue**: ICCV 2025
+
+**Pages created**:
+- `wiki/sources/epona.md` — full source summary with 7 figures (Figure 1 URL-only, not locally available), all tables, complete architecture description (MST + TrajDiT + VisDiT), chain-of-forward training formulation, and full ablation data
+
+**Concept pages updated**:
+- `wiki/concepts/world-model-for-ad.md` — expanded Pattern 2 stub (Autoregressive WM + Diffusion Planner) into full section covering MST architecture, chain-of-forward, shared latent ablation, inference modes, and DreamerAD relationship; linked Epona to FID/planning tables; bumped frontmatter
+- `wiki/concepts/navsim-benchmark.md` — added Epona (86.2 PDMS) to SOTA v1 table; added caveat paragraph noting pre-2025-baseline-only comparison; bumped frontmatter
+
+**Source pages updated**:
+- `wiki/sources/dreameraD.md` — added `sources/epona.md` to related frontmatter
+
+**Index updated**: added Epona row to Sources table (inserted above DreamerAD).
+
+**Key facts**:
+- FVD 82.8 NuScenes (SOTA at time; −7.4% vs Vista 89.4); generation horizon 120s / 600 frames (vs Vista 15s)
+- 86.2 PDMS NAVSIM-v1 camera-only; comparison table excludes all VLA-era methods (DriveFine 90.7, WAM-Flow 90.3, etc.)
+- Joint video+trajectory training critical: disabling VisDiT → PDMS 86.2 → 78.1 (−8.1)
+- Chain-of-forward training: 1-step velocity estimate prevents autoregressive drift in long-horizon generation
+- Real-time planning (20 Hz) only with VisDiT disabled; full generation is ~2.3s/frame
+- Epona is DreamerAD's base model; DreamerAD adds latent RL → 88.7 PDMS (+2.5)
+- Figure 1 in source file is a URL reference to arxiv — not saved locally as an asset
+
+---
+
+## 2026-04-16 — Ingest: DiffusionDriveV2
+
+**Source**: `raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md`  
+**arXiv**: 2512.07745  
+**Org**: HUST (EIC + AI Institute), Horizon Robotics, Wuhan University  
+**Venue**: December 2024
+
+**Pages created**:
+- `wiki/sources/diffusiondrive-v2.md` — full source summary with all 8 figures, all tables, and complete method description including Intra/Inter-Anchor GRPO formulations and multiplicative noise derivation
+
+**Concept pages updated**:
+- `wiki/concepts/rl-for-ad.md` — added "DiffusionDriveV2: Anchored Truncated GRPO" section; updated GRPO comparison table with DiffusionDriveV2 row; bumped frontmatter `updated` and `sources`/`related`
+- `wiki/concepts/diffusion-planner.md` — added DiffusionDriveV2 subsection under DiffusionDrive section; updated comparison table to include V2 row; bumped frontmatter
+- `wiki/concepts/navsim-benchmark.md` — added DiffusionDriveV2 to NAVSIM v1 SOTA table (91.2) and v2 SOTA table (85.5 EPDMS); added caveat paragraph; bumped frontmatter
+
+**Index updated**: added DiffusionDriveV2 row to Sources table.
+
+**Key facts**:
+- 91.2 PDMS NAVSIM-v1 (highest non-VLM result in wiki; +3.1 over DiffusionDrive); 85.5 EPDMS NAVSIM-v2
+- EC = 91.0 on NAVSIM-v2 (highest extended comfort in wiki)
+- NAVSIM-v2 caveat: 85.5 EPDMS below DriveDreamer-Policy (88.7), DreamerAD (87.7), Senna-2 (86.6); those methods excluded from V2's comparison table
+- Intra-Anchor GRPO prevents mode collapse from cross-intent advantage comparison (+0.9 PDMS ablation)
+- Inter-Anchor Truncated GRPO provides global collision penalty floor (+0.6 PDMS ablation)
+- Multiplicative exploration noise preserves trajectory smoothness (+0.4 PDMS ablation)
+
+---
+
 ## 2026-04-15 — Lint + New Concept Pages
 
 **Lint fixes applied**:

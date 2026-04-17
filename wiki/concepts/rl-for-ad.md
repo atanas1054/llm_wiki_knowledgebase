@@ -1,10 +1,10 @@
 ---
 title: Reinforcement Learning for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, sources/dreameraD.md, sources/nord.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, sources/dreameraD.md, sources/nord.md, sources/diffusiondrive-v2.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md]
 created: 2026-04-05
-updated: 2026-04-15
+updated: 2026-04-16
 confidence: high
 ---
 
@@ -485,6 +485,65 @@ The paper claims BC is more reliable for preventing collapse in diffusion planne
 
 **Result**: SFT 86.9 → RFT 91.4 PDMS (+4.5 PDMS); EC = 87.5 on NAVSIM-v2 — no reward hacking observed (contrast with DriveFine finding for KL-penalized diffusion planners).
 
+## DiffusionDriveV2: Anchored Truncated GRPO
+
+**DiffusionDriveV2** ([[sources/diffusiondrive-v2.md]]) applies RL specifically to the **truncated GMM diffusion** architecture of DiffusionDrive, addressing a failure mode that vanilla GRPO-on-diffusion would not solve: cross-anchor mode collapse.
+
+### The Multi-Modal Supervision Gap in IL
+
+DiffusionDrive's GMM prior has $N_\text{anchor}$ = 20 anchors, each representing a distinct driving intent (straight, turn, overtake, etc.). Imitation learning can only supervise the one anchor closest to the GT trajectory per scene. The 19 negative-mode anchors receive **zero quality constraints** — they generate trajectories but nothing prevents those trajectories from colliding. The downstream selector (a far smaller module) must save the system from these unsafe samples, and fails under OOD conditions.
+
+### Why Vanilla GRPO Fails for GMM Diffusion
+
+Applying standard GRPO across all anchors as one group causes mode collapse. A "turn left" trajectory compared to a "go straight" trajectory via group-level advantage estimation would systematically favor the dominant mode — exactly the problem DiffusionDrive's anchor design was meant to solve. The insight: **cross-intent advantage comparison is conceptually wrong for multi-modal models**.
+
+### Intra-Anchor GRPO
+
+For each anchor $k$, generate $G$ trajectory variations using multiplicative exploration noise. Compute GRPO advantages **within this same-intent group only**:
+
+$$A^{k,i} = \frac{r^{k,i} - \text{mean}(\{r^{k,j}\}_{j=1}^G)}{\text{std}(\{r^{k,j}\}_{j=1}^G)}$$
+
+The RL loss uses a denoising discount $\gamma_{t-1}$ (set to 0.8) to downweight gradients from early, noisier denoising steps:
+
+$$L_\text{RL} = -\frac{1}{N_\text{anchor}}\sum_k \frac{1}{G}\sum_i \frac{1}{T_\text{trunc}}\sum_t \gamma_{t-1} \log \pi_\theta(\tau_{t-1}^{k,i} \mid \tau_t^{k,i})\, A^{k,i}$$
+
+Combined with an IL regularization term ($\lambda L_\text{IL}$, BC = 0.1) to preserve pre-trained driving capability.
+
+**Ablation**: intra-anchor vs. cross-anchor — 90.1 vs. 89.2 PDMS (+0.9). Cross-anchor causes partial mode collapse even in a non-degenerate setting.
+
+### Inter-Anchor Truncated GRPO
+
+Pure intra-anchor isolation has a blind spot: a colliding trajectory can receive positive local advantage if it outperforms its own anchor group peers. Fix — truncated advantage:
+
+$$A_\text{trunc}^{k,i} = \begin{cases} -1 & \text{if collision} \\ \max(0, A^{k,i}) & \text{otherwise} \end{cases}$$
+
+Principle: **reward relative improvements, penalize absolute failures**. Negative local advantages are zeroed (no punishment for "safe but below group mean"). Collisions receive a universal hard penalty regardless of anchor group or local rank. Only trajectories that are both safe and locally above average receive positive gradient.
+
+**Ablation**: with vs. without inter-anchor truncation — 90.1 vs. 89.5 PDMS (+0.6).
+
+### Scale-Adaptive Multiplicative Exploration Noise
+
+Standard additive Gaussian noise disrupts trajectory smoothness because trajectory coordinates have scale-dependent magnitudes (near waypoints small, far waypoints large). DiffusionDriveV2 uses multiplicative noise: $\tau' = (1 + \epsilon_\text{mul})\tau$ with just two scalars (longitudinal, lateral). The perturbation is proportionally larger for distant waypoints — matching the natural uncertainty profile. Ablation: multiplicative vs. additive — 90.1 vs. 89.7 PDMS (+0.4).
+
+### Results
+
+DiffusionDriveV2 achieves **91.2 PDMS** on NAVSIM v1 (ResNet-34, +3.1 over DiffusionDrive, new non-VLM SOTA). Diversity–quality trade-off (raw output, 20 trajectories, no selector):
+
+| Method | Div. | PDMS@1 | PDMS@5 | PDMS@10 |
+|--------|------|--------|--------|---------|
+| DiffusionDrive | 42.3 | 93.5 | 84.3 | 75.3 |
+| **DiffusionDriveV2** | **30.3** | **94.9** | **91.1** | **84.4** |
+
+RL raises both the upper bound (PDMS@1: +1.4) and the quality floor (PDMS@10: +9.1) — validating the exploration-constraint dual role of RL.
+
+### Connection to Other RL Papers in the Wiki
+
+- **vs. ReCogDrive (vanilla GRPO on diffusion)**: V2 uses anchor-scoped GRPO instead of flat group estimation. ReCogDrive achieves +2.8 PDMS from RL; V2 achieves +3.1 PDMS from RL — similar magnitude, but V2 is specifically designed to avoid mode collapse that ReCogDrive would suffer from if applied to a GMM model.
+- **vs. FLARE (BC-regularized GRPO on DiT)**: both use BC regularization to prevent reward hacking in diffusion planners. FLARE uses BC in place of KL divergence; V2 uses BC as a supplementary IL loss alongside truncated GRPO. Both avoid the EPDMS degradation that DriveFine reported for KL-penalized diffusion planners.
+- **vs. DIVER**: also RL-based on a similar architecture; DiffusionDriveV2 outperforms DIVER by +2.9 PDMS (91.2 vs. 88.3), suggesting the intra/inter-anchor GRPO design provides a meaningful advantage over simpler RL approaches.
+
+---
+
 ### Comparison: All GRPO Reward Designs in the Wiki
 
 | Method | Reward | Simulator needed? | Reasoning reward? | Adaptive reasoning? | Regularization |
@@ -498,11 +557,12 @@ The paper claims BC is more reliable for preventing collapse in diffusion planne
 | AutoDrive-R² | 4-component physics MSE | No | No | No | KL |
 | Alpamayo-R1 | LRM-graded reasoning + binary consistency + L2/collision/jerk | No | Yes (LRM-as-critic) | No | KL |
 | AdaThinkDrive | PDMS + format + endpoint + Adaptive Think | Yes | No | Yes (mode-comparison rollout) | KL |
-| **FLARE** | **PDM-Score (R_progress + R_safety + R_comfort)** | **Yes** | **No** | **No** | **BC (λ=0.1)** |
-| **DreamerAD** | **Latent AD-RM (8 dims × 8 horizons, log-sigmoid safety)** | **Vocabulary filtering only** | **No** | **No** | **BC + KL** |
-| **NoRD** | **PDMS + format + length (all [0,1])** | **Yes** | **No** | **No** | **None (no KL)** |
+| FLARE | PDM-Score (R_progress + R_safety + R_comfort) | Yes | No | No | BC (λ=0.1) |
+| DreamerAD | Latent AD-RM (8 dims × 8 horizons, log-sigmoid safety) | Vocabulary filtering only | No | No | BC + KL |
+| NoRD | PDMS + format + length (all [0,1]) | Yes | No | No | None (no KL) |
+| **DiffusionDriveV2** | **PDMS (NAVSIM) + hard collision penalty (−1)** | **Yes** | **No** | **No** | **BC (λ=0.1, IL loss)** |
 
-AR1 is the only method with explicit reasoning evaluation as a reward component. FLARE is the only method using BC (not KL) regularization for a diffusion planner. **DreamerAD is the only method where reward is computed from latent world model features** rather than a PDM simulator or GT trajectories — a fundamentally different reward source.
+AR1 is the only method with explicit reasoning evaluation as a reward component. FLARE and DiffusionDriveV2 both use BC regularization for diffusion planners — the key distinction is DiffusionDriveV2 additionally introduces anchor-scoped advantage estimation and truncated collision penalization, neither of which appear in FLARE. **DreamerAD is the only method where reward is computed from latent world model features** rather than a PDM simulator or GT trajectories.
 
 ## DreamerAD: RL within Latent World Model Imagination Space
 

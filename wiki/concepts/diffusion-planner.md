@@ -1,10 +1,10 @@
 ---
 title: Diffusion-Based Trajectory Planner
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/orion.md, sources/linkvla.md, sources/drivefine.md, sources/autovla.md, sources/alpamayo-r1.md, sources/diffusiondrive.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/orion.md, sources/linkvla.md, sources/drivefine.md, sources/autovla.md, sources/alpamayo-r1.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md]
 created: 2026-04-05
-updated: 2026-04-15
+updated: 2026-04-16
 confidence: high
 ---
 
@@ -105,19 +105,32 @@ Replaces the UNet (101M params) with a lightweight transformer decoder (60M para
 
 The cascade decoder alone contributes +2.4 PDMS over truncated DP with UNet, while being 39% lighter.
 
-### DiffusionDrive vs. Later VLA Diffusion Methods
+### DiffusionDriveV2: RL-Constrained Truncated Diffusion
 
-DiffusionDrive uses ResNet-34 + Camera+LiDAR, no VLM. It predates the VLA wave and uses far simpler perception. Comparisons across paradigms:
+**DiffusionDriveV2** ([[sources/diffusiondrive-v2.md]]) is DiffusionDrive's direct successor, keeping the truncated GMM diffusion architecture but adding a carefully designed RL stage. The core insight: imitation learning can only supervise one mode per scene (the anchor closest to GT). This leaves 19 of 20 anchors without quality constraints — generating diverse but unsafe trajectories. RL fills this gap.
 
-| Method | PDMS | Backbone | Sensors | Reasoning |
-|--------|------|----------|---------|-----------|
-| DiffusionDrive | 88.1 | ResNet-34 | C+L | None |
-| ReCogDrive | 89.6 | InternVL3 | 3-cam | VLM+CoT |
-| WAM-Flow | 90.3 | Custom | 1-cam | None |
-| DriveFine | 90.7 | LLaDA-8B | 1-cam | None |
-| FLARE | 91.4 | Qwen3-VL-4B | 1-cam | DINOv2 |
+**Three RL innovations** (see [[concepts/rl-for-ad.md]] for full treatment):
 
-DiffusionDrive (88.1) establishes the diffusion planner as a competitive architecture before VLM backbones were applied. The performance gap to VLA-era methods (88.1 → 90.7+) reflects the combination of better backbones and RL post-training, not diffusion vs. other architectures.
+1. **Scale-adaptive multiplicative noise**: $\tau' = (1 + \epsilon_\text{mul})\tau$ — preserves trajectory smoothness vs. additive noise, which creates jagged paths due to scale inconsistency between near/far waypoints.
+
+2. **Intra-Anchor GRPO**: advantage estimation scoped within each anchor's sample group. Cross-anchor comparison would cause mode collapse — e.g., turn-left trajectories competing with go-straight trajectories for positive advantage would favor the dominant mode.
+
+3. **Inter-Anchor Truncated GRPO**: global safety floor via $A_\text{trunc}^{k,i} = -1$ for collisions, $\max(0, A^{k,i})$ otherwise. Prevents locally-valid but globally-unsafe trajectories from receiving positive gradient.
+
+**Result**: PDMS@10 (quality floor) jumps from 75.3 → 84.4 (+9.1); PDMS@1 (ceiling) improves 93.5 → 94.9 (+1.4). Final NAVSIM v1 score: **91.2 PDMS** with ResNet-34 — the highest non-VLM result in the wiki.
+
+### DiffusionDrive vs. DiffusionDriveV2 vs. Later VLA Methods
+
+| Method | PDMS | Backbone | Sensors | RL | Reasoning |
+|--------|------|----------|---------|-----|-----------|
+| DiffusionDrive | 88.1 | ResNet-34 | C+L | No | None |
+| **DiffusionDriveV2** | **91.2** | **ResNet-34** | **C+L** | **Yes** | **None** |
+| ReCogDrive | 89.6 | InternVL3 | 3-cam | Yes | VLM+CoT |
+| WAM-Flow | 90.3 | Custom | 1-cam | Yes | None |
+| DriveFine | 90.7 | LLaDA-8B | 1-cam | Yes | None |
+| FLARE | 91.4 | Qwen3-VL-4B | 1-cam | Yes | DINOv2 |
+
+DiffusionDriveV2 (91.2) closes most of the gap to VLA-era methods (90.3–91.4) using only ResNet-34 — demonstrating that RL, not the VLM backbone, is the primary lever for PDMS gains in this regime.
 
 ## Learnable Action Queries: A Non-Diffusion Parallel Alternative (Reasoning-VLA)
 

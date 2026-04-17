@@ -2,7 +2,7 @@
 title: "DreamerAD: Efficient Reinforcement Learning via Latent World Model for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md]
-related: [concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md]
+related: [sources/epona.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md]
 created: 2026-04-08
 updated: 2026-04-08
 confidence: high
