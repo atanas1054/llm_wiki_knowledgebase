@@ -16,7 +16,7 @@ wiki/
 CLAUDE.md      # Workflow instructions for the LLM assistant
 ```
 
-## Papers Ingested (31)
+## Papers Ingested (32)
 
 | Paper | Org | Key Contribution | Benchmark |
 |-------|-----|-----------------|-----------|
@@ -48,6 +48,7 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [DiffusionDrive](wiki/sources/diffusiondrive.md) | HUST + Horizon Robotics | Truncated diffusion (20 anchors, 2 steps); cascade decoder; 45 FPS | 88.1 PDMS NAVSIM-v1 (non-VLM baseline) |
 | [DiffusionDriveV2](wiki/sources/diffusiondrive-v2.md) | HUST + Horizon Robotics | Intra/Inter-Anchor GRPO + multiplicative noise on truncated diffusion; highest non-VLM result | 91.2 PDMS NAVSIM-v1 / 85.5 EPDMS NAVSIM-v2 |
 | [Epona](wiki/sources/epona.md) | Horizon Robotics + Tsinghua + PKU | AR+Diffusion WM (MST+DiTs, 2.5B); chain-of-forward training; backbone for DreamerAD | FVD 82.8 NuScenes SOTA; 86.2 PDMS NAVSIM-v1 |
+| [HybridDriveVLA / DualDriveVLA](wiki/sources/hybriddriveVLA.md) | — | 3-RQ complementarity analysis (CKA/SAE); VLM+ViT dual-branch + style-axis interpolation + trajectory scorer; fast–slow deployment | 92.10 PDMS NAVSIM-v1; 91.0 PDMS @ 3.2× throughput (DualDriveVLA) |
 
 ## Concept Pages (12)
 
@@ -59,7 +60,7 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [VLM Domain Adaptation](wiki/concepts/vlm-domain-adaptation.md) | Data curation, CoT integration, dual-mode SFT, frozen VLM, reasoning-free adaptation |
 | [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md) | PDMS/EPDMS metrics; full SOTA table with caveats; Navhard OOD results |
 | [World Models for AD](wiki/concepts/world-model-for-ad.md) | 10 architecture patterns from cascaded generation to latent RL reward sources |
-| [Dual-System VLA](wiki/concepts/dual-system-vla.md) | VLM decisions + E2E trajectory; consistency alignment; async KV cache; MoT paradigm |
+| [Dual-System VLA](wiki/concepts/dual-system-vla.md) | VLM decisions + E2E trajectory; consistency alignment; async KV cache; MoT paradigm; complementarity + fast–slow deployment |
 | [Inference-Time Safety](wiki/concepts/inference-time-safety.md) | Gradient-free safety correction; inpainting-as-repair; DriveFine block-MoE contrast |
 | [Perception-Enhanced Planning](wiki/concepts/perception-for-planning.md) | World-PV/BEV tokens; grid-conditioned AR detection; IoU-aware confidence; sparse MoT |
 | [Best-of-N Sampling](wiki/concepts/best-of-n.md) | Oracle trajectory selection; NAVSIM-v1 saturated at BoN-6 (94.8 = human GT); deployable variants |

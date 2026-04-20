@@ -4,6 +4,35 @@ Append-only log of all wiki operations.
 
 ---
 
+## 2026-04-19 — Ingest: HybridDriveVLA / DualDriveVLA
+
+**Source**: `raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md`  
+**arXiv**: 2602.10719v1  
+**Venue**: Machine Learning, ICML
+
+**Pages created**:
+- `wiki/sources/hybriddriveVLA.md` — full source summary with all 4 figures (aligned_feature_kde.png, cka_backbone_vs_dit.png, x1 21.png, Dual.png), all quantitative tables (RQ1 CKA/SAE, RQ2 BoN/complementarity, RQ3 ablation, NAVSIM-v1/v2 comparison), method descriptions for HybridDriveVLA and DualDriveVLA
+
+**Concept pages updated**:
+- `wiki/concepts/dual-system-vla.md` — added "Representational Complementarity" section with full exposition of 3-RQ framework; HybridDriveVLA/DualDriveVLA mechanism (style-axis interpolation, trajectory scorer, fast–slow deployment); comparison table expanded with new column; frontmatter bumped
+- `wiki/concepts/best-of-n.md` — added "Cross-Model BoN" section establishing cross-model diversity as richer than within-model sampling (oracle cross-model best-of-2: 93.58 vs. within-model BoN-6: 91.95); HybridDriveVLA as second deployable BoN variant; frontmatter bumped
+- `wiki/concepts/navsim-benchmark.md` — added HybridDriveVLA (92.1 PDMS v1, 85.5 EPDMS v2) and DualDriveVLA (91.0 PDMS) to SOTA tables; added HybridDriveVLA caveat (ensemble method, DAC weakness, limited v2 comparison set); frontmatter bumped
+
+**Index updated**: added HybridDriveVLA / DualDriveVLA row.
+
+**Key facts**:
+- 3-RQ analysis on RecogDrive: VLM (InternVL-2B) vs. ViT-large in same DiT planner
+- Backbone CKA ~0.22 → DiT CKA ~0.54: policy learning compresses heterogeneous visual signals
+- Representation-only gating ceiling: 90.96 PDMS (vs. VLM baseline 90.80, oracle 93.58)
+- VLM is faster/more aggressive in ~66% of scenarios; each side decisively wins on ~2–3% long-tail scenarios
+- Cross-model oracle best-of-2: 93.58 PDMS (+2.78 over VLM single) >> within-model BoN-6 VLM: 91.95
+- HybridDriveVLA: 11-candidate set (2 endpoints + 9 interpolations) + DrivoR-style trajectory scorer → **92.10 PDMS** NAVSIM-v1
+- DualDriveVLA: 15% VLM invocations → **91.00 PDMS** at **3.2× throughput**
+- NAVSIM-v2: 85.5 EPDMS; DAC = 92.2 (lowest in its comparison table — interpolated trajectories occasionally exit drivable area)
+- Comparison table in paper includes DiffusionDriveV2 (91.2) and iPad (91.7) — relatively fair
+
+---
+
 ## 2026-04-17 — Ingest: Epona
 
 **Source**: `raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md`  

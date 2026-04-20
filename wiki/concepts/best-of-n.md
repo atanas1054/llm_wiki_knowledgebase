@@ -1,10 +1,10 @@
 ---
 title: Best-of-N Sampling
 type: concept
-sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md]
-related: [sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md]
+sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md]
+related: [sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md]
 created: 2026-04-15
-updated: 2026-04-15
+updated: 2026-04-19
 confidence: high
 ---
 
@@ -66,6 +66,49 @@ AdaThinkDrive BoN-4 (93.0) and DriveVLA-W0 BoN-6 (93.0) achieve identical PDMS �
 ### 4. Relationship to learned selectors: DreamerAD's vocabulary sampling
 
 DreamerAD generates 256 candidate trajectories and selects the best via a learned AD-RM reward model trained on latent features — not PDMS oracle. This is a **deployable BoN variant**: the selector is an approximation but runs entirely from latent features without the PDM simulator. It achieves 87.7 EPDMS from a base of 85.1, a +2.6 gain. This is the only wiki method that closes the BoN gap in a deployment-feasible way. See [[sources/dreameraD.md]].
+
+---
+
+## Cross-Model BoN: Complementarity as Diversity Source
+
+All BoN results above draw N samples from a **single model**. HybridDriveVLA ([[sources/hybriddriveVLA.md]]) introduces a complementary paradigm: draw one sample from each of two different backbone types (VLM + ViT) and select between them.
+
+### Cross-Model Oracle Results (VLM + ViT in Same Architecture)
+
+| Candidate Set | N | PDMS | Method |
+|---|---|---|---|
+| ViT-large samples only | 1 | 88.88 | Within-model |
+| ViT-large samples only | 3 | 89.13 | Within-model BoN |
+| ViT-large samples only | 6 | 89.32 | Within-model BoN |
+| VLM samples only | 1 | 90.80 | Single model |
+| VLM samples only | 3 | 91.57 | Within-model BoN |
+| VLM samples only | 6 | 91.95 | Within-model BoN |
+| VLM + ViT oracle | 2 | **93.58** | Cross-model oracle |
+| VLM + ViT oracle | 6 (interp.) | **94.00** | Cross-model oracle + interpolations |
+
+**Key insight**: cross-model diversity (93.58) vastly exceeds within-model sampling diversity (91.95 at BoN-6). Complementarity from different backbone inductive biases produces more useful diversity than stochastic sampling from a single model.
+
+### Why Cross-Model Diversity Is Richer
+
+- **Within-model BoN**: same representation, same training; stochastic decoding produces minor variations around the same solution
+- **Cross-model BoN**: VLM is more aggressive (~66% of scenarios); ViT is more conservative; neither strictly contains the other; expert behavior often lies between them
+- The two models win on completely different ~2–3% scenario subsets (neither is a subset of the other)
+
+### HybridDriveVLA: Deployable Cross-Model Selector
+
+HybridDriveVLA converts this oracle into a deployable system using a trajectory-level scorer:
+
+1. Both VLM and ViT branches produce trajectories
+2. 9 linear interpolations are added (τ_α = α·τ_ViT + (1-α)·τ_VLM)
+3. A DrivoR-style scorer ranks all 11 candidates
+
+**Result**: 92.10 PDMS — not oracle (93.58), but substantially better than any single-model result.
+
+This is the second deployable BoN variant in the wiki (alongside DreamerAD). Key distinction:
+- **DreamerAD**: within-model BoN (256 samples) using a learned latent reward model; +2.6 EPDMS
+- **HybridDriveVLA**: cross-model BoN (2 branches + interpolations) using a trajectory scorer; +1.30 PDMS over VLM baseline
+
+Both demonstrate that the oracle BoN gap can be partially closed by a learned selector without the PDM simulator.
 
 ---
 

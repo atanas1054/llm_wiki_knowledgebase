@@ -1,10 +1,10 @@
 ---
 title: Dual-System VLA for Autonomous Driving
 type: concept
-sources: [raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
-related: [sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md]
+sources: [raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md]
+related: [sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md]
 created: 2026-04-05
-updated: 2026-04-07
+updated: 2026-04-19
 confidence: high
 ---
 
@@ -169,18 +169,75 @@ AutoMoT achieves higher DS partly because it uses KV-cache async execution and a
 
 ## Comparison of Dual-System and MoT Designs
 
-| Feature              | Senna (v1)            | Senna-2                                | ReCogDrive                       | AutoMoT                                      | UniDriveVLA                          |
-| -------------------- | --------------------- | -------------------------------------- | -------------------------------- | -------------------------------------------- | ------------------------------------ |
-| VLM backbone         | —                     | Qwen2.5-VL-3B                          | InternVL3-8B                     | Qwen3-VL-4B                                  | Qwen3-VL-2B/8B                       |
-| VLM training         | Fine-tuned            | Fine-tuned                             | Fine-tuned                       | **Frozen**                                   | LoRA→Frozen                          |
-| Decision type        | Meta-actions          | Meta-actions (4×5)                     | Text + reasoning                 | Meta-actions (20 combos)                     | Continuous FM trajectory             |
-| Planner              | E2E (diffusion)       | DiT (residual diffusion)               | DiT (cross-attention)            | AE from scratch + optional diffusion refiner | FM action expert (act stream)        |
-| VLM→planner bridge   | Decision conditioning | Decision Adapter (tokens + AdaLN)      | Cross-attention to hidden states | Layer-wise shared KV cache                   | Masked Joint Attention               |
-| Explicit consistency | ✗                     | ✓ (kinematic mapping + selective loss) | ✗                                | ✗                                            | ✗                                    |
-| RL alignment         | ✗                     | ✓ (HRL with 3DGS)                      | ✓ (GRPO with NAVSIM)             | ✗                                            | ✗                                    |
-| Async execution      | Heuristic cache       | Heuristic cache                        | No                               | ✓ Layer-wise KV cache (7.6× speedup)         | ✗                                    |
-| Perception stream    | ✗                     | ✗                                      | ✗                                | ✗                                            | ✓ (sparse 5-task queries)            |
-| System type          | Dual                  | Dual                                   | Single (tight)                   | MoT (dual)                                   | MoT (unified 3-expert)               |
+| Feature              | Senna (v1)            | Senna-2                                | ReCogDrive                       | AutoMoT                                      | UniDriveVLA                          | HybridDriveVLA / DualDriveVLA           |
+| -------------------- | --------------------- | -------------------------------------- | -------------------------------- | -------------------------------------------- | ------------------------------------ | --------------------------------------- |
+| VLM backbone         | —                     | Qwen2.5-VL-3B                          | InternVL3-8B                     | Qwen3-VL-4B                                  | Qwen3-VL-2B/8B                       | InternVL-2B (VLM) + ViT-large           |
+| VLM training         | Fine-tuned            | Fine-tuned                             | Fine-tuned                       | **Frozen**                                   | LoRA→Frozen                          | Fine-tuned (RecogDrive recipe)          |
+| Decision type        | Meta-actions          | Meta-actions (4×5)                     | Text + reasoning                 | Meta-actions (20 combos)                     | Continuous FM trajectory             | Full trajectory (each branch)           |
+| Planner              | E2E (diffusion)       | DiT (residual diffusion)               | DiT (cross-attention)            | AE from scratch + optional diffusion refiner | FM action expert (act stream)        | DiT (separate for each branch)          |
+| VLM→planner bridge   | Decision conditioning | Decision Adapter (tokens + AdaLN)      | Cross-attention to hidden states | Layer-wise shared KV cache                   | Masked Joint Attention               | Trajectory scorer (no weight sharing)   |
+| Explicit consistency | ✗                     | ✓ (kinematic mapping + selective loss) | ✗                                | ✗                                            | ✗                                    | ✗ (complementarity instead)             |
+| RL alignment         | ✗                     | ✓ (HRL with 3DGS)                      | ✓ (GRPO with NAVSIM)             | ✗                                            | ✗                                    | ✗ (scorer only)                         |
+| Async execution      | Heuristic cache       | Heuristic cache                        | No                               | ✓ Layer-wise KV cache (7.6× speedup)         | ✗                                    | ✓ DualDriveVLA (15% VLM; 3.2× speedup) |
+| Perception stream    | ✗                     | ✗                                      | ✗                                | ✗                                            | ✓ (sparse 5-task queries)            | ✗                                       |
+| System type          | Dual                  | Dual                                   | Single (tight)                   | MoT (dual)                                   | MoT (unified 3-expert)               | Parallel complementary branches         |
+
+## Representational Complementarity: HybridDriveVLA / DualDriveVLA {#complementarity-hybriddriveVLA}
+
+This paper takes a fundamentally different framing from Senna-2's alignment paradigm. Instead of forcing VLM decisions and E2E trajectories to *agree*, it treats the VLM and ViT branches as **complementary candidate generators** and asks: can we exploit the diversity between them?
+
+### The Key Empirical Finding
+
+Plugging InternVL-2B (VLM) and ViT-large into the same RecogDrive diffusion planner produces **behaviorally complementary trajectories**:
+
+- VLM tends to be more aggressive (faster, more willing to merge/accelerate)
+- ViT tends to be more conservative (more likely to brake and yield)
+- The ground-truth expert trajectory **often lies between** the two styles
+- Each side decisively outperforms the other on ~2–3% of test scenarios (|ΔPDMS| > 20%)
+
+Oracle best-of-2 (pick the better per scenario): **93.58 PDMS**, up from 90.80 (VLM single). This exploitable gap is the paper's central finding.
+
+### Why This Is Different from Traditional Dual-System
+
+Traditional dual-system (Senna-2): VLM provides discrete meta-action → E2E executes it. Goal: make the trajectory **consistent with** the VLM decision.
+
+Complementarity framing (HybridDriveVLA): VLM and ViT each produce **complete independent trajectories**. Goal: **select between** them (and interpolations) using trajectory-level signals.
+
+| Dimension | Senna-2 (alignment) | HybridDriveVLA (complementarity) |
+|---|---|---|
+| VLM output | Discrete meta-action | Full trajectory |
+| ViT/E2E output | Full trajectory | Full trajectory |
+| Goal | Consistency (VLM → trajectory) | Selection (best trajectory wins) |
+| Key tool | Kinematic mapping + selective loss | Trajectory scorer |
+| Interaction | Top-down guidance | Parallel candidate generation |
+| Inference cost | VLM + E2E + adapter | 2× (both branches) or ~1.15× (DualDriveVLA) |
+
+### HybridDriveVLA
+
+**Step 1 — Candidate construction**: interpolate between VLM and ViT endpoints along the style axis:
+$$\tau_\alpha = \alpha \cdot \tau_\text{ViT} + (1-\alpha) \cdot \tau_\text{VLM}, \quad \alpha \in \{0.1, \ldots, 0.9\}$$
+
+11-candidate set: both endpoints + 9 interpolations. The expert often lies in the interior of this segment.
+
+**Step 2 — Scorer selection**: DrivoR-style trajectory scorer predicts PDMS sub-score components from decoded waypoints + scene tokens. Scorer is explicitly separated from the generator (re-embeds finalized trajectories rather than reading generator latents).
+
+**Result**: 92.10 PDMS on NAVSIM-v1 (new SOTA in paper's comparison table, which includes DiffusionDriveV2 91.2 and iPad 91.7).
+
+### DualDriveVLA: Fast–Slow Deployment
+
+Run ViT by default; if scorer confidence $\hat{s}(\tau_\text{ViT}) < \gamma$, invoke VLM + full 11-candidate selection.
+
+- At γ that routes 15% of scenarios to the VLM: **91.00 PDMS** at **3.2× throughput** vs. VLM-only
+- All performance gain from HybridDriveVLA is preserved with 85% ViT-only fast-path acceptance
+
+### Representation Analysis Findings (RQ1)
+
+Backbone-level VLM–ViT CKA: **~0.22** (low).  
+DiT-level (after policy training) CKA: **~0.54** (substantially higher).
+
+The planner compresses heterogeneous visual signals into a more shared decision space. Despite this, the residual mismatch is sufficient to produce complementary behaviors.
+
+**Key negative result**: trying to predict per-scenario winners using representation features alone (SAE shared/unique energies, CCA statistics, Random Forest, attention gate) yields at most 90.96 PDMS — barely above the 90.80 VLM baseline and far below the 93.58 oracle. Representation statistics are poor predictors of trajectory superiority; trajectory-level scoring is necessary.
 
 ## Open Questions
 

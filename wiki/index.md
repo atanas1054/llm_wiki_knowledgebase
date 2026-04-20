@@ -36,6 +36,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [NoRD](sources/nord.md) | Reasoning-free VLA; k-disc tokens (2048); Dr. GRPO over GRPO (+11.68% vs +0.67%); 85.6 PDMS / 92.4 BoN-6 NAVSIM; 3rd RFS WaymoE2E with 6–17× less data; difficulty bias identification |
 | [DiffusionDrive](sources/diffusiondrive.md) | Truncated diffusion (20 anchors, 2 steps); cascade decoder (60M, 45 FPS); 88.1 PDMS NAVSIM; 74% mode diversity; canonical non-VLM diffusion baseline; ResNet-34 + C+L |
 | [DiffusionDriveV2](sources/diffusiondrive-v2.md) | DiffusionDrive + Intra/Inter-Anchor GRPO + multiplicative exploration noise; 91.2 PDMS NAVSIM-v1 / 85.5 EPDMS NAVSIM-v2; highest non-VLM result; ResNet-34 + C+L |
+| [HybridDriveVLA / DualDriveVLA](sources/hybriddriveVLA.md) | 3-RQ complementarity analysis (CKA/CCA/SAE); VLM+ViT dual-branch + style-axis interpolation + trajectory scorer; 92.10 PDMS NAVSIM-v1; fast–slow DualDriveVLA 91.0 PDMS @ 3.2× throughput |
 
 ---
 
