@@ -16,7 +16,7 @@ wiki/
 CLAUDE.md      # Workflow instructions for the LLM assistant
 ```
 
-## Papers Ingested (32)
+## Papers Ingested (33)
 
 | Paper | Org | Key Contribution | Benchmark |
 |-------|-----|-----------------|-----------|
@@ -41,16 +41,17 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [DriveDreamer-Policy](wiki/sources/drivedreamer-policy.md) | GigaAI + U of Toronto | Causal depth→video→action WAM; geometry-grounded; 3 FM generators | 89.2 PDMS NAVSIM-v1 / 88.7 EPDMS NAVSIM-v2 |
 | [DriveVLA-W0](wiki/sources/drivevla-w0.md) | CASIA + Yinwang | Supervision deficit → world model self-supervision; scaling law | 90.2★ PDMS / 93.0 BoN-6 NAVSIM-v1 |
 | [UniDriveVLA](wiki/sources/unidrivevla.md) | HUST + Xiaomi EV | MoT 3-expert (und/per/act); sparse 5-task perception | 78.37 DS Bench2Drive; 0.51m L2 nuScenes |
-| [FLARE](wiki/sources/flare.md) | OpenDriveLab + Li Auto | Annotation-free DINOv2 future feature prediction; BC-GRPO | 91.4 PDMS RFT (single-sample SOTA) NAVSIM-v1 |
+| [FLARE](wiki/sources/flare.md) | OpenDriveLab + Li Auto | Annotation-free DINOv2 future feature prediction; BC-GRPO | 91.4 PDMS RFT NAVSIM-v1 |
 | [DreamerAD](wiki/sources/dreameraD.md) | Chongqing Chang'an | Latent world model RL; shortcut forcing (80× speedup); latent reward model | 87.7 EPDMS NAVSIM-v2 |
 | [Vega](wiki/sources/vega.md) | Tsinghua + GigaAI | Instruction-conditioned AR+Diffusion; InstructScene 100K; NL instruction following | 86.9 EPDMS / 89.4 BoN-6 NAVSIM-v2 |
 | [NoRD](wiki/sources/nord.md) | Applied Intuition + TAMU + UCB | Reasoning-free VLA; Dr. GRPO fixes difficulty bias; data efficiency | 85.6 PDMS / 92.4 BoN-6 NAVSIM-v1 |
 | [DiffusionDrive](wiki/sources/diffusiondrive.md) | HUST + Horizon Robotics | Truncated diffusion (20 anchors, 2 steps); cascade decoder; 45 FPS | 88.1 PDMS NAVSIM-v1 (non-VLM baseline) |
-| [DiffusionDriveV2](wiki/sources/diffusiondrive-v2.md) | HUST + Horizon Robotics | Intra/Inter-Anchor GRPO + multiplicative noise on truncated diffusion; highest non-VLM result | 91.2 PDMS NAVSIM-v1 / 85.5 EPDMS NAVSIM-v2 |
-| [Epona](wiki/sources/epona.md) | Horizon Robotics + Tsinghua + PKU | AR+Diffusion WM (MST+DiTs, 2.5B); chain-of-forward training; backbone for DreamerAD | FVD 82.8 NuScenes SOTA; 86.2 PDMS NAVSIM-v1 |
-| [HybridDriveVLA / DualDriveVLA](wiki/sources/hybriddriveVLA.md) | — | 3-RQ complementarity analysis (CKA/SAE); VLM+ViT dual-branch + style-axis interpolation + trajectory scorer; fast–slow deployment | 92.10 PDMS NAVSIM-v1; 91.0 PDMS @ 3.2× throughput (DualDriveVLA) |
+| [DiffusionDriveV2](wiki/sources/diffusiondrive-v2.md) | HUST + Horizon Robotics | Intra/Inter-Anchor GRPO + multiplicative noise on truncated diffusion | 91.2 PDMS NAVSIM-v1 / 85.5 EPDMS NAVSIM-v2 |
+| [Epona](wiki/sources/epona.md) | Horizon Robotics + Tsinghua + PKU | AR+Diffusion WM (MST+DiTs, 2.5B); chain-of-forward training; backbone for DreamerAD | FVD 82.8 NuScenes; 86.2 PDMS NAVSIM-v1 |
+| [HybridDriveVLA / DualDriveVLA](wiki/sources/hybriddriveVLA.md) | — | 3-RQ complementarity analysis (CKA/SAE); VLM+ViT dual-branch + style-axis interpolation; fast–slow deployment | 92.10 PDMS NAVSIM-v1; 91.0 PDMS @ 3.2× throughput |
+| [WAM-Diff](wiki/sources/wam-diff.md) | Fudan + Yinwang | Masked diffusion + LoRA MoE (64 experts) + GSPO (sequence-level RL); reverse-causal decoding | 91.0 PDMS NAVSIM-v1 / 89.7 EPDMS NAVSIM-v2 |
 
-## Concept Pages (12)
+## Concept Pages (13)
 
 | Concept | Description |
 |---------|-------------|
@@ -66,6 +67,7 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [Best-of-N Sampling](wiki/concepts/best-of-n.md) | Oracle trajectory selection; NAVSIM-v1 saturated at BoN-6 (94.8 = human GT); deployable variants |
 | [Bench2Drive Benchmark](wiki/concepts/bench2drive.md) | CARLA V2 closed-loop; interactive agents; DS + SR metrics; SOTA LinkVLA 91.01 DS |
 | [Chain-of-Thought for AD](wiki/concepts/chain-of-thought-for-ad.md) | Text/visual/self-reflection CoT types; annotation methods; adaptive CoT; NoRD challenge |
+| [Mixture of Experts for AD](wiki/concepts/mixture-of-experts.md) | 4 patterns: sparse LoRA MoE, block-level task MoE, MoT (frozen+trained), side expert; RL routing instability; catastrophic forgetting |
 
 ## Workflow
 

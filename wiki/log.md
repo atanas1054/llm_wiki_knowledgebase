@@ -4,6 +4,81 @@ Append-only log of all wiki operations.
 
 ---
 
+## 2026-04-21 — New Concept Page: Mixture of Experts for AD
+
+**Page created**: `wiki/concepts/mixture-of-experts.md`
+
+**Sources**: WAM-Diff, DriveFine, DriveVLA-W0, AutoMoT, UniDriveVLA
+
+**Key content**:
+- 4-type taxonomy: sparse LoRA MoE (WAM-Diff), block-level task MoE (DriveFine), Mixture-of-Transformers (AutoMoT/UniDriveVLA), lightweight side expert (DriveVLA-W0)
+- Comparison table across all 5 wiki papers
+- MoE + RL routing instability problem and GSPO as solution
+- Catastrophic forgetting evidence table (AutoMoT)
+- Bottleneck-to-solution mapping across papers
+
+**Index updated**: added MoE to concepts table.
+
+---
+
+## 2026-04-21 — Lint Pass
+
+**Stale claims fixed (9 files)**:
+- `wiki/index.md`: removed "SOTA" from WAM-Flow row; removed "SOTA" from Senna-2 row; removed "(new SOTA)" from DriveDreamer-Policy row
+- `wiki/sources/senna2.md`: updated NAVSIM-v2 SOTA note (lines 181, 227) to reflect supersession by DriveFine/WAM-Diff (89.7)
+- `wiki/sources/drivedreamer-policy.md`: updated NAVSIM-v2 SOTA cross-reference to "(now superseded)"
+- `wiki/sources/wam-flow.md`: removed "SOTA" from one-line summary; updated connections note to list all superseding methods
+- `wiki/sources/drivefine.md`: updated "current single-sample SOTA" to "most broadly-verified"
+- `wiki/sources/recogdrive.md`: removed "SOTA" from one-line summary
+
+**Concept pages updated**:
+- `wiki/concepts/navsim-benchmark.md`: updated v1 closing sentence to include WAM-Diff (91.0) in ordering
+- `wiki/concepts/discrete-flow-matching.md`: added WAM-Diff and DriveFine to frontmatter sources/related; added both to Applications in Literature; updated DFM vs. Masked Diffusion comparison table
+
+**Orphan pages**:
+- `wiki/overview.md`: deleted (empty 1-line file; no inbound links)
+
+**No new orphan source pages** — all 30 source pages referenced in concept frontmatter or body text.
+
+**Concepts mentioned but lacking dedicated pages** (candidates for future work):
+- Mixture of Experts (MoE) — heavily used across DriveFine, WAM-Diff, AutoMoT, UniDriveVLA
+- nuScenes Benchmark — referenced for L2/collision metrics but no wiki page
+- WaymoE2E Benchmark — referenced in NoRD, HERMES but no wiki page
+- BEV Representation — mentioned across multiple sources but covered only inline
+
+---
+
+## 2026-04-21 — Ingest: WAM-Diff
+
+**Source**: `raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md`  
+**arXiv**: 2512.11872v1  
+**Org**: Fudan University + Yinwang Intelligent Technology Co., Ltd
+
+**Pages created**:
+- `wiki/sources/wam-diff.md` — full source summary with all 14 figures (teaser.png, main_arch.png, scheduler.png, gspo.png, x1 22.png–x8 10.png, fc2.png, gspo2grpo.png), all 10 tables (NAVSIM-v1 comparison, NAVSIM-v2 comparison, nuScenes comparison, MoE config ablation, GSPO ablation, component ablation, reward ablation, decoding schedule ablation, CFG ablation, training hyperparameters), and full architecture/training/inference descriptions
+
+**Concept pages updated**:
+- `wiki/concepts/rl-for-ad.md` — added "WAM-Diff: GSPO — Sequence-Level RL for MoE Policies" section: GSPO motivation (MoE routing instability under token-level GRPO), full formulation (length-normalized sequence likelihood ratio + clipped PPO at sequence level), comparison table GSPO vs. GRPO, ablation results (+4.4 PDMS), architecture-specific RL comparison table (GSPO vs. DiffusionDriveV2 vs. FLARE); added WAM-Diff row to GRPO reward comparison table; updated closing note; frontmatter bumped
+- `wiki/concepts/diffusion-planner.md` — added "WAM-Diff: MoE Masked Diffusion with Flexible Decoding and GSPO" section: hybrid tokenization, flexible decoding schedules table (random/causal/reverse-causal), LoRA MoE scaling, GSPO reference, three-way comparison table (ReflectDrive/DriveFine/WAM-Diff); added WAM-Diff row to design space table; frontmatter bumped
+- `wiki/concepts/navsim-benchmark.md` — added WAM-Diff (91.0 PDMS v1, 89.7 EPDMS v2) to both SOTA tables; added caveat paragraph; updated single-sample NAVSIM-v2 SOTA note; frontmatter bumped
+
+**Index updated**: added WAM-Diff row (33rd paper).
+
+**Key facts**:
+- First VLA combining masked diffusion + sparse MoE + online RL (GSPO) for AD
+- GSPO is sequence-level GRPO variant — solves MoE routing instability that token-level GRPO causes
+- Reverse-causal decoding schedule (+2.0 PDMS): resolves far-future tokens first, then refines near-term — best for car-following and oncoming scenarios
+- GSPO is the single largest contribution: +4.4 PDMS (86.6 → 91.0); LoRA MoE +1.9 PDMS; CFG +2.4 PDMS; decoding schedule +2.0 PDMS
+- 91.0 PDMS NAVSIM-v1 (comparison includes ReCogDrive 90.8, DriveVLA-W0 90.2, DiffusionDrive 88.1; excludes FLARE 91.4, DiffusionDriveV2 91.2, HybridDriveVLA 92.1)
+- 89.7 EPDMS NAVSIM-v2 (comparison excludes DDP 88.7, DreamerAD 87.7, Senna-2 86.6); potential new single-sample SOTA if on comparable scorer to prior methods
+- EC = 78.5 (below DDP 79.4, DiffusionDrive 87.7 — masked diffusion doesn't optimize extended comfort)
+- nuScenes: 0.28% avg collision (best VLA, matches UniAD) under UniAD protocol
+- Limitations: front-view only (no surround), no temporal history (single frame)
+- 8.4B params total; +0.5B MoE (only ~0.05B activated at inference)
+- Training: 4 stages on Ascend 910B; 668K nuPlan + 800K VQA SFT → 103K NAVSIM adaptation → GSPO
+
+---
+
 ## 2026-04-19 — Ingest: HybridDriveVLA / DualDriveVLA
 
 **Source**: `raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md`  

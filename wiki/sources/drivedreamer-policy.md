@@ -190,5 +190,5 @@ Figure 4: Columns = Action-Only, Depth-Action, Video-Action, Depth-Video-Action.
 ## Key Cross-References
 
 - **Geometry-grounded WAM pattern**: [[concepts/world-model-for-ad.md]] — Pattern 6: causal depth→video→action conditioning
-- **NAVSIM-v2 new SOTA**: [[concepts/navsim-benchmark.md]] — 88.7 EPDMS surpasses Senna-2 (86.6)
+- **NAVSIM-v2**: [[concepts/navsim-benchmark.md]] — 88.7 EPDMS (surpassed Senna-2 86.6 at publication; now superseded by DriveFine/WAM-Diff 89.7)
 - **FM action generator**: [[concepts/diffusion-planner.md]] — modular flow-matching action expert with LLM cross-attention conditioning

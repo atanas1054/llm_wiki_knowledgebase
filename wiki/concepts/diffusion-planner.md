@@ -1,10 +1,10 @@
 ---
 title: Diffusion-Based Trajectory Planner
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/orion.md, sources/linkvla.md, sources/drivefine.md, sources/autovla.md, sources/alpamayo-r1.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/orion.md, sources/linkvla.md, sources/drivefine.md, sources/autovla.md, sources/alpamayo-r1.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/wam-diff.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md]
 created: 2026-04-05
-updated: 2026-04-16
+updated: 2026-04-21
 confidence: high
 ---
 
@@ -159,6 +159,7 @@ The ARM (Action Refinement Module) then refines the parallel outputs via MLP + a
 | Block-MoE masked diffusion (DriveFine) | s + 1         | Yes (gen) + 1 refine | No (tokens) | Native (refinement expert) | Moderate |
 | AR over physical codebook (AutoVLA) | T (AR steps) | No | No (codebook tokens) | No | Moderate (1 Hz w/ CoT) |
 | FM action expert + discrete training (AR1) | 5 (Euler) | Yes (expert) | Yes (continuous) | No | Fast (8.75ms) |
+| MoE masked diffusion + GSPO (WAM-Diff) | 32 iterations | Yes (parallel infill) | No (tokens) | Native | Moderate |
 
 **Trade-off**: learnable queries are the fastest paradigm but lack iterative refinement. Quality is bounded by single-pass prediction; complex multimodal scenarios (e.g., intersection turns) may produce averaged trajectories without multi-modal diversity mechanisms.
 
@@ -306,6 +307,47 @@ Both DriveFine and ReflectDrive ([[sources/reflectdrive.md]]) use masked discret
 | Correction trigger | Safety violations detected at inference (gradient-free) | Always applied: one refinement step after s generation steps |
 | Training | Refinement not explicitly trained; emerges from masked NLL | Refinement expert explicitly trained with hybrid offline+online RL |
 | Scope | Safety-focused (DAC, TTC violations) | General quality (smooth outlier correction + trajectory fluency) |
+
+## WAM-Diff: MoE Masked Diffusion with Flexible Decoding and GSPO
+
+**WAM-Diff** ([[sources/wam-diff.md]]) scales masked diffusion (LLaDA-V backbone) along two orthogonal axes not explored by ReflectDrive or DriveFine: **sparse LoRA MoE** for capacity scaling and **GSPO** for sequence-level RL. It also introduces a principled **flexible decoding schedule** that injects driving priors into the token resolution order.
+
+### Hybrid Discrete Action Tokenization
+
+Unlike ReflectDrive and DriveFine's pure trajectory token sequences, WAM-Diff uses a **hybrid vocabulary**: 20,001 quantized numerical tokens (uniform grid over $[-100,100]$ at 0.01 resolution) merged into the LLM text vocabulary, enabling semantic tokens (e.g., `lane-keep`, `turn-left`) to coexist with metric waypoints in a single masked sequence. The model conditions on both directions bidirectionally.
+
+### Flexible Decoding Schedules
+
+The remasking policy at inference controls which masked tokens are resolved at each iteration. WAM-Diff provides three schedules:
+
+| Schedule | Token resolution order | Suited for | PDMS |
+|---|---|---|---|
+| Random | Confidence-based (re-mask lowest-confidence) | Balanced, general | 90.0 |
+| Causal | Near-future tokens first | Turns, kinematic coherence | 88.9 |
+| **Reverse-Causal** | **Far-future first** | **Car-following, oncoming, long-range intent** | **91.0** |
+
+This flexibility is a structural advantage of masked diffusion over autoregressive decoders (which are locked to left-to-right) and continuous diffusion (which denoise all positions simultaneously without order control). DFM (WAM-Flow) supports parallel generation but does not expose a driving-prior-aware decoding order.
+
+### LoRA MoE for Capacity Scaling
+
+Sparse LoRA experts integrated into FFNs: 64 experts, rank 32, expert-choice routing, capacity 0.1. The shared frozen FFN acts as a base expert. Only +0.5B params added to 8.4B base; ~0.05B activated per token. Multi-task joint training on trajectory + driving VQA unlocks semantic reasoning alongside motion planning. MoE gain: +1.9 PDMS (84.7 → 86.6).
+
+### GSPO for MoE-Stable RL
+
+Standard token-level GRPO is incompatible with MoE routing: each token gradient update changes which expert gets selected, creating routing instability. GSPO addresses this with sequence-level optimization — each complete trajectory is treated as an atomic unit, and the policy update is measured in sequence-likelihood space rather than per-token. GSPO gain: +4.4 PDMS (86.6 → 91.0). See [[concepts/rl-for-ad.md]] for the full GSPO formulation.
+
+### Three-Way Comparison of Masked Diffusion VLAs
+
+| | ReflectDrive | DriveFine | WAM-Diff |
+|--|---|---|---|
+| Backbone | LLaDA-V | LLaDA-8B | LLaDA-V (8.4B) |
+| MoE | None | Block-MoE (refinement expert) | Sparse LoRA MoE (64 experts, backbone FFNs) |
+| RL | None (inference-time safety) | Hybrid offline+online GRPO | GSPO (sequence-level) |
+| Decoding | Iterative reflection (1–5 cycles) | Fixed s-step + 1 refinement | Causal / Reverse-Causal / Random (32 steps) |
+| Inpainting | Native | Native (refinement expert) | Native (reverse-causal serves similar role) |
+| NAVSIM-v1 | >89.1 (claimed) | 90.7 / 91.8★ | **91.0** |
+| NAVSIM-v2 | — | 89.7 (bug-fixed scorer) | **89.7** |
+| Unique contribution | Inference-time safety correction | Error refinement via dedicated expert | Scenario-aware decoding + MoE scaling + GSPO |
 
 ## Shared Codebook Coarse-to-Fine Generation (LinkVLA)
 

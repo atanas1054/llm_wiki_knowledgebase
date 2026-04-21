@@ -1,10 +1,10 @@
 ---
 title: Reinforcement Learning for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, sources/dreameraD.md, sources/nord.md, sources/diffusiondrive-v2.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, sources/dreameraD.md, sources/nord.md, sources/diffusiondrive-v2.md, sources/wam-diff.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md]
 created: 2026-04-05
-updated: 2026-04-16
+updated: 2026-04-21
 confidence: high
 ---
 
@@ -542,6 +542,73 @@ RL raises both the upper bound (PDMS@1: +1.4) and the quality floor (PDMS@10: +9
 - **vs. FLARE (BC-regularized GRPO on DiT)**: both use BC regularization to prevent reward hacking in diffusion planners. FLARE uses BC in place of KL divergence; V2 uses BC as a supplementary IL loss alongside truncated GRPO. Both avoid the EPDMS degradation that DriveFine reported for KL-penalized diffusion planners.
 - **vs. DIVER**: also RL-based on a similar architecture; DiffusionDriveV2 outperforms DIVER by +2.9 PDMS (91.2 vs. 88.3), suggesting the intra/inter-anchor GRPO design provides a meaningful advantage over simpler RL approaches.
 
+## WAM-Diff: GSPO — Sequence-Level RL for MoE Policies
+
+**WAM-Diff** ([[sources/wam-diff.md]]) introduces **Group Sequence Policy Optimization (GSPO)**, a variant of GRPO specifically designed to remain stable when the policy contains a sparse **Mixture-of-Experts** (MoE) architecture. The core motivation: standard GRPO computes advantages and updates at the **token level**, which is fundamentally incompatible with MoE routing. Each token-level gradient update changes expert routing decisions at that position, creating incoherent credit assignment across the sequence — the very experts that produced good trajectory segments can lose their identity between steps.
+
+### Why Token-Level GRPO Fails for MoE
+
+In standard GRPO (as used in DriveFine, WAM-Flow, ReCogDrive, etc.), the advantage $\hat{A}_i$ is computed per trajectory and the policy gradient flows through each individual token log-probability. For a dense model, this is fine. For an MoE model with sparse expert routing, updating the $k$-th token's embedding changes the softmax gate output $g_i(z_k)$, which in turn re-routes the $k$-th token to a different expert in the next forward pass. This routing instability means the gradient signal "forgets" which expert generated which trajectory segment — providing noisy, often contradictory credit.
+
+GSPO resolves this by treating each **complete trajectory as the atomic unit** of policy optimization.
+
+### GSPO Formulation
+
+**Step 1** — Sample $G=3$ candidate sequences from the old policy:
+$$\{x_i\}_{i=1}^G \sim \pi_{\theta_\text{old}}(\cdot|c_t)$$
+
+**Step 2** — Evaluate in NAVSIM simulator; group-normalize rewards:
+$$\hat{A}_i = \frac{R_i - \text{mean}(\{R_j\}_{j=1}^G)}{\text{std}(\{R_j\}_{j=1}^G)}$$
+
+**Step 3** — Compute length-normalized sequence likelihood ratio (estimated via single one-step unmasking per token):
+$$s_i(\theta) = \exp\!\left(\frac{1}{|x_i|}\sum_{k=1}^{|x_i|}\log\frac{\pi_\theta(x_{i,k}|c_t)}{\pi_{\theta_\text{old}}(x_{i,k}|c_t)}\right)$$
+
+The $1/|x_i|$ normalization is critical: without it, longer sequences would have systematically smaller (more negative) log-ratios, biasing advantage estimates against complete trajectories.
+
+**Step 4** — Clipped PPO objective at sequence level:
+$$J_\text{GSPO}(\theta) = \mathbb{E}_x\!\left[\frac{1}{G}\sum_{i=1}^G \min\!\Big(s_i(\theta)\hat{A}_i,\;\text{clip}\big(s_i(\theta),1-\epsilon,1+\epsilon\big)\hat{A}_i\Big)\right]$$
+
+The clipping constraint operates in *sequence-likelihood* space (not token space) — appropriate for MoE because it constrains the full policy update as measured by how much the trajectory distribution shifts, rather than individual routing decisions.
+
+### GSPO vs. Standard GRPO for MoE
+
+| Aspect | GRPO (token-level) | GSPO (sequence-level) |
+|---|---|---|
+| Advantage unit | Per token | Per trajectory |
+| MoE routing stability | Unstable — token updates re-route experts | Stable — routing consistent within one trajectory |
+| Credit assignment | Must attribute reward to each token's expert | Full trajectory credited as unit; no per-token assignment |
+| Training curves | Noisy, lower convergence ceiling | Steady improvement to higher reward |
+| Optimal group size | Varies | **G=3** (WAM-Diff ablation) |
+
+![[gspo2grpo.png]]
+*Training reward curves: GSPO maintains steadily higher reward than GRPO throughout training, confirming routing-stability advantage.*
+
+### Ablation Results
+
+| Config | PDMS |
+|---|---|
+| w/o GSPO (MoE-only SFT) | 86.6 |
+| GSPO G=2 | 88.9 (+2.3) |
+| **GSPO G=3** | **91.0 (+4.4)** |
+
+Larger group size promotes more diverse candidate trajectories, providing cleaner gradient signal. G=3 is the sweet spot — G=2 provides too little reward spread; beyond G=3 training cost grows without clear benefit.
+
+**GSPO contributes +4.4 PDMS** (86.6 → 91.0) — the single largest gain in WAM-Diff's ablation stack, larger than MoE (+1.9), CFG (+2.4), or decoding schedule (+2.0).
+
+### Reward Design
+
+Multi-dimensional PDMS-based reward evaluated by NAVSIM simulator: NC (no collision) × DAC (drivable area) × weighted combination of EP (ego progress), TTC (time-to-collision), and Comfort. The ablation shows that optimizing individual sub-rewards (TTC-only, EP-only, Comfort-only) hurts the composite score — each improves its target metric while degrading the others. Using the full PDMS composite achieves the best balance at 91.0 vs. 90.3–90.7 for single-factor rewards.
+
+### Position in the RL Landscape
+
+GSPO is the **only method in the wiki where RL is specifically designed around MoE routing stability**. Compare with other architecture-specific RL adaptations:
+
+- **DiffusionDriveV2**: adapts GRPO for *multi-anchor GMM diffusion* (intra-anchor scoping prevents cross-intent collapse)
+- **FLARE**: adapts GRPO for *DiT diffusion planners* (BC regularization prevents policy collapse when KL estimation is noisy)
+- **WAM-Diff GSPO**: adapts GRPO for *sparse LoRA MoE* (sequence-level objective prevents routing instability)
+
+All three papers independently arrive at the conclusion that standard GRPO requires architectural-specific adaptation when the policy has a non-standard structure.
+
 ---
 
 ### Comparison: All GRPO Reward Designs in the Wiki
@@ -561,8 +628,9 @@ RL raises both the upper bound (PDMS@1: +1.4) and the quality floor (PDMS@10: +9
 | DreamerAD | Latent AD-RM (8 dims × 8 horizons, log-sigmoid safety) | Vocabulary filtering only | No | No | BC + KL |
 | NoRD | PDMS + format + length (all [0,1]) | Yes | No | No | None (no KL) |
 | **DiffusionDriveV2** | **PDMS (NAVSIM) + hard collision penalty (−1)** | **Yes** | **No** | **No** | **BC (λ=0.1, IL loss)** |
+| WAM-Diff | PDMS (NAVSIM composite) | Yes | No | No | Clipping (seq-level, no KL) |
 
-AR1 is the only method with explicit reasoning evaluation as a reward component. FLARE and DiffusionDriveV2 both use BC regularization for diffusion planners — the key distinction is DiffusionDriveV2 additionally introduces anchor-scoped advantage estimation and truncated collision penalization, neither of which appear in FLARE. **DreamerAD is the only method where reward is computed from latent world model features** rather than a PDM simulator or GT trajectories.
+AR1 is the only method with explicit reasoning evaluation as a reward component. FLARE, DiffusionDriveV2, and WAM-Diff all adapt GRPO to handle non-standard planner architectures: FLARE uses BC regularization for DiT planners; DiffusionDriveV2 uses anchor-scoped truncated advantage for GMM planners; WAM-Diff uses sequence-level GSPO for sparse MoE planners. **DreamerAD is the only method where reward is computed from latent world model features** rather than a PDM simulator or GT trajectories. **WAM-Diff's GSPO is the only method that eliminates token-level credit assignment entirely** — replacing it with sequence-level importance ratios to maintain MoE routing stability.
 
 ## DreamerAD: RL within Latent World Model Imagination Space
 

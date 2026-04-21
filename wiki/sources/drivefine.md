@@ -155,7 +155,7 @@ Both experts trained **synchronously**: generator samples online → feed direct
 | **DriveFine\*** (score-based RFT) | **1xC** | **91.8** |
 | DriveFine† (best-of-6) | 1xC | 94.2 |
 
-DriveFine base (90.7): current single-sample NAVSIM-v1 SOTA among single-camera methods.  
+DriveFine base (90.7): most broadly-verified single-sample single-camera result; superseded in absolute terms by WAM-Diff (91.0) and FLARE-4B RFT (91.4) — neither of which includes DriveFine in their comparison tables.  
 DriveFine\*: uses an **additional trained scorer** for reward computation — comparisons with GRPO-only methods should note this.  
 DriveFine†: best-of-6 multi-sample oracle, not practical for deployment.
 

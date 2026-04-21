@@ -9,9 +9,9 @@ Master catalog of all wiki pages. Updated on every ingest.
 | Page                                      | Description                                                                                                                                                                          |
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [ReCogDrive](sources/recogdrive.md)       | VLM + diffusion planner + RL for end-to-end AD; PDMS 89.6 on NAVSIM-v1                                                                                                               |
-| [WAM-Flow](sources/wam-flow.md)           | Discrete flow matching VLA for AD; PDMS 90.3 SOTA on NAVSIM-v1; 1 camera only                                                                                                        |
+| [WAM-Flow](sources/wam-flow.md)           | Discrete flow matching VLA for AD; PDMS 90.3 on NAVSIM-v1; 1 camera only                                                                                                             |
 | [UniUGP](sources/uniugp.md)               | Unified VLA + world model; CoT + video generation + FM trajectory; SOTA nuScenes FID/FVD and DriveLM                                                                                 |
-| [Senna-2](sources/senna2.md)              | Dual-system VLM + E2E alignment; 3DGS HRL; +19.3% consistency F1; EPDMS 86.6 SOTA on NAVSIM-v2                                                                                       |
+| [Senna-2](sources/senna2.md)              | Dual-system VLM + E2E alignment; 3DGS HRL; +19.3% consistency F1; EPDMS 86.6 on NAVSIM-v2                                                                                            |
 | [ReflectDrive](sources/reflectdrive.md)   | Masked discrete diffusion + gradient-free reflective inference; goal-conditioned NMS + safety anchor inpainting; claims >AutoVLA on NAVSIM-v1                                        |
 | [Reasoning-VLA](sources/reasoning-vla.md) | Learnable action queries (1-step parallel); unified 8-dataset corpus; GT-based GRPO; 91.7 PDMS claimed (comparison scope limited); 61× faster than AR                                |
 | [Percept-WAM](sources/percept-wam.md)     | World-PV/BEV tokens unify 2D/3D perception + planning in one VLM; IoU-aware confidence; four-query trajectory decoder; 90.2 PDMS; 707ms latency                                      |
@@ -26,7 +26,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [Alpamayo-R1](sources/alpamayo-r1.md)     | Cosmos-Reason backbone + CoC dataset (700K, hybrid labeling) + FM action expert (unicycle dynamics); 3-reward GRPO (LRM-as-critic + consistency + safety); 99ms; internal evals only |
 | [AdaThinkDrive](sources/adathinkdrive.md) | Adaptive Think Reward GRPO (mode-comparison per scene); dual-mode SFT (Think+NonThink same query); 90.3 PDMS / 93.0 BoN-4; InternVL3-8B; 1 camera; 14% faster than always-Think |
 | [FutureSightDrive](sources/futuresightdrive.md) | Visual spatio-temporal CoT (VQ-VAE AR future frame with lane dividers + 3D boxes); dual-role VLA (world model + inverse dynamics); 85.1 PDMS NAVSIM; 0.96m L2 nuScenes; FID 10.1; Qwen2-VL-2B |
-| [DriveDreamer-Policy](sources/drivedreamer-policy.md) | Geometry-grounded WAM; causal depth→video→action FM generators; Qwen3-VL-2B; 89.2 PDMS NAVSIM-v1; 88.7 EPDMS NAVSIM-v2 (new SOTA); FVD 53.59 |
+| [DriveDreamer-Policy](sources/drivedreamer-policy.md) | Geometry-grounded WAM; causal depth→video→action FM generators; Qwen3-VL-2B; 89.2 PDMS NAVSIM-v1; 88.7 EPDMS NAVSIM-v2; FVD 53.59 |
 | [DriveVLA-W0](sources/drivevla-w0.md) | Supervision deficit framing; AR + diffusion world models (training-time only); MoE action expert; 90.2★ PDMS (anchors) / 93.0 BoN-6; scaling reversal FM→AR at 70M frames |
 | [UniDriveVLA](sources/unidrivevla.md) | HUST + Xiaomi EV; MoT 3-expert (und/per/act) + masked joint attention; sparse 5-task perception; 3-stage progressive training; 78.37 DS Bench2Drive (best w/o PDM-Lite); 0.51m L2 nuScenes no-ego |
 | [FLARE](sources/flare.md) | OpenDriveLab + Li Auto; annotation-free DINOv2 future feature prediction + DiT + BC-GRPO; 86.9 PDMS SFT / 91.4 PDMS RFT (best single-sample VLM-based); 1 camera |
@@ -37,6 +37,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [DiffusionDrive](sources/diffusiondrive.md) | Truncated diffusion (20 anchors, 2 steps); cascade decoder (60M, 45 FPS); 88.1 PDMS NAVSIM; 74% mode diversity; canonical non-VLM diffusion baseline; ResNet-34 + C+L |
 | [DiffusionDriveV2](sources/diffusiondrive-v2.md) | DiffusionDrive + Intra/Inter-Anchor GRPO + multiplicative exploration noise; 91.2 PDMS NAVSIM-v1 / 85.5 EPDMS NAVSIM-v2; highest non-VLM result; ResNet-34 + C+L |
 | [HybridDriveVLA / DualDriveVLA](sources/hybriddriveVLA.md) | 3-RQ complementarity analysis (CKA/CCA/SAE); VLM+ViT dual-branch + style-axis interpolation + trajectory scorer; 92.10 PDMS NAVSIM-v1; fast–slow DualDriveVLA 91.0 PDMS @ 3.2× throughput |
+| [WAM-Diff](sources/wam-diff.md) | Masked diffusion VLA (LLaDA-V 8.4B) + LoRA MoE (64 experts) + GSPO (sequence-level RL); reverse-causal decoding; 91.0 PDMS NAVSIM-v1; 89.7 EPDMS NAVSIM-v2 |
 
 ---
 
@@ -56,6 +57,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [Best-of-N Sampling](concepts/best-of-n.md) | Oracle trajectory selection from N samples; NAVSIM-v1 saturated at BoN-6 (94.8 = human GT); implications for benchmark interpretation; DreamerAD as deployable BoN variant |
 | [Bench2Drive Benchmark](concepts/bench2drive.md) | CARLA V2 closed-loop; interactive agents; DS + SR metrics; SOTA LinkVLA 91.01 DS; PDM-Lite caveat; contrast with NAVSIM |
 | [Chain-of-Thought for AD](concepts/chain-of-thought-for-ad.md) | Text/visual/self-reflection CoT types; annotation methods (frontier VLM, GT-grounded, LRM-as-critic); adaptive CoT (AdaThinkDrive); NoRD challenges necessity; efficiency tradeoffs |
+| [Mixture of Experts for AD](concepts/mixture-of-experts.md) | 4 MoE patterns: sparse LoRA (WAM-Diff), block-level task routing (DriveFine), MoT frozen+trained (AutoMoT), 3-stream MoT (UniDriveVLA); RL routing instability → GSPO; catastrophic forgetting evidence |
 
 ---
 

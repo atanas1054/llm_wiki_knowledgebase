@@ -16,7 +16,7 @@ Code: https://github.com/fudan-generative-vision/WAM-Flow
 
 ## One-Line Summary
 
-A VLA model that casts ego-trajectory planning as **discrete flow matching over a structured token space**, enabling fully parallel coarse-to-fine refinement with a tunable compute–accuracy tradeoff — 90.3 PDMS SOTA on NAVSIM-v1 using only 1 front camera.
+A VLA model that casts ego-trajectory planning as **discrete flow matching over a structured token space**, enabling fully parallel coarse-to-fine refinement with a tunable compute–accuracy tradeoff — 90.3 PDMS on NAVSIM-v1 using only 1 front camera.
 
 ## Problem Statement
 
@@ -203,5 +203,5 @@ Lowest average collision rate among all VLA methods under UniAD metrics. Perfect
 - [[concepts/discrete-flow-matching.md]] — the theoretical foundation (CTMC, probability paths, DFM objectives)
 - [[concepts/diffusion-planner.md]] — DFM is a discrete analogue to continuous diffusion; key differences: parallel vs. iterative denoising, discrete vs. continuous state space
 - [[concepts/rl-for-ad.md]] — GRPO applied to DFM (parallel generation preserved unlike diffusion-as-MDP)
-- [[concepts/navsim-benchmark.md]] — WAM-Flow sets new SOTA on both NAVSIM-v1 and v2
+- [[concepts/navsim-benchmark.md]] — WAM-Flow held SOTA on NAVSIM-v1 at publication (90.3); superseded by HybridDriveVLA (92.1), DiffusionDriveV2 (91.2), WAM-Diff (91.0), FLARE (91.4), DriveFine (91.8)
 - [[sources/recogdrive.md]] — competitor; provides 3.1M VQA data used in WAM-Flow Stage 2 pretraining

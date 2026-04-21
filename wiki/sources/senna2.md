@@ -178,7 +178,7 @@ Best on all metrics. −5.7% FDE vs. Senna.
 | ResAD | 97.8 | 97.2 | 99.5 | 99.8 | 88.2 | 96.9 | 97.0 | 98.4 | 88.2 | 85.5 |
 | **Senna-2** | **98.5** | **97.8** | **99.5** | **99.8** | **88.1** | **97.5** | **97.0** | **98.6** | **88.4** | **86.6** |
 
-NAVSIM-v2 SOTA as of April 2026. Note: this result uses a separate NAVSIM fine-tune variant.
+Best NAVSIM-v2 result at time of publication. Superseded by DriveFine (89.7 EPDMS, bug-fixed scorer) and WAM-Diff (89.7 EPDMS). Note: this result uses a separate NAVSIM fine-tune variant.
 
 ### Ablation — Architecture (Table 4, Stage 1 only)
 
@@ -224,5 +224,5 @@ Note: Stage 3 slightly increases open-loop FDE (0.575 → 0.597) — closed-loop
 - [[concepts/dual-system-vla.md]] — Senna-2 is the primary example of the dual-system VLM + E2E architecture pattern
 - [[concepts/rl-for-ad.md]] — HRL with 3DGS; bottom-up hierarchical RL; contrasts with NAVSIM-based GRPO in ReCogDrive/WAM-Flow
 - [[concepts/vlm-domain-adaptation.md]] — Senna-2's decision adapter, selective open-loop alignment, kinematic mapping
-- [[concepts/navsim-benchmark.md]] — Senna-2 is current NAVSIM-v2 SOTA (86.6 EPDMS, after fine-tune)
+- [[concepts/navsim-benchmark.md]] — Senna-2 held NAVSIM-v2 SOTA at publication (86.6 EPDMS); now superseded by DriveFine and WAM-Diff (both 89.7)
 - [[sources/recogdrive.md]] — ReCogDrive uses a single-system approach (VLM + diffusion planner via cross-attention) vs. Senna-2's explicit dual-system consistency alignment

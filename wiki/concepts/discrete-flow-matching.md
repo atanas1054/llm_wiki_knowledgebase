@@ -1,10 +1,10 @@
 ---
 title: Discrete Flow Matching
 type: concept
-sources: [raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md]
-related: [sources/wam-flow.md, sources/reflectdrive.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/inference-time-safety.md]
+sources: [raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md]
+related: [sources/wam-flow.md, sources/reflectdrive.md, sources/wam-diff.md, sources/drivefine.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/inference-time-safety.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-04-21
 confidence: high
 ---
 
@@ -125,26 +125,30 @@ Ablation result: numerical tokenizer alone gives +4.9 PDMS; metric-aligned embed
 
 Both DFM (WAM-Flow) and masked discrete diffusion (ReflectDrive, LLaDA) operate over discrete token vocabularies but are **distinct paradigms**. The confusion arises because both are sometimes described as "discrete diffusion."
 
-| Aspect | DFM / CTMC (WAM-Flow) | Masked Discrete Diffusion (ReflectDrive, LLaDA) |
-|--------|-----------------------|--------------------------------------------------|
+| Aspect | DFM / CTMC (WAM-Flow) | Masked Discrete Diffusion (ReflectDrive, DriveFine, WAM-Diff) |
+|--------|-----------------------|---------------------------------------------------------------|
 | Corruption process | CTMC Gibbs probability path | BERT-style [MASK] tokens |
 | Velocity field | Learned geometry-aware rates | Fixed mask/unmask schedule |
 | Boundary conditions | Source: uniform; target: data | Source: fully masked; target: data |
 | Theoretical framework | Continuous-time Markov chain flow | Absorbing Markov chain (D3PM subclass) |
 | Numerical tokenizer | Metric-aligned (triplet loss required) | Simple uniform codebook |
 | Inpainting | Requires adapting CTMC boundary conditions | Native — identical to training objective |
-| RL training | GRPO on parallel outputs (clean) | Not explored in current literature |
-| Key AD paper | WAM-Flow | ReflectDrive |
+| RL training | GRPO on parallel outputs (clean) | GSPO (WAM-Diff), hybrid offline/online (DriveFine) |
+| Decoding order | Not applicable (parallel) | Flexible: random / causal / reverse-causal (WAM-Diff) |
+| Key AD papers | WAM-Flow | ReflectDrive, DriveFine, WAM-Diff |
 
-**Practical takeaway for AD**: Masked diffusion provides inpainting for free (ReflectDrive exploits this for inference-time safety). DFM provides geometry-aware transport and cleaner GRPO integration (WAM-Flow exploits this for RL). Neither is strictly superior — they address different needs.
+**Practical takeaway for AD**: Masked diffusion provides inpainting for free (ReflectDrive exploits this for inference-time safety) and is increasingly the preferred substrate for RL-trained VLA policies (DriveFine, WAM-Diff). DFM provides geometry-aware transport and cleaner GRPO integration (WAM-Flow exploits this for RL). The masked diffusion camp has grown: WAM-Diff adds LoRA MoE + sequence-level RL (GSPO), DriveFine adds block-level MoE + hybrid RL — both on LLaDA-V backbone.
 
 ## Applications in Literature
 
 - **LLaDA** — 8B discrete diffusion LLM (masked diffusion) reaching LLaMA-3 performance
+- **LLaDA-V** — multimodal extension of LLaDA (backbone for WAM-Diff and DriveFine)
 - **DREAM-7B** — diffusion-based reasoning via iterative refinement (masked diffusion)
 - **FUDOKI** — multimodal DFM for image + text generation (CTMC-based DFM)
-- **WAM-Flow** — first VLA application to AD trajectory planning (CTMC-based DFM + GRPO)
+- **WAM-Flow** — first VLA application to AD trajectory planning (CTMC-based DFM + GRPO); 90.3 PDMS NAVSIM-v1
 - **ReflectDrive** — VLA with inference-time safety reflection via inpainting (masked diffusion)
+- **DriveFine** — block-MoE masked diffusion (LLaDA-8B) + hybrid offline/online RL; 90.7 PDMS NAVSIM-v1; 89.7 EPDMS (bug-fixed) NAVSIM-v2
+- **WAM-Diff** — LoRA MoE masked diffusion (LLaDA-V 8.4B) + GSPO; flexible decoding schedules (reverse-causal best); 91.0 PDMS NAVSIM-v1; 89.7 EPDMS NAVSIM-v2
 
 ## Open Questions
 

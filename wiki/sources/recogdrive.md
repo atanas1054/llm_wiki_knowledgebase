@@ -16,7 +16,7 @@ Project: https://xiaomi-research.github.io/recogdrive
 
 ## One-Line Summary
 
-ReCogDrive integrates a domain-adapted InternVL3-8B VLM with a DDPM diffusion trajectory planner, fine-tuned via simulator-assisted GRPO-style RL, achieving 89.6 PDMS SOTA on NAVSIM using camera only.
+ReCogDrive integrates a domain-adapted InternVL3-8B VLM with a DDPM diffusion trajectory planner, fine-tuned via simulator-assisted GRPO-style RL, achieving 89.6 PDMS on NAVSIM using camera only.
 
 ## Problem Statement
 
