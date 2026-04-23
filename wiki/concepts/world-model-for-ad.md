@@ -1,10 +1,10 @@
 ---
 title: World Models for Autonomous Driving
 type: concept
-sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md]
-related: [sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md]
+sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md]
+related: [sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md]
 created: 2026-04-05
-updated: 2026-04-17
+updated: 2026-04-23
 confidence: high
 ---
 
@@ -250,6 +250,84 @@ Note: exact choice of future frame matters little — the task structure is what
 
 **Contrast with UniUGP (Pattern 1)**: UniUGP uses future video generation to improve expert imitation; Vega uses it to ground instruction-conditioned policy learning. UniUGP's generation expert is optionally available at inference; Vega's is training-time only.
 
+### 11. Joint Video-Action DiT from Video Generation Backbone (DriveVA)
+
+**DriveVA** ([[sources/driveva.md]]) answers a different framing of the world model question: instead of building a driving world model from scratch or adding video prediction to a VLM backbone, can we directly fine-tune a **large-scale pretrained video generation model** for AD planning?
+
+**Core motivation**: VLMs pretrained on image-text pairs learn semantic knowledge ("what is what") but not spatiotemporal dynamics ("how the world moves"). Video generation models trained on web-scale video implicitly encode physically plausible motion patterns — richer priors for generalizable driving.
+
+**Backbone**: Wan2.2-TI2V-5B (5B parameters) — the text-to-image-to-video variant of the Wan model family (same family as DriveDreamer-Policy's Wan-2.1-1.3B, but larger and with image-conditioning support). The 3D-causal VAE and frozen text encoder are inherited.
+
+**Key architectural innovation — joint generative target**: instead of separate modules for video prediction and trajectory generation, DriveVA places both in the same noisy target:
+
+$$\mathbf{Y}_0^{(l)} = [\underbrace{\mathbf{V}'_{l+1}, \ldots, \mathbf{V}'_{l+n_\text{pred}}}_\text{future video latents},\ \underbrace{\mathbf{A}_{l+1:l+K}}_\text{action tokens}]$$
+
+A **single DiT** denoises both halves simultaneously at the same flow time $s$. This is the deepest video-action coupling in the wiki:
+
+| Method | Video-action coupling mechanism |
+|---|---|
+| UniUGP | Cascaded: generation expert conditioned on planning expert output |
+| Epona | Parallel branches (TrajDiT ‖ VisDiT) on shared MST latent |
+| DriveDreamer-Policy | Causal stages: depth → video → action, separate FM generators |
+| DriveVLA-W0 | Training-time auxiliary loss only, no coupling at inference |
+| FLARE | Auxiliary semantic prediction only, no video generation at inference |
+| **DriveVA** | **Single DiT over joint [video_latents ‖ action_tokens] target** |
+
+**Video continuation module**: history observation buffer (m frames) encoded as condition latents; after each action chunk is executed, the window slides and a new short clip is predicted. Inference requires only **2 flow-matching steps** for near-optimal NAVSIM performance.
+
+**Critical ablation** (Table 5.5): video supervision 71.4 → 90.9 PDMS (+19.5) over action-only optimization. This is the strongest single-component gain in the wiki for any technique. The authors argue the gain requires actions to be forced *consistent* with the imagined future — loose coupling (auxiliary loss) does not replicate it.
+
+**Zero-shot generalization results** (key differentiator from all other wiki world-model methods):
+- **nuScenes (zero-shot, trained on NAVSIM only)**: −78.9% avg L2, −83.3% collision vs. PWM
+- **Bench2Drive (zero-shot, real→sim)**: −52.5% avg L2, −52.4% collision vs. PWM
+
+No other wiki world-model paper demonstrates quantitative cross-dataset zero-shot transfer at this scale.
+
+**Limitations**: Table 1 (NAVSIM sub-scores) truncated in source file — per-metric breakdown unavailable; comparison table methods unknown. No NAVSIM-v2/EPDMS. No RL stage. 5B backbone with no latency numbers. Video required at every inference step (unlike Epona's optional VisDiT). Zero-shot comparison baseline is PWM only, not full leaderboard.
+
+**NAVSIM-v1**: 90.9 PDMS — between WAM-Diff (91.0) and DriveFine (90.7) in the wiki.
+
+### 12. Dual-Role World Model: Dense Supervisor + Intrinsic Exploration Reward (ExploreVLA)
+
+**ExploreVLA** ([[sources/explorevla.md]]) assigns the world model **two simultaneous roles** — a pattern not seen in any previous entry:
+1. **Dense supervisory signal** (Stage 1 SFT): future RGB + depth masked token prediction provides rich visual and geometric supervision alongside trajectory prediction.
+2. **Intrinsic exploration reward** (Stage 2 GRPO): the world model's token-level entropy measures trajectory novelty — high entropy indicates OOD trajectories that, if safe, are valuable learning opportunities.
+
+**Key distinction from all prior patterns**:
+- Patterns 1–8: world model provides supervision signal (pixels, latent features, semantic patches, instructions)
+- Pattern 9 (DreamerAD): world model provides a *task-aligned learned reward* from latent features
+- **Pattern 12 (ExploreVLA)**: world model provides an *uncertainty-based novelty reward* from prediction entropy — no separate reward model training; entropy is model-native
+
+**RGB + depth dual supervision** (Table 3 ablation):
+
+| RGB | Depth | PDMS |
+|-----|-------|------|
+| ✗ | ✗ | 86.2 |
+| ✓ | ✗ | 87.9 |
+| ✗ | ✓ | 87.8 |
+| ✓ | ✓ | **88.5** |
+
+Depth (Metric3D pseudo-labels) provides complementary geometric structure; joint supervision is additive (+2.3 PDMS over no image generation).
+
+**Safety-gated entropy reward** (Stage 2 GRPO):
+
+$$R_i = \begin{cases} \text{PDMS}_i + \lambda \cdot f(\mathcal{H}(\boldsymbol{\tau}_i)) & \text{PDMS}_i > \delta \\ \text{PDMS}_i & \text{otherwise} \end{cases}$$
+
+where $\mathcal{H}$ = average entropy of MAGVIT-v2 token predictions across all future RGB + depth frames; δ = 0.9; λ = 0.5. The entropy bonus flows only to trajectories that are simultaneously safe and novel.
+
+**Critical finding** (Table 4): image entropy reward alone = +0.03 PDMS; PDMS reward alone = +1.69; both = +1.86. The exploration signal is useless without the safety gate — discovery is only valuable when grounded by task performance.
+
+**NAVSIM-v1**: 90.4 single / 93.7 BoN-6 (2nd in wiki after Curious-VLA 94.8). **NAVSIM-v2**: 88.8 EPDMS, EC = 86.8 (2nd in wiki after WAM-Diff 89.7; comparison table omits WAM-Diff, DDP, DreamerAD). **nuScenes** (Stage 1 only, no RL): avg L2 0.44m / collision rate 0.10% (ties OpenDriveVLA for best average collision).
+
+**Contrast with DreamerAD (Pattern 9)**:
+| Aspect | DreamerAD | ExploreVLA |
+|--------|-----------|------------|
+| World model reward type | Learned latent AD-RM (8 dims × 8 horizons) | Raw token entropy (no separate training) |
+| Task alignment | High (explicitly trained on 8 EPDMS sub-metrics) | Indirect (entropy is novelty, not task reward) |
+| Simulator needed for RL | No (latent inference only) | Yes (PDMS gate requires PDM simulator) |
+| World model inference mode at RL | Latent (1-step shortcut, 0.03s) | Image generation (MAGVIT-v2 token decoding) |
+| Primary PDMS result | 88.7 NAVSIM-v1 | 90.4 / 93.7 BoN-6 NAVSIM-v1 |
+
 ## Key Challenges
 
 ### 1. Coupling world model and trajectory planner
@@ -285,6 +363,8 @@ Note: FID/FVD measure distributional realism, not planning-relevant accuracy. A 
 | Long-tail generalization | Partial | Partial |
 | **UniUGP** | **Both** | **Both** |
 | **Vega** | **World model as instruction bridge** | **Instruction-conditioned planning** |
+| **DriveVA** | **✓ (joint DiT, video backbone)** | **✗ (no LLM reasoning)** |
+| **ExploreVLA** | **✓ (RGB+depth masked prediction + entropy reward)** | **Partial (Show-o Phi-1.5 LLM)** |
 
 ## State of the Art (as of April 2026)
 
@@ -330,3 +410,5 @@ DDP substantially improves video coherence (−38% FVD) vs. PWM. The improvement
 - **DDP depth grounding**: DDP uses Depth Anything 3 pseudo-labels for both training and evaluation — does real LiDAR depth provide further improvement? Is geometric grounding from pseudo-labels sufficient for embodied planning?
 - **Comfort under extended metrics**: both DDP (EC=79.4) and WAM-Flow (EC=73.9) score poorly on NAVSIM-v2 extended comfort. Does world model training inherently produce more aggressive trajectories? (FLARE achieves EC=87.5 without video generation — suggests comfort is driven by RL reward design, not world model type)
 - **FLARE multi-step**: does extending FFP to predict features at t+2, t+3 provide further planning gains over single next-frame prediction?
+- **Video backbone scale**: DriveVA uses Wan2.2-TI2V-5B (5B params) and achieves 90.9 PDMS without RL. Would a smaller video backbone (e.g., 1.3B as in DDP) achieve comparable generalization? Is the zero-shot transfer a function of backbone size, joint coupling, or both?
+- **Zero-shot transfer ceiling**: DriveVA's zero-shot nuScenes/Bench2Drive gains are measured relative to PWM only. How does DriveVA compare zero-shot against VLA methods (FLARE, DriveFine) that are fine-tuned on the target domain? Does joint video-action training provide a sustainable generalization advantage at matched data scale?

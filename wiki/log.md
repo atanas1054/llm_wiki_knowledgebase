@@ -4,6 +4,94 @@ Append-only log of all wiki operations.
 
 ---
 
+## 2026-04-23 — Ingest: ExploreVLA
+
+**Source**: `raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md`  
+**arXiv**: 2604.02714v1  
+**Authors**: Zihao Sheng, Xin Ye, Jingru Luo, Sikai Chen, Liu Ren  
+**Confidence**: high — all tables and figures available in source
+
+**Pages created**:
+- `wiki/sources/explorevla.md` — full source summary covering all 6 figures (x1 25.png–x6 18.png), both NAVSIM tables (v1 full, v2 full), dense supervision ablation (Table 3), reward component ablation (Table 4), nuScenes comparison (Table 5), method equations, training strategy, qualitative analysis
+
+**Concept pages updated**:
+- `wiki/concepts/rl-for-ad.md` — added "ExploreVLA: World Model Uncertainty as Intrinsic Exploration Reward" section (entropy formula, safety-gated reward, RL ablation table, contrast with DreamerAD); added ExploreVLA row to GRPO comparison table; frontmatter updated
+- `wiki/concepts/world-model-for-ad.md` — added Pattern 12: Dual-Role World Model (dense supervisor + intrinsic entropy reward); updated World Model vs. VLA table; frontmatter updated
+- `wiki/concepts/navsim-benchmark.md` — added ExploreVLA to v1 SOTA table (90.4 single / 93.7 BoN-6); added to v2 SOTA table (88.8 EPDMS, EC=86.8); added caveat paragraph; updated BoN ranking summary; frontmatter updated
+- `wiki/concepts/best-of-n.md` — added ExploreVLA BoN-6 (93.7, 2nd in wiki) to NAVSIM-v1 table; updated Key Observations #1; frontmatter updated
+
+**Index updated**: added ExploreVLA row (37th paper).
+
+**Key facts**:
+- Architecture: Show-o (Phi-1.5 LLM + MAGVIT-v2 8192-codebook); omni-attention (causal for text/ego, full for image); 2-frame input (current + 0.5s history)
+- Stage 1a pre-train (10 epochs, image gen only) → Stage 1b SFT (15 epochs, joint action+image) → Stage 2 GRPO LoRA (5 epochs, G=8, rank 32, 4×H200)
+- Dense supervision ablation: RGB only 87.9, depth only 87.8, both 88.5 (from 86.2 baseline)
+- Reward design: safety-gated entropy R_i = PDMS_i + 0.5·f(H) if PDMS_i > 0.9 else PDMS_i; image reward alone +0.03, PDMS alone +1.69, combined +1.86
+- NAVSIM v1: 90.4 single / 93.7 BoN-6 — 2nd highest BoN in wiki (after Curious-VLA 94.8)
+- NAVSIM v2: 88.8 EPDMS (2nd in wiki after WAM-Diff 89.7); EC=86.8 (strong); comparison table omits WAM-Diff, DDP, DreamerAD
+- nuScenes (Stage 1 only): avg collision 0.10% (ties OpenDriveVLA for best); avg L2 0.44m
+- Comparison scope caveat: v1 table omits WAM-Diff, FLARE, DiffusionDriveV2, HybridDriveVLA, DriveFine — single-sample 90.4 is below all; BoN-6 vs. DriveSuprim single-sample not a fair comparison
+- First wiki method to use world model prediction *uncertainty* (not predictions) as an RL reward
+
+---
+
+## 2026-04-23 — Ingest: DriveVA
+
+**Source**: `raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md`  
+**arXiv**: 2604.04198v1  
+**Org**: University of Twente (+ multiple affiliations)  
+**Confidence**: medium — Table 1 (NAVSIM sub-scores and comparison methods) is truncated in the source file
+
+**Pages created**:
+- `wiki/sources/driveva.md` — full source summary covering abstract, method (all equations, tokenization, video continuation, flow-matching loss), available figures (x1 24.png, x2 22.png, x3 22.png truncated), key ablation (action-only 71.4 → DriveVA 90.9 PDMS, +19.5), zero-shot results, limitations
+
+**Concept pages updated**:
+- `wiki/concepts/world-model-for-ad.md` — added Pattern 11: Joint Video-Action DiT from Video Generation Backbone (DriveVA); coupling mechanism comparison table (6 wiki methods); zero-shot generalization data; added DriveVA to World Model vs. VLA table; added 2 open questions (backbone scale, zero-shot ceiling); frontmatter bumped to 2026-04-23
+- `wiki/concepts/navsim-benchmark.md` — added DriveVA (90.9 PDMS v1) to SOTA table with truncation caveat; added DriveVA caveat paragraph (medium confidence); frontmatter bumped
+
+**Index updated**: added DriveVA row (36th paper).
+
+**Key facts**:
+- Backbone: Wan2.2-TI2V-5B (5B params) — largest backbone in wiki; same family as DDP (1.3B) and UniUGP (Wan2.1)
+- Joint generative target: single DiT denoises [future_video_latents ‖ action_tokens] simultaneously — deepest video-action coupling in wiki
+- Critical ablation: action-only 71.4 → joint video+action 90.9 PDMS (+19.5) — strongest single-component gain in wiki for any technique
+- 2 flow-matching steps sufficient for near-optimal NAVSIM performance
+- Zero-shot nuScenes (trained on NAVSIM only): −78.9% avg L2, −83.3% collision rate vs. PWM
+- Zero-shot Bench2Drive (real→sim): −52.5% avg L2, −52.4% collision rate vs. PWM
+- 90.9 PDMS slots between WAM-Diff (91.0) and DriveFine (90.7) in wiki; no RL stage
+- No NAVSIM-v2 / EPDMS results; no latency numbers; video required at every inference step
+- Table 1 truncated — cannot verify comparison set or sub-metric breakdown
+
+---
+
+## 2026-04-23 — Ingest: DriveSuprim
+
+**Source**: `raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md`  
+**arXiv**: 2506.06659v1  
+**Org**: Fudan University + NVIDIA
+
+**Pages created**:
+- `wiki/sources/drivesuprim.md` — full source summary with all 6 figures (x1 23.png, x2 21.png, x3 21.png, trajectories_ori_vs_rotated.png, x4 20.png, x5 20.png), all 11 tables (oracle top-K, NAVSIM-v1 comparison, NAVSIM-v2 comparison, module ablation, coarse-to-fine evolution, refinement settings, soft-label threshold, FOV settings, inference coefficients v1, inference coefficients v2, turning scenario breakdown), and full method descriptions
+- `wiki/concepts/selection-based-planning.md` — new concept page: fixed-vocabulary scoring paradigm; three failure modes (hard negatives / directional bias / hard binary labels); oracle ceiling (98.7 PDMS top-256); DriveSuprim coarse-to-fine mechanism; rotation augmentation; comparison table of selection-based methods (Hydra-MDP, HydraMDP++, DriveSuprim, DreamerAD, HybridDriveVLA); relationship to stochastic BoN
+
+**Concept pages updated**:
+- `wiki/concepts/navsim-benchmark.md` — added DriveSuprim (93.5 PDMS v1, 87.1 EPDMS v2) to both SOTA tables; updated SOTA summary (DriveSuprim 93.5 is now highest non-BoN result in wiki); added DriveSuprim caveat paragraph; frontmatter bumped to 2026-04-23
+- `wiki/concepts/best-of-n.md` — added "Fixed-Vocabulary Oracle Selection" section; DriveSuprim oracle study (top-1=91.9, top-4=94.5, top-16=96.1, top-256=98.7 vs. human 94.8); explains why vocabulary ceiling (98.7) exceeds stochastic BoN ceiling (94.8); frontmatter bumped to 2026-04-23
+
+**Index updated**: added DriveSuprim row (35th paper); added Selection-Based Planning concept row (14th concept).
+
+**Key facts**:
+- Selection-based (non-VLM): scores 8192 fixed candidate trajectories; picks argmax
+- Oracle study: top-4 of 8192 → 94.5 PDMS (nearly matches human GT 94.8); top-256 → 98.7 PDMS — ceiling far above stochastic BoN
+- Coarse-to-fine: Stage 1 selects top-256 → Stage 2 re-scores only those 256; key ablation: adding decoder layers gives +0, trajectory filtering gives +0.8 EPDMS
+- Rotation augmentation: only 8% NAVSIM GT trajectories turn >30°; pseudo-panoramic view from 3 cameras + angle-crop + GT rotation gives uniform direction distribution; +0.7 EPDMS overall, +2.9/+2.0 EPDMS on left/right turning scenarios
+- EMA self-distillation: teacher EMA (momentum 0.992→0.998); soft labels clipped within ±0.15 of hard GT; optimal threshold δ=0.15; +1.5 EPDMS
+- 93.5 PDMS NAVSIM-v1 (ViT-L, 3-cam, no LiDAR, no VLM) — highest non-BoN result in wiki, surpassing DiffusionDriveV2 (91.2 C+L) and HybridDriveVLA (92.1 ensemble)
+- 87.1 EPDMS NAVSIM-v2 (ViT-L) — below DreamerAD (87.7) and WAM-Diff (89.7); EC=78.6 (middle range)
+- Limitations: multi-stage (>2) provides no gain; inference speed suboptimal (no latency numbers given); NAVSIM-only evaluation
+
+---
+
 ## 2026-04-21 — New Concept Page: Mixture of Experts for AD
 
 **Page created**: `wiki/concepts/mixture-of-experts.md`

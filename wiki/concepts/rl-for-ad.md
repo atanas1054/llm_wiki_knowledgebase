@@ -1,10 +1,10 @@
 ---
 title: Reinforcement Learning for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, sources/dreameraD.md, sources/nord.md, sources/diffusiondrive-v2.md, sources/wam-diff.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, sources/dreameraD.md, sources/nord.md, sources/diffusiondrive-v2.md, sources/wam-diff.md, sources/explorevla.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md]
 created: 2026-04-05
-updated: 2026-04-21
+updated: 2026-04-23
 confidence: high
 ---
 
@@ -629,8 +629,9 @@ All three papers independently arrive at the conclusion that standard GRPO requi
 | NoRD | PDMS + format + length (all [0,1]) | Yes | No | No | None (no KL) |
 | **DiffusionDriveV2** | **PDMS (NAVSIM) + hard collision penalty (−1)** | **Yes** | **No** | **No** | **BC (λ=0.1, IL loss)** |
 | WAM-Diff | PDMS (NAVSIM composite) | Yes | No | No | Clipping (seq-level, no KL) |
+| **ExploreVLA** | **PDMS (safety gate, δ=0.9) + image entropy exploration bonus (λ=0.5)** | **Yes** | **No** | **No** | **KL (β=0.01)** |
 
-AR1 is the only method with explicit reasoning evaluation as a reward component. FLARE, DiffusionDriveV2, and WAM-Diff all adapt GRPO to handle non-standard planner architectures: FLARE uses BC regularization for DiT planners; DiffusionDriveV2 uses anchor-scoped truncated advantage for GMM planners; WAM-Diff uses sequence-level GSPO for sparse MoE planners. **DreamerAD is the only method where reward is computed from latent world model features** rather than a PDM simulator or GT trajectories. **WAM-Diff's GSPO is the only method that eliminates token-level credit assignment entirely** — replacing it with sequence-level importance ratios to maintain MoE routing stability.
+AR1 is the only method with explicit reasoning evaluation as a reward component. FLARE, DiffusionDriveV2, and WAM-Diff all adapt GRPO to handle non-standard planner architectures: FLARE uses BC regularization for DiT planners; DiffusionDriveV2 uses anchor-scoped truncated advantage for GMM planners; WAM-Diff uses sequence-level GSPO for sparse MoE planners. **DreamerAD is the only method where reward is computed from latent world model features** rather than a PDM simulator or GT trajectories. **WAM-Diff's GSPO is the only method that eliminates token-level credit assignment entirely** — replacing it with sequence-level importance ratios to maintain MoE routing stability. **ExploreVLA is the only method where the world model's prediction *uncertainty* (entropy) serves as a novelty reward** — distinct from DreamerAD's task-aligned latent reward model.
 
 ## DreamerAD: RL within Latent World Model Imagination Space
 
@@ -686,6 +687,79 @@ DreamerAD achieves **87.7 EPDMS on NAVSIM-v2** (+2.6 over Epona baseline), with 
 **Unique position**: DreamerAD is the **only method in the wiki where RL rewards are computed from latent world model features at training time** — not simulator, not GT trajectories. This opens a path toward RL training that scales with world model quality rather than simulator speed.
 
 **Key tradeoff vs. simulator-based GRPO**: latent AD-RM rewards are learned approximations to simulator rewards — they may not perfectly reflect all safety conditions. The reward model is trained from simulator labels but generalizes within the world model's distribution. In exchange, RL training is 80× faster per rollout.
+
+## ExploreVLA: World Model Uncertainty as Intrinsic Exploration Reward
+
+**ExploreVLA** ([[sources/explorevla.md]]) introduces the most structurally novel reward design in the wiki: using the **image prediction entropy of a trained world model** as an intrinsic novelty signal. Unlike all other GRPO methods (which derive rewards from PDM simulator, GT trajectories, or latent reward models), ExploreVLA computes the novelty of a trajectory by how *uncertain* its own world model is about the visual consequences of that trajectory.
+
+### Core Motivation
+
+Standard GRPO with PDMS-only reward encourages the policy to exploit known good behaviors but does not distinguish between:
+- Trajectories that replicate expert behavior (low entropy, already learned)
+- Trajectories that safely venture outside the expert distribution (high entropy, potentially valuable discoveries)
+
+An exploration bonus orthogonal to task performance is needed to unlock genuinely novel strategies.
+
+### Architecture Prerequisite: Show-o World Model
+
+ExploreVLA is built on **Show-o** (Phi-1.5 LLM + MAGVIT-v2, 8192-codebook). The model is first trained with two world modeling objectives: (a) predicting future RGB image tokens and (b) predicting future depth map tokens (Metric3D pseudo-labels) via masked token prediction. This SFT model is the reward source for Stage 2 GRPO.
+
+### Entropy-Based Uncertainty Measure
+
+For each candidate trajectory $\boldsymbol{\tau}_i$, the world model performs future image generation and outputs a token-level probability distribution over the MAGVIT-v2 codebook. The entropy is averaged across all generated token positions (both RGB and depth frames):
+
+$$\mathcal{H}(\boldsymbol{\tau}_i) = -\frac{1}{|\mathcal{M}|}\sum_{j \in \mathcal{M}} p_j \log p_j$$
+
+- Low entropy → in-distribution trajectory; world model confidently predicts the visual consequences
+- High entropy → OOD trajectory; world model is uncertain → potential novel discovery
+
+**Key advantage over L2 to GT**: entropy measures distance to the *entire* training distribution rather than deviation from a single expert trajectory. A trajectory that follows the expert's direction but is laterally offset has high L2 but low entropy (world model still predicts a similar scene). A trajectory taking a genuinely different route has potentially low L2 (by coincidence) but high entropy. The entropy correctly identifies the second as more novel.
+
+### Safety-Gated Reward
+
+High entropy alone is not sufficient — a collision trajectory is also novel. The exploration bonus is gated by the PDMS threshold:
+
+$$R_i = \begin{cases} \text{PDMS}_i + \lambda \cdot f(\mathcal{H}(\boldsymbol{\tau}_i)) & \text{if } \text{PDMS}_i > \delta \\ \text{PDMS}_i & \text{otherwise} \end{cases}$$
+
+- δ = **0.9** safety threshold; only safe trajectories receive the exploration bonus
+- λ = **0.5** exploration weight
+- $f(\cdot)$ normalizes entropy to $[0, 1]$
+
+**Result**: novel + safe trajectories are doubly rewarded; unsafe OOD trajectories are penalized solely by their low PDMS.
+
+### RL Ablation (Table 4)
+
+| PDMS Reward | Image Reward | PDMS |
+|-------------|--------------|------|
+| ✗ | ✗ | 88.50 (Stage 1 baseline) |
+| ✓ | ✗ | 90.19 (+1.69) |
+| ✗ | ✓ | 88.53 (+0.03) |
+| **✓** | **✓** | **90.36 (+1.86)** |
+
+Image reward alone contributes only +0.03 — the exploration signal is useless without the safety gate (PDMS reward). Combined, they achieve +1.86, with the entropy bonus contributing +0.17 complementary signal beyond PDMS alone.
+
+**Then BoN-6 on top**: ExploreVLA† (BoN-6) = 93.7 PDMS on NAVSIM-v1.
+
+### Contrast with DreamerAD
+
+| Aspect | DreamerAD | ExploreVLA |
+|--------|-----------|------------|
+| World model reward type | Learned latent AD-RM (8 dims × 8 horizons) | Raw entropy of token probability distributions |
+| Reward learning | Trained reward model on 20% of data | No training — entropy is model-native |
+| World model at RL time | Latent shortcut-forced (no pixels) | Image generation (MAGVIT-v2 token decoding) |
+| Reward signal | Task-aligned (8 EPDMS sub-metrics) | Novelty-aligned (exploration bonus) |
+| Safety handling | Log-sigmoid dominance (collision → −∞) | Hard gate (PDMS > δ = 0.9) |
+| Primary NAVSIM-v1 result | 88.7 PDMS | 90.4 / 93.7 BoN-6 PDMS |
+| Primary NAVSIM-v2 result | 87.7 EPDMS | 88.8 EPDMS |
+
+DreamerAD provides **task-aligned** rewards from latent states (good proxy for simulator). ExploreVLA provides **novelty-aligned** rewards from generation entropy (exploration without simulator). ExploreVLA still needs the PDM simulator for the safety gate — it is not fully simulator-free.
+
+### Position in the RL Landscape
+
+ExploreVLA is the **only method in the wiki that uses a world model's prediction uncertainty (not its predictions) as a reward**. This places it in a unique region of the design space:
+- Task quality signal: PDMS from NAVSIM simulator (shared with 10+ other methods)
+- Exploration signal: world model entropy (unique; no other wiki method uses this)
+- Dual-role world model: same model provides both SFT dense supervision and RL exploration reward
 
 ## NoRD: Difficulty Bias in GRPO and Dr. GRPO
 

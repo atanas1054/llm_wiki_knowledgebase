@@ -1,10 +1,10 @@
 ---
 title: Best-of-N Sampling
 type: concept
-sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md]
-related: [sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md]
+sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md]
+related: [sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, sources/drivesuprim.md, sources/explorevla.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md, concepts/selection-based-planning.md]
 created: 2026-04-15
-updated: 2026-04-19
+updated: 2026-04-23
 confidence: high
 ---
 
@@ -30,14 +30,15 @@ N is typically 4 or 6 in current AD papers. Comparing BoN scores across differen
 
 ### NAVSIM-v1 (PDMS)
 
-| Method          | Single-sample PDMS | BoN PDMS  | N   | Gain              |
-| --------------- | ------------------ | --------- | --- | ----------------- |
-| **Curious-VLA** | 90.3               | **94.8**  | 6   | +4.5 (= human GT) |
-| DriveVLA-W0★    | 90.2               | **93.0**  | 6   | +2.8              |
-| AdaThinkDrive   | 90.3               | **93.0**  | 4   | +2.7              |
-| NoRD            | 85.6               | **92.4**  | 6   | +6.8              |
-| AutoVLA         | 89.11              | **92.12** | 6   | +3.01             |
-| Vega            | 87.9               | **89.8**  | 6   | +1.9              |
+| Method            | Single-sample PDMS | BoN PDMS  | N   | Gain              |
+| ----------------- | ------------------ | --------- | --- | ----------------- |
+| **Curious-VLA**   | 90.3               | **94.8**  | 6   | +4.5 (= human GT) |
+| **ExploreVLA**    | 90.4               | **93.7**  | 6   | +3.3              |
+| DriveVLA-W0★      | 90.2               | **93.0**  | 6   | +2.8              |
+| AdaThinkDrive     | 90.3               | **93.0**  | 4   | +2.7              |
+| NoRD              | 85.6               | **92.4**  | 6   | +6.8              |
+| AutoVLA           | 89.11              | **92.12** | 6   | +3.01             |
+| Vega              | 87.9               | **89.8**  | 6   | +1.9              |
 
 ★ DriveVLA-W0's "90.2" single-sample uses query-based expert with trajectory anchors (multi-candidate selection within the model); the underlying single-model output is 88.4 PDMS. BoN-6 adds oracle selection on top.
 
@@ -53,7 +54,7 @@ N is typically 4 or 6 in current AD papers. Comparing BoN scores across differen
 
 ### 1. NAVSIM-v1 is saturated at BoN-6
 
-Curious-VLA BoN-6 (94.8 PDMS) matches the human ground-truth trajectory score on NAVSIM-v1. A model that can select among 6 samples already reaches human-level performance on this benchmark. This suggests **NAVSIM-v1 BoN-6 is a closed frontier**: further BoN-6 improvements are marginal, and future work should emphasize single-sample scores, NAVSIM-v2 extended metrics (EPDMS), or Navhard OOD evaluation.
+Curious-VLA BoN-6 (94.8 PDMS) matches the human ground-truth trajectory score on NAVSIM-v1. ExploreVLA BoN-6 (93.7) is the second-highest result in the wiki. A model that can select among 6 samples already reaches near-human-level performance on this benchmark. This suggests **NAVSIM-v1 BoN-6 is a closed frontier**: further BoN-6 improvements are marginal, and future work should emphasize single-sample scores, NAVSIM-v2 extended metrics (EPDMS), or Navhard OOD evaluation.
 
 ### 2. BoN gain is inversely correlated with single-sample quality
 
@@ -120,3 +121,30 @@ When reading NAVSIM SOTA tables:
 - BoN results are most informative when paired with the single-sample result — the gap indicates how much a learned selector could theoretically recover
 
 See [[concepts/navsim-benchmark.md]] for the full SOTA table with BoN and single-sample results labeled separately.
+
+---
+
+## Fixed-Vocabulary Oracle Selection: A Higher Ceiling
+
+All BoN results above use **stochastic sampling** — N forward passes from the same model. A structurally different oracle study exists for **selection-based planners** that maintain a fixed vocabulary of N pre-defined candidate trajectories.
+
+DriveSuprim ([[sources/drivesuprim.md]]) reports oracle PDMS when the perfect trajectory is selected from the top-K highest-quality candidates in an 8192-trajectory vocabulary:
+
+| Top-K oracle | PDMS | vs. Human GT |
+|---|---|---|
+| Top-1 (best learned model) | 91.9 | −2.9 |
+| Top-4 | 94.5 | −0.3 |
+| Top-16 | 96.1 | +1.3 |
+| Top-256 | 98.7 | +3.9 |
+| Human GT | 94.8 | — |
+
+**Key contrast with stochastic BoN**:
+- Stochastic BoN-6 ceiling: 94.8 PDMS (Curious-VLA) — matches human GT
+- Fixed-vocabulary oracle top-4: 94.5 PDMS — nearly matches human GT with only 4 candidates from 8192
+- Fixed-vocabulary oracle top-256: 98.7 PDMS — far exceeds human GT
+
+The vocabulary ceiling (98.7 at top-256) is substantially higher than stochastic BoN (94.8 at N=6). This is because the vocabulary is purpose-built for diverse maneuver coverage via K-Means clustering over expert trajectories, while stochastic decoding from a single model produces correlated outputs clustered near the model's peak probability mass.
+
+**Why stochastic BoN saturates earlier**: a well-trained model assigns high probability to a narrow neighborhood of trajectories. Drawing 6 samples from this distribution produces 6 similar trajectories — the oracle selects the best among them but they are all close to the same local optimum. The vocabulary, by contrast, explicitly covers the full action space including turning scenarios that stochastic sampling rarely reaches.
+
+This implies the **true capability ceiling** of AD planners is better measured by fixed-vocabulary oracle selection than stochastic BoN, and that closing the gap between top-1 (91.9) and top-4 (94.5) is a tractable near-term target for selection quality research. See [[concepts/selection-based-planning.md]] for the full paradigm context.

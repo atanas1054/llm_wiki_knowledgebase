@@ -38,6 +38,9 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [DiffusionDriveV2](sources/diffusiondrive-v2.md) | DiffusionDrive + Intra/Inter-Anchor GRPO + multiplicative exploration noise; 91.2 PDMS NAVSIM-v1 / 85.5 EPDMS NAVSIM-v2; highest non-VLM result; ResNet-34 + C+L |
 | [HybridDriveVLA / DualDriveVLA](sources/hybriddriveVLA.md) | 3-RQ complementarity analysis (CKA/CCA/SAE); VLM+ViT dual-branch + style-axis interpolation + trajectory scorer; 92.10 PDMS NAVSIM-v1; fast–slow DualDriveVLA 91.0 PDMS @ 3.2× throughput |
 | [WAM-Diff](sources/wam-diff.md) | Masked diffusion VLA (LLaDA-V 8.4B) + LoRA MoE (64 experts) + GSPO (sequence-level RL); reverse-causal decoding; 91.0 PDMS NAVSIM-v1; 89.7 EPDMS NAVSIM-v2 |
+| [DriveSuprim](sources/drivesuprim.md) | Non-VLM selection-based (8192 vocab); coarse-to-fine (→256) + rotation aug + EMA self-distill; **93.5 PDMS NAVSIM-v1** (highest non-BoN in wiki); 87.1 EPDMS NAVSIM-v2 |
+| [DriveVA](sources/driveva.md) | Wan2.2-TI2V-5B video backbone; single DiT over joint [video latents ‖ action tokens]; +19.5 PDMS from video supervision; 90.9 PDMS NAVSIM-v1; zero-shot −78.9% L2 nuScenes; table truncated |
+| [ExploreVLA](sources/explorevla.md) | Show-o (Phi-1.5 + MAGVIT-v2); dense RGB+depth world model SFT; safety-gated entropy exploration reward (GRPO); 90.4 PDMS / 93.7 BoN-6 NAVSIM-v1; 88.8 EPDMS NAVSIM-v2; 1 cam |
 
 ---
 
@@ -58,6 +61,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [Bench2Drive Benchmark](concepts/bench2drive.md) | CARLA V2 closed-loop; interactive agents; DS + SR metrics; SOTA LinkVLA 91.01 DS; PDM-Lite caveat; contrast with NAVSIM |
 | [Chain-of-Thought for AD](concepts/chain-of-thought-for-ad.md) | Text/visual/self-reflection CoT types; annotation methods (frontier VLM, GT-grounded, LRM-as-critic); adaptive CoT (AdaThinkDrive); NoRD challenges necessity; efficiency tradeoffs |
 | [Mixture of Experts for AD](concepts/mixture-of-experts.md) | 4 MoE patterns: sparse LoRA (WAM-Diff), block-level task routing (DriveFine), MoT frozen+trained (AutoMoT), 3-stream MoT (UniDriveVLA); RL routing instability → GSPO; catastrophic forgetting evidence |
+| [Selection-Based Planning](concepts/selection-based-planning.md) | Fixed-vocabulary trajectory scoring; coarse-to-fine filtering; oracle ceiling 98.7 PDMS (top-256); hard-negative / directional bias / hard-label failure modes; DriveSuprim, DreamerAD, HybridDriveVLA |
 
 ---
 

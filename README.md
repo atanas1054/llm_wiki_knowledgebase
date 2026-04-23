@@ -50,17 +50,20 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [Epona](wiki/sources/epona.md) | Horizon Robotics + Tsinghua + PKU | AR+Diffusion WM (MST+DiTs, 2.5B); chain-of-forward training; backbone for DreamerAD | FVD 82.8 NuScenes; 86.2 PDMS NAVSIM-v1 |
 | [HybridDriveVLA / DualDriveVLA](wiki/sources/hybriddriveVLA.md) | — | 3-RQ complementarity analysis (CKA/SAE); VLM+ViT dual-branch + style-axis interpolation; fast–slow deployment | 92.10 PDMS NAVSIM-v1; 91.0 PDMS @ 3.2× throughput |
 | [WAM-Diff](wiki/sources/wam-diff.md) | Fudan + Yinwang | Masked diffusion + LoRA MoE (64 experts) + GSPO (sequence-level RL); reverse-causal decoding | 91.0 PDMS NAVSIM-v1 / 89.7 EPDMS NAVSIM-v2 |
+| [DriveSuprim](wiki/sources/drivesuprim.md) | Fudan + NVIDIA | Non-VLM selection-based; 8192-vocab + coarse-to-fine (→256) + rotation aug + EMA self-distill | **93.5 PDMS NAVSIM-v1** (highest non-BoN) / 87.1 EPDMS NAVSIM-v2 |
+| [DriveVA](wiki/sources/driveva.md) | U. Twente | Wan2.2-TI2V-5B video backbone; single DiT over joint [video latents ‖ action tokens]; zero-shot cross-dataset | 90.9 PDMS NAVSIM-v1; −78.9% L2 nuScenes (zero-shot) |
+| [ExploreVLA](wiki/sources/explorevla.md) | — | Show-o (Phi-1.5 + MAGVIT-v2); dense RGB+depth world model SFT; safety-gated entropy exploration reward (GRPO) | 90.4 PDMS / 93.7 BoN-6 NAVSIM-v1; 88.8 EPDMS NAVSIM-v2 |
 
-## Concept Pages (13)
+## Concept Pages (14)
 
 | Concept | Description |
 |---------|-------------|
 | [Diffusion-Based Trajectory Planner](wiki/concepts/diffusion-planner.md) | Continuous diffusion, DFM, masked diffusion, FM action expert, and learnable-query paradigms compared |
 | [Discrete Flow Matching](wiki/concepts/discrete-flow-matching.md) | CTMC-based DFM theory; WAM-Flow vs. masked diffusion vs. continuous FM |
-| [RL for Autonomous Driving](wiki/concepts/rl-for-ad.md) | GRPO variants: simulator, GT-based, hierarchical (3DGS), adaptive Think, LRM-as-critic, Dr. GRPO |
+| [RL for Autonomous Driving](wiki/concepts/rl-for-ad.md) | GRPO variants: simulator, GT-based, hierarchical (3DGS), adaptive Think, LRM-as-critic, Dr. GRPO, entropy-based exploration |
 | [VLM Domain Adaptation](wiki/concepts/vlm-domain-adaptation.md) | Data curation, CoT integration, dual-mode SFT, frozen VLM, reasoning-free adaptation |
 | [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md) | PDMS/EPDMS metrics; full SOTA table with caveats; Navhard OOD results |
-| [World Models for AD](wiki/concepts/world-model-for-ad.md) | 10 architecture patterns from cascaded generation to latent RL reward sources |
+| [World Models for AD](wiki/concepts/world-model-for-ad.md) | 12 architecture patterns from cascaded generation to entropy-based exploration rewards |
 | [Dual-System VLA](wiki/concepts/dual-system-vla.md) | VLM decisions + E2E trajectory; consistency alignment; async KV cache; MoT paradigm; complementarity + fast–slow deployment |
 | [Inference-Time Safety](wiki/concepts/inference-time-safety.md) | Gradient-free safety correction; inpainting-as-repair; DriveFine block-MoE contrast |
 | [Perception-Enhanced Planning](wiki/concepts/perception-for-planning.md) | World-PV/BEV tokens; grid-conditioned AR detection; IoU-aware confidence; sparse MoT |
@@ -68,6 +71,7 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [Bench2Drive Benchmark](wiki/concepts/bench2drive.md) | CARLA V2 closed-loop; interactive agents; DS + SR metrics; SOTA LinkVLA 91.01 DS |
 | [Chain-of-Thought for AD](wiki/concepts/chain-of-thought-for-ad.md) | Text/visual/self-reflection CoT types; annotation methods; adaptive CoT; NoRD challenge |
 | [Mixture of Experts for AD](wiki/concepts/mixture-of-experts.md) | 4 patterns: sparse LoRA MoE, block-level task MoE, MoT (frozen+trained), side expert; RL routing instability; catastrophic forgetting |
+| [Selection-Based Planning](wiki/concepts/selection-based-planning.md) | Fixed-vocabulary trajectory scoring; coarse-to-fine filtering; oracle ceiling 98.7 PDMS; hard-negative / directional bias failure modes |
 
 ## Workflow
 
