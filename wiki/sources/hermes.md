@@ -23,7 +23,7 @@ Existing VLM-powered E2E methods focus on nominal driving and lack dedicated mec
 
 ## Figure 1 — Paradigm Comparison
 
-![[raw/assets/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving/x1 9.png]]
+![[x1 9.png]]
 
 | Paradigm | Approach | Gap |
 |----------|----------|-----|
@@ -35,7 +35,7 @@ Existing VLM-powered E2E methods focus on nominal driving and lack dedicated mec
 
 ## Figure 2 — HERMES Architecture Overview
 
-![[raw/assets/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving/x2 7.png]]
+![[x2 7.png]]
 
 Two components: (1) **Long-Tail Instruction Embedding** (offline teacher) and (2) **Tri-Modal Driving Module** (online student).
 
@@ -106,7 +106,7 @@ Merges scene-aware visual representation with historical motion dynamics.
 
 ### Figure 3 — Intent Modulator
 
-![[raw/assets/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving/x3 7.png]]
+![[x3 7.png]]
 
 **FiLM-style** (feature-wise linear modulation) conditioning on discrete intent $\in \{0,1,2,3\}$ (unknown/straight/left/right):
 
@@ -116,7 +116,7 @@ Intent embedding → 2-layer MLP → scale and shift parameters. Sigmoid ensures
 
 ### Figure 4 — Risk Planning Cross-Attention
 
-![[raw/assets/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving/x4 6.png]]
+![[x4 6.png]]
 
 The key safety mechanism. Rather than directly substituting semantic guidance into the planning representation, it uses a **scaled residual** to limit its influence:
 
@@ -211,25 +211,25 @@ HERMES leads 8/10 categories. Weakest: Others (6.41 vs 6.44 LightEMMA), FOD (6.3
 
 ### Figure 5 — Nighttime Driving in Heavy Rain
 
-![[raw/assets/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving/x5 6.png]]
+![[x5 6.png]]
 
 Long-Tail Scene Context identifies low visibility and wet road reflections. HERMES produces a conservative, smooth turning trajectory with controlled speed — appropriate for conditions where visual cues are unreliable.
 
 ### Figure 6 — Extremely Low-Visibility Residential Street
 
-![[raw/assets/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving/x6 5.png]]
+![[x6 5.png]]
 
 Despite no immediate obstacle, the risk-aware planning context triggers cautious, centered trajectory to account for potential pedestrians and reduced friction.
 
 ### Figure 7 — Construction Zone with Lane Channelization
 
-![[raw/assets/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving/x7 5.png]]
+![[x7 5.png]]
 
 Temporary barricades and non-standard lane markings — rare in training data. Long-Tail Planning Context anticipates lane change needed; HERMES generates a smooth lateral maneuver at controlled speed.
 
 ### Figure 8 — Complex Urban Intersection
 
-![[raw/assets/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving/x8 4.png]]
+![[x8 4.png]]
 
 Wide intersection with crosswalks and latent pedestrian risk. HERMES maintains a stable straight trajectory while encoding readiness to yield — appropriate moderate-risk behavior.
 

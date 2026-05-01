@@ -4,7 +4,7 @@ type: concept
 sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md]
 related: [sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, sources/drivesuprim.md, sources/explorevla.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md, concepts/selection-based-planning.md]
 created: 2026-04-15
-updated: 2026-04-23
+updated: 2026-05-01
 confidence: high
 ---
 
@@ -117,7 +117,7 @@ Both demonstrate that the oracle BoN gap can be partially closed by a learned se
 
 When reading NAVSIM SOTA tables:
 - A method that reports only BoN without a single-sample number is not directly comparable to single-sample results
-- Curious-VLA BoN-6 (94.8) is the highest absolute PDMS in the wiki — but the most meaningful single-sample SOTA is FLARE RFT (91.4) and DriveFine (90.7)
+- Curious-VLA BoN-6 (94.8) is the highest absolute PDMS in the wiki, but it uses an oracle selection regime. The strongest non-BoN wiki result is DriveSuprim (93.5, selection-based non-VLM); among VLM-style single-sample methods, DynVLA/Reasoning-VLA report 91.7 with comparison-scope caveats, FLARE reports 91.4, and DriveFine remains one of the most broadly verified direct-comparison baselines at 90.7.
 - BoN results are most informative when paired with the single-sample result — the gap indicates how much a learned selector could theoretically recover
 
 See [[concepts/navsim-benchmark.md]] for the full SOTA table with BoN and single-sample results labeled separately.

@@ -1,10 +1,10 @@
 ---
 title: Bench2Drive Benchmark
 type: concept
-sources: [raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
-related: [sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md]
+sources: [raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md]
+related: [sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md]
 created: 2026-04-15
-updated: 2026-04-15
+updated: 2026-05-01
 confidence: high
 ---
 
@@ -72,11 +72,13 @@ Five standardized scenario categories; reported separately by ORION and LinkVLA:
 | VAD | 42.35 | 15.00 | 157.94 | 46.01 | — |
 | DriveAdapter | 64.22 | 33.08 | 70.22 | 16.01 | — |
 | DriveTransformer | 63.46 | 35.01 | 100.64 | 20.78 | — |
+| Drive-JEPA | 64.52 | 36.82 | 157.85 | 30.24 | V-JEPA + MTD proposal planner; improves over iPad/DriveTransformer but is far below current VLA leaders |
 | ORION | 77.74 | 54.62 | 151.48 | 17.38 | VLM + VAE planner; +14.28 DS vs. prior SOTA at time |
 | AutoVLA | 78.84 | 57.73 | 146.93 | 39.33 | Physical codebook; higher comfort than ORION |
 | UniDriveVLA | 78.37 | — | — | — | Best result without PDM-Lite oracle; MoT 3-expert |
 | SimLingo | 85.07 | 67.27 | 259.23 | 33.67 | Fast MLP head (34ms) |
 | AutoMoT | 87.34 | — | — | — | Frozen Qwen3-VL-4B + 1.6B AE; async MoT (7.6× speedup) |
+| DynVLA | 88.34 | 72.73 | â€” | â€” | Dynamics CoT with ego/environment VQ dynamics tokens; below LinkVLA, above AutoMoT; table omits LinkVLA |
 | **LinkVLA** | **91.01** | **74.55** | **255.84** | **34.62** | **Shared codebook + C2F; current SOTA** |
 
 **PDM-Lite caveat**: PDM-Lite is a privileged oracle planner (uses ground-truth waypoints or HD map access) that some Bench2Drive methods use as a fallback or auxiliary module. UniDriveVLA (78.37) is explicitly noted as the best result *without* PDM-Lite. Methods that use PDM-Lite score higher but are not fairly comparable to methods that do not. The precise PDM-Lite usage for each method above is not always disclosed.
@@ -106,13 +108,15 @@ The two benchmarks test complementary capabilities:
 - **NAVSIM**: diverse real-world-like traffic; reward-shaped safety metrics; non-reactive agents
 - **Bench2Drive**: interactive CARLA simulation; explicit scenario types; closed-loop agent reactions
 
-AutoVLA is the only wiki method with published results on both (89.11 PDMS, 78.84 DS). It is competitive but not SOTA on either, which suggests the two benchmarks test different skills and SOTA on one does not imply SOTA on the other.
+AutoVLA and DynVLA are the wiki methods with published results on both. AutoVLA is competitive but not SOTA on either (89.11 PDMS, 78.84 DS). DynVLA is stronger on both (91.7 PDMS, 88.34 DS), but still trails LinkVLA on Bench2Drive and DriveSuprim/HybridDriveVLA on NAVSIM. This reinforces that strong cross-benchmark performance is possible, but SOTA on one benchmark still does not imply SOTA on the other.
+
+Drive-JEPA ([[sources/drive-jepa.md]]) also reports both NAVSIM and Bench2Drive, but with a different profile: very strong NAVSIM-v1 (93.3 PDMS) and moderate Bench2Drive (64.52 DS / 36.82 SR). Its Bench2Drive value is evidence that MTD improves over iPad (60.52 DS), not evidence of closed-loop frontier performance; LinkVLA (91.01), DynVLA (88.34), and AutoMoT (87.34) remain much stronger on this benchmark.
 
 ---
 
 ## Open Questions
 
 - Does Bench2Drive's interactive simulation better predict real-world safety than NAVSIM's non-reactive scoring?
-- Does LinkVLA's 91.01 DS (on a 1B backbone) scale further with a 7B backbone?
+- Does LinkVLA's 91.01 DS (on a 1B backbone) scale further with a 7B backbone, and would DynVLA's dynamics-token CoT close the remaining gap if combined with LinkVLA-style action tokenization?
 - Are the GRPO-optimized NAVSIM methods (FLARE, DriveFine) competitive on Bench2Drive's interactive scenarios, or does their non-reactive training regime limit reactive behavior?
 - Can PDM-Lite usage be standardized across papers, or should the benchmark track PDM-Lite and non-PDM-Lite leaderboards separately?

@@ -26,7 +26,7 @@ LinkVLA solves both simultaneously with three interlocking innovations: a shared
 
 ## Figure 1 — Motivation and Overview
 
-![[raw/assets/Unifying Language-Action Understanding and Generation for Autonomous Driving/x1 8.png]]
+![[x1 8.png]]
 
 Shows latency vs. driving performance trade-off. LinkVLA C2F achieves the best of both worlds: 48ms latency at 91.01 DS, compared to SimLingo (34ms, 85.07 DS) and ORION (65ms, 77.74 DS).
 
@@ -34,7 +34,7 @@ Shows latency vs. driving performance trade-off. LinkVLA C2F achieves the best o
 
 ## Figure 2 — Architecture Overview
 
-![[raw/assets/Unifying Language-Action Understanding and Generation for Autonomous Driving/x3 6.png]]
+![[x3 6.png]]
 
 Three core components illustrated: (1) unified tokenization — log BEV grid merged with text vocabulary; (2) bidirectional objective — action generation and action understanding swapping L/A roles; (3) C2F decoder — endpoint + linear coarse path + parallel refinement.
 
@@ -66,7 +66,7 @@ This concentrates grid cells near the ego vehicle where precision matters most a
 
 ### Figure S1 — Uniform vs. Log Grid
 
-![[raw/assets/Unifying Language-Action Understanding and Generation for Autonomous Driving/x6 4.png]]
+![[x6 4.png]]
 
 Left: uniform grid — dense far-field tokens wasted. Right: log grid — dense near-field, sparse far-field, aligned with waypoint distribution.
 
@@ -88,7 +88,7 @@ This embeds spatial topology into the loss — the model learns that adjacent to
 
 ### Figure 3 — Bidirectional Training
 
-![[raw/assets/Unifying Language-Action Understanding and Generation for Autonomous Driving/x4 5.png]]
+![[x4 5.png]]
 
 Inspired by the image-captioning / text-to-image duality in vision-language modeling. For VLAs, both directions exist:
 
@@ -182,13 +182,13 @@ C2F: 86% faster than AR, +13.27 DS over ORION, +5.94 DS over SimLingo at only 14
 
 ### Figure 4 — Diverse Instruction Following
 
-![[raw/assets/Unifying Language-Action Understanding and Generation for Autonomous Driving/x5 5.png]]
+![[x5 5.png]]
 
 Shows trajectory generation adhering to various language instructions (speed up, slow down, lane change) in complex environments with obstacles and dynamic agents.
 
 ### Figure S2 — Additional Closed-Loop Scenarios
 
-![[raw/assets/Unifying Language-Action Understanding and Generation for Autonomous Driving/x7 4.png]]
+![[x7 4.png]]
 
 Intersection navigation and obstacle avoidance scenarios during CARLA closed-loop evaluation.
 

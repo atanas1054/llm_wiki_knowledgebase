@@ -1,14 +1,339 @@
+---
+title: Activity Log
+type: comparison
+sources: []
+related: [wiki/index.md]
+created: 2026-04-05
+updated: 2026-05-01
+confidence: high
+---
+
 # Activity Log
+
+## 2026-05-01 - Ingest: Policy World Model
+
+**Source**: `raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md`
+**arXiv**: 2510.19654v1
+**Authors**: Zhida Zhao, Talas Fu, Yifan Wang, Lijun Wang, Huchuan Lu
+**Confidence**: high - local markdown includes method text, local figures, all six main tables, two appendix tables, and implementation details
+
+**Pages created**:
+- `wiki/sources/policy-world-model.md` - full source summary covering action-free future forecasting, context-guided 28-token frame compression, dynamic focal loss, all local figures, all main/appendix tables, relationships, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/world-model-for-ad.md` - added PWM as inference-time action-free future-frame forecasting used as planning rationale
+- `wiki/concepts/navsim-benchmark.md` - added 88.1 PDMS NAVSIM-v1 row and caveat
+- `wiki/concepts/nuscenes-waymo-evals.md` - added PWM's nuScenes L2/collision results and safety-vs-L2 interpretation
+- `wiki/concepts/foundation-backbones-for-ad.md` - added Show-o/PWM as a unified generation-understanding backbone role
+
+**Index/README updated**: added Policy World Model row; paper count now 43.
+
+**Key facts**:
+- Core method: pretrain an autoregressive world model on unlabeled, action-free driving videos, then generate future frame tokens before action prediction during planning.
+- Tokenizer: frozen high-resolution first-frame branch plus trainable low-resolution branch; each future frame is represented by 28 tokens.
+- DFL upweights temporally changing tokens; full DFL + pretraining improves nuScenes Avg L2/Col to 0.78/0.07 and NAVSIM PDMS to 88.1.
+- nuScenes with ego status: 0.41 average L2 and 0.04 average collision, prioritizing safety over best L2.
+- NAVSIM-v1: 88.1 PDMS with one front camera, matching DiffusionDrive's Camera+LiDAR score in the paper's table but below current wiki frontier methods.
+- Caveat: no NAVSIM-v2/EPDMS, navhard, Bench2Drive, HUGSIM, or Waymo result; 10-frame forecasting adds 0.28s latency and slightly reduces ego progress versus no forecasting.
+
+---
+
+## 2026-05-01 - Ingest: FeaXDrive
+
+**Source**: `raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md`
+**arXiv**: 2604.12656v2
+**Authors**: Baoyun Wang, Zhuoren Li, Ran Yu, Yu Che, Xinrui Zhang, Ming Liu, Jia Hu, Lv Chen, Bo Leng
+**Confidence**: high - local markdown includes method text, all six local figures, all five tables, and implementation/latency details
+
+**Pages created**:
+- `wiki/sources/feaxdrive.md` - full source summary covering trajectory-centric diffusion, adaptive curvature regularization, drivable-area SDF guidance, feasibility-aware GRPO, all six figures, all five tables, relationships, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/diffusion-planner.md` - added FeaXDrive as clean-trajectory-parameterized diffusion with feasibility guidance
+- `wiki/concepts/rl-for-ad.md` - added feasibility-aware GRPO and score-vs-feasibility trade-off
+- `wiki/concepts/navsim-benchmark.md` - added FeaXDrive 90.0 PDMS row and caveat
+- `wiki/concepts/inference-time-safety.md` - added drivable-area SDF guidance as gradient-based reverse-sampling safety
+
+**Index/README updated**: added FeaXDrive row; paper count now 42.
+
+**Key facts**:
+- Core method: predict clean trajectory `x0` directly at each diffusion step, making feasibility constraints act in trajectory space rather than noise space.
+- Training-time curvature regularization uses differentiable curvature estimation, `kappa_geo=0.166 m^-1`, and `a_lat_max=6 m/s^2`.
+- Inference-time drivable-area guidance builds a local SDF and samples the vehicle footprint corners, not just trajectory center points.
+- NAVSIM-v1: FeaXDrive-IL reaches 88.7 PDMS; FeaXDrive with FA-GRPO reaches 90.0 PDMS.
+- Standard GRPO reaches higher PDMS (90.56) but raises curvature violation from 0.88% to 5.79%; FA-GRPO keeps it to 2.40%.
+- Latency: 348.73 ms total median; VLM backbone 245.33 ms, planner 82.96 ms, SDF build 16.03 ms, guidance 4.41 ms.
+- Caveat: NAVSIM-only evaluation; no NAVSIM-v2/EPDMS, navhard, Bench2Drive, HUGSIM, nuScenes, or Waymo result.
+
+---
+
+## 2026-05-01 - Ingest: Drive-JEPA
+
+**Source**: `raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md`
+**arXiv**: 2601.22032v1
+**Authors**: Linhan Wang, Zichong Yang, Chen Bai, Guoxiang Zhang, Xiaotong Liu, Xiaoyin Zheng, Xiao-Xiao Long, Chang-Tien Lu, Cheng Lu
+**Confidence**: high - raw markdown includes the method text, all six local figures, all eight tables, and appendix details for the pseudo-teacher threshold and input resolution
+
+**Pages created**:
+- `wiki/sources/drive-jepa.md` - full source summary covering V-JEPA driving-video pretraining, proposal-centric planning, MTD, momentum-aware selection, all six figures, all eight tables, relationships, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/world-model-for-ad.md` - added Drive-JEPA as JEPA latent predictive video pretraining for planning representations
+- `wiki/concepts/selection-based-planning.md` - added Drive-JEPA as simulator-distilled online proposals rather than fixed-vocabulary inference
+- `wiki/concepts/navsim-benchmark.md` - added NAVSIM-v1 and NAVSIM-v2 rows plus comparison-scope caveat
+- `wiki/concepts/bench2drive.md` - added Drive-JEPA's 64.52 DS / 36.82 SR result and frontier comparison
+- `wiki/concepts/foundation-backbones-for-ad.md` - added V-JEPA as a self-supervised video encoder role
+
+**Index/README updated**: added Drive-JEPA row; paper count now 41.
+
+**Key facts**:
+- V-JEPA 2 initialization plus 208h of curated driving videos, 8-frame clips, 512 x 256 front-view images, sampled at 2 Hz.
+- Perception-free simple decoder reaches 89.0 PDMS in Table 1, +3 over Epona's 86.1/86.2 comparison number.
+- Full Drive-JEPA reports 93.3 PDMS on NAVSIM-v1, 87.8 EPDMS on NAVSIM-v2, and 64.52 DS on Bench2Drive.
+- MTD ablation: baseline 84.1 EPDMS; V-JEPA init 85.8; driving video pretraining 86.1; +MTD reaches 40% diversity but drops EC to 47.9 and EPDMS to 84.5; +momentum-aware selection restores EC to 84.8 and EPDMS to 87.8.
+- Pseudo-teacher count is shallow: `N_pseudo=1` and `N_pseudo=4` both reach 87.8 EPDMS; `N_pseudo=8` drops to 87.5.
+- Vision pretraining table: Epona 86.2, ImageNet ResNet34 76.0, DINOv2 76.1, SigLIP 83.4, V-JEPA 2 86.1, Drive-JEPA 89.0; MAE and DepthAnything did not converge.
+- Caveat: the paper's NAVSIM SOTA claim is comparison-scope sensitive in the wiki because DriveSuprim reports 93.5 PDMS on v1 and WAM-Diff/Vega-BoN/Latent-WAM exceed 87.8 on v2.
+
+---
+
+## 2026-05-01 - Ingest: Latent-WAM
+
+**Source**: `raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md`
+**arXiv**: 2603.24581v1
+**Authors**: Linbo Wang, Yupeng Zheng, Qiang Chen, Shiwei Li, Yichen Zhang, Zebin Xing, Qichao Zhang, Xiang Li, Deheng Qian, Pengxuan Yang, Yihang Dong, Ce Hao, Xiaoqing Ye, Junyu Han, Yifeng Pan, Dongbin Zhao
+**Confidence**: high - local markdown includes method text, main figures, all seven tables, and supplementary captions; missing supplementary images 6-15 were downloaded from the arXiv HTML into `raw/assets/latent-wam-x6.png` through `raw/assets/latent-wam-x15.png`
+
+**Pages created**:
+- `wiki/sources/latent-wam.md` - full source summary covering SCWE, WorldMirror geometric distillation, DLWM, trajectory decoder, all 15 figures, all 7 tables, relationships, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/world-model-for-ad.md` - added Latent-WAM as compact latent world-status prediction without pixel decoding
+- `wiki/concepts/perception-for-planning.md` - added geometric distillation as a training-time spatial-supervision path
+- `wiki/concepts/navsim-benchmark.md` - added 89.3 EPDMS NAVSIM-v2 row and caveat
+- `wiki/concepts/hugsim-benchmark.md` - added Latent-WAM zero-shot HUGSIM RC/HDS row
+- `wiki/concepts/foundation-backbones-for-ad.md` - added DINOv2-Base plus WorldMirror/VGGT teacher role
+
+**Index/README updated**: added Latent-WAM row; paper count now 40.
+
+**Key facts**:
+- Core method: 16 learnable scene queries per camera compress DINOv2 image patch tokens into compact scene tokens, then a causal latent world model predicts future world status from historical scene and ego-status tokens.
+- Geometric distillation from frozen WorldMirror improves EPDMS from 88.3 to 89.3; direct geometry-feature concatenation degrades to 88.0.
+- Full component ablation improves from 87.9 baseline to 89.3 EPDMS; compression alone slightly hurts to 87.7, while geometry, DLWM, and ego-status supervision are complementary.
+- NAVSIM-v2: 89.3 EPDMS, EC 87.3, 104M inference parameters, 107ms inference latency on A100.
+- HUGSIM zero-shot: 45.9 RC / 28.9 HD-Score average; best average RC in the paper's table and tied best average HD-Score with UniAD.
+- Caveat: no NAVSIM-v1 result, no RL/RFT, and the NAVSIM-v2 comparison table omits several wiki leaders such as WAM-Diff, Vega BoN-6, ExploreVLA, DriveDreamer-Policy, DreamerAD, and HAD.
+
+---
+
+## 2026-05-01 - Ingest: HAD
+
+**Source**: `raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md`
+**arXiv**: 2604.03581v1
+**Authors**: Wenhao Yao, Xinglong Sun, Zhenxin Li, Shiyi Lan, Zi Wang, Jose M. Alvarez, Zuxuan Wu
+**Confidence**: high - raw markdown includes the method text, all seven local figures, and all eleven result/ablation tables
+
+**Pages created**:
+- `wiki/sources/had.md` - full source summary covering hierarchical diffusion, structure-preserved polar trajectory expansion, metric-decoupled policy optimization, offline reward retrieval, all figures, all tables, relationships, and limitations
+- `wiki/concepts/hugsim-benchmark.md` - closed-loop HUGSIM benchmark note with RC/HDS metrics and HAD-L result
+
+**Concept pages updated**:
+- `wiki/concepts/diffusion-planner.md` - added HAD as hierarchical diffusion with top-K coarse anchors, polar local expansion, and real-time inference
+- `wiki/concepts/rl-for-ad.md` - added HAD's metric-decoupled policy optimization and offline reward retrieval
+- `wiki/concepts/navsim-benchmark.md` - added HAD to NAVSIM-v1 and NAVSIM-v2 tables with comparison caveats
+- `wiki/concepts/selection-based-planning.md` - added HAD as a hybrid of reward-cache vocabulary lookup and diffusion local refinement
+- `wiki/concepts/navhard-ood-evaluation.md` - added HAD-L NavHard result and 3DGS-noise caveat
+- `wiki/concepts/hugsim-benchmark.md` - added HUGSIM as a separate closed-loop benchmark concept
+
+**Index/README updated**: added HAD row; paper count now 39; concept count now 21.
+
+**Key facts**:
+- Core method: 20 coarse diffusion trajectories -> top-2 coarse intentions -> 5x5 polar local expansion during training and 7x7 at inference -> local diffusion refinement
+- MDPO trains metric-specific heads instead of a single coupled PDMS/EPDMS reward; decoupled metrics reach 88.6 EPDMS vs. 87.8 for coupled PDMS reward
+- Offline reward retrieval reduces per-sample reward lookup from 0.2449s to 0.0042s and training time from 64.4h to 13.6h
+- NAVSIM-v1: HAD reaches 90.2 PDMS; camera-only HAD-L reaches 89.9
+- NAVSIM-v2: HAD reaches 88.6 EPDMS; HAD-L reaches 88.5
+- HUGSIM: HAD-L reports 47.5 RC / 30.8 HDS overall, with 39.1 RC / 22.5 HDS on the Extreme split
+- NavHard: HAD-L reaches 32.3 EPDMS, above DiffusionDrive and LTF but below DriveSuprim and GTRS-Dense in the paper's table
+- Caveat: HAD is a strong non-VLM real-time planner, but it is not the absolute NAVSIM-v1/v2 frontier in the broader wiki.
+
+---
+
+## 2026-05-01 - Ingest: OneVL
+
+**Source**: `raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md`
+**arXiv**: 2604.18486v1
+**Team**: Xiaomi Embodied Intelligence Team
+**Confidence**: high - raw markdown preserves the core method and local figures; table rows recovered from arXiv HTML because the local markdown jumps into references after Table 1
+
+**Pages created**:
+- `wiki/sources/onevl.md` - full source summary covering latent tokens, dual auxiliary decoders, prefill inference, staged training, all 10 tables, available local images, relationships, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/chain-of-thought-for-ad.md` - added OneVL as latent CoT with world-model-grounded compression
+- `wiki/concepts/world-model-for-ad.md` - added training-only visual decoder as a world-model compression target
+- `wiki/concepts/vlm-domain-adaptation.md` - added Qwen3-VL latent-token adaptation with staged auxiliary supervision
+- `wiki/concepts/navsim-benchmark.md` - added 88.84 PDMS row and caveat
+- `wiki/concepts/foundation-backbones-for-ad.md` - added Qwen3-VL-4B OneVL role
+
+**Index/README updated**: added OneVL row; paper count now 38.
+
+**Key facts**:
+- Core method: 4 visual latent tokens plus 2 language latent tokens are trained with visual and language auxiliary decoders
+- Visual auxiliary decoder predicts future-frame visual tokens at +0.5s and +1.0s, functioning as a training-time world-model objective
+- Inference: auxiliary decoders are discarded and latent tokens are prefilled, giving 4.46s NAVSIM latency vs. 4.49s for answer-only AR
+- NAVSIM-v1: 88.84 PDMS under SFT, above AR CoT+Answer 88.29 in the paper's controlled Qwen3-VL-4B setup
+- Deployment variant: MLP regression head reaches 86.83 PDMS at 0.24s
+- Caveat: no NAVSIM-v2/navhard/Bench2Drive, no RL, AR trajectory decoding remains the latency bottleneck, and broad NAVSIM frontier methods exceed 90 PDMS
+
+---
+
+## 2026-05-01 - Ingest: OneDrive
+
+**Source**: `raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md`
+**arXiv**: 2604.17915v1
+**Authors**: Yiwei Zhang, Xuesong Chen, Jin Gao, Hanshi Wang, Fudong Ge, Weiming Hu, Shaoshuai Shi, Zhipeng Zhang
+**Confidence**: high - raw markdown includes all 3 figures and all 10 tables
+
+**Pages created**:
+- `wiki/sources/onedrive.md` - full source summary covering the attention-vs-FFN transfer diagnostic, single causal decoder architecture, mixed decoder layers, three-stage training, all figures, all 10 tables, relationships, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/dual-system-vla.md` - added OneDrive as a single-decoder alternative to dual-system and MoT designs
+- `wiki/concepts/vlm-domain-adaptation.md` - added attention-transfer / FFN-replacement adaptation lesson
+- `wiki/concepts/perception-for-planning.md` - added single-decoder structured-query perception/planning pattern
+- `wiki/concepts/diffusion-planner.md` - added unified causal planning queries to the action-decoder design space
+- `wiki/concepts/navsim-benchmark.md` - added 86.8 PDMS row and caveat
+- `wiki/concepts/nuscenes-waymo-evals.md` - added OneDrive's 0.28 L2 / 0.18 collision open-loop result
+- `wiki/concepts/foundation-backbones-for-ad.md` - added InternVL/Qwen attention-transfer diagnostic
+- `wiki/concepts/action-tokenization.md` - added planning-query tokens pattern
+
+**Index/README updated**: added OneDrive row; paper count now 37.
+
+**Key facts**:
+- Core architecture: image tokens, detection queries, lane queries, planning queries, and text tokens in one causal VLM decoder
+- Diagnostic result: pretrained attention transfers to structured driving prediction; pretrained language FFNs can degrade performance
+- nuScenes: 0.28 average L2 and 0.18 average collision rate
+- NAVSIM-v1 navtest: 86.8 PDMS under SFT, improving over a 85.0 query-decoder baseline but below current wiki frontier methods
+- Latency: 156ms on NAVSIM vs. ReCogDrive 263ms; 513ms on nuScenes vs. ColaVLA 727ms
+- Caveat: no RL/RFT, no NAVSIM-v2/navhard/Bench2Drive, and NAVSIM uses planning queries only rather than the full perception-query stack
+
+---
+
+## 2026-05-01 - Lint Fix Pass
+
+**Issues fixed**:
+- Added schema frontmatter to `wiki/index.md` and `wiki/log.md`.
+- Repaired 33 broken image references across `dreameraD.md`, `drivefine.md`, `hermes.md`, `linkvla.md`, `orion.md`, and `vega.md`.
+- Updated stale NAVSIM leaderboard wording around DiffusionDriveV2, DriveFine, DriveDreamer-Policy, and Best-of-N interpretation.
+- Created concept pages for high-frequency missing concepts: action tokenization/codebooks, GSPO vs. GRPO, PDM-Lite, nuScenes/Waymo evaluations, foundation backbones, and Navhard/OOD evaluation.
+- Updated `README.md` and `wiki/index.md` concept catalogs.
+
+---
 
 Append-only log of all wiki operations.
 
 ---
 
+## 2026-04-28 - Ingest: SpanVLA
+
+**Source**: `raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md`
+**arXiv**: 2604.19710v1
+**Authors**: Zewei Zhou, Ruining Yang, Xuewei (Tony) Qi, Yiluan Guo, Sherry X. Chen, Tao Feng, Kateryna Pistunova, Yishan Shen, Lili Su, Jiaqi Ma
+**Confidence**: high - local markdown was clipped after Table 1, but missing tables/figures/limitations were recovered from arXiv HTML and missing figure assets were downloaded locally
+
+**Pages created**:
+- `wiki/sources/spanvla.md` - full source summary covering sparse-KV action bridging, flow-matching from historical initialization, mReasoning, negative-recovery GRPO, all 5 tables, main and supplementary figures, NAVSIM/navhard results, relationships, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/diffusion-planner.md` - added sparse-KV flow matching from history and action-policy latency comparison
+- `wiki/concepts/rl-for-ad.md` - added negative-recovery GRPO reward design and comparison table row
+- `wiki/concepts/chain-of-thought-for-ad.md` - added adaptive CoT with continuous action expert
+- `wiki/concepts/vlm-domain-adaptation.md` - added mReasoning and negative-recovery adaptation section
+- `wiki/concepts/navsim-benchmark.md` - added SpanVLA to NAVSIM-v1, NAVSIM-v2, and navhard tables with comparison caveat
+
+**Index/README updated**: added SpanVLA row; paper count now 36.
+
+**Key facts**:
+- Architecture: Qwen2.5-VL-3B VLM backbone plus sparse-KV action bridge and continuous flow-matching action expert
+- Action generation: FM starts from historical trajectory initialization rather than Gaussian noise; 5 FM steps; 0.67s total latency for 10 or 50 action points
+- Dataset: mReasoning has 30K complex reasoning samples plus 3K negative and 3K recovery real-world samples
+- RFT: GRPO with PDMS/EPDMS driving reward, negative-trajectory proximity penalty, recovery proximity reward, CoT length penalty, and action-reasoning alignment penalty
+- NAVSIM-v1: 90.3 PDMS post-RFT vs. 82.1 one-shot
+- NAVSIM-v2 navtest: 86.4 EPDMS post-RFT vs. 79.4 one-shot
+- NAVSIM-v2 navhard: 40.1 EPDMS reported for both Stage 1 and Stage 2
+- Caveat: not absolute SOTA in the wiki; v1 and v2 comparison tables omit several stronger contemporary methods
+
+---
+
+## 2026-04-28 - Ingest: DynVLA
+
+**Source**: `raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md`
+**arXiv**: 2603.11041v1
+**Authors**: Shuyao Shang, Bing Zhan, Yunfei Yan, Yuqi Wang, Yingyan Li, Yasong An, Xiaoman Wang, Jierui Liu, Lu Hou, Lue Fan, Zhaoxiang Zhang, Tieniu Tan
+**Confidence**: high - all 10 figures and 8 tables available in source
+
+**Pages created**:
+- `wiki/sources/dynvla.md` - full source summary covering Dynamics CoT, Dynamics Tokenizer, SFT/RFT pipeline, NAVSIM/Bench2Drive/in-house results, all ablation tables, qualitative/failure figures, implementation details, relationships, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/chain-of-thought-for-ad.md` - added Dynamics CoT as a compact world-dynamics-token CoT substrate
+- `wiki/concepts/world-model-for-ad.md` - added dynamics-token world-model pattern and comparison to future-image/video world models
+- `wiki/concepts/rl-for-ad.md` - added DynVLA GRPO RFT reward/design row and section
+- `wiki/concepts/navsim-benchmark.md` - added DynVLA to NAVSIM-v1 table and SOTA ordering/caveat
+- `wiki/concepts/bench2drive.md` - added DynVLA to Bench2Drive SOTA progression and cross-benchmark comparison
+
+**Index/README updated**: added DynVLA row; paper count now 35.
+
+**Key facts**:
+- Core idea: generate compact ego/environment dynamics tokens before action tokens instead of text CoT or future-image CoT
+- Dynamics Tokenizer: decoupled ego-centric and environment-centric VQ codebooks, action regularization, and image+BEV reconstruction
+- Default Dynamics CoT: K=2 horizon, 16 dynamics tokens total, 4 ego + 4 environment tokens per transition
+- Training: Dynamics Tokenizer pretraining, Dynamics CoT SFT, then GRPO RFT with PDMS + format reward
+- NAVSIM-v1: 91.7 PDMS; strong but below DriveSuprim 93.5 and HybridDriveVLA 92.1 in the wiki
+- Bench2Drive: 88.34 DS / 72.73 SR / 72.23 multi-ability mean; below LinkVLA 91.01 DS but above AutoMoT 87.34 DS
+- CoT design ablation: Dynamics CoT 0.37s / 87.2 PDMS vs. no CoT 0.20s / 85.6, scene-description CoT 3.04s / 85.3, future-image CoT 2.29s / 86.3
+- Caveats: no NAVSIM-v2 / EPDMS result, in-house 700k-frame dataset is not public, front-view-only setup, and the NAVSIM comparison table omits several stronger contemporary methods
+
+---
+
+## 2026-04-28 — Ingest: ELF-VLA
+
+**Source**: `raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md`
+**arXiv**: 2603.01063v1
+**Authors**: Yuechen Luo, Qimao Chen, Fang Li, Shaoqing Xu, Jiaxin Liu, Ziying Song, Zhi-xin Yang, Fuxi Wen
+**Confidence**: high — all 11 figures and 10 tables available in source
+
+**Pages created**:
+- `wiki/sources/elf-vla.md` — full source summary covering the persistent-failure problem, two-stage SFT, GRPO with teacher feedback, policy shaping, reward design, data curation, all NAVSIM/high-level-planning/ablation tables, and all figures (`introv6.png`, `mainv4.png`, `methodv3.png`, `rollout_ratio.png`, `visual*.jpg`, prompts, feedback, meta-action labels)
+
+**Concept pages updated**:
+- `wiki/concepts/rl-for-ad.md` — added "ELF-VLA: Teacher-Guided Learning from Persistent Failures"; added ELF-VLA row to GRPO reward/design table; frontmatter updated
+- `wiki/concepts/chain-of-thought-for-ad.md` — added failure-diagnostic CoT pattern and ELF-VLA row in CoT design table; frontmatter updated
+- `wiki/concepts/vlm-domain-adaptation.md` — added feedback-conditioned adaptation section; frontmatter updated
+- `wiki/concepts/navsim-benchmark.md` — added ELF-VLA to NAVSIM-v1 and NAVSIM-v2 tables; added comparison-scope caveat; updated SOTA ordering language; frontmatter updated
+
+**Index/README updated**: added ELF-VLA row.
+
+**Key facts**:
+- Base model: InternVL3-8B; teacher: Qwen3-VL-32B
+- Persistent-failure mechanism: teacher diagnoses failed rollouts below threshold `s=0.8`, student re-rolls from feedback input, and `k=1` better refinement is injected into the GRPO batch
+- Reward: PDMS trajectory reward + format reward + endpoint goal reward
+- Policy shaping: `f(x)=x/(x+gamma)`, `gamma=0.1`, needed because feedback-generated outputs are low-probability under base input conditioning
+- Data curation: 85k NAVSIM entries filtered to 24k high-value difficult/ambiguous scenarios; curated 24k reaches 91.0 PDMS vs. 89.1 for full 85k
+- NAVSIM-v1: 91.0 PDMS, +2.0 over standard GRPO and +3.6 over SFT
+- NAVSIM-v2: 87.1 EPDMS, EC=87.2
+- High-level planning: 80.3% overall accuracy vs. 79.3% for GRPO
+- Caveat: v1 table omits DriveSuprim, HybridDriveVLA, FLARE, DiffusionDriveV2, WAM-Diff, ExploreVLA; v2 table omits WAM-Diff, ExploreVLA, DriveDreamer-Policy, DreamerAD, Vega BoN-6
+- Main contribution is training-time failure distillation, not current absolute NAVSIM SOTA
+
+---
+
 ## 2026-04-23 — Ingest: ExploreVLA
 
-**Source**: `raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md`  
-**arXiv**: 2604.02714v1  
-**Authors**: Zihao Sheng, Xin Ye, Jingru Luo, Sikai Chen, Liu Ren  
+**Source**: `raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md`
+**arXiv**: 2604.02714v1
+**Authors**: Zihao Sheng, Xin Ye, Jingru Luo, Sikai Chen, Liu Ren
 **Confidence**: high — all tables and figures available in source
 
 **Pages created**:
@@ -37,9 +362,9 @@ Append-only log of all wiki operations.
 
 ## 2026-04-23 — Ingest: DriveVA
 
-**Source**: `raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md`  
-**arXiv**: 2604.04198v1  
-**Org**: University of Twente (+ multiple affiliations)  
+**Source**: `raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md`
+**arXiv**: 2604.04198v1
+**Org**: University of Twente (+ multiple affiliations)
 **Confidence**: medium — Table 1 (NAVSIM sub-scores and comparison methods) is truncated in the source file
 
 **Pages created**:
@@ -66,8 +391,8 @@ Append-only log of all wiki operations.
 
 ## 2026-04-23 — Ingest: DriveSuprim
 
-**Source**: `raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md`  
-**arXiv**: 2506.06659v1  
+**Source**: `raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md`
+**arXiv**: 2506.06659v1
 **Org**: Fudan University + NVIDIA
 
 **Pages created**:
@@ -138,8 +463,8 @@ Append-only log of all wiki operations.
 
 ## 2026-04-21 — Ingest: WAM-Diff
 
-**Source**: `raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md`  
-**arXiv**: 2512.11872v1  
+**Source**: `raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md`
+**arXiv**: 2512.11872v1
 **Org**: Fudan University + Yinwang Intelligent Technology Co., Ltd
 
 **Pages created**:
@@ -169,8 +494,8 @@ Append-only log of all wiki operations.
 
 ## 2026-04-19 — Ingest: HybridDriveVLA / DualDriveVLA
 
-**Source**: `raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md`  
-**arXiv**: 2602.10719v1  
+**Source**: `raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md`
+**arXiv**: 2602.10719v1
 **Venue**: Machine Learning, ICML
 
 **Pages created**:
@@ -198,9 +523,9 @@ Append-only log of all wiki operations.
 
 ## 2026-04-17 — Ingest: Epona
 
-**Source**: `raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md`  
-**arXiv**: 2506.24113  
-**Org**: Horizon Robotics, Tsinghua, PKU, NJU, HKUST, NTU, Tencent  
+**Source**: `raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md`
+**arXiv**: 2506.24113
+**Org**: Horizon Robotics, Tsinghua, PKU, NJU, HKUST, NTU, Tencent
 **Venue**: ICCV 2025
 
 **Pages created**:
@@ -228,9 +553,9 @@ Append-only log of all wiki operations.
 
 ## 2026-04-16 — Ingest: DiffusionDriveV2
 
-**Source**: `raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md`  
-**arXiv**: 2512.07745  
-**Org**: HUST (EIC + AI Institute), Horizon Robotics, Wuhan University  
+**Source**: `raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md`
+**arXiv**: 2512.07745
+**Org**: HUST (EIC + AI Institute), Horizon Robotics, Wuhan University
 **Venue**: December 2024
 
 **Pages created**:
@@ -244,7 +569,7 @@ Append-only log of all wiki operations.
 **Index updated**: added DiffusionDriveV2 row to Sources table.
 
 **Key facts**:
-- 91.2 PDMS NAVSIM-v1 (highest non-VLM result in wiki; +3.1 over DiffusionDrive); 85.5 EPDMS NAVSIM-v2
+- 91.2 PDMS NAVSIM-v1 (strong non-VLM diffusion result at ingest time; +3.1 over DiffusionDrive; later superseded by DriveSuprim); 85.5 EPDMS NAVSIM-v2
 - EC = 91.0 on NAVSIM-v2 (highest extended comfort in wiki)
 - NAVSIM-v2 caveat: 85.5 EPDMS below DriveDreamer-Policy (88.7), DreamerAD (87.7), Senna-2 (86.6); those methods excluded from V2's comparison table
 - Intra-Anchor GRPO prevents mode collapse from cross-intent advantage comparison (+0.9 PDMS ablation)
@@ -271,9 +596,9 @@ Append-only log of all wiki operations.
 
 ## 2026-04-15 — Ingest: DiffusionDrive
 
-**Source**: `raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md`  
-**arXiv**: 2411.15139v1  
-**Org**: HUST (Institute of AI + School of EIC); Horizon Robotics  
+**Source**: `raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md`
+**arXiv**: 2411.15139v1
+**Org**: HUST (Institute of AI + School of EIC); Horizon Robotics
 **Venue**: pre-VLA era (November 2024)
 
 **Pages created**:
@@ -303,8 +628,8 @@ Append-only log of all wiki operations.
 
 ## 2026-04-15 — Ingest: NoRD
 
-**Source**: `raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md`  
-**arXiv**: 2602.21172v1  
+**Source**: `raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md`
+**arXiv**: 2602.21172v1
 **Org**: Applied Intuition; Texas A&M University; UC Berkeley
 
 **Pages created**:
@@ -342,8 +667,8 @@ Append-only log of all wiki operations.
 
 ## 2026-04-08 — Ingest: Vega
 
-**Source**: `raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md`  
-**arXiv**: 2603.25741v1  
+**Source**: `raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md`
+**arXiv**: 2603.25741v1
 **Org**: Tsinghua University + GigaAI
 
 **Pages created**:
@@ -370,8 +695,8 @@ Append-only log of all wiki operations.
 
 ## 2026-04-08 — Ingest: DreamerAD
 
-**Source**: `raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md`  
-**arXiv**: 2603.24587v1  
+**Source**: `raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md`
+**arXiv**: 2603.24587v1
 **Org**: Chongqing Chang'an Technology Co., Ltd.
 
 **Pages created**:
@@ -397,8 +722,8 @@ Append-only log of all wiki operations.
 
 ## 2026-04-07 — Ingest: FLARE
 
-**Source**: `raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md`  
-**arXiv**: 2601.05611v2  
+**Source**: `raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md`
+**arXiv**: 2601.05611v2
 **Org**: OpenDriveLab + Li Auto
 
 **Pages created**:
@@ -425,8 +750,8 @@ Append-only log of all wiki operations.
 
 ## 2026-04-07 — Ingest: UniDriveVLA
 
-**Source**: `raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md`  
-**arXiv**: 2604.02190v1  
+**Source**: `raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md`
+**arXiv**: 2604.02190v1
 **Org**: HUST + Xiaomi EV + University of Macau
 
 **Pages created**:
@@ -452,8 +777,8 @@ Append-only log of all wiki operations.
 
 ## 2026-04-07 — Ingest: DriveVLA-W0
 
-**Source**: `raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md`  
-**arXiv**: 2510.12796v1  
+**Source**: `raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md`
+**arXiv**: 2510.12796v1
 **Org**: CASIA + Yinwang Intelligent Technology
 
 **Pages created**:
@@ -478,8 +803,8 @@ Append-only log of all wiki operations.
 
 ## 2026-04-07 — Ingest: DriveDreamer-Policy
 
-**Source**: `raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md`  
-**arXiv**: 2604.01765v1  
+**Source**: `raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md`
+**arXiv**: 2604.01765v1
 **Org**: GigaAI + University of Toronto + CUHK MMLab
 
 **Pages created**:
@@ -502,8 +827,8 @@ Append-only log of all wiki operations.
 
 ## 2026-04-07 — Ingest: FutureSightDrive
 
-**Source**: `raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md`  
-**arXiv**: 2505.17685v3  
+**Source**: `raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md`
+**arXiv**: 2505.17685v3
 **Org**: Xi'an Jiaotong University + Amap (Alibaba Group)
 
 **Pages created**:

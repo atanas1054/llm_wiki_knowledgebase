@@ -1,10 +1,10 @@
 ---
 title: World Models for Autonomous Driving
 type: concept
-sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md]
-related: [sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md]
+sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md]
+related: [sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md]
 created: 2026-04-05
-updated: 2026-04-23
+updated: 2026-05-01
 confidence: high
 ---
 
@@ -179,7 +179,7 @@ Combined L1 for magnitude + cosine for directional (semantic) alignment.
 
 Spatial granularity matters: global DINO captures overall scene semantics but loses spatial structure that informs lane and obstacle positions. Spatial DINO preserves both.
 
-**Result**: 86.9 PDMS SFT (best VLM-based SFT on NAVSIM-v1, 1 camera, no external pretraining); 91.4 PDMS after GRPO RFT (best single-sample VLM-based).
+**Result**: 86.9 PDMS SFT (strong VLM SFT on NAVSIM-v1, 1 camera, no external pretraining); 91.4 PDMS after GRPO RFT. Later wiki entries such as DynVLA report higher absolute VLM-style scores, so FLARE's "best" framing should be treated as comparison-scope limited.
 
 **Contrast with DriveVLA-W0 (Pattern 7)**:
 | Aspect | DriveVLA-W0 | FLARE |
@@ -330,6 +330,89 @@ where $\mathcal{H}$ = average entropy of MAGVIT-v2 token predictions across all 
 
 ## Key Challenges
 
+### Dynamics Tokens as Compact CoT (DynVLA)
+
+**DynVLA** ([[sources/dynvla.md]]) introduces a world-model pattern that is neither full future image generation nor training-only auxiliary prediction: it learns a **Dynamics Tokenizer** whose discrete tokens are generated at inference time as the model's Chain-of-Thought before action tokens.
+
+The tokenizer decouples dynamics into ego-centric and environment-centric branches, with two regularizers:
+
+| Regularizer | Purpose |
+|-------------|---------|
+| Ego action regularization | Forces ego dynamics tokens to explain relative ego motion instead of collapsing into generic reconstruction codes |
+| Image+BEV cross-view reconstruction | Forces the same dynamics tokens to predict future camera and BEV states, aligning appearance and spatial semantics |
+
+Default representation: 8 dynamics tokens per transition (4 ego + 4 environment), codebook size 64 per branch, VQ dim 32. DynVLA reasons over K=2 transitions, producing a 16-token dynamics trace before action tokens.
+
+**Why this matters for world models**: DynVLA uses future-state prediction to learn the token space, but at inference it does not decode pixels. The world model appears as a compact latent reasoning language:
+
+| Method | World-model signal | Used at inference? | Output generated at inference |
+|--------|--------------------|--------------------|-------------------------------|
+| FSDrive | Future visual frame | Yes | Image tokens / visual CoT |
+| DriveVLA-W0 | Future/current image prediction | No | None; training-time representation only |
+| FLARE | Future DINOv2 feature prediction | No | None; auxiliary loss only |
+| ExploreVLA | RGB+depth entropy | During RL | Entropy reward, not action reasoning |
+| **DynVLA** | **Future image+BEV dynamics tokenization** | **Yes** | **Compact dynamics tokens before action tokens** |
+
+Controlled CoT comparison on NAVSIM SFT stage: Dynamics CoT reaches 87.2 PDMS at 0.37s, compared with future-image CoT 86.3 PDMS at 2.29s and scene-description CoT 85.3 PDMS at 3.04s. This supports DynVLA's central claim that dynamics tokens preserve planning-relevant foresight while removing pixel/text redundancy.
+
+### 13. Latent CoT with Training-Time Visual Decoder (OneVL)
+
+**OneVL** ([[sources/onevl.md]]) adds another world-model role: the world model is a **training-time decoder that supervises latent reasoning tokens**, not a deployed generator or an RL rollout model. Visual latent tokens inside Qwen3-VL-4B are trained so an auxiliary decoder can predict future-frame visual tokens at +0.5s and +1.0s. A parallel language auxiliary decoder reconstructs text CoT from language latent tokens.
+
+At inference, both decoders are discarded. The visual and language latent tokens are prefilled into the prompt, so the planner keeps the representation shaped by future-scene prediction without paying the cost of image generation. This places OneVL between FLARE/DriveVLA-W0 and DynVLA:
+
+| Method | World-model signal | Used at inference? | Output generated at inference |
+|--------|--------------------|--------------------|-------------------------------|
+| FLARE | Future DINOv2 feature prediction | No | None |
+| DriveVLA-W0 | Future/current image token prediction | No | None |
+| DynVLA | Dynamics tokenization from future image+BEV | Yes | Dynamics tokens |
+| **OneVL** | **Future-frame visual token decoder over latent CoT** | **No decoders; yes latent prefill** | **Trajectory tokens, optional post-hoc explanations** |
+
+The ablation supports the world-model interpretation: removing the visual decoder drops NAVSIM PDMS from 88.84 to 87.97, while removing the language decoder drops it only to 88.53. The larger gain comes from the spatial-temporal future-frame target rather than linguistic reconstruction.
+
+### 14. Compact Latent World Status Prediction (Latent-WAM)
+
+**Latent-WAM** ([[sources/latent-wam.md]]) is the wiki's cleanest example of a world model that never decodes pixels and does not use a VLM. It compresses three-camera image patches into 16 scene queries per view, appends ego-status tokens, and trains a causal Transformer to predict future latent world status blocks.
+
+The distinguishing feature is spatial-aware compression. Compression alone slightly hurts planning (87.9 -> 87.7 EPDMS), but geometric distillation from WorldMirror turns the compressed representation into a stronger planning state (88.3 -> 89.3 EPDMS in the full model). This separates Latent-WAM from video-generation WAMs: it does not need image reconstruction fidelity; it needs compact latent tokens that preserve lane/drivable-area geometry and ego dynamics.
+
+| Aspect | Latent-WAM |
+| --- | --- |
+| World-model target | Future latent world status tokens |
+| Visual decoder | None |
+| Inference world model | No; SCWE + trajectory decoder only |
+| Spatial supervision | WorldMirror geometric feature distillation |
+| Dynamics supervision | Causal latent prediction + command/velocity/acceleration ego loss |
+| NAVSIM-v2 | 89.3 EPDMS |
+| Runtime | 104M params, 107ms on A100 |
+
+Latent-WAM is closest to FLARE and DriveVLA-W0 in using world modeling as a training-time representation shaper, but its target is neither future pixels nor DINO patches. It predicts the latent world state itself.
+
+### 15. JEPA Video Pretraining for Planning (Drive-JEPA)
+
+**Drive-JEPA** ([[sources/drive-jepa.md]]) adapts V-JEPA to driving videos: masked context representations predict target latent representations without pixel reconstruction. The paper initializes from V-JEPA 2, curates 208 hours of front-view driving video, and pretrains a ViT-L encoder on 8-frame clips sampled at 2 Hz.
+
+This is a world-model-like signal but not a deployed world model. Drive-JEPA does not decode future pixels or run a future-state predictor at inference. Instead, JEPA pretraining shapes the visual encoder before a proposal-centric planner is trained. The evidence is strongest in the perception-free table: a simple decoder on top of the Drive-JEPA encoder reaches 89.0 PDMS on NAVSIM-v1, compared with 86.2 for Epona and 86.1 for the base V-JEPA 2 checkpoint.
+
+Drive-JEPA differs from Latent-WAM in the target and deployment path. Latent-WAM predicts compact future world-status tokens and uses WorldMirror geometric distillation; Drive-JEPA predicts latent video representations during pretraining, then relies on multimodal trajectory distillation and momentum-aware proposal selection during planner training.
+
+### 16. Policy World Model: Forecasted Future Frames as Planning Rationales
+
+**Policy World Model** ([[sources/policy-world-model.md]]) makes the strongest version of inference-time future forecasting among the compact AR world-model papers in the wiki. PWM pretrains on action-free OpenDV front-camera video, compresses each frame to 28 tokens, then rolls out future frame tokens before predicting action tokens.
+
+The important distinction is ordering: the world model runs **before** the planner output is known. This avoids the action-conditioned setup where future video only verifies a candidate action. Instead, PWM uses generated future states as multimodal rationales for the action itself.
+
+| Method | Future-state signal | Inference role |
+| --- | --- | --- |
+| DriveVLA-W0 | Future/current image prediction | Training-only representation shaping |
+| FSDrive | Future visual CoT frame | Mandatory planning intermediate |
+| DriveVA | Joint video-action DiT target | Video/action generated together |
+| Latent-WAM | Future latent world status | Training-time latent dynamics, no pixel decoder |
+| OneVL | Future-frame auxiliary decoder | Decoder discarded; latent tokens prefilled |
+| **PWM** | **Action-free future frame tokens** | **Forecasted at inference before action prediction** |
+
+Empirically, PWM's signature is collision reduction rather than best L2: with ego status it reports 0.41 average L2 and 0.04 average collision on nuScenes. The NAVSIM result is 88.1 PDMS with one front camera, which is no longer leaderboard-level in this wiki but remains useful evidence for the future-frame rationale mechanism.
+
 ### 1. Coupling world model and trajectory planner
 The world model must receive the planned trajectory as a condition, but the trajectory is what we're trying to optimize. Solutions:
 - **Teacher forcing**: use ground-truth trajectories 50% of training time (UniUGP)
@@ -365,6 +448,10 @@ Note: FID/FVD measure distributional realism, not planning-relevant accuracy. A 
 | **Vega** | **World model as instruction bridge** | **Instruction-conditioned planning** |
 | **DriveVA** | **✓ (joint DiT, video backbone)** | **✗ (no LLM reasoning)** |
 | **ExploreVLA** | **✓ (RGB+depth masked prediction + entropy reward)** | **Partial (Show-o Phi-1.5 LLM)** |
+| **DynVLA** | **✓ (image+BEV dynamics tokenizer)** | **✓ (dynamics tokens as CoT before actions)** |
+| **Latent-WAM** | **Compact latent future-status prediction** | **No VLM; DINOv2 + trajectory decoder** |
+| **Drive-JEPA** | **V-JEPA latent predictive video pretraining** | **No VLM; ViT + proposal planner** |
+| **Policy World Model** | **Action-free future video forecasting used as planning rationale** | **Show-o-style unified AR policy; no separate VLM reasoning focus** |
 
 ## State of the Art (as of April 2026)
 
@@ -401,7 +488,7 @@ DDP substantially improves video coherence (−38% FVD) vs. PWM. The improvement
 
 ## Open Questions
 
-- Does trajectory-conditioned video generation improve **closed-loop** performance (NAVSIM PDMS), or only open-loop metrics? (FSDrive shows 85.1 PDMS, well below the NAVSIM SOTA of 90.7 — generation quality may not translate to closed-loop driving)
+- Does trajectory-conditioned video generation improve **closed-loop** performance (NAVSIM PDMS), or only open-loop metrics? (FSDrive shows 85.1 PDMS, well below the current wiki non-BoN frontier of DriveSuprim 93.5 and below multiple VLM-style 90+ PDMS methods — generation quality may not translate to closed-loop driving)
 - **[Partially answered by DreamerAD]** Can the world model provide a reward signal for RL, replacing or augmenting the simulator? — DreamerAD shows a latent reward model can replace simulator calls *during* RL rollout (87.7 EPDMS), but still requires simulator for initial vocabulary annotation. True simulator-free RL from world model rewards remains open.
 - Does higher-resolution visual CoT (e.g., 512×768) substantially improve collision avoidance over FSDrive's 128×192?
 - FSDrive only generates a front-view CoT. Does generating surround-view visual CoT improve performance in lane-change and merge scenarios?

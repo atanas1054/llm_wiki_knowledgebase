@@ -1,10 +1,10 @@
 ---
 title: Selection-Based Trajectory Planning
 type: concept
-sources: [raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md]
-related: [sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md]
+sources: [raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md]
+related: [sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md]
 created: 2026-04-23
-updated: 2026-04-23
+updated: 2026-05-01
 confidence: high
 ---
 
@@ -88,12 +88,26 @@ Safety scores are {0,1} per metric. BCE against binary labels creates sharp trai
 | **DriveSuprim** | 8192 (→ 256) | Two-stage coarse-to-fine | Rotation aug + EMA self-distill; **93.5 PDMS** |
 | **DreamerAD** | 8192 (→ 256) | Learned latent AD-RM | Gaussian vocab sampling; reward from latent WM |
 | **HybridDriveVLA** | 2 + 9 interp. | Trajectory scorer | Cross-model (VLM + ViT) with linear interpolations |
+| **HAD** | 8192 reward cache + 20 coarse anchors -> 50 local candidates | Hierarchical diffusion + metric heads | Uses selection vocabulary for offline reward retrieval and coarse-to-fine local generation; 88.6 EPDMS |
+| **Drive-JEPA** | 8192 pseudo-teacher vocabulary + 32 online proposals | Proposal scoring + momentum-aware selection | Uses vocabulary for simulator-distilled supervision, not direct fixed selection; 93.3 PDMS NAVSIM-v1 |
 
 ### DreamerAD as a deployable selection variant
 
 DreamerAD generates 256 trajectories via Mahalanobis-ranked Gaussian sampling over the 8192 vocabulary, then selects via a learned reward model (AD-RM) trained on latent video features — no PDM simulator needed at inference. This is the closest approach in the wiki to a deployable selection system: the selection quality is approx. but fast. +2.6 EPDMS from base to selected. See [[sources/dreameraD.md]].
 
 ---
+
+### HAD: Selection as Reward Cache + Local Refinement
+
+HAD ([[sources/had.md]]) is not a pure fixed-vocabulary selector like DriveSuprim. It uses an 8192-trajectory vocabulary primarily as an offline reward-retrieval cache: nearest-neighbor matching maps generated trajectories to precomputed metric rewards, avoiding online simulator calls during RL. The deployed policy still generates and refines trajectories with hierarchical diffusion.
+
+The selection connection is the coarse-to-fine structure. HAD first narrows the global plan to top-K coarse intentions, then expands local candidates around those intentions and learns metric-specific scores. This gives some of the hard-negative concentration benefits of selection-based methods without constraining the final trajectory to a fixed library entry.
+
+### Drive-JEPA: Simulator-Distilled Online Proposals
+
+Drive-JEPA ([[sources/drive-jepa.md]]) is adjacent to selection-based planning but should not be classified as a pure fixed-vocabulary selector. It clusters the training set into an 8192-trajectory vocabulary and uses a NAVSIM-v2-style simulator to choose high-scoring pseudo-teacher trajectories above an EPDMS threshold of 0.95. Those trajectories supervise the distribution of 32 continuous online proposals during training.
+
+The deployed planner still generates and refines proposals with Waypoint-anchored Deformable Attention. The vocabulary is therefore a training-time distillation device, not the inference-time trajectory source. The key failure mode is comfort: MTD increases diversity from 24% to 40%, but EC drops to 47.9 unless the momentum-aware selector compares proposals with the previous selected trajectory.
 
 ## Coarse-to-Fine Selection (DriveSuprim)
 

@@ -203,5 +203,5 @@ Lowest average collision rate among all VLA methods under UniAD metrics. Perfect
 - [[concepts/discrete-flow-matching.md]] — the theoretical foundation (CTMC, probability paths, DFM objectives)
 - [[concepts/diffusion-planner.md]] — DFM is a discrete analogue to continuous diffusion; key differences: parallel vs. iterative denoising, discrete vs. continuous state space
 - [[concepts/rl-for-ad.md]] — GRPO applied to DFM (parallel generation preserved unlike diffusion-as-MDP)
-- [[concepts/navsim-benchmark.md]] — WAM-Flow held SOTA on NAVSIM-v1 at publication (90.3); superseded by HybridDriveVLA (92.1), DiffusionDriveV2 (91.2), WAM-Diff (91.0), FLARE (91.4), DriveFine (91.8)
+- [[concepts/navsim-benchmark.md]] — WAM-Flow held SOTA on NAVSIM-v1 at publication (90.3); superseded by later single-pass/non-BoN entries including DriveSuprim (93.5), HybridDriveVLA (92.1, ensemble), DynVLA/Reasoning-VLA (91.7, comparison-limited), FLARE (91.4), DiffusionDriveV2 (91.2), WAM-Diff/ELF-VLA (91.0), and DriveFine base (90.7). DriveFine* 91.8 uses an extra trained scorer and should be labeled separately.
 - [[sources/recogdrive.md]] — competitor; provides 3.1M VQA data used in WAM-Flow Stage 2 pretraining

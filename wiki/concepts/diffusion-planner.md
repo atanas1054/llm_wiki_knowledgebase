@@ -1,10 +1,10 @@
 ---
 title: Diffusion-Based Trajectory Planner
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/orion.md, sources/linkvla.md, sources/drivefine.md, sources/autovla.md, sources/alpamayo-r1.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/wam-diff.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/orion.md, sources/linkvla.md, sources/drivefine.md, sources/autovla.md, sources/alpamayo-r1.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/drivevla-w0.md, sources/percept-wam.md, sources/wam-diff.md, sources/spanvla.md, sources/onedrive.md, sources/had.md, sources/feaxdrive.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md]
 created: 2026-04-05
-updated: 2026-04-21
+updated: 2026-05-01
 confidence: high
 ---
 
@@ -117,7 +117,7 @@ The cascade decoder alone contributes +2.4 PDMS over truncated DP with UNet, whi
 
 3. **Inter-Anchor Truncated GRPO**: global safety floor via $A_\text{trunc}^{k,i} = -1$ for collisions, $\max(0, A^{k,i})$ otherwise. Prevents locally-valid but globally-unsafe trajectories from receiving positive gradient.
 
-**Result**: PDMS@10 (quality floor) jumps from 75.3 → 84.4 (+9.1); PDMS@1 (ceiling) improves 93.5 → 94.9 (+1.4). Final NAVSIM v1 score: **91.2 PDMS** with ResNet-34 — the highest non-VLM result in the wiki.
+**Result**: PDMS@10 (quality floor) jumps from 75.3 → 84.4 (+9.1); PDMS@1 (ceiling) improves 93.5 → 94.9 (+1.4). Final NAVSIM v1 score: **91.2 PDMS** with ResNet-34 -- strong for a non-VLM diffusion planner, but now below DriveSuprim's 93.5 PDMS selection-based non-VLM result.
 
 ### DiffusionDrive vs. DiffusionDriveV2 vs. Later VLA Methods
 
@@ -125,12 +125,29 @@ The cascade decoder alone contributes +2.4 PDMS over truncated DP with UNet, whi
 |--------|------|----------|---------|-----|-----------|
 | DiffusionDrive | 88.1 | ResNet-34 | C+L | No | None |
 | **DiffusionDriveV2** | **91.2** | **ResNet-34** | **C+L** | **Yes** | **None** |
+| HAD | 90.2 | Transfuser-style | C+L | Yes | None |
 | ReCogDrive | 89.6 | InternVL3 | 3-cam | Yes | VLM+CoT |
 | WAM-Flow | 90.3 | Custom | 1-cam | Yes | None |
 | DriveFine | 90.7 | LLaDA-8B | 1-cam | Yes | None |
 | FLARE | 91.4 | Qwen3-VL-4B | 1-cam | Yes | DINOv2 |
 
 DiffusionDriveV2 (91.2) closes most of the gap to VLA-era methods (90.3–91.4) using only ResNet-34 — demonstrating that RL, not the VLM backbone, is the primary lever for PDMS gains in this regime.
+
+### HAD: Hierarchical Diffusion Policy
+
+**HAD** ([[sources/had.md]]) keeps the non-VLM, Transfuser-style planning lineage but changes the diffusion policy from a flat set of candidates into a coarse-to-fine hierarchy. The global planner first proposes 20 coarse trajectories, the top-2 intentions are expanded with a polar grid, and a local diffusion head refines those expanded candidates. The best setting uses a 5x5 local expansion during training and a 7x7 expansion at inference; naively keeping all 20 coarse anchors drops EPDMS to 79.8.
+
+The local expansion is structure-preserved rather than random: offsets are applied in polar coordinates so local samples retain the coarse trajectory's maneuver type. This is the key difference from simple Gaussian trajectory perturbation, which scored 84.9 EPDMS vs. 88.6 for polar expansion in HAD's ablation.
+
+HAD reaches 90.2 PDMS on NAVSIM-v1 and 88.6 EPDMS on NAVSIM-v2 at 30.4 FPS, making it a real-time non-VLM diffusion-family planner. It remains below DriveSuprim on NAVSIM-v1 and below WAM-Diff/DriveFine bug-fixed numbers on NAVSIM-v2 in the broader wiki.
+
+### FeaXDrive: Trajectory-Centric Diffusion for Feasibility
+
+**FeaXDrive** ([[sources/feaxdrive.md]]) targets a different weakness in diffusion planners: generated trajectories can be semantically plausible while still violating curvature, kinematic, or drivable-area feasibility. Instead of predicting the noise residual, FeaXDrive predicts the clean trajectory estimate `x0` at each denoising step and uses that estimate as the direct object for feasibility modeling.
+
+The three components are complementary. Adaptive curvature-regularized training acts on `x0` to suppress curvature spikes; drivable-area guidance builds a local SDF and adjusts the vehicle footprint during reverse sampling; feasibility-aware GRPO adds a curvature-feasibility term to the reward. This makes FeaXDrive a useful counterpoint to DiffusionDriveV2 and HAD: it is less about faster sampling or hierarchical candidates, and more about making the diffusion state physically interpretable.
+
+The trade-off is visible in post-training. Standard GRPO reaches 90.56 PDMS but raises curvature violation to 5.79%; feasibility-aware GRPO reaches 90.00 PDMS with 2.40% curvature violation. FeaXDrive is therefore not the NAVSIM-v1 frontier in the wiki, but it is one of the clearest demonstrations that diffusion reward optimization can improve benchmark score while damaging trajectory-space feasibility if not constrained.
 
 ## Learnable Action Queries: A Non-Diffusion Parallel Alternative (Reasoning-VLA)
 
@@ -159,9 +176,19 @@ The ARM (Action Refinement Module) then refines the parallel outputs via MLP + a
 | Block-MoE masked diffusion (DriveFine) | s + 1         | Yes (gen) + 1 refine | No (tokens) | Native (refinement expert) | Moderate |
 | AR over physical codebook (AutoVLA) | T (AR steps) | No | No (codebook tokens) | No | Moderate (1 Hz w/ CoT) |
 | FM action expert + discrete training (AR1) | 5 (Euler) | Yes (expert) | Yes (continuous) | No | Fast (8.75ms) |
+| Sparse-KV FM action expert (SpanVLA) | 5 (Euler) | Yes (expert) | Yes (continuous) | No | 0.67s end-to-end |
 | MoE masked diffusion + GSPO (WAM-Diff) | 32 iterations | Yes (parallel infill) | No (tokens) | Native | Moderate |
+| Unified causal planning queries (OneDrive) | 1 | Yes | Yes | No | 156ms NAVSIM / 513ms nuScenes |
+| Hierarchical diffusion (HAD) | 2-stage + local refinement | Yes | Yes | No | 30.4 FPS |
+| Trajectory-centric diffusion (FeaXDrive) | DDIM chain + x0 guidance | Partial | Yes | Drivable-area SDF guidance | 348.73ms total |
 
 **Trade-off**: learnable queries are the fastest paradigm but lack iterative refinement. Quality is bounded by single-pass prediction; complex multimodal scenarios (e.g., intersection turns) may produce averaged trajectories without multi-modal diversity mechanisms.
+
+### Unified Causal Planning Queries (OneDrive)
+
+**OneDrive** ([[sources/onedrive.md]]) extends the query-based family by embedding planning queries directly into a pretrained causal VLM decoder. Each future timestep has a planning query initialized from a VAD-derived anchor trajectory. Because planning queries are ordered after detection and lane queries, they condition on perception through the same causal attention rather than through a separate cross-attention planner.
+
+The result is not a NAVSIM frontier score (86.8 PDMS SFT), but the latency and architecture are important: 156ms on NAVSIM vs. ReCogDrive's 263ms, and 513ms on nuScenes vs. ColaVLA's 727ms.
 
 ### Action Decoder Scaling Reversal (DriveVLA-W0)
 
@@ -435,3 +462,22 @@ Both UniUGP and AR1 use continuous flow matching, but differ in coupling archite
 - **AR1**: action expert attends to VLM KV-cache via cross-attention; VLM does not see action expert states; stop-gradient; modular and separately trainable
 
 UniUGP's coupling is tighter (shared layers); AR1's is more modular (allows async updates and GRPO on discrete tokens at training).
+
+## Sparse-KV Flow Matching from History (SpanVLA)
+
+**SpanVLA** ([[sources/spanvla.md]]) adds a practical action-bridging variant between AutoVLA-style AR action tokens and Alpamayo-R1-style FM experts. The VLM still autoregressively emits compact reasoning, but a lightweight bridge reads sparse KV-cache layers and a flow-matching action expert generates the continuous trajectory from historical trajectory initialization.
+
+The key distinction from Gaussian/noise-start FM is the transport path:
+
+$$\mathbf{a}_{\tau}=\tau\mathbf{a}_{future}+(1-\tau)\mathbf{a}_{history}$$
+
+This makes the action expert learn a transition from past ego motion to future ego motion, rather than denoising from unstructured noise. SpanVLA reports 90.3 PDMS with 5 FM steps and 0.08s trajectory generation.
+
+| Action policy | Action count | PDMS | Total latency |
+|---|---:|---:|---:|
+| AutoVLA AR | 10 | 89.1 | 1.25s |
+| AutoVLA AR | 50 | - | 2.57s |
+| SpanVLA L1 head | 10/50 | 85.1 | 0.61s |
+| **SpanVLA FM** | **10/50** | **90.3** | **0.67s** |
+
+The L1 head is slightly faster but loses 5.2 PDMS, suggesting that continuous FM provides a real quality gain rather than just a speed optimization. Sparse bridge ablation: last-layer-only 79.3 PDMS, interval-4 82.2, interval-2 without historical initialization 86.4, and interval-2 with historical initialization 90.3.

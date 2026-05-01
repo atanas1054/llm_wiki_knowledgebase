@@ -1,8 +1,8 @@
 ---
 title: Inference-Time Safety for Trajectory Planning
 type: concept
-sources: [raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md]
-related: [sources/reflectdrive.md, sources/drivefine.md, sources/diffusiondrive.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/rl-for-ad.md]
+sources: [raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md]
+related: [sources/reflectdrive.md, sources/drivefine.md, sources/diffusiondrive.md, sources/feaxdrive.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/rl-for-ad.md]
 created: 2026-04-05
 updated: 2026-04-15
 confidence: high
@@ -23,11 +23,14 @@ Training-time solutions (RL, reward shaping) are effective but require unsafe on
 |--------|-----------|---------------------|-----------------|
 | Trajectory anchors (DiffusionDrive, Hydra-MDP) | Rule-based candidate initialization | No | Architecture change |
 | Diffusion guidance | Add safety reward gradient to denoising score | Yes | No |
+| Drivable-area SDF guidance (FeaXDrive) | Gradient correction of predicted clean trajectory inside reverse diffusion | Yes | No for inference guidance; yes for full method |
 | **Reflective inference (ReflectDrive)** | Discrete token search + inpainting | **No** | No |
 | GRPO RL (WAM-Flow, ReCogDrive) | Optimize policy toward reward during training | No (inference) | Yes |
 | Block-MoE refinement (DriveFine) | Dedicated refinement expert corrects completed token sequences | No | Architecture + training change |
 
 ReflectDrive's approach is the only one in this table that operates entirely at inference time, requires no gradient computation, and requires no architectural changes or retraining.
+
+**FeaXDrive's drivable-area guidance** ([[sources/feaxdrive.md]]) is a continuous-diffusion counterpart to inference-time safety. It builds a local drivable-area signed distance field, samples the four corners of the vehicle footprint at each predicted waypoint, and applies a gradient correction to the predicted clean trajectory `x0` during reverse sampling. This is not post-hoc trajectory repair: the corrected `x0` is fed back into the sampling chain. It reduces drivable-area violation rate from 5.06% to 2.54% in the paper's IL-stage ablation, with guidance overhead of 4.41 ms.
 
 **DriveFine's Block-MoE refinement** ([[sources/drivefine.md]]) is a training-time analog: a separate set of blocks (gradient-isolated from the main masked-diffusion backbone) is trained to read a fully completed trajectory and correct errors. Unlike ReflectDrive's inference-time token search + inpaint loop, DriveFine's correction is a single extra forward pass baked into training. It addresses the same root cause (committed token errors in discrete diffusion) but embeds the fix in model weights rather than applying it post-hoc. Key trade-off: DriveFine requires retraining; ReflectDrive works on any already-trained masked diffusion model without modification.
 

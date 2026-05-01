@@ -16,7 +16,7 @@ confidence: high
 **Org**: HUST (EIC + AI Institute), Horizon Robotics, Wuhan University  
 **Code**: [hustvl/DiffusionDriveV2](https://github.com/hustvl/DiffusionDriveV2)
 
-DiffusionDriveV2 achieves **91.2 PDMS** on NAVSIM v1 and **85.5 EPDMS** on NAVSIM v2 (ResNet-34, Camera+LiDAR) — the highest non-VLM results in the wiki and competitive with VLM-based methods on v1.
+DiffusionDriveV2 achieves **91.2 PDMS** on NAVSIM v1 and **85.5 EPDMS** on NAVSIM v2 (ResNet-34, Camera+LiDAR) -- a strong non-VLM diffusion baseline, but superseded by DriveSuprim's 93.5 PDMS selection-based non-VLM result.
 
 ---
 

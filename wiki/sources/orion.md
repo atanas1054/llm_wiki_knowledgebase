@@ -24,7 +24,7 @@ End-to-end VLM methods fail at closed-loop evaluation because there is a **seman
 
 ## Figure 1 — Four Paradigms of E2E Autonomous Driving
 
-![[raw/assets/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation/x1 7.png]]
+![[x1 7.png]]
 
 | Paradigm | Description | Weakness |
 |----------|-------------|----------|
@@ -37,7 +37,7 @@ End-to-end VLM methods fail at closed-loop evaluation because there is a **seman
 
 ## Figure 2 — ORION Full Pipeline
 
-![[raw/assets/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation/x2 6.png]]
+![[x2 6.png]]
 
 Three components: **QT-Former** (vision → reasoning space) → **Vicuna v1.5 LLM** (reasoning) → **Generative Planner** (reasoning → action space).
 
@@ -47,7 +47,7 @@ Three components: **QT-Former** (vision → reasoning space) → **Vicuna v1.5 L
 
 ### QT-Former
 
-![[raw/assets/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation/x3 5.png]]
+![[x3 5.png]]
 
 A Q-Former-style module that compresses multi-view images into three query types:
 
@@ -104,7 +104,7 @@ $$\mathcal{L} = \mathcal{L}_{qt} + \mathcal{L}_{ce} + \mathcal{L}_{gp}$$
 
 ### Figure A1 — Automated Annotation Pipeline
 
-![[raw/assets/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation/x6 3.png]]
+![[x6 3.png]]
 
 ORION introduces **Chat-B2D**, a VQA dataset auto-generated from Bench2Drive using Qwen2-VL-72B:
 
@@ -171,7 +171,7 @@ ORION excels at interaction requiring **causal reasoning** (Overtaking, Emergenc
 
 ### Figure 4 — Closed-Loop Evaluation Scenarios
 
-![[raw/assets/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation/x4 4.png]]
+![[x4 4.png]]
 
 Shows action reasoning + trajectory prediction. Brown = action decision text, Red = objects influencing decision, Green = predicted trajectory. Demonstrates interpretable causal reasoning followed by consistent trajectory.
 
@@ -181,7 +181,7 @@ Shows action reasoning + trajectory prediction. Brown = action decision text, Re
 
 ### Figure 5 / Table (Paradigm Comparison)
 
-![[raw/assets/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation/x5 4.png]]
+![[x5 4.png]]
 
 | Paradigm | DS | SR (%) | Mean Ability (%) |
 |----------|-----|--------|-----------------|

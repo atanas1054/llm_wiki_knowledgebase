@@ -1,7 +1,7 @@
 ---
 title: Mixture of Experts for Autonomous Driving VLAs
 type: concept
-sources: [raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ A Unified VLA Model for Autonomous Driving with 3D World Understanding.md]
+sources: [raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
 related: [sources/wam-diff.md, sources/drivefine.md, sources/drivevla-w0.md, sources/automot.md, sources/unidrivevla.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/perception-for-planning.md]
 created: 2026-04-21
 updated: 2026-04-21

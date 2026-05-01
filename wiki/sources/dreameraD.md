@@ -27,7 +27,7 @@ DreamerAD performs RL entirely within the latent imagination space of a diffusio
 
 DreamerAD builds on **Epona** (ICCV 2025) — an autoregressive flow-matching world model pretrained on NuPlan + NuScenes, unified video generation and trajectory planning. Three innovations:
 
-![Figure 3: DreamerAD RL training architecture](../../../raw/assets/x5%2015.png)
+![Figure 3: DreamerAD RL training architecture](../../raw/assets/x5%2015.png)
 
 *Figure 3: Three-stage RL pipeline: (1) Policy Generation + Vocabulary Sampling (yellow), (2) Latent World Model Rollout + Dense Reward Prediction (green), (3) GRPO Policy Optimization (blue).*
 
@@ -45,7 +45,7 @@ Weighting $\omega(t) = 0.9t + 0.1$ preserves both global structure and local det
 
 **Key PCA finding**: Denoised latent features from Video DiT exhibit strong spatial and semantic coherence — the latent space is structured enough to support direct reward modeling without pixel-level decoding:
 
-![Figure 2: PCA visualization of denoised latent features](../../../raw/assets/x1%2017.png)
+![Figure 2: PCA visualization of denoised latent features](../../raw/assets/x1%2017.png)
 
 *Figure 2: PCA of denoised latent features shows structured spatial and semantic layout consistent across scenarios.*
 
@@ -150,7 +150,7 @@ All three components contribute. SF-WM contributes more than AD-RM (comparing ID
 
 ### Qualitative (Figure 5)
 
-![Figure 5: Comparison before/after RL training](../../../raw/assets/x8%208.png)
+![Figure 5: Comparison before/after RL training](../../raw/assets/x8%208.png)
 
 *Figure 5: SFT (red) vs. RL (blue) trajectories in BEV. Rows 1–3: SFT speeds into stationary vehicles; RL decelerates safely. Row 4: SFT collides with curb; RL adjusts heading to navigate through.*
 

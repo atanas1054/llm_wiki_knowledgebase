@@ -1,10 +1,10 @@
 ---
 title: VLM Domain Adaptation for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md]
-related: [sources/recogdrive.md, sources/uniugp.md, sources/senna2.md, sources/reasoning-vla.md, sources/hermes.md, sources/autovla.md, sources/automot.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/futuresightdrive.md, sources/unidrivevla.md, sources/flare.md, sources/vega.md, sources/nord.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/perception-for-planning.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md]
+related: [sources/recogdrive.md, sources/uniugp.md, sources/senna2.md, sources/reasoning-vla.md, sources/hermes.md, sources/autovla.md, sources/automot.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/futuresightdrive.md, sources/unidrivevla.md, sources/flare.md, sources/vega.md, sources/nord.md, sources/elf-vla.md, sources/spanvla.md, sources/onedrive.md, sources/onevl.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/perception-for-planning.md]
 created: 2026-04-05
-updated: 2026-04-15
+updated: 2026-05-01
 confidence: high
 ---
 
@@ -706,6 +706,59 @@ NoRD and FLARE both achieve no-reasoning at inference, but via different mechani
 | FLARE | LoRA SFT on trajectories + future DINOv2 feature prediction (no language annotations) | ✓ (LoRA) | NAVSIM navtrain (trajectories only) | Qwen3-VL-4B | At inference |
 | Vega | Integrated AR+Diffusion (Bagel-7B); NL instruction following via world model dense supervision | ✓ (full fine-tune) | InstructScene 100K + NAVSIM | Qwen2.5-LLM + Bagel-7B | At inference (CFG) |
 | **NoRD** | **Reasoning-free trajectory SFT + Dr. GRPO; no CoT at any stage** | **✓ (full fine-tune)** | **80K NAVSIM (no annotations)** | **Qwen-2.5VL-3B** | **At inference (fast, 3× fewer tokens)** |
+
+## ELF-VLA: Feedback-Conditioned Adaptation
+
+**ELF-VLA** ([[sources/elf-vla.md]]) adds a different adaptation axis: training the VLM to **consume corrective feedback**. The model is not only adapted to predict trajectories from driving scenes; it is also adapted to refine its own previous wrong response when given structured diagnostics.
+
+Training has three stages:
+
+| Stage | Data / objective | Adaptation role |
+|-------|------------------|-----------------|
+| Pretrain | Driving QA from DriveLM, LingoQA, ImpromptuVLA, NuScenes-QA, NuInstruct, OmniDrive, plus NAVSIM CoT tasks | General driving cognition |
+| SFT | Mixed base inputs and feedback inputs supervised to GT trajectory | Teaches both generation and feedback-based refinement |
+| RL | Curated 24k difficult/ambiguous NAVSIM scenes with online Qwen3-VL-32B failure diagnostics | Internalizes teacher corrections for persistent failures |
+
+The feedback dataset includes 4k correct and 4k incorrect generated responses. Correct responses receive positive rule feedback; wrong responses receive Qwen3-VL-32B teacher feedback using wrong trajectory, GT trajectory, NAVSIM metric scores, and task requirements.
+
+This pattern is closest to HERMES in using a VLM teacher, but the timing and target differ:
+
+| Method | Teacher role | Teacher timing | Student learns |
+|--------|--------------|----------------|----------------|
+| HERMES | Offline safety annotator | Before training | Risk-aware embeddings for planning |
+| **ELF-VLA** | Online failure diagnostician | During SFT data construction and RL rollouts | How to repair its own failed reasoning/trajectory |
+
+ELF-VLA therefore treats domain adaptation as **error-correction skill acquisition**, not only scene-understanding acquisition.
+
+## SpanVLA: Negative-Recovery Adaptation and Action Bridging
+
+**SpanVLA** ([[sources/spanvla.md]]) adapts Qwen2.5-VL-3B through a dual objective: teach compact driving reasoning with mReasoning, then avoid known bad behaviors and learn expert recoveries through RFT. Its dataset contribution is an in-house 30K complex-scenario reasoning set plus 3K negative trajectories and 3K expert recovery trajectories collected from early-stage real-world testing.
+
+The adaptation pipeline has two unusual properties:
+
+- **Action bridge instead of pure AR action decoding**: the VLM is adapted to reason and emit action tokens during training, but inference delegates trajectory generation to a sparse-KV flow-matching action expert initialized from history.
+- **Negative-recovery reward shaping**: GRPO uses PDMS/EPDMS plus a bounded L2 penalty away from negative trajectories, a bounded L2 reward toward recovery trajectories, and CoT length/action-alignment penalties.
+
+This differs from ELF-VLA's teacher-feedback adaptation. ELF-VLA uses an online teacher to diagnose failed rollouts and inject corrected samples. SpanVLA instead uses real negative/recovery driving logs as reward-shaped references, making the correction signal data-driven rather than teacher-generated.
+
+## OneDrive: Attention Transfer, FFN Replacement
+
+**OneDrive** ([[sources/onedrive.md]]) adds a low-level adaptation lesson: pretrained VLM attention is transferable to structured driving queries, but pretrained language FFNs are not. Its diagnostic table shows that initializing attention from InternVL3 or Qwen2.5-VL improves or stabilizes parallel decoder transfer, while reusing FFNs can degrade training severely.
+
+Design implications:
+
+- Keep causal attention as the shared visual/structured/text conditioning interface.
+- Replace or specialize FFNs for detection, lane, and planning queries.
+- Preserve text loss during adaptation as a regularizer for the shared attention backbone.
+- Avoid separate Q-Former or E2E decoder branches when a single decoder can host all query types.
+
+OneDrive is an architecture-adaptation method rather than a data/RL method: it does not add GRPO, teacher feedback, or world-model supervision, but changes how a pretrained VLM decoder is reused.
+
+## OneVL: Latent-Token Adaptation with Auxiliary Decoders
+
+**OneVL** ([[sources/onevl.md]]) adapts Qwen3-VL-4B by inserting visual and language latent tokens into the assistant response and training those latent positions with two auxiliary objectives. The language decoder reconstructs text CoT, while the visual decoder predicts future-frame visual tokens. This is a different adaptation recipe from adding more CoT data or RL: the model is forced to make its hidden latent states decodable as both semantic reasoning and short-horizon scene dynamics.
+
+The staged optimization is the main engineering lesson. Direct joint training of the VLM plus both decoders collapses to 67.13 PDMS, while the full warmup -> decoder alignment -> joint fine-tune curriculum reaches 88.84. This makes OneVL an example where adaptation failure is not due to insufficient model capacity, but due to unstable coupling between pretrained language representations, latent bottlenecks, and auxiliary world-model losses.
 
 ## Related Systems
 

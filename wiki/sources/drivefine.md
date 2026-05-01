@@ -30,7 +30,7 @@ DriveFine uses a **masked diffusion LLM** (parallel, bidirectional decoding) as 
 
 ## Figure 1 — Decoding Mechanism Comparison
 
-![[raw/assets/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving/x1 10.png]]
+![[x1 10.png]]
 
 Three paradigms:
 - **(a) Diffusion**: parallel denoising across many steps
@@ -41,7 +41,7 @@ Three paradigms:
 
 ## Figure 2 — PDMS-Oriented RFT Comparison
 
-![[raw/assets/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving/x2 8.png]]
+![[x2 8.png]]
 
 **Key empirical finding**: when PDMS-oriented reinforcement fine-tuning is applied:
 - **Token-based** (InternVL): PDMS ↑, EPDMS ↑ — both improve simultaneously
@@ -53,7 +53,7 @@ This is attributed to the weak coupling between separate diffusion planners and 
 
 ## Figure 3 — Irreversible Decoding Failures
 
-![[raw/assets/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving/x3 8.png]]
+![[x3 8.png]]
 
 Masked diffusion decoding without refinement exacerbates irreversibility: tokens decoded early (high confidence but lacking global context) become outliers that cannot be revised, causing trajectory-level failures (collision, off-road).
 
@@ -63,7 +63,7 @@ Masked diffusion decoding without refinement exacerbates irreversibility: tokens
 
 ### Figure 4 — DriveFine Overview
 
-![[raw/assets/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving/x4 7.png]]
+![[x4 7.png]]
 
 ### Action Tokenization
 
@@ -110,7 +110,7 @@ LLaDA-8B has 32 transformer blocks. Split:
 
 ### Figure 5 — Hybrid RL Pipeline
 
-![[raw/assets/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving/x5 7.png]]
+![[x5 7.png]]
 
 ### GRPO for Generation Expert
 
@@ -189,13 +189,13 @@ Uses **3DGS (Gaussian splatting)** to generate scenarios beyond training distrib
 
 ### Figure 6 — Before/After Refinement
 
-![[raw/assets/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving/x6 6.png]]
+![[x6 6.png]]
 
 Red = trajectory before refinement (generation expert output); Green = after refinement. Refinement corrects individual outlier tokens that would otherwise cause collisions or off-road driving, and smooths trajectory-level fluctuations from non-causal decoding.
 
 ### Figure 7 — PDMS-Latency Trade-off
 
-![[raw/assets/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving/x7 6.png]]
+![[x7 6.png]]
 
 At s=4 steps: **90.47 PDMS, 207ms latency** — matching ReCogDrive-8B at much lower step count. Step count is a continuous latency-quality dial.
 

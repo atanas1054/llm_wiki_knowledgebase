@@ -1,10 +1,10 @@
 ---
 title: Perception-Enhanced Planning in VLA Models
 type: concept
-sources: [raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
-related: [sources/percept-wam.md, sources/unidrivevla.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md]
+sources: [raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md]
+related: [sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md]
 created: 2026-04-05
-updated: 2026-04-07
+updated: 2026-05-01
 confidence: high
 ---
 
@@ -114,6 +114,29 @@ MoT solves this by decoupling parameters: the Understanding expert (und) never s
 
 Detection is most critical for safety (CR halved: 0.21→0.10). Occupancy gives the best trajectory accuracy (0.58→0.53). Map and motion add no consistent gains in the current nuScenes open-loop regime — possibly because map supervision overlaps with what detection already provides, and motion prediction is still far behind specialized models.
 
+## Single-Decoder Structured Queries: OneDrive
+
+**OneDrive** ([[sources/onedrive.md]]) introduces a third perception-integration path. It does not create dense World-PV/BEV tokens like Percept-WAM and does not use decoupled MoT perception experts like UniDriveVLA. Instead, it puts detection queries, lane queries, planning queries, image tokens, and optional text tokens into one causal VLM decoder.
+
+The planning order matters: detection tokens before lane tokens before planning tokens gives the best nuScenes result (0.28 L2 / 0.18 collision), while lane-before-detection is worse. This supports the same high-level claim as UniAD/Percept-WAM: perception supervision helps planning, but OneDrive shows it can be mediated by causal attention rather than a separate BEV or expert stream.
+
+Key tradeoff: OneDrive preserves text generation and uses one attention backbone, but it still needs query-only self-attention and task-specific FFNs because raw autoregressive causal attention is not sufficient for parallel structured prediction.
+
+## Geometric Distillation Without Perception Heads: Latent-WAM
+
+**Latent-WAM** ([[sources/latent-wam.md]]) adds a training-time spatial-supervision path that is not explicit detection, BEV segmentation, or occupancy prediction. It distills patch-level features from a frozen geometric foundation model, WorldMirror, into a DINOv2-Base encoder, then compresses the result into scene tokens for latent world modeling.
+
+This is a useful middle ground:
+
+| Approach | Spatial signal | Runtime cost |
+| --- | --- | --- |
+| Percept-WAM | Explicit PV/BEV perception tokens and heads | Perception tokens run at inference |
+| UniDriveVLA | Sparse perception expert with detection/map/occupancy tasks | Perception expert runs at inference |
+| OneDrive | Detection/lane/planning queries in one causal decoder | Structured queries run at inference |
+| **Latent-WAM** | **WorldMirror feature distillation into DINOv2 patches** | **Teacher removed at inference** |
+
+The ablation is sharp: no geometric feature gives 88.3 EPDMS, direct feature concatenation gives 88.0, and distillation gives 89.3. The lesson is that spatial foundation features help only when aligned into the trainable planning representation, not when appended as frozen key-value inputs.
+
 ## Comparison: Perception Integration Approaches in AD VLMs
 
 | Approach | Spatial supervision | World state type | Shared params? | Planning benefit |
@@ -123,6 +146,8 @@ Detection is most critical for safety (CR halved: 0.21→0.10). Occupancy gives 
 | **World tokens (Percept-WAM)** | **Direct (token-level)** | **World-PV + World-BEV tokens** | **✓** | **Shared representation + modality-aligned decoding** |
 | Dense spatial injection (OmniDrive, OpenDriveVLA) | Direct (3D Q-Former / BEV) | BEV features | ✓ | Improved spatial precision, impaired reasoning |
 | **Sparse MoT (UniDriveVLA)** | **Direct (sparse queries)** | **K-Means instance banks (5 tasks)** | **✗ (decoupled)** | **Spatial precision + preserved reasoning** |
+| **Single causal decoder (OneDrive)** | **Direct (det/lane/planning queries)** | **Structured query tokens in VLM sequence** | **Yes, shared attention with task FFNs** | **Unified text/perception/planning; 0.28 L2 / 0.18 collision on nuScenes** |
+| Latent-WAM | Geometry foundation distillation | Compact scene/world-status tokens | No VLM | Spatial grounding without inference-time perception heads |
 | World model (UniUGP) | Video generation | Future frame prediction | ✓ | Causal feature grounding |
 
 UniAD's planning-oriented multi-task learning is the closest philosophical predecessor to both Percept-WAM and UniDriveVLA. The key architectural divergence: Percept-WAM uses shared-weight tokens with a four-query decoder; UniDriveVLA uses decoupled MoT experts with sparse queries. Both share the insight that explicit spatial supervision improves planning, but they resolve the perception–reasoning conflict differently.

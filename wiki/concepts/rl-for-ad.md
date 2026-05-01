@@ -1,10 +1,10 @@
 ---
 title: Reinforcement Learning for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md]
-related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, sources/dreameraD.md, sources/nord.md, sources/diffusiondrive-v2.md, sources/wam-diff.md, sources/explorevla.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md]
+sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md]
+related: [sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, sources/dreameraD.md, sources/nord.md, sources/diffusiondrive-v2.md, sources/wam-diff.md, sources/explorevla.md, sources/elf-vla.md, sources/dynvla.md, sources/spanvla.md, sources/had.md, sources/feaxdrive.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md]
 created: 2026-04-05
-updated: 2026-04-23
+updated: 2026-04-28
 confidence: high
 ---
 
@@ -61,6 +61,12 @@ $$L = L_{RL} - \lambda L_{BC}$$
 ## Key Tension: Non-Reactive vs. Interactive Simulators
 
 NAVSIM's non-reactive simulator does not model other agents responding to ego actions. This simplifies RL but may limit generalization to scenarios requiring interaction. A fully interactive closed-loop simulator is much harder to build and maintain.
+
+## FeaXDrive: Feasibility-Aware GRPO
+
+**FeaXDrive** ([[sources/feaxdrive.md]]) exposes a reward-design problem for diffusion planners: score-only GRPO can improve NAVSIM PDMS while making trajectories less physically feasible. Starting from FeaXDrive-IL, standard GRPO improves PDMS from 88.75 to 90.56, but curvature violation rate rises from 0.88% to 5.79%.
+
+Feasibility-aware GRPO adds a curvature-feasibility preference to the task reward. It reaches a lower PDMS than score-only GRPO (90.00 vs. 90.56), but keeps curvature violation much lower (2.40% vs. 5.79%) and slightly improves DAC (98.31 vs. 98.28). The lesson is that NAVSIM reward optimization and trajectory-space feasibility are not automatically aligned; diffusion-chain RL may need explicit physical constraints in the reward.
 
 ## WAM-Flow: GRPO Applied to Discrete Flow Matching
 
@@ -629,7 +635,10 @@ All three papers independently arrive at the conclusion that standard GRPO requi
 | NoRD | PDMS + format + length (all [0,1]) | Yes | No | No | None (no KL) |
 | **DiffusionDriveV2** | **PDMS (NAVSIM) + hard collision penalty (−1)** | **Yes** | **No** | **No** | **BC (λ=0.1, IL loss)** |
 | WAM-Diff | PDMS (NAVSIM composite) | Yes | No | No | Clipping (seq-level, no KL) |
+| **DynVLA** | **PDMS + format over dynamics-token/action-token sequence** | **Yes** | **No** | **No** | **KL to SFT reference** |
+| **SpanVLA** | **PDMS/EPDMS - negative-trajectory proximity + recovery proximity - CoT length/alignment penalty** | **Yes** | **Action-reasoning alignment** | **Yes (length penalty)** | **KL to SFT reference** |
 | **ExploreVLA** | **PDMS (safety gate, δ=0.9) + image entropy exploration bonus (λ=0.5)** | **Yes** | **No** | **No** | **KL (β=0.01)** |
+| **ELF-VLA** | **PDMS + format + endpoint, augmented with teacher-guided corrected refinements** | **Yes** | **Indirectly (failure diagnostics)** | **No** | **KL + policy shaping for feedback samples** |
 
 AR1 is the only method with explicit reasoning evaluation as a reward component. FLARE, DiffusionDriveV2, and WAM-Diff all adapt GRPO to handle non-standard planner architectures: FLARE uses BC regularization for DiT planners; DiffusionDriveV2 uses anchor-scoped truncated advantage for GMM planners; WAM-Diff uses sequence-level GSPO for sparse MoE planners. **DreamerAD is the only method where reward is computed from latent world model features** rather than a PDM simulator or GT trajectories. **WAM-Diff's GSPO is the only method that eliminates token-level credit assignment entirely** — replacing it with sequence-level importance ratios to maintain MoE routing stability. **ExploreVLA is the only method where the world model's prediction *uncertainty* (entropy) serves as a novelty reward** — distinct from DreamerAD's task-aligned latent reward model.
 
@@ -761,6 +770,69 @@ ExploreVLA is the **only method in the wiki that uses a world model's prediction
 - Exploration signal: world model entropy (unique; no other wiki method uses this)
 - Dual-role world model: same model provides both SFT dense supervision and RL exploration reward
 
+## DynVLA: GRPO RFT over Dynamics CoT
+
+**DynVLA** ([[sources/dynvla.md]]) applies standard GRPO after SFT to a structured output sequence containing dynamics tokens followed by action tokens. The reward is `r_traj + lambda_fmt r_fmt`, where `r_traj` is PDMS from NAVSIM and the format reward enforces the `[BOD ... EOD][BOA ... EOA]` sequence.
+
+The RFT stage is most effective when Dynamics CoT is present: EMU3 without Dynamics CoT reaches 88.7 PDMS after RFT, while EMU3 with Dynamics CoT reaches 91.7; Qwen2.5-VL without Dynamics CoT reaches 88.4, while Qwen2.5-VL with Dynamics CoT reaches 91.0. The result suggests that outcome-level RL can optimize actions more effectively when the policy first commits to compact future dynamics.
+
+## SpanVLA: GRPO with Negative-Recovery Samples
+
+**SpanVLA** ([[sources/spanvla.md]]) extends NAVSIM-style GRPO by adding real negative and recovery trajectories into the reward design. The final reward is:
+
+$$r=r_{Driving}-w_N r_{Negative}+w_R r_{Recovery}-\lambda_C r_{CoT}$$
+
+The driving reward is PDMS on NAVSIM-v1 and EPDMS on NAVSIM-v2. Negative samples use suboptimal real-world ego trajectories as references to avoid; recovery samples use expert corrective actions as references to approach. Both terms are bounded L2/ADE shaping signals, preventing unbounded repulsion from negative traces or over-constrained recovery imitation.
+
+SpanVLA also inherits AutoVLA-style adaptive reasoning pressure via a CoT length penalty, then adds a rule-based action-reasoning alignment penalty. The best RFT recipe is a 6K budget with 2K positive warm-up plus 3K positive, 0.5K negative, and 0.5K recovery samples. Main effect: NAVSIM-v1 improves from 82.1 one-shot to 90.3 after RFT, and NAVSIM-v2 improves from 79.4 to 86.4.
+
+## ELF-VLA: Teacher-Guided Learning from Persistent Failures
+
+**ELF-VLA** ([[sources/elf-vla.md]]) targets a different GRPO failure mode from both Curious-VLA and NoRD: **persistent failures**, where every rollout in a long-tail scene receives a low driving score. In that regime, a scalar PDMS reward says the rollout group failed but does not identify whether the cause is high-level planning, flawed reasoning about a critical object, or trajectory execution.
+
+### Failure Feedback Loop
+
+ELF-VLA adds a teacher-model loop during rollout:
+
+1. The policy samples $n$ base responses.
+2. Responses below a trajectory-reward threshold $s$ are sent to Qwen3-VL-32B with the base input, wrong trajectory, GT trajectory, and NAVSIM metric details.
+3. The teacher returns structured diagnostics: meta-action analysis, think-process analysis, safety failure, efficiency failure, and actionable lateral/longitudinal correction.
+4. The student re-rolls from the feedback input.
+5. Up to $k$ refined responses whose trajectory reward exceeds the best original rollout are injected into the final GRPO batch.
+
+This converts an all-failed group into a batch with at least one corrected high-advantage sample.
+
+### Policy Shaping for Feedback Samples
+
+Feedback-generated outputs are sampled under $q^{fb}$ but optimized under $q^{base}$. Their base-conditioned likelihood can be low, creating high-variance ratios. ELF-VLA uses:
+
+$$f(x)=\frac{x}{x+\gamma}, \quad \gamma=0.1$$
+
+for feedback samples instead of normal clipped PPO ratios. Ablation: at $k=1$, removing policy shaping drops PDMS from 91.0 to 89.3.
+
+### Result and Ablations
+
+| Method | PDMS |
+|--------|------|
+| SFT | 87.4 |
+| GRPO | 89.0 |
+| GT-GRPO | 89.2 |
+| Rule-GRPO | 89.6 |
+| **ELF-VLA** | **91.0** |
+
+ELF-VLA also reduces total-failure PDMS rate during RL from 2.73% under standard GRPO to 1.08%. The optimal feedback threshold is $s=0.8$; lower thresholds miss fixable suboptimal cases, while $s=0.9$ over-refines already adequate outputs and adds noise.
+
+### Position Relative to Other GRPO Fixes
+
+| Method | GRPO bottleneck | Fix |
+|--------|-----------------|-----|
+| Curious-VLA | Narrow policy, low diversity, advantage collapse | Expand/diversify IL data and sample diverse-outcome RL cases |
+| NoRD | Weak SFT causes high-variance difficulty bias | Remove std normalization via Dr. GRPO |
+| ExploreVLA | Safe novelty under-rewarded | Add world-model entropy bonus gated by PDMS |
+| **ELF-VLA** | Persistent all-failed rollout groups | Teacher diagnosis plus corrected refinement injection |
+
+The key tradeoff is teacher dependence: ELF-VLA's improvements require online Qwen3-VL-32B diagnostics during training and GT trajectories in the teacher prompt. The mechanism is therefore best understood as training-time failure distillation, not an inference-time recovery system.
+
 ## NoRD: Difficulty Bias in GRPO and Dr. GRPO
 
 **NoRD** ([[sources/nord.md]]) identifies and addresses a fundamental failure mode of GRPO when applied to **weak SFT policies** — policies trained on smaller, reasoning-free datasets. This is the first paper in the wiki to characterize this failure as **difficulty bias** in the AD domain.
@@ -817,6 +889,16 @@ $$\text{PDMS} = \text{NC} \times \text{DAC} \times \frac{5 \cdot \text{TTC} + 2 
 ### Position in the GRPO Landscape
 
 NoRD establishes that the SFT policy **strength** (not just size or reasoning content) determines whether GRPO is viable. A strong SFT policy (high mean reward, low variance) provides clear learning signal for GRPO. A weak policy (high variance, intermediate mean) starves GRPO even if the policy is expressive enough to eventually learn the task — the solution is fixing the optimizer, not adding more data or reasoning.
+
+## HAD: Metric-Decoupled Policy Optimization
+
+**HAD** ([[sources/had.md]]) introduces metric-decoupled policy optimization (MDPO), a NAVSIM RL variant aimed at avoiding the conflict created by optimizing one coupled PDMS/EPDMS scalar. Instead of training one reward head for the composite score, HAD predicts separate metric rewards and combines them with explicit inference-time coefficients.
+
+The ablation is direct: a distance-only reward scores 62.6 EPDMS, a coupled PDMS reward scores 87.8, distance+PDMS scores 86.9, and decoupled metric rewards score 88.6. The same table also shows why metric scope matters: applying safety and RL heads only to local expanded candidates reaches 88.6, while applying them globally as well drops to 87.2.
+
+HAD also makes RL cheaper through offline trajectory reward retrieval. It precomputes metric rewards for an 8192-trajectory vocabulary, then uses nearest-neighbor matching to approximate generated-trajectory rewards during training. The paper reports per-sample reward lookup falling from 0.2449s to 0.0042s and total training time from 64.4h to 13.6h, with the same 88.6 EPDMS.
+
+The tradeoff is approximation: rewards are only as accurate as the vocabulary-nearest trajectory and the metric-head calibration. HAD's contribution is therefore best read as efficient multi-metric reward shaping for a hierarchical diffusion planner, not as a simulator-free replacement for NAVSIM evaluation.
 
 ## Connection to LLM RL (GRPO / DeepSeek-R1)
 

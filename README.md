@@ -16,7 +16,7 @@ wiki/
 CLAUDE.md      # Workflow instructions for the LLM assistant
 ```
 
-## Papers Ingested (33)
+## Papers Ingested (43)
 
 | Paper | Org | Key Contribution | Benchmark |
 |-------|-----|-----------------|-----------|
@@ -53,8 +53,18 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [DriveSuprim](wiki/sources/drivesuprim.md) | Fudan + NVIDIA | Non-VLM selection-based; 8192-vocab + coarse-to-fine (→256) + rotation aug + EMA self-distill | **93.5 PDMS NAVSIM-v1** (highest non-BoN) / 87.1 EPDMS NAVSIM-v2 |
 | [DriveVA](wiki/sources/driveva.md) | U. Twente | Wan2.2-TI2V-5B video backbone; single DiT over joint [video latents ‖ action tokens]; zero-shot cross-dataset | 90.9 PDMS NAVSIM-v1; −78.9% L2 nuScenes (zero-shot) |
 | [ExploreVLA](wiki/sources/explorevla.md) | — | Show-o (Phi-1.5 + MAGVIT-v2); dense RGB+depth world model SFT; safety-gated entropy exploration reward (GRPO) | 90.4 PDMS / 93.7 BoN-6 NAVSIM-v1; 88.8 EPDMS NAVSIM-v2 |
+| [ELF-VLA](wiki/sources/elf-vla.md) | Tsinghua + University of Macau + Beijing Jiaotong | Teacher-diagnosed persistent failures; feedback-guided refinement re-injected into GRPO with policy shaping | 91.0 PDMS NAVSIM-v1; 87.1 EPDMS NAVSIM-v2 |
+| [DynVLA](wiki/sources/dynvla.md) | — | Dynamics CoT: compact ego/environment dynamics tokens before action tokens; Dynamics Tokenizer + SFT + GRPO RFT | 91.7 PDMS NAVSIM-v1; 88.34 DS Bench2Drive |
+| [SpanVLA](wiki/sources/spanvla.md) | UCLA + Motional + Northeastern | Sparse-KV action bridge + flow-matching action expert from historical initialization; GRPO with negative-recovery samples | 90.3 PDMS NAVSIM-v1; 86.4 EPDMS NAVSIM-v2; 40.1 navhard |
+| [OneDrive](wiki/sources/onedrive.md) | — | Single causal VLM decoder unifies AR text, parallel perception queries, and planning queries; pretrained attention transfers better than FFNs | 0.28 L2 / 0.18 collision nuScenes; 86.8 PDMS NAVSIM-v1; 156ms NAVSIM latency |
+| [OneVL](wiki/sources/onevl.md) | Xiaomi | Latent CoT with dual auxiliary decoders: language explanation plus future-frame world-model supervision, discarded at inference via prefill | 88.84 PDMS NAVSIM-v1 at 4.46s; 0.24s MLP variant at 86.83 PDMS |
+| [HAD](wiki/sources/had.md) | Fudan + NVIDIA | Hierarchical diffusion planner with polar trajectory expansion, metric-decoupled RL, and offline reward retrieval | 90.2 PDMS NAVSIM-v1; 88.6 EPDMS NAVSIM-v2; 47.5 RC / 30.8 HDS HUGSIM |
+| [Latent-WAM](wiki/sources/latent-wam.md) | Chongqing Chang'an + collaborators | Spatial-aware compressed latent world states with WorldMirror geometric distillation and causal latent dynamics prediction | 89.3 EPDMS NAVSIM-v2; 45.9 RC / 28.9 HDS HUGSIM zero-shot |
+| [Drive-JEPA](wiki/sources/drive-jepa.md) | — | V-JEPA driving-video pretraining plus proposal-centric multimodal trajectory distillation and momentum-aware selection | 93.3 PDMS NAVSIM-v1; 87.8 EPDMS NAVSIM-v2; 64.52 DS Bench2Drive |
+| [FeaXDrive](wiki/sources/feaxdrive.md) | Tongji + NTU | Trajectory-centric diffusion planning with curvature regularization, drivable-area guidance, and feasibility-aware GRPO | 90.0 PDMS NAVSIM-v1; 2.40% curvature violation |
+| [Policy World Model](wiki/sources/policy-world-model.md) | Dalian University of Technology | Show-o-based policy world model with action-free future video forecasting, 28-token frames, and collaborative state-action prediction | 88.1 PDMS NAVSIM-v1; 0.41 L2 / 0.04 collision nuScenes w/ ego |
 
-## Concept Pages (14)
+## Concept Pages (21)
 
 | Concept | Description |
 |---------|-------------|
@@ -63,7 +73,7 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [RL for Autonomous Driving](wiki/concepts/rl-for-ad.md) | GRPO variants: simulator, GT-based, hierarchical (3DGS), adaptive Think, LRM-as-critic, Dr. GRPO, entropy-based exploration |
 | [VLM Domain Adaptation](wiki/concepts/vlm-domain-adaptation.md) | Data curation, CoT integration, dual-mode SFT, frozen VLM, reasoning-free adaptation |
 | [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md) | PDMS/EPDMS metrics; full SOTA table with caveats; Navhard OOD results |
-| [World Models for AD](wiki/concepts/world-model-for-ad.md) | 12 architecture patterns from cascaded generation to entropy-based exploration rewards |
+| [World Models for AD](wiki/concepts/world-model-for-ad.md) | World-model patterns from video generation to latent status prediction, dynamics tokens, and entropy rewards |
 | [Dual-System VLA](wiki/concepts/dual-system-vla.md) | VLM decisions + E2E trajectory; consistency alignment; async KV cache; MoT paradigm; complementarity + fast–slow deployment |
 | [Inference-Time Safety](wiki/concepts/inference-time-safety.md) | Gradient-free safety correction; inpainting-as-repair; DriveFine block-MoE contrast |
 | [Perception-Enhanced Planning](wiki/concepts/perception-for-planning.md) | World-PV/BEV tokens; grid-conditioned AR detection; IoU-aware confidence; sparse MoT |
@@ -72,6 +82,13 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [Chain-of-Thought for AD](wiki/concepts/chain-of-thought-for-ad.md) | Text/visual/self-reflection CoT types; annotation methods; adaptive CoT; NoRD challenge |
 | [Mixture of Experts for AD](wiki/concepts/mixture-of-experts.md) | 4 patterns: sparse LoRA MoE, block-level task MoE, MoT (frozen+trained), side expert; RL routing instability; catastrophic forgetting |
 | [Selection-Based Planning](wiki/concepts/selection-based-planning.md) | Fixed-vocabulary trajectory scoring; coarse-to-fine filtering; oracle ceiling 98.7 PDMS; hard-negative / directional bias failure modes |
+| [Action Tokenization and Codebooks](wiki/concepts/action-tokenization.md) | Discrete action vocabularies, learned codebooks, continuous action experts, and tokenizer tradeoffs |
+| [GSPO vs. GRPO](wiki/concepts/gspo-vs-grpo.md) | Sequence-level RL for MoE/masked-diffusion policies vs. token/group-level GRPO recipes |
+| [PDM-Lite](wiki/concepts/pdm-lite.md) | Privileged oracle planner/fallback caveat for Bench2Drive comparisons |
+| [nuScenes and Waymo Evaluations](wiki/concepts/nuscenes-waymo-evals.md) | Open-loop L2/collision/RFS metrics and cross-benchmark caveats |
+| [Foundation Backbones for AD](wiki/concepts/foundation-backbones-for-ad.md) | Qwen, InternVL, Cosmos, Wan, Show-o, and other backbone choices in driving VLAs |
+| [Navhard and OOD Evaluation](wiki/concepts/navhard-ood-evaluation.md) | NAVSIM-v2 navhard, distribution-shift scoring, and OOD caveats |
+| [HUGSIM Benchmark](wiki/concepts/hugsim-benchmark.md) | Closed-loop interactive benchmark with route completion and HD-Score; HAD reports 47.5 RC / 30.8 HDS |
 
 ## Workflow
 

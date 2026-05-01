@@ -38,7 +38,7 @@ Vega addresses this via **world modeling as dense supervision**: future image ge
 
 ## Architecture
 
-![Figure 2: Vega overview](../../../raw/assets/x3%2017.png)
+![Figure 2: Vega overview](../../raw/assets/x3%2017.png)
 
 *Figure 3: Integrated AR+Diffusion transformer. Understanding (AR) and generation (diffusion) transformers share joint attention while using separate MoT parameter sets.*
 
@@ -150,11 +150,11 @@ Diffusion module catastrophically fails as an action planner — the diffusion p
 
 ### Instruction-Following Qualitative Results
 
-![Figure 5: Instruction-based planning examples](../../../raw/assets/x5%2016.png)
+![Figure 5: Instruction-based planning examples](../../raw/assets/x5%2016.png)
 
 *Figure 5: Same scenario, different instructions → different trajectories. Front-camera + BEV overlay. Vega successfully modulates speed up/down/maintain to follow instructions.*
 
-![Figure 6: Future image generation conditioned on instructions](../../../raw/assets/x6%2014.png)
+![Figure 6: Future image generation conditioned on instructions](../../raw/assets/x6%2014.png)
 
 *Figure 6: Instruction-conditioned generation at an intersection. Two different instruction sets produce both different action sequences and different future image predictions — both action and image are mutually consistent.*
 
