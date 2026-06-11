@@ -1179,3 +1179,24 @@ Append-only log of all wiki operations.
 - `wiki/concepts/navsim-benchmark.md` — NAVSIM benchmark and PDMS metric
 
 **Index updated**: yes
+---
+
+## 2026-06-11 — Ingest: CLEAR
+
+**Source**: `raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md`
+**arXiv**: https://arxiv.org/html/2606.06219v1
+**Assets read**: `framework.png` (architecture), `training_plot.png` (drift training dynamics)
+
+**Pages created**:
+- `wiki/sources/clear.md` — full source summary with two figures, NAVSIM-v1/v2 tables, ablation table, relationships, and limitations
+- `wiki/concepts/adaptive-routing.md` — new concept for scene-conditioned candidate budget/diversity routing and learned trajectory scoring
+
+**Pages updated**:
+- `wiki/index.md` — added CLEAR source and Adaptive Routing concept; updated DriveSuprim wording
+- `wiki/concepts/navsim-benchmark.md` — added CLEAR v1/v2 leaderboard entries; updated non-BoN frontier note and caveat
+- `wiki/concepts/diffusion-planner.md` — added single-step VAE latent drift as a diffusion alternative
+- `wiki/concepts/best-of-n.md` — distinguished CLEAR's learned adaptive routing from oracle BoN
+- `wiki/concepts/selection-based-planning.md` — clarified DriveSuprim remains strongest fixed-vocabulary selector, while CLEAR is adjacent but not fixed-vocabulary
+- `wiki/concepts/foundation-backbones-for-ad.md` — added Qwen hidden-state router/scorer role
+
+**Index updated**: yes

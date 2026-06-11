@@ -2,9 +2,9 @@
 title: Wiki Index
 type: comparison
 sources: []
-related: [concepts/discrete-flow-matching.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/mixture-of-experts.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/pdm-lite.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md]
+related: [concepts/discrete-flow-matching.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/mixture-of-experts.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/pdm-lite.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/adaptive-routing.md]
 created: 2026-04-05
-updated: 2026-05-01
+updated: 2026-06-11
 confidence: high
 ---
 
@@ -48,7 +48,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [DiffusionDriveV2](sources/diffusiondrive-v2.md) | DiffusionDrive + Intra/Inter-Anchor GRPO + multiplicative exploration noise; 91.2 PDMS NAVSIM-v1 / 85.5 EPDMS NAVSIM-v2; strong non-VLM diffusion baseline; ResNet-34 + C+L |
 | [HybridDriveVLA / DualDriveVLA](sources/hybriddriveVLA.md) | 3-RQ complementarity analysis (CKA/CCA/SAE); VLM+ViT dual-branch + style-axis interpolation + trajectory scorer; 92.10 PDMS NAVSIM-v1; fast–slow DualDriveVLA 91.0 PDMS @ 3.2× throughput |
 | [WAM-Diff](sources/wam-diff.md) | Masked diffusion VLA (LLaDA-V 8.4B) + LoRA MoE (64 experts) + GSPO (sequence-level RL); reverse-causal decoding; 91.0 PDMS NAVSIM-v1; 89.7 EPDMS NAVSIM-v2 |
-| [DriveSuprim](sources/drivesuprim.md) | Non-VLM selection-based (8192 vocab); coarse-to-fine (→256) + rotation aug + EMA self-distill; **93.5 PDMS NAVSIM-v1** (highest non-BoN in wiki); 87.1 EPDMS NAVSIM-v2 |
+| [DriveSuprim](sources/drivesuprim.md) | Non-VLM selection-based (8192 vocab); coarse-to-fine (→256) + rotation aug + EMA self-distill; **93.5 PDMS NAVSIM-v1** (strongest fixed-vocabulary selector); 87.1 EPDMS NAVSIM-v2 |
 | [DriveVA](sources/driveva.md) | Wan2.2-TI2V-5B video backbone; single DiT over joint [video latents ‖ action tokens]; +19.5 PDMS from video supervision; 90.9 PDMS NAVSIM-v1; zero-shot −78.9% L2 nuScenes; table truncated |
 | [ExploreVLA](sources/explorevla.md) | Show-o (Phi-1.5 + MAGVIT-v2); dense RGB+depth world model SFT; safety-gated entropy exploration reward (GRPO); 90.4 PDMS / 93.7 BoN-6 NAVSIM-v1; 88.8 EPDMS NAVSIM-v2; 1 cam |
 | [ELF-VLA](sources/elf-vla.md) | InternVL3-8B with explicit learning from failures; Qwen3-VL-32B teacher diagnostics + feedback-guided refinement injected into GRPO; 91.0 PDMS NAVSIM-v1 / 87.1 EPDMS NAVSIM-v2 |
@@ -59,6 +59,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [HAD](sources/had.md) | Hierarchical diffusion + polar trajectory expansion + MDPO/offline reward retrieval; 90.2 PDMS NAVSIM-v1; 88.6 EPDMS NAVSIM-v2; 47.5 RC / 30.8 HDS HUGSIM |
 | [Latent-WAM](sources/latent-wam.md) | Compact latent world-action model with DINOv2 scene queries, WorldMirror geometric distillation, and causal DLWM; 89.3 EPDMS NAVSIM-v2; 45.9 RC / 28.9 HDS HUGSIM |
 | [Drive-JEPA](sources/drive-jepa.md) | V-JEPA video pretraining + multimodal trajectory distillation + momentum-aware selection; 93.3 PDMS NAVSIM-v1; 87.8 EPDMS NAVSIM-v2; 64.52 DS Bench2Drive |
+| [CLEAR](sources/clear.md) | Drive-JEPA encoder + Qwen hidden-state scheduler/scorer + single-step VAE latent drift; **93.7 PDMS NAVSIM-v1**; 88.6 EPDMS NAVSIM-v2 |
 | [FeaXDrive](sources/feaxdrive.md) | Feasibility-aware trajectory-centric diffusion planning with adaptive curvature regularization, drivable-area guidance, and FA-GRPO; 90.0 PDMS NAVSIM-v1 |
 | [Policy World Model](sources/policy-world-model.md) | Action-free video world model + future-frame rationales for planning; 28-token frame tokenizer; 88.1 PDMS NAVSIM-v1; 0.41 L2 / 0.04 collision nuScenes w/ ego |
 
@@ -87,6 +88,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [PDM-Lite](concepts/pdm-lite.md) | Privileged oracle planner/fallback caveat for Bench2Drive comparisons |
 | [nuScenes and Waymo Evaluations](concepts/nuscenes-waymo-evals.md) | Open-loop L2/collision/RFS metrics and why they do not substitute for NAVSIM or Bench2Drive |
 | [Foundation Backbones for AD](concepts/foundation-backbones-for-ad.md) | Qwen, InternVL, Cosmos, Wan, Show-o, and other backbone choices used in driving VLAs |
+| [Adaptive Routing for Trajectory Planning](concepts/adaptive-routing.md) | Scene-conditioned candidate budget and diversity control; CLEAR uses Qwen hidden states to choose `(alpha, N)` and score generated trajectories |
 | [Navhard and OOD Evaluation](concepts/navhard-ood-evaluation.md) | NAVSIM-v2 navhard, distribution-shift scoring, and OOD caveats |
 | [HUGSIM Benchmark](concepts/hugsim-benchmark.md) | Closed-loop planning benchmark with route completion and HD-Score; HAD reports 47.5 RC / 30.8 HDS |
 

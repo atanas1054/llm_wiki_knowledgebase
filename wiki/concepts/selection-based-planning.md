@@ -1,10 +1,10 @@
 ---
 title: Selection-Based Trajectory Planning
 type: concept
-sources: [raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md]
-related: [sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md]
+sources: [raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md]
+related: [sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md]
 created: 2026-04-23
-updated: 2026-05-01
+updated: 2026-06-11
 confidence: high
 ---
 
@@ -181,4 +181,4 @@ Selection-based methods' trajectory on the NAVSIM-v1 leaderboard:
 
 *HydraMDP++ is evaluated primarily on NAVSIM-v2 (EPDMS).
 
-DriveSuprim (93.5) is the highest single-sample, non-VLM, non-ensemble result in the wiki, surpassing DiffusionDriveV2 (91.2 with Camera+LiDAR) and HybridDriveVLA (92.1 dual-model ensemble). See [[concepts/navsim-benchmark.md]] for the full SOTA table.
+DriveSuprim (93.5) remains the strongest fixed-vocabulary selection result in the wiki, surpassing DiffusionDriveV2 (91.2 with Camera+LiDAR) and HybridDriveVLA (92.1 dual-model ensemble). CLEAR later reports 93.7 with online candidate generation plus learned adaptive routing, so it is adjacent to selection but not a fixed-vocabulary selector. See [[concepts/navsim-benchmark.md]] and [[concepts/adaptive-routing.md]].
