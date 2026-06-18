@@ -2,9 +2,9 @@
 title: Wiki Index
 type: comparison
 sources: []
-related: [concepts/discrete-flow-matching.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/mixture-of-experts.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/pdm-lite.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/adaptive-routing.md]
+related: [concepts/discrete-flow-matching.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/mixture-of-experts.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/pdm-lite.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md]
 created: 2026-04-05
-updated: 2026-06-11
+updated: 2026-06-18
 confidence: high
 ---
 
@@ -44,6 +44,9 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [DreamerAD](sources/dreameraD.md) | Latent world model RL; SF-WM (80× speedup) + AD-RM (latent rewards) + Gaussian vocab sampling; 87.7 EPDMS NAVSIM-v2 / 88.7 PDMS NAVSIM-v1; Epona backbone |
 | [Vega](sources/vega.md) | Instruction-conditioned AR+Diffusion (Bagel-7B/MoT); InstructScene 100K; future image as dense supervision; 86.9 EPDMS / 89.4 BoN-6 NAVSIM-v2; open-ended NL instruction following |
 | [NoRD](sources/nord.md) | Reasoning-free VLA; k-disc tokens (2048); Dr. GRPO over GRPO (+11.68% vs +0.67%); 85.6 PDMS / 92.4 BoN-6 NAVSIM; 3rd RFS WaymoE2E with 6–17× less data; difficulty bias identification |
+| [Understanding R1-Zero-Like Training](sources/understanding-r1-zero-like-training.md) | Critical analysis of R1-Zero-like math RL; Qwen2.5 template/pretraining confounds; GRPO length + difficulty bias; Dr. GRPO; Oat-Zero-7B 43.3 AIME24 / 51.4 avg |
+| [All Roads Lead to Rome](sources/all-roads-lead-to-rome.md) | VLM reasoning RL; GRPO diversity collapse; base models retain broader parallel reasoning; MUPO multi-group policy optimization; MUPO-Thinker-7B 51.6/58.8 math avg acc@1/4 |
+| [Plan-R1](sources/plan-r1.md) | Trajectory planning as motion-token language modeling; dual-model reactive rollout; VD-GRPO fixes GRPO variance downweighting of unsafe groups; 90.04 reactive Test14-random nuPlan |
 | [DiffusionDrive](sources/diffusiondrive.md) | Truncated diffusion (20 anchors, 2 steps); cascade decoder (60M, 45 FPS); 88.1 PDMS NAVSIM; 74% mode diversity; canonical non-VLM diffusion baseline; ResNet-34 + C+L |
 | [DiffusionDriveV2](sources/diffusiondrive-v2.md) | DiffusionDrive + Intra/Inter-Anchor GRPO + multiplicative exploration noise; 91.2 PDMS NAVSIM-v1 / 85.5 EPDMS NAVSIM-v2; strong non-VLM diffusion baseline; ResNet-34 + C+L |
 | [HybridDriveVLA / DualDriveVLA](sources/hybriddriveVLA.md) | 3-RQ complementarity analysis (CKA/CCA/SAE); VLM+ViT dual-branch + style-axis interpolation + trajectory scorer; 92.10 PDMS NAVSIM-v1; fast–slow DualDriveVLA 91.0 PDMS @ 3.2× throughput |
@@ -71,7 +74,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 |------|-------------|
 | [Discrete Flow Matching](concepts/discrete-flow-matching.md) | DFM over token spaces via CTMC; parallel bidirectional generation; geometry-aware Gibbs paths; metric-aligned numerical tokenizer |
 | [Diffusion-Based Trajectory Planner](concepts/diffusion-planner.md) | DDPM/DiT applied to continuous trajectory generation; MoT coupling; DFM and FM comparisons |
-| [Reinforcement Learning for Autonomous Driving](concepts/rl-for-ad.md) | RL approaches in AD; GRPO applied to diffusion and DFM policies; sim-assisted RL |
+| [Reinforcement Learning for Autonomous Driving](concepts/rl-for-ad.md) | RL approaches in AD; GRPO applied to diffusion, DFM, and tokenized planners; sim-assisted RL; VD-GRPO |
 | [VLM Domain Adaptation for Autonomous Driving](concepts/vlm-domain-adaptation.md) | Adapting general VLMs to driving via data curation, SFT, CoT integration; multi-stage training |
 | [NAVSIM Benchmark](concepts/navsim-benchmark.md) | Planning benchmark, PDMS/EPDMS metrics, non-reactive simulator; current SOTA |
 | [World Models for Autonomous Driving](concepts/world-model-for-ad.md) | Video, latent, feature, and dynamics-token world models for planning; coupling and evaluation caveats |
@@ -83,8 +86,10 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [Chain-of-Thought for AD](concepts/chain-of-thought-for-ad.md) | Text/visual/self-reflection CoT types; annotation methods (frontier VLM, GT-grounded, LRM-as-critic); adaptive CoT (AdaThinkDrive); NoRD challenges necessity; efficiency tradeoffs |
 | [Mixture of Experts for AD](concepts/mixture-of-experts.md) | 4 MoE patterns: sparse LoRA (WAM-Diff), block-level task routing (DriveFine), MoT frozen+trained (AutoMoT), 3-stream MoT (UniDriveVLA); RL routing instability → GSPO; catastrophic forgetting evidence |
 | [Selection-Based Planning](concepts/selection-based-planning.md) | Fixed-vocabulary trajectory scoring; coarse-to-fine filtering; oracle ceiling 98.7 PDMS (top-256); hard-negative / directional bias / hard-label failure modes; DriveSuprim, DreamerAD, HybridDriveVLA |
-| [Action Tokenization and Codebooks](concepts/action-tokenization.md) | Discrete action vocabularies, learned codebooks, continuous action experts, and tokenizer tradeoffs across AD VLAs |
-| [GSPO vs. GRPO](concepts/gspo-vs-grpo.md) | Sequence-level RL for MoE/masked-diffusion policies vs. token/group-level GRPO recipes |
+| [Action Tokenization and Codebooks](concepts/action-tokenization.md) | Discrete action vocabularies, learned codebooks, continuous action experts, and tokenizer tradeoffs across AD planners/VLAs |
+| [GSPO vs. GRPO](concepts/gspo-vs-grpo.md) | Sequence-level RL for MoE/masked-diffusion policies vs. token/group-level GRPO, VD-GRPO, Dr. GRPO, and MUPO recipes |
+| [R1-Zero-Like Training](concepts/r1-zero-like-training.md) | RL directly on base/pretrained models; template/base-prior confounds; Dr./VD-GRPO corrections; relevance to NoRD, Plan-R1, and AD GRPO interpretation |
+| [Divergent Thinking in VLMs](concepts/divergent-thinking-in-vlms.md) | Reasoning-strategy diversity, MUPO, acc@k scaling, and why correlated samples limit parallel test-time gains |
 | [PDM-Lite](concepts/pdm-lite.md) | Privileged oracle planner/fallback caveat for Bench2Drive comparisons |
 | [nuScenes and Waymo Evaluations](concepts/nuscenes-waymo-evals.md) | Open-loop L2/collision/RFS metrics and why they do not substitute for NAVSIM or Bench2Drive |
 | [Foundation Backbones for AD](concepts/foundation-backbones-for-ad.md) | Qwen, InternVL, Cosmos, Wan, Show-o, and other backbone choices used in driving VLAs |

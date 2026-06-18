@@ -1200,3 +1200,89 @@ Append-only log of all wiki operations.
 - `wiki/concepts/foundation-backbones-for-ad.md` — added Qwen hidden-state router/scorer role
 
 **Index updated**: yes
+
+---
+
+## 2026-06-18 - Ingest: Understanding R1-Zero-Like Training
+
+**Source**: `raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md`
+**arXiv**: https://arxiv.org/html/2503.20783v2
+**Authors**: Zichen Liu, Changyu Chen, Wenjun Li, Penghui Qi, Tianyu Pang, Chao Du, Wee Sun Lee, Min Lin
+**Confidence**: high - local markdown includes the main text, all 15 local figures, benchmark tables, GRPO bias derivation, and hyperparameter table; Table 5 is referenced but not rendered as table rows
+
+**Pages created**:
+- `wiki/sources/understanding-r1-zero-like-training.md` - full source summary covering base-model/template analysis, GRPO bias, Dr. GRPO, benchmark results, all figures, reproduced tables, AD relevance, and limitations
+- `wiki/concepts/r1-zero-like-training.md` - concept page for base-model RL, template/base-prior confounds, Dr. GRPO, and AD interpretation rules
+
+**Concept pages updated**:
+- `wiki/concepts/gspo-vs-grpo.md` - added Dr. GRPO as a correction to GRPO normalization, distinct from GSPO's MoE sequence stabilization
+- `wiki/concepts/rl-for-ad.md` - linked NoRD's difficulty-bias fix back to the original Dr. GRPO analysis
+- `wiki/concepts/chain-of-thought-for-ad.md` - added caveat that self-reflection-like language can preexist RL and does not guarantee higher accuracy
+- `wiki/concepts/foundation-backbones-for-ad.md` - added Qwen base-prior/template caveat for interpreting RL gains
+
+**Index updated**: added source and R1-Zero-Like Training concept.
+
+**Key facts**:
+- Qwen2.5-Math base models perform best with no template, suggesting pretraining/template confounds in R1-Zero-like replication claims.
+- DeepSeek-V3-Base already shows "Aha moment" examples before RL tuning.
+- Standard GRPO has response-length bias and question-level difficulty bias from response-length and reward-std normalization.
+- Dr. GRPO removes both normalizers and improves token efficiency while preserving reasoning performance.
+- Oat-Zero-7B reports 43.3 AIME24 and 51.4 average across AIME24, AMC, MATH500, Minerva, and OlympiadBench under the paper's 3k-budget comparison.
+- Main limitation: evidence is from verifiable math RL, so transfer to multimodal AD planning is methodological rather than direct.
+
+---
+
+## 2026-06-18 - Ingest: All Roads Lead to Rome
+
+**Source**: `raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md`
+**arXiv**: https://arxiv.org/html/2604.00479v1
+**Authors**: Xinyu Tian, Shu Zou, Zhaoyuan Yang, Mengqi He, Peter Tu, Jing Zhang
+**Confidence**: high - local markdown includes main method text, all nine local figures, four tables, benchmark setup, and implementation details
+
+**Pages created**:
+- `wiki/sources/all-roads-lead-to-rome.md` - source summary covering GRPO diversity collapse, MUPO, figures, reconstructed benchmark tables, AD relevance, and limitations
+- `wiki/concepts/divergent-thinking-in-vlms.md` - concept page for reasoning-strategy diversity, MUPO, and parallel test-time scaling
+
+**Concept pages updated**:
+- `wiki/concepts/gspo-vs-grpo.md` - added MUPO as a multi-group GRPO variant for reasoning diversity
+- `wiki/concepts/best-of-n.md` - added candidate-diversity caveat for BoN and acc@k scaling
+- `wiki/concepts/chain-of-thought-for-ad.md` - added sequential-depth vs parallel-breadth caution for CoT
+- `wiki/concepts/r1-zero-like-training.md` - added GRPO diversity-collapse caveat for RL-from-base interpretation
+
+**Index updated**: added All Roads Lead to Rome source and Divergent Thinking in VLMs concept.
+
+**Key facts**:
+- RL VLMs can outperform base models at `acc@1` while underperforming under multi-sample `acc@k` because their reasoning strategies collapse.
+- Base models often retain broader alternative reasoning paths, improving their chance of success with parallel sampling.
+- MUPO partitions responses into `K` reasoning groups, computes local advantages, and adds an accuracy-gated diversity reward.
+- MUPO-Thinker-7B reports 51.6/58.8 average math `acc@1/acc@4`, improving over Vision-R1-7B's 49.1/52.8.
+- On general benchmarks, MUPO reports 65.6/72.4 average `acc@1/acc@4`, above the listed 7B RL baselines.
+- Main limitation: this is a VLM reasoning paper, not an AD evaluation; transfer to driving is methodological.
+
+## 2026-06-18 - Ingest: Plan-R1
+
+**Source**: `raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md`
+
+**Pages created**:
+- `wiki/sources/plan-r1.md` - source summary covering motion-token pretraining, dual-model reactive rollout, rule-based rewards, VD-GRPO, figures, tables, nuPlan/interPlan results, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/rl-for-ad.md` - added Plan-R1 as VD-GRPO safety-critical reward normalization case
+- `wiki/concepts/action-tokenization.md` - added Plan-R1 motion-token language modeling
+- `wiki/concepts/gspo-vs-grpo.md` - added VD-GRPO alongside Dr. GRPO and MUPO
+- `wiki/concepts/inference-time-safety.md` - contrasted Plan-R1 training-time safety alignment with inference-time repair methods
+- `wiki/concepts/r1-zero-like-training.md` - added Plan-R1 as a planning-as-language-modeling R1-style analogy with a GRPO caveat
+
+**Index updated**: added Plan-R1 source and refreshed affected concept descriptions.
+
+**Key facts**:
+- Plan-R1 pretrains a 1024-token-per-category motion-token predictor, then fine-tunes the ego planner with rule-based rewards.
+- Dual-model rollout keeps a frozen pretrained model as a reactive world model for surrounding agents.
+- Standard GRPO improves overall score but lowers collision avoidance; VD-GRPO removes per-group std normalization to avoid downweighting rare unsafe groups.
+- Plan-R1 reports 88.98/87.69 Val14 NR/R, 77.45/77.20 Test14-hard NR/R, and 91.23/90.04 Test14-random NR/R on nuPlan without post-processing.
+- With post-processing, Plan-R1* reports 72.33 on interPlan, above the listed postprocessed baselines.
+
+**Limitations**:
+- Evaluation is simulation-only.
+- Reward priority structure is manually designed.
+- Some cited appendix tables (Table 3 and Table 4) are referenced in the raw markdown but their bodies are absent; the wiki records the textual numbers available around those references.
