@@ -1,10 +1,10 @@
 ---
 title: Best-of-N Sampling
 type: concept
-sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md]
-related: [sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, sources/drivesuprim.md, sources/explorevla.md, sources/clear.md, sources/all-roads-lead-to-rome.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/divergent-thinking-in-vlms.md]
+sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
+related: [sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, sources/drivesuprim.md, sources/explorevla.md, sources/clear.md, sources/all-roads-lead-to-rome.md, sources/pair-drive.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/divergent-thinking-in-vlms.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md]
 created: 2026-04-15
-updated: 2026-06-18
+updated: 2026-06-23
 confidence: high
 ---
 
@@ -75,6 +75,27 @@ For AD BoN, this means `N=6` is only useful if the six trajectories cover differ
 DreamerAD generates 256 candidate trajectories and selects the best via a learned AD-RM reward model trained on latent features — not PDMS oracle. This is a **deployable BoN variant**: the selector is an approximation but runs entirely from latent features without the PDM simulator. It achieves 87.7 EPDMS from a base of 85.1, a +2.6 gain. This is the only wiki method that closes the BoN gap in a deployment-feasible way. See [[sources/dreameraD.md]].
 
 ---
+
+## PaIR-Drive: Single-Plan vs. Best-of-6
+
+[[sources/pair-drive.md]] makes the selection effect explicit by reporting both modes:
+
+| Base and refinement | Single plan | Best-of-6 | Gain from BoN |
+| --- | ---: | ---: | ---: |
+| TransFuser + PaIR-Drive, PDMS | 89.7 | 93.3 | +3.6 |
+| DiffusionDrive + PaIR-Drive, PDMS | 91.2 | 94.0 | +2.8 |
+| TransFuser + PaIR-Drive, EPDMS | 86.6 | 88.5 | +1.9 |
+| DiffusionDrive + PaIR-Drive, EPDMS | 87.9 | 89.6 | +1.7 |
+
+The candidate generator is learned with a tree of intention-conditioned residuals, and an RWM already ranks that tree. The dagger results then apply the paper's Best-of-6 protocol. Consequently, PaIR-Drive's peak scores should not be described as single-sample policy quality. Its cleanest plug-in result is the non-dagger 91.2 PDMS / 87.9 EPDMS with DiffusionDrive.
+
+## DIAL: Best-of-N as a Proposal-Support Diagnostic
+
+[[sources/dial.md]] uses Best-of-N differently from NAVSIM oracle selection: WOD-E2E RFS has multiple rated human alternatives, so the curve measures whether a policy can reach any rater-preferred maneuver basin.
+
+Ordinary SFT samples from four controlled baselines remain below the logged trajectory's RFS 8.13 at $N=128$. Intent-conditioned sampling crosses 8.13 around $N=8$, and equal-budget pooling over eight intents reaches 9.14 at $N=128$. This is evidence that semantic proposal coverage—not simply sample count—raises the ceiling.
+
+The 9.14 result remains oracle-selected and non-deployable. DIAL's deployable evidence is its intent-classifier-conditioned held-out peak of 8.211. Report these numbers separately.
 
 ## Cross-Model BoN: Complementarity as Diversity Source
 

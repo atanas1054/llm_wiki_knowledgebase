@@ -2,9 +2,9 @@
 title: Wiki Index
 type: comparison
 sources: []
-related: [concepts/discrete-flow-matching.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/mixture-of-experts.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/pdm-lite.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md]
+related: [concepts/discrete-flow-matching.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md, concepts/discriminative-policy-optimization.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/nuplan-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/mixture-of-experts.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/pdm-lite.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md]
 created: 2026-04-05
-updated: 2026-06-18
+updated: 2026-06-23
 confidence: high
 ---
 
@@ -47,6 +47,11 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [Understanding R1-Zero-Like Training](sources/understanding-r1-zero-like-training.md) | Critical analysis of R1-Zero-like math RL; Qwen2.5 template/pretraining confounds; GRPO length + difficulty bias; Dr. GRPO; Oat-Zero-7B 43.3 AIME24 / 51.4 avg |
 | [All Roads Lead to Rome](sources/all-roads-lead-to-rome.md) | VLM reasoning RL; GRPO diversity collapse; base models retain broader parallel reasoning; MUPO multi-group policy optimization; MUPO-Thinker-7B 51.6/58.8 math avg acc@1/4 |
 | [Plan-R1](sources/plan-r1.md) | Trajectory planning as motion-token language modeling; dual-model reactive rollout; VD-GRPO fixes GRPO variance downweighting of unsafe groups; 90.04 reactive Test14-random nuPlan |
+| [PlannerRFT](sources/plannerrft.md) | Diffusion-planner RFT with PPO-learned lateral/longitudinal exploration, GRPO survival reward, and nuMax; 72.21 Test14-hard reactive / 85.80 Test14-random reactive nuPlan |
+| [PaIR-Drive](sources/pair-drive.md) | Parallel IL and GRPO residual-refinement branches; intention-conditioned trajectory tree + RWM selection; DiffusionDrive reaches 91.2 PDMS / 87.9 EPDMS single-plan and 94.0 / 89.6 Best-of-6 |
+| [DIAL](sources/dial.md) | Eight-intent CFG expands continuous-flow proposal support; multi-intent GRPO preserves preference contrast; WOD-E2E held RFS 7.696→8.211 and oracle Best-of-128 ceiling 9.14 |
+| [DisCO](sources/disco.md) | Binary-reward discriminative RL replacing GRPO weighting/clipping; DRO hard negatives + KL constraint; 1.5B six-task math average 0.533 vs. GRPO 0.457; methodological AD relevance only |
+| [DAPO](sources/dapo.md) | Open-source 32B reasoning-RL system; Clip-Higher + dynamic sampling + token-level loss + overlong shaping; Qwen2.5-32B AIME24 avg@32 30→50 |
 | [DiffusionDrive](sources/diffusiondrive.md) | Truncated diffusion (20 anchors, 2 steps); cascade decoder (60M, 45 FPS); 88.1 PDMS NAVSIM; 74% mode diversity; canonical non-VLM diffusion baseline; ResNet-34 + C+L |
 | [DiffusionDriveV2](sources/diffusiondrive-v2.md) | DiffusionDrive + Intra/Inter-Anchor GRPO + multiplicative exploration noise; 91.2 PDMS NAVSIM-v1 / 85.5 EPDMS NAVSIM-v2; strong non-VLM diffusion baseline; ResNet-34 + C+L |
 | [HybridDriveVLA / DualDriveVLA](sources/hybriddriveVLA.md) | 3-RQ complementarity analysis (CKA/CCA/SAE); VLM+ViT dual-branch + style-axis interpolation + trajectory scorer; 92.10 PDMS NAVSIM-v1; fast–slow DualDriveVLA 91.0 PDMS @ 3.2× throughput |
@@ -75,8 +80,12 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [Discrete Flow Matching](concepts/discrete-flow-matching.md) | DFM over token spaces via CTMC; parallel bidirectional generation; geometry-aware Gibbs paths; metric-aligned numerical tokenizer |
 | [Diffusion-Based Trajectory Planner](concepts/diffusion-planner.md) | DDPM/DiT applied to continuous trajectory generation; MoT coupling; DFM and FM comparisons |
 | [Reinforcement Learning for Autonomous Driving](concepts/rl-for-ad.md) | RL approaches in AD; GRPO applied to diffusion, DFM, and tokenized planners; sim-assisted RL; VD-GRPO |
+| [Parallel Imitation and Reinforcement Learning](concepts/parallel-il-rl.md) | Separate IL and RL parameter spaces; reusable residual proposal policies; modularity conditions and reference-shift caveats |
+| [Intent-Conditioned Trajectory Planning](concepts/intent-conditioned-planning.md) | Discrete maneuver variables for multimodal continuous proposals; intent-CFG, intent-balanced GRPO, ontology and evaluation requirements |
+| [Discriminative Policy Optimization](concepts/discriminative-policy-optimization.md) | Positive/negative rollout scoring, GRPO difficulty-weight analysis, hard-negative DRO, KL trust regions, and conditions for driving transfer |
 | [VLM Domain Adaptation for Autonomous Driving](concepts/vlm-domain-adaptation.md) | Adapting general VLMs to driving via data curation, SFT, CoT integration; multi-stage training |
 | [NAVSIM Benchmark](concepts/navsim-benchmark.md) | Planning benchmark, PDMS/EPDMS metrics, non-reactive simulator; current SOTA |
+| [nuPlan Closed-Loop Planning Benchmark](concepts/nuplan-benchmark.md) | Reactive/non-reactive closed-loop evaluation, Val14/Test14 splits, scorer/protocol caveats, and nuMax training acceleration |
 | [World Models for Autonomous Driving](concepts/world-model-for-ad.md) | Video, latent, feature, and dynamics-token world models for planning; coupling and evaluation caveats |
 | [Dual-System VLA](concepts/dual-system-vla.md) | VLM for decisions + E2E for trajectory; decision adapter; kinematic mapping; consistency alignment |
 | [Inference-Time Safety](concepts/inference-time-safety.md) | Gradient-free safety correction at inference; discrete token search + inpainting-as-repair; taxonomy vs. guidance/RL/anchors |

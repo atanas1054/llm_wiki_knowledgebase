@@ -99,25 +99,25 @@ This mechanism is important: in Table 5, adding MTD without momentum-aware selec
 
 ### Table 2: NAVSIM-v1
 
-| Method | Backbone | Inputs | NC | DAC | EP | C | TTC | PDMS |
-| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| LAW | ResNet34 | C & L | 97.4 | 93.3 | 78.8 | 100 | 91.9 | 83.8 |
-| World4Drive | ResNet34 | C & L | 97.4 | 94.3 | 79.9 | 100 | 92.8 | 85.1 |
-| Epona | ViT/G | Camera | 97.9 | 95.1 | 80.4 | 99.9 | 93.8 | 86.2 |
-| Ours | ViT/L | Camera | 98.7 | 96.2 | 82.9 | 100 | 95.5 | 89.0 |
-| Transfuser | ResNet34 | C & L | 97.7 | 92.8 | 79.2 | 100 | 92.8 | 84.0 |
-| HydraMDP | ResNet34 | C & L | 98.3 | 96.0 | 78.7 | 100 | 94.6 | 86.5 |
-| HydraMDP++ | ResNet34 | C & L | 97.6 | 96.0 | 80.4 | 100 | 93.1 | 86.6 |
-| DiffusionDrive | ResNet34 | C & L | 98.2 | 96.2 | 82.2 | 100 | 94.7 | 88.1 |
-| GoalFlow | ResNet34 | C & L | 98.4 | 98.3 | 85.0 | 100 | 94.6 | 90.3 |
-| DriveDPO | ResNet34 | C & L | 98.5 | 98.1 | 84.3 | 100 | 94.8 | 90.0 |
-| DriveSuprim | ResNet34 | Camera | 97.8 | 97.3 | 86.7 | 100 | 93.6 | 89.9 |
-| iPad | ResNet34 | Camera | 98.4 | 97.9 | 87.4 | 99.9 | 94.9 | 91.1 |
+| Method            | Backbone | Inputs |   NC |  DAC |   EP |    C |  TTC | PDMS |
+| ----------------- | -------- | ------ | ---: | ---: | ---: | ---: | ---: | ---: |
+| LAW               | ResNet34 | C & L  | 97.4 | 93.3 | 78.8 |  100 | 91.9 | 83.8 |
+| World4Drive       | ResNet34 | C & L  | 97.4 | 94.3 | 79.9 |  100 | 92.8 | 85.1 |
+| Epona             | ViT/G    | Camera | 97.9 | 95.1 | 80.4 | 99.9 | 93.8 | 86.2 |
+| Ours              | ViT/L    | Camera | 98.7 | 96.2 | 82.9 |  100 | 95.5 | 89.0 |
+| Transfuser        | ResNet34 | C & L  | 97.7 | 92.8 | 79.2 |  100 | 92.8 | 84.0 |
+| HydraMDP          | ResNet34 | C & L  | 98.3 | 96.0 | 78.7 |  100 | 94.6 | 86.5 |
+| HydraMDP++        | ResNet34 | C & L  | 97.6 | 96.0 | 80.4 |  100 | 93.1 | 86.6 |
+| DiffusionDrive    | ResNet34 | C & L  | 98.2 | 96.2 | 82.2 |  100 | 94.7 | 88.1 |
+| GoalFlow          | ResNet34 | C & L  | 98.4 | 98.3 | 85.0 |  100 | 94.6 | 90.3 |
+| DriveDPO          | ResNet34 | C & L  | 98.5 | 98.1 | 84.3 |  100 | 94.8 | 90.0 |
+| DriveSuprim       | ResNet34 | Camera | 97.8 | 97.3 | 86.7 |  100 | 93.6 | 89.9 |
+| iPad              | ResNet34 | Camera | 98.4 | 97.9 | 87.4 | 99.9 | 94.9 | 91.1 |
 | Drive-JEPA (Ours) | ResNet34 | Camera | 98.2 | 98.0 | 88.8 | 99.9 | 94.2 | 91.5 |
-| Hydra-MDP | ViT/L | C & L | 98.4 | 97.7 | 85.0 | 100 | 94.5 | 89.9 |
-| iPad | ViT/L | Camera | 99.2 | 97.4 | 87.8 | 99.7 | 96.3 | 91.7 |
-| DriveSuprim | ViT/L | Camera | 98.6 | 98.6 | 91.3 | 100 | 95.5 | 93.5 |
-| Drive-JEPA (Ours) | ViT/L | Camera | 99.1 | 98.2 | 90.8 | 99.9 | 95.9 | 93.3 |
+| Hydra-MDP         | ViT/L    | C & L  | 98.4 | 97.7 | 85.0 |  100 | 94.5 | 89.9 |
+| iPad              | ViT/L    | Camera | 99.2 | 97.4 | 87.8 | 99.7 | 96.3 | 91.7 |
+| DriveSuprim       | ViT/L    | Camera | 98.6 | 98.6 | 91.3 |  100 | 95.5 | 93.5 |
+| Drive-JEPA (Ours) | ViT/L    | Camera | 99.1 | 98.2 | 90.8 | 99.9 | 95.9 | 93.3 |
 
 ### Table 3: NAVSIM-v2
 
@@ -150,13 +150,13 @@ This mechanism is important: in Table 5, adding MTD without momentum-aware selec
 
 `M1`: V-JEPA 2 checkpoint. `M2`: driving-video pretraining. `M3`: MTD. `M4`: momentum-aware trajectory selection.
 
-| M1 | M2 | M3 | M4 | NC | DAC | DDC | TL | EP | TTC | LK | HC | EC | Diversity | EPDMS |
-| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| no | no | no | no | 98.7 | 97.8 | 99.1 | 99.8 | 84.0 | 98.0 | 96.0 | 98.0 | 68.2 | 25% | 84.1 |
-| yes | no | no | no | 98.7 | 98.0 | 98.9 | 99.8 | 86.6 | 98.3 | 97.2 | 98.3 | 74.6 | 21% | 85.8 |
-| no | yes | no | no | 98.3 | 98.1 | 99.1 | 99.9 | 89.1 | 97.7 | 97.7 | 98.1 | 69.7 | 24% | 86.1 |
-| no | yes | yes | no | 98.5 | 98.6 | 99.1 | 99.8 | 89.1 | 97.9 | 97.6 | 97.8 | 47.9 | 40% | 84.5 |
-| no | yes | yes | yes | 98.4 | 98.6 | 99.1 | 99.8 | 88.4 | 97.8 | 97.6 | 97.9 | 84.8 | 40% | 87.8 |
+| M1  | M2  | M3  | M4  |   NC |  DAC |  DDC |   TL |   EP |  TTC |   LK |   HC |   EC | Diversity | EPDMS |
+| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --------: | ----: |
+| no  | no  | no  | no  | 98.7 | 97.8 | 99.1 | 99.8 | 84.0 | 98.0 | 96.0 | 98.0 | 68.2 |       25% |  84.1 |
+| yes | no  | no  | no  | 98.7 | 98.0 | 98.9 | 99.8 | 86.6 | 98.3 | 97.2 | 98.3 | 74.6 |       21% |  85.8 |
+| no  | yes | no  | no  | 98.3 | 98.1 | 99.1 | 99.9 | 89.1 | 97.7 | 97.7 | 98.1 | 69.7 |       24% |  86.1 |
+| no  | yes | yes | no  | 98.5 | 98.6 | 99.1 | 99.8 | 89.1 | 97.9 | 97.6 | 97.8 | 47.9 |       40% |  84.5 |
+| no  | yes | yes | yes | 98.4 | 98.6 | 99.1 | 99.8 | 88.4 | 97.8 | 97.6 | 97.9 | 84.8 |       40% |  87.8 |
 
 ### Table 6: Number of Pseudo-Teacher Trajectories
 
@@ -166,16 +166,16 @@ This mechanism is important: in Table 5, adding MTD without momentum-aware selec
 
 ### Table 7: Vision Pretraining Comparison
 
-| Vision encoder | Size | PDMS |
-| --- | --- | ---: |
-| Epona | ViT/G | 86.2 |
-| ImageNet | ResNet34 | 76.0 |
-| DepthAnything | ViT/L | - |
-| MAE | ViT/L | - |
-| DINOv2 | ViT/L | 76.1 |
-| SigLIP | ViT/L | 83.4 |
-| V-JEPA 2 | ViT/L | 86.1 |
-| Ours | ViT/L | 89.0 |
+| Vision encoder | Size     | PDMS |
+| -------------- | -------- | ---: |
+| Epona          | ViT/G    | 86.2 |
+| ImageNet       | ResNet34 | 76.0 |
+| DepthAnything  | ViT/L    |    - |
+| MAE            | ViT/L    |    - |
+| DINOv2         | ViT/L    | 76.1 |
+| SigLIP         | ViT/L    | 83.4 |
+| V-JEPA 2       | ViT/L    | 86.1 |
+| Ours           | ViT/L    | 89.0 |
 
 ### Table 8: Input Image Resolution
 

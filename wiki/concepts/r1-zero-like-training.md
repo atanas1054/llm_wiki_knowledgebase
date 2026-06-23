@@ -1,10 +1,10 @@
 ---
 title: R1-Zero-Like Training
 type: concept
-sources: [raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md]
-related: [sources/understanding-r1-zero-like-training.md, sources/nord.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/all-roads-lead-to-rome.md, sources/plan-r1.md, concepts/gspo-vs-grpo.md, concepts/rl-for-ad.md, concepts/chain-of-thought-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/divergent-thinking-in-vlms.md, concepts/action-tokenization.md]
+sources: [raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md, raw/papers/DisCO_ Reinforcing Large Reasoning Models with Discriminative Constrained Optimization.md, raw/papers/DAPO_ An Open-Source LLM Reinforcement Learning System at Scale.md]
+related: [sources/understanding-r1-zero-like-training.md, sources/nord.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/all-roads-lead-to-rome.md, sources/plan-r1.md, sources/disco.md, sources/dapo.md, concepts/gspo-vs-grpo.md, concepts/rl-for-ad.md, concepts/chain-of-thought-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/divergent-thinking-in-vlms.md, concepts/action-tokenization.md, concepts/discriminative-policy-optimization.md]
 created: 2026-06-18
-updated: 2026-06-18
+updated: 2026-06-23
 confidence: high
 ---
 
@@ -42,6 +42,22 @@ This matters because:
 - length normalization can under-penalize long incorrect outputs;
 - reward-std normalization can downweight high-variance medium-difficulty samples;
 - response length can grow for optimizer reasons, not because better reasoning emerged.
+
+## DisCO's Stronger Difficulty-Bias Critique
+
+[[sources/disco.md]] derives the expected binary-reward objectives rather than inspecting only the advantage formula. Standard GRPO applies question weight $\sqrt{p(1-p)}$. Dr. GRPO changes it to $p(1-p)$, so easy and hard mixed groups remain downweighted even after std normalization is removed.
+
+DisCO removes the question weight by directly ranking correct responses above incorrect ones. It also removes clipping, emphasizes hard negatives, and uses a KL trust-region constraint. On Qwen 1.5B, DisCO log-L averages 0.533 across six math tasks versus 0.457 for GRPO, 0.443 for Dr. GRPO, and 0.473 for DAPO.
+
+This does not invalidate Dr. GRPO's empirical gains or its response-length correction. It narrows the claim: Dr. GRPO removes one normalization-induced attenuation mechanism but does not make every question contribute equally under binary rewards.
+
+## DAPO: Reproduction Depends on the Full Recipe
+
+[[sources/dapo.md]] shows why “R1-Zero-like GRPO” is underspecified. The authors' naive GRPO reaches only 30 AIME24 points from Qwen2.5-32B; a cumulative recipe of overlong filtering, asymmetric clipping, soft length punishment, token-level loss, and dynamic sampling reaches 50.
+
+Dynamic sampling removes all-correct and all-wrong groups and refills the effective batch. Token-level reduction changes the contribution of long responses. Integer-answer dataset transformation reduces verifier errors. These are not cosmetic implementation details; they alter which prompts, tokens, and rewards generate gradients.
+
+DAPO also reports reflection/backtracking examples, but qualitative emergence should not be treated as proof that RL created a new capability. The wiki's existing base-prior and template cautions still apply.
 
 ## AD Relevance
 

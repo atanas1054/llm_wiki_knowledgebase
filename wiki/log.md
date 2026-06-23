@@ -1286,3 +1286,160 @@ Append-only log of all wiki operations.
 - Evaluation is simulation-only.
 - Reward priority structure is manually designed.
 - Some cited appendix tables (Table 3 and Table 4) are referenced in the raw markdown but their bodies are absent; the wiki records the textual numbers available around those references.
+
+## 2026-06-23 - Ingest: PlannerRFT
+
+**Source**: `raw/papers/PlannerRFT_ Reinforcing Diffusion Planners through Closed-Loop and Sample-Efficient Fine-Tuning.md`
+
+**Pages created**:
+- `wiki/sources/plannerrft.md` - full source summary covering adaptive guided denoising, PPO/GRPO dual-branch training, survival reward, nuMax, all 16 figures, and all ten paper tables
+- `wiki/concepts/nuplan-benchmark.md` - nuPlan reactive/non-reactive protocol, split definitions, scoring caveats, representative learning-only results, and nuMax limitations
+
+**Concept pages updated**:
+- `wiki/concepts/diffusion-planner.md` - added learned exploration distributions and training-only guidance
+- `wiki/concepts/rl-for-ad.md` - added PPO-guided exploration plus GRPO and survival reward
+- `wiki/concepts/gspo-vs-grpo.md` - distinguished PlannerRFT group construction/reward shaping from Dr. GRPO and VD-GRPO normalization fixes
+
+**Index updated**: added PlannerRFT and the nuPlan Closed-Loop Planning Benchmark concept.
+
+**Key facts**:
+- PlannerRFT learns scene-conditioned Beta distributions over lateral and longitudinal denoising guidance using PPO, then fine-tunes the DiT with GRPO.
+- Uniform exploration is most diverse (39.78%) but unstable and worse-performing; adaptive exploration reaches 72.21 Test14-hard reactive with 25.34% diversity.
+- Against the matched five-step DDIM baseline, PlannerRFT improves Test14-hard reactive from 68.18 to 72.21 and Test14-random reactive from 82.63 to 85.80.
+- Survival reward preserves relative signal in groups whose candidates eventually collide or leave the road.
+- The deployment model removes the reference/guidance modules and runs five-step DDIM at a reported 34.27 ms.
+- nuMax is reported as up to 10x faster than native nuPlan through JAX/XLA simulation and fixed-shape caching.
+
+**Limitations**:
+- Structured abstract inputs only; no camera-based visuomotor evaluation.
+- One benchmark family, no real-world validation, and no multiple-seed uncertainty.
+- Training uses 40M environment steps on eight H100 GPUs.
+- nuMax uses log-replay traffic during training, has representation-specific static caches, and is a calibrated reimplementation rather than the official simulator.
+
+## 2026-06-23 - Ingest: PaIR-Drive
+
+**Source**: `raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md`
+
+**Pages created**:
+- `wiki/sources/pair-drive.md` - full source summary covering parallel IL/RL, tree-structured residual sampling, GRPO, RWM inference, all seven figures, and all six tables
+- `wiki/concepts/parallel-il-rl.md` - concept page comparing one-shot, iterative, and parallel IL/RL and defining modularity/evaluation requirements
+
+**Concept pages updated**:
+- `wiki/concepts/rl-for-ad.md` - added reusable RL refinement as an alternative to fine-tuning
+- `wiki/concepts/gspo-vs-grpo.md` - added tree-structured group construction upstream of GRPO normalization
+- `wiki/concepts/best-of-n.md` - separated PaIR-Drive single-plan and Best-of-6 results
+- `wiki/concepts/selection-based-planning.md` - added residual-tree generation plus RWM selection
+- `wiki/concepts/navsim-benchmark.md` - added human-bad splits, Best-of-6 caveat, and aggregate-metric comfort regressions
+
+**Index updated**: added PaIR-Drive and Parallel Imitation and Reinforcement Learning.
+
+**Key facts**:
+- PaIR-Drive trains independent IL and RL branches; the RL branch learns intention-conditioned residual trees around human trajectories with GRPO.
+- At inference, the RL branch is centered on an IL proposal and an RWM selects the final trajectory.
+- Without Best-of-N, TransFuser improves from 84.0 to 89.7 PDMS and 79.7 to 86.6 EPDMS; DiffusionDrive improves from 88.1 to 91.2 and 84.3 to 87.9.
+- Best-of-6 raises the PaIR-Drive + DiffusionDrive results to 94.0 PDMS and 89.6 EPDMS.
+- Tree-structured residual sampling reaches 93.3/88.5 PDMS/EPDMS versus 88.8/81.6 for unstructured residual sampling in the reported Best-of-6 ablation.
+- Refining recorded human trajectories improves the paper's low-human-score subsets by +1.6 PDMS and +10.8 EPDMS.
+
+**Limitations**:
+- Human-reference training and IL-reference inference introduce unquantified distribution shift.
+- The RWM architecture, training targets, calibration, selection details, and inference cost are largely unspecified.
+- Plug-and-play reuse is demonstrated only for TransFuser and DiffusionDrive on NAVSIM.
+- Peak and ablation scores use Best-of-6; no latency, seed variance, or non-NAVSIM validation is reported.
+- Aggregate gains hide substantial Comfort/Extended Comfort regressions.
+
+## 2026-06-23 - Ingest: DIAL
+
+**Source**: `raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md`
+
+**Pages created**:
+- `wiki/sources/dial.md` - full summary covering intent-CFG, multi-intent GRPO, reward-hacking-aware RFS, all four tables, four embedded figures, and the missing Figure 4 extraction gap
+- `wiki/concepts/intent-conditioned-planning.md` - concept page for intent variables as proposal-support controls, ontology design, diversity metrics, and evaluation requirements
+
+**Concept pages updated**:
+- `wiki/concepts/rl-for-ad.md` - added preference contrast through intent-balanced rollout groups
+- `wiki/concepts/gspo-vs-grpo.md` - added semantic group composition as a GRPO design axis
+- `wiki/concepts/best-of-n.md` - added WOD-E2E proposal-support ceilings versus deployable performance
+- `wiki/concepts/diffusion-planner.md` - added intent-CFG support expansion for continuous flow policies
+- `wiki/concepts/nuscenes-waymo-evals.md` - added RFS protocol, split leakage, oracle selection, and open-loop caveats
+
+**Index updated**: added DIAL and Intent-Conditioned Trajectory Planning.
+
+**Key facts**:
+- DIAL conditions a continuous flow action head on eight rule-derived intents with classifier-free guidance.
+- GRPO groups contain two samples from every intent, holding total group size at 16 while guaranteeing maneuver-level contrast.
+- The controlled Waymo-only experiment improves held-out RFS from 7.696 to 8.211, above all single-intent variants.
+- Pre-RL eight-intent pooling reaches oracle Best-of-128 RFS 9.14, above the logged trajectory at 8.13.
+- DIAL preserves an RFS diversity dividend of +2.04 at Best-of-16, close to the SFT initialization's +2.23.
+- Label-softmax rater aggregation plus dense 1–5 s anchors improves resistance to RFS reward hacking.
+
+**Limitations**:
+- The eight-intent ontology and labels are hand-engineered and incomplete for long-tail/composite behavior.
+- RL uses 338 labeled validation sequences; the 100-sequence held-out partition is used for checkpoint/hyperparameter selection and is not an untouched test.
+- Evaluation is open-loop WOD-E2E RFS only; no reactive, closed-loop, or cross-dataset validation is reported.
+- Intent-classifier accuracy, inference latency, final-checkpoint variance, and multiple-seed uncertainty are absent.
+- Best-of-128 is oracle-selected and not deployable.
+- Referenced Figure 4 is absent from the raw extraction; its numeric sweep is reconstructed in the source summary.
+
+## 2026-06-23 - Ingest: DisCO
+
+**Source**: `raw/papers/DisCO_ Reinforcing Large Reasoning Models with Discriminative Constrained Optimization.md`
+
+**Source condition**: the local markdown ends after Proposition 1 at line 96. The official arXiv v5 PDF was used to recover the missing method, algorithm, experiments, six tables, figure findings, conclusion, and appendices. `raw/` remained unchanged.
+
+**Pages created**:
+- `wiki/sources/disco.md` - summary of GRPO difficulty weighting, DisCO-b/DisCO objectives, hard-negative DRO, KL-constrained optimization, all six paper tables, the one available local figure, PDF-recovered findings, and limitations
+- `wiki/concepts/discriminative-policy-optimization.md` - concept page for positive/negative policy scoring, hard-negative emphasis, trust-region constraints, and requirements for AD transfer
+
+**Concept pages updated**:
+- `wiki/concepts/gspo-vs-grpo.md` - added DisCO as an objective replacement and clarified residual difficulty bias in Dr. GRPO
+- `wiki/concepts/r1-zero-like-training.md` - added the expected-objective analysis of GRPO/Dr. GRPO question weights
+- `wiki/concepts/rl-for-ad.md` - added cautious methodological relevance for binary safety rewards and all-failed-group caveats
+
+**Index updated**: added DisCO and Discriminative Policy Optimization.
+
+**Key facts**:
+- Binary-reward GRPO weights each question's discriminative objective by `sqrt(p(1-p))`; Dr. GRPO retains weight `p(1-p)`.
+- DisCO directly increases positive rollout scores and decreases negative rollout scores without clipping.
+- Full DisCO uses a DRO/partial-AUC objective to emphasize high-scoring hard negatives.
+- A squared-hinge KL penalty is active only when old-to-new KL exceeds the trust threshold.
+- On Qwen 1.5B with 8k responses, DisCO log-L averages 0.533 across six math tasks versus 0.457 GRPO, 0.443 Dr. GRPO, and 0.473 DAPO.
+- DisCO also leads same-base comparisons on Qwen 7B and Llama 8B and generalizes to DAPO-Math-17K.
+
+**Limitations**:
+- Binary rewards and mixed positive/negative groups are required; all-wrong/all-correct groups provide no pairwise signal.
+- Evidence is math-only and does not directly validate autonomous-driving policies or continuous rewards.
+- Best checkpoints are reported without seed variance; full DAPO dynamic sampling is omitted.
+- Compute is high and trust-region hyperparameters are empirically selected.
+- Only Figure 1 exists locally; Figures 2–6 and Tables 1–6 are absent from the raw extraction, so missing figure findings are textual and tables are reconstructed from the official PDF.
+
+## 2026-06-23 - Ingest: DAPO
+
+**Source**: `raw/papers/DAPO_ An Open-Source LLM Reinforcement Learning System at Scale.md`
+
+**Pages created**:
+- `wiki/sources/dapo.md` - source summary covering the four-part DAPO recipe, algorithm, DAPO-Math-17K transformation, all seven figures, the progressive result table, two extracted reflective cases, training dynamics, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/gspo-vs-grpo.md` - added DAPO as a systems-scale GRPO recipe and contrasted degenerate-group filtering with signal-recovery methods
+- `wiki/concepts/r1-zero-like-training.md` - added the full-recipe reproducibility lesson and cautioned against interpreting reflection anecdotes as proof of capability emergence
+- `wiki/concepts/discriminative-policy-optimization.md` - contrasted DAPO's clipped, dynamically sampled system with DisCO's objective-level redesign
+- `wiki/concepts/rl-for-ad.md` - added transferable monitoring/reward lessons and safety caveats for dynamic filtering, Clip-Higher, token weighting, and KL removal
+
+**Index updated**: added DAPO.
+
+**Key facts**:
+- DAPO raises the upper PPO ratio clip from 0.2 to 0.28 while retaining a 0.2 lower clip.
+- Dynamic sampling oversamples and discards all-correct/all-wrong groups until the effective prompt batch is full.
+- Token-level loss divides by total generated tokens rather than averaging each response equally.
+- Overlong filtering and soft punishment reduce noisy incorrect labels caused only by truncation.
+- The cumulative recipe improves Qwen2.5-32B AIME24 avg@32 from 30 under naive GRPO to 50.
+- The released setup uses 512 prompts × 16 responses, 20,480-token maximum generation, exact integer-answer verification, and no reference KL penalty.
+
+**Limitations**:
+- Evidence is math-only and primarily one 32B base model.
+- Progressive ablations are cumulative/order-dependent and no training-seed variance is reported.
+- Dynamic sampling changes the prompt distribution and may incur substantial extra rollout cost.
+- Removing KL allows unconstrained policy drift; token-level loss intentionally gives longer responses more total influence.
+- All-failed-group filtering is unsafe to transfer directly to driving because it can discard the most critical failure scenes.
+- Reflective behavior evidence is qualitative and anecdotal.

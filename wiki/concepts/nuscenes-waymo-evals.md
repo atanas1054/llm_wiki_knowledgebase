@@ -1,10 +1,10 @@
 ---
 title: nuScenes and Waymo Evaluations
 type: concept
-sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md]
-related: [concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, sources/autovla.md, sources/hermes.md, sources/uniugp.md, sources/reasoning-vla.md, sources/driveva.md, sources/explorevla.md, sources/onedrive.md, sources/policy-world-model.md]
+sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
+related: [concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/intent-conditioned-planning.md, concepts/best-of-n.md, sources/autovla.md, sources/hermes.md, sources/uniugp.md, sources/reasoning-vla.md, sources/driveva.md, sources/explorevla.md, sources/onedrive.md, sources/policy-world-model.md, sources/dial.md]
 created: 2026-05-01
-updated: 2026-05-01
+updated: 2026-06-23
 confidence: high
 ---
 
@@ -20,6 +20,21 @@ nuScenes and Waymo-style evaluations in this wiki are mostly open-loop: L2 displ
 | Collision rate | nuScenes/Waymo proxy safety | Often computed against logged agents without reactive simulation. |
 | RFS | WaymoE2E long-tail risk | Dataset/task-specific; not comparable to PDMS or DS. |
 | FID/FVD | World-model visual quality | Video realism does not guarantee planning quality. |
+
+## WOD-E2E Rater Feedback Score
+
+[[sources/dial.md]] uses WOD-E2E RFS, which scores a predicted trajectory against up to three human-rated alternative trajectories rather than treating the logged path as the unique target. This makes RFS useful for detecting proposal support: a policy may generate a path preferred over the logged demonstration.
+
+DIAL reports the logged trajectory at RFS 8.13 and an intent-pooled Best-of-128 ceiling of 9.14. That does not mean the model deploys at 9.14; oracle selection is required. Its intent-classified deployment-oriented held-out peak is 8.211.
+
+Protocol caveats:
+
+- RL uses 338 of the 438 labeled validation sequences.
+- The remaining 100 sequences are used to select checkpoints and reward hyperparameters, so “held-out” means validation, not untouched test.
+- “Full RFS” includes RL-training sequences.
+- Standard RFS scores 3 s and 5 s anchors with a hard maximum over raters; DIAL uses denser anchors and label-softmax aggregation only during training.
+- RFS is open-loop preference alignment and does not directly measure reactive collision avoidance or closed-loop stability.
+- The paper tabulates `TR` but the available source extraction does not define it.
 
 ## Takeaways
 

@@ -62,15 +62,15 @@ The Cross-Attention Scorer treats trajectory features as queries and LLM hidden 
 
 ### NAVSIM-v1
 
-| Method | NC | DAC | EP | Comf. | TTC | PDMS |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| GoalFlow | 98.4 | 98.3 | 85.0 | 100 | 94.6 | 90.3 |
-| DiffusionDrive | 98.2 | 96.2 | 82.2 | 100 | 94.7 | 88.1 |
-| ReCogDrive | 97.9 | 97.3 | 87.3 | 100 | 94.9 | 90.8 |
-| iPad | 98.6 | 98.3 | 88.0 | 100 | 94.9 | 91.7 |
-| DriveSuprim | 98.6 | 98.6 | 91.3 | 100 | 95.5 | 93.5 |
-| Drive-JEPA | 99.1 | 98.2 | 90.8 | 99.9 | 95.9 | 93.3 |
-| **CLEAR** | **99.1** | **98.8** | 89.7 | 99.6 | **97.2** | **93.7** |
+| Method         |       NC |      DAC |   EP | Comf. |      TTC |     PDMS |
+| -------------- | -------: | -------: | ---: | ----: | -------: | -------: |
+| GoalFlow       |     98.4 |     98.3 | 85.0 |   100 |     94.6 |     90.3 |
+| DiffusionDrive |     98.2 |     96.2 | 82.2 |   100 |     94.7 |     88.1 |
+| ReCogDrive     |     97.9 |     97.3 | 87.3 |   100 |     94.9 |     90.8 |
+| iPad           |     98.6 |     98.3 | 88.0 |   100 |     94.9 |     91.7 |
+| DriveSuprim    |     98.6 |     98.6 | 91.3 |   100 |     95.5 |     93.5 |
+| Drive-JEPA     |     99.1 |     98.2 | 90.8 |  99.9 |     95.9 |     93.3 |
+| **CLEAR**      | **99.1** | **98.8** | 89.7 |  99.6 | **97.2** | **93.7** |
 
 The gain over DriveSuprim is small (+0.2 PDMS) but comes with notably higher TTC (97.2 vs. 95.5) and DAC (98.8 vs. 98.6), while ego progress is lower (89.7 vs. 91.3).
 

@@ -1,10 +1,10 @@
 ---
 title: Selection-Based Trajectory Planning
 type: concept
-sources: [raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md]
-related: [sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md]
+sources: [raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
+related: [sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, sources/pair-drive.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md]
 created: 2026-04-23
-updated: 2026-06-11
+updated: 2026-06-23
 confidence: high
 ---
 
@@ -108,6 +108,12 @@ The selection connection is the coarse-to-fine structure. HAD first narrows the 
 Drive-JEPA ([[sources/drive-jepa.md]]) is adjacent to selection-based planning but should not be classified as a pure fixed-vocabulary selector. It clusters the training set into an 8192-trajectory vocabulary and uses a NAVSIM-v2-style simulator to choose high-scoring pseudo-teacher trajectories above an EPDMS threshold of 0.95. Those trajectories supervise the distribution of 32 continuous online proposals during training.
 
 The deployed planner still generates and refines proposals with Waypoint-anchored Deformable Attention. The vocabulary is therefore a training-time distillation device, not the inference-time trajectory source. The key failure mode is comfort: MTD increases diversity from 24% to 40%, but EC drops to 47.9 unless the momentum-aware selector compares proposals with the previous selected trajectory.
+
+### PaIR-Drive: Residual Tree plus Reward World Model
+
+[[sources/pair-drive.md]] turns an IL trajectory into the root of a recurrent proposal tree. Intention tokens generate residual branches; a learned reward world model scores their predicted reward and confidence and chooses the final plan. This is a hybrid of generative refinement and selection rather than fixed-vocabulary classification.
+
+The RWM ablation reports 88.1/84.3 PDMS/EPDMS for vanilla DiffusionDrive, 90.2/87.0 for IL + RWM, and 94.0/89.6 for PaIR-Drive + RWM under the paper's selected setting. The comparison supports the value of the tree generator, but does not provide PaIR-Drive without RWM. Selector calibration, architecture, and latency are also missing, so the deployment mechanism is less reproducible than the GRPO sampler.
 
 ## Coarse-to-Fine Selection (DriveSuprim)
 
