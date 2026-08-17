@@ -74,6 +74,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [DriveWAM](sources/drivewam.md) | Wan2.2-TI2V-5B as policy core; chunked AR video→action inverse dynamics; frozen Qwen3-VL-8B chunk guidance + selective KV memory (12× cheaper at 300s); 90.1 PDMS NAVSIM-v1; 0.83 ADE@4s PhysicalAI-AV; 4k→100k scaling unsaturated |
 | [SimWAM](sources/simwam.md) | Isolated attention mask makes future-video prediction training-time-only; **91.5 PDMS NAVSIM-v1** (highest WAM in wiki) at 518ms; Flow-GRPO SDE + LoRA RL on hard subset; swappable video prior (1.3B ≈ 5B); best zero-shot nuScenes collision 0.04%; code released |
 | [SGDrive](sources/sgdrive.md) | Scene-agent-goal ⟨world⟩ queries (occupancy + safety-critical boxes + 4s goal, at t and t+n) + block-wise anti-leakage mask + DiT; InternVL3-2B beats ReCogDrive-8B at SFT (87.4 vs 86.8); 91.1 PDMS RFT; 86.2 EPDMS; needs 3D/occupancy labels |
+| [DriveLaW](sources/drivelaw.md) | Chained gen→plan: Video DiT first-step latents are the planning state; **video latents > VLM hidden states > BEV under a fixed planner (89.1 / 86.5 / 84.1)**; conditioning on clean futures collapses to 23.2; NC 99.0 / TTC 96.7 highest in wiki; FID 4.6 nuScenes; no RL |
 
 ---
 

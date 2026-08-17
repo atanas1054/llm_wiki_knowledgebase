@@ -1577,3 +1577,49 @@ Append-only log of all wiki operations.
 - Front-camera-only input causes lane-change errors under extreme turns, acknowledged in the failure cases.
 - No latency numbers despite an efficiency argument for feeding query hidden states directly to the planner.
 - Compute is substantial for a 2B model: 32 H20 GPUs, 3.1M QA pairs, and 220 planner epochs.
+
+## 2026-08-17 - Ingest: DriveLaW
+
+**Source**: `raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md`
+
+**Pages created**:
+- `wiki/sources/drivelaw.md` - source summary covering the chained generation-planning design, the high-compression spatiotemporal VAE with hybrid pixel-space decoding, noise reinjection, the three-stage curriculum, all six figures, Tables 1-11, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/world-model-for-ad.md` - added Pattern 21 (mid-denoising latents as the planning state); substantially extended the test-time-imagination synthesis with DriveLaW's denoising-step sweep as independent corroboration of SimWAM; refreshed the nuScenes generation table with DriveLaW at FID 4.6 and corrected the claim added during the 2026-08-17 lint that no post-April world-model entry reports FID/FVD
+- `wiki/concepts/navsim-benchmark.md` - added the DriveLaW row and a caveat noting NC 99.0 / TTC 96.7 are the highest in the wiki and that DriveVLA-W0 appears there as a flow-matching reimplementation at 87.2
+- `wiki/concepts/foundation-backbones-for-ad.md` - added the controlled representation comparison (video latents 89.1 > VLM hidden states 86.5 > BEV 84.1) and the pretraining-data versus model-size distinction against SimWAM
+- `wiki/concepts/diffusion-planner.md` - added the section on conditioning a planner on another diffusion model's latents, including the brittleness of the conditioning timestep
+
+**Source pages updated**:
+- `wiki/sources/epona.md` - added DriveLaW as its main challenger, noting Epona still wins at the 100-frame horizon and on trajectory-only latency
+- `wiki/sources/simwam.md` - DriveLaW now independently confirms SimWAM's transcription and, unexpectedly, its thesis
+
+**Index and README updated**: added DriveLaW; README count 56 to 57; open thread #1 rewritten around two independent results; known-gaps list refreshed with Hydra-MDP as the top remaining gap.
+
+**Key facts**:
+- Chained rather than parallel: the Action DiT cross-attends to per-block latents cached from the Video DiT during its first denoising step, so the generator's internal state is the planning representation.
+- DriveLaW-Video is a 2B LTX-Video-initialized DiT; DriveLaW-Act is a 133M vanilla DiT trained with flow matching.
+- The spatiotemporal VAE uses 32x32x8 downsampling with 128 channels, a 1:192 compression ratio (1:8192 pixel-to-token), and a causal 3D encoder; the final rectified-flow step is executed by the decoder in pixel space.
+- Noise reinjection perturbs only high-frequency regions, identified by a Laplacian response on a decoded grayscale preview thresholded at beta times the standard deviation.
+- Three-stage curriculum: 740x352x121 for long-horizon motion, then 1280x704x25 for spatial detail, then chaining latents into the planner.
+- NAVSIM: 89.1 PDMS with no RL and no learned scorer; NC 99.0 and TTC 96.7 are the highest recorded in this wiki, but EP is 81.3.
+- nuScenes generation: FID 4.6 and FVD 81.3, the best FID in the wiki; UniUGP retains the best FVD at 75.9.
+- Representation ablation under a fixed planner: BEV features 84.1, VLM hidden states 86.5, video latents 89.1.
+- Denoising-step ablation: t=1 gives 89.1, t=5 gives 86.9, t=10 collapses to 23.2 with comfort 0.
+- Video pretraining scaling: 0, 76k, 3.8M, 7.6M samples give 85.9, 87.0, 87.8, 89.1 PDMS.
+- Noise reinjection is worth 1.5 FID and 20.8 FVD; dropping the first curriculum stage costs 28.0 FVD.
+- Speed: video generation is about 5x faster than Epona at matched resolution, but trajectory planning is slower (0.71s versus 0.42s on H20).
+
+**Limitations**:
+- The NAVSIM record is scoped to its own table; 89.1 sits below ten wiki entries, and SimWAM cites this exact figure while beating it by 2.4.
+- The policy is safety-skewed: leading NC and TTC but mediocre EP, with no RL or scorer stage to recover progress, and the nuScenes 1s collision rate regresses versus Epona.
+- The t=10 collapse is reported without diagnosis; a 66-point PDMS drop suggests a distribution or scaling pathology rather than merely redundant information.
+- The high-compression VAE introduces motion artifacts in high-motion scenes, acknowledged in Appendix D.1 and only partly mitigated by noise reinjection.
+- Long-horizon generation degrades past about 80 frames, where Epona overtakes it.
+- Planning latency is worse than Epona's despite much faster video generation.
+- DriveVLA-W0 appears at 87.2, a third distinct value for that method, because it is a flow-matching reimplementation rather than the published configuration.
+- No NAVSIM-v2/EPDMS, no navhard, no closed-loop reactive benchmark.
+- The claim of gradient isolation between generator and planner sits awkwardly with the statement that stage 3 updates both the Video DiT and the Planning DiT.
+
+**Process note**: a PowerShell read-modify-write round-trip corrupted UTF-8 characters in `README.md` and `wiki/concepts/diffusion-planner.md` (84 mojibake sequences). Both files were restored from HEAD and the edits reapplied with the editing tool. Future frontmatter edits should not use `Get-Content -Raw` piped to `Set-Content` on files containing non-ASCII characters.

@@ -2,9 +2,9 @@
 title: "Epona: Autoregressive Diffusion World Model for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md]
-related: [sources/dreameraD.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md]
+related: [sources/dreameraD.md, sources/drivelaw.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/foundation-backbones-for-ad.md]
 created: 2026-04-17
-updated: 2026-04-17
+updated: 2026-08-17
 confidence: high
 ---
 
@@ -15,6 +15,8 @@ confidence: high
 **arXiv**: 2506.24113  
 **Code**: [Kevin-thu/Epona](https://github.com/Kevin-thu/Epona)  
 **Successor**: DreamerAD ([[sources/dreameraD.md]]) builds on Epona as its backbone, adding latent RL to push NAVSIM PDMS from 86.2 → 88.7.
+
+**Main challenger (added 2026-08-17)**: [[sources/drivelaw.md]] uses Epona as its primary baseline and beats it on generation (FID 4.6 vs 7.5, FVD 81.3 vs 82.8), on planning (89.1 vs 86.2 PDMS), on zero-shot OpenDV transfer, and on per-frame generation speed (0.18s vs 0.88s at 1024×512 on a 4090). Epona's argument for *parallel* TrajDiT ‖ VisDiT branches is precisely what DriveLaW rejects — it chains instead, treating the video generator's mid-denoising latents as the planning state. Two things still favor Epona: it wins at the **100-frame horizon** (FVD 277.3 vs 296.1), and its **trajectory-only latency is lower** (0.42s vs 0.71s on H20), so Epona remains the better choice for long-horizon generation and for real-time planning without video.
 
 ---
 

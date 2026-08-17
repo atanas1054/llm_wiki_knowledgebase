@@ -1,8 +1,8 @@
 ---
 title: World Models for Autonomous Driving
 type: concept
-sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [sources/simwam.md, sources/sgdrive.md, sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md]
+sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md]
+related: [sources/simwam.md, sources/sgdrive.md, sources/drivelaw.md, sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md]
 created: 2026-04-05
 updated: 2026-08-17
 confidence: high
@@ -276,6 +276,7 @@ A **single DiT** denoises both halves simultaneously at the same flow time $s$. 
 | **DriveVA** | **Single DiT over joint [video_latents ‖ action_tokens] target** |
 | **DriveWAM** | **Shared DiT, sequential: generated future latent conditions the action flow (inverse dynamics)** |
 | **SimWAM** | **Shared attention only, with an isolated mask: no coupling at inference by construction** |
+| **DriveLaW** | **Chained: Video DiT's cached first-step block latents are cross-attended by a separate Action DiT** |
 
 **Video continuation module**: history observation buffer (m frames) encoded as condition latents; after each action chunk is executed, the window slides and a new short clip is predicted. Inference requires only **2 flow-matching steps** for near-optimal NAVSIM performance.
 
@@ -518,6 +519,26 @@ The mechanism is supervised query tokens rather than a generator. A set of learn
 
 **Anti-leakage via masking**, not parameter separation. A block-wise mask forbids attention between the scene/agent/goal blocks while allowing temporal attention within a block and free cross-attention to visual/text tokens. This is a third answer to the representational-interference problem that [[concepts/mixture-of-experts.md]] tracks: UniDriveVLA decouples expert *parameters*, OneDrive isolates heterogeneity in task FFNs, and SGDrive simply masks *attention* between query blocks. It is by far the cheapest of the three — and also the weakest measured effect, worth only +0.3 PDMS, entirely in EP.
 
+### 21. Mid-Denoising Latents as the Planning State (DriveLaW)
+
+**DriveLaW** ([[sources/drivelaw.md]]) makes a distinction the other video-prior methods do not: it separates the video generator's *output* from its *internal state*, and plans from the latter. The Action DiT cross-attends to latents cached from each Video DiT block **during the first denoising step** — the generator's early internal activations, not its finished prediction.
+
+The paper's framing is that Epona, VaVAM, and DriveVLA-W0 are only nominally unified, running generation and planning as "two independent output streams" so the trajectory is never grounded in the features that actually govern synthesis. Chaining fixes that representation disconnect.
+
+**The controlled representation comparison is the wiki's most direct evidence for the video-prior thesis** (Table 5, same diffusion planner throughout):
+
+| Conditioning representation | PDMS |
+|---|---:|
+| BEV features (BEVFormer ResNet-101) | 84.1 |
+| VLM hidden states (Qwen2.5-VL, ReCogDrive-style) | 86.5 |
+| **Video-generator latents** | **89.1** |
+
+Video latents beat BEV by +5.0 and VLM hidden states by +2.6 with everything else held fixed. Every other comparison of these representation families in the wiki is confounded by architecture and training data; this one is not. The PCA visualization (Figure 4 of the paper) supports it qualitatively — BEV and VLM features appear diffuse with irregular focus shifts, while video-generator features are sharper and spatially structured under severe motion.
+
+**Pretraining data scales planning** (Table 4): 0 → 76k → 3.8M → 7.6M video samples gives 85.9 → 87.0 → 87.8 → 89.1 PDMS, monotone and unsaturated. This is the axis SimWAM did *not* test — SimWAM varied backbone *size* at fixed data and found it flat, DriveLaW varies *data* at fixed size and finds +3.2. Read together: for video priors, what you pretrain on matters much more than how big the model is.
+
+**Cost profile.** NC 99.0 and TTC 96.7 are the highest in the wiki — a conspicuously safety-skewed policy achieved with no RL and no scorer — but EP 81.3 is mediocre, and there is no mechanism to recover progress. Video generation is ~5× faster than Epona at matched resolution, though trajectory planning is *slower* (0.71 s vs 0.42 s on H20).
+
 ## Does Test-Time Future Imagination Help? {#test-time-imagination}
 
 This is now the central open dispute among world-model planners in the wiki, and SimWAM supplies the first controlled evidence.
@@ -538,9 +559,23 @@ Access to future-frame tokens produces **no measurable benefit**, while forcing 
 
 **How much weight this deserves.** The spread is 0.2 PDMS with no reported seed variance, so the supportable conclusion is that test-time future conditioning is *unnecessary here*, not that it is harmful. Three further caveats: the comparison is within SimWAM's own architecture (a shared-attention two-expert design where the action expert already reads a video-model-shaped representation), it is single-benchmark, and it uses a 4 s horizon at 2 Hz. A method whose future generation is longer-horizon, geometry-grounded (DriveDreamer-Policy's depth stage), or semantically guided (DriveWAM's per-chunk VLM intent) might still extract value the mask ablation cannot see.
 
-**What survives across all three same-backbone papers**: every one finds video *supervision* essential, and none demonstrates that video *generation at inference* is. DriveVA's +19.5 PDMS and DriveWAM's backbone ablation both isolate the training objective, not the inference path. The efficiency implication is immediate — SimWAM reaches 91.5 PDMS at 518 ms while DriveWAM's imagine-then-act loop costs 871–1262 ms per 4 s chunk.
+**Corroboration from inside the imagine-then-act camp.** [[sources/drivelaw.md]] is classified above as imagine-then-act, and SimWAM treats it that way. But its own Table 6 sweeps *which* denoising step feeds the planner, and the result is striking:
 
-**What is still unresolved**: whether imagined futures matter for capabilities NAVSIM does not measure — long-horizon rollout, counterfactual evaluation of candidate maneuvers, reactive interaction, or the instruction-conditioned generation Vega targets. NAVSIM's 4 s non-reactive horizon may simply be too short for anticipation to pay off.
+| Video denoise step | PDMS | What the latent contains |
+|---|---:|---|
+| **t = 1** | **89.1** | Early internal state; no recognizable future yet |
+| t = 5 | 86.9 | Partially denoised |
+| t = 10 | **23.2** | Nearly clean generated future — **policy collapses** |
+
+The closer the conditioning signal gets to an actual synthesized future, the worse the planning — catastrophically so at t=10, where comfort drops to 0 and PDMS falls below the Ego-Status-MLP baseline. DriveLaW's stated explanation is that "raw pixel-format videos frequently contain redundant, non-essential information, which can hinder the effectiveness of decision-making."
+
+This matters because it is an **independent, differently-motivated result pointing the same way as SimWAM's mask ablation**. SimWAM removed the future-token dependency and lost nothing; DriveLaW kept the generator but found that useful signal lives in its early internal activations rather than its output. Neither paper set out to test the other's hypothesis. DriveLaW is therefore better described not as imagine-then-act but as **"borrow the generator's representation, not its imagination"** — closer to Pattern 19 than its own framing suggests.
+
+**What survives across all four papers**: every one finds video *supervision* or a video *prior* essential, and none demonstrates that conditioning on a generated future helps. DriveVA's +19.5 PDMS and DriveWAM's backbone ablation isolate the training objective; SimWAM's mask and DriveLaW's denoising sweep both isolate the inference path and find no benefit there. The efficiency implication is immediate — SimWAM reaches 91.5 PDMS at 518 ms while DriveWAM's imagine-then-act loop costs 871–1262 ms per 4 s chunk.
+
+**The strongest remaining case for generation** is DriveLaW's own Table 5: video-generator latents beat VLM hidden states by 2.6 PDMS and BEV features by 5.0 under a fixed planner. The *generator* is clearly valuable as a representation learner. What is unsupported is running it forward to a clean future at decision time.
+
+**What is still unresolved**: whether imagined futures matter for capabilities NAVSIM does not measure — long-horizon rollout, counterfactual evaluation of candidate maneuvers, reactive interaction, or the instruction-conditioned generation Vega targets. NAVSIM's 4 s non-reactive horizon may simply be too short for anticipation to pay off. Also unexplained is *why* DriveLaW's t=10 conditioning collapses so completely; a 66-point PDMS drop suggests a distribution or scaling pathology rather than merely "redundant information," and no paper has diagnosed it.
 
 ### 1. Coupling world model and trajectory planner
 The world model must receive the planned trajectory as a condition, but the trajectory is what we're trying to optimize. Solutions:
@@ -588,10 +623,11 @@ Note: FID/FVD measure distributional realism, not planning-relevant accuracy. A 
 | **DriveWAM** | **✓ (Wan2.2-TI2V-5B is the policy core; chunked AR video generation at inference)** | **Advisory only (frozen Qwen3-VL-8B emits chunk-level text guidance; never decodes actions)** |
 | **SimWAM** | **✓ at training (Wan2.2-5B co-trained); ✗ at inference (isolated mask drops the branch)** | **✗ (no VLM; lightweight action DiT only)** |
 | **SGDrive** | **Structured symbolic forecast (occupancy + agent boxes at t and t+n); no generation** | **✓ (InternVL3-2B hosts the ⟨world⟩ queries and does VQA)** |
+| **DriveLaW** | **✓ (LTX-Video 2B DiT; best FID in wiki, and its early latents are the planning state)** | **✗ (no VLM; 133M action DiT reads video latents directly)** |
 
-## Generation-Quality Tables (last refreshed April 2026)
+## Generation-Quality Tables (updated August 2026)
 
-These two tables cover *visual generation* quality, not planning, and have not been updated since the UniUGP/DDP ingests — later world-model entries (DriveVA, DriveWAM, SimWAM, DeepSight, Latent-WAM, Drive-JEPA) report no FID/FVD at all, since they either never decode pixels or treat generation as a training-time means rather than an output. Treat these as a snapshot of the pixel-generating era of the wiki, not a current leaderboard. For planning standings see [[concepts/navsim-benchmark.md]].
+These tables cover *visual generation* quality, not planning. Most world-model entries ingested after April 2026 (DriveVA, DriveWAM, SimWAM, DeepSight, Latent-WAM, Drive-JEPA, SGDrive) report **no FID/FVD at all**, because they either never decode pixels or treat generation as a training-time means rather than an output — so the table below is sparse for recent work by nature, not by neglect. [[sources/drivelaw.md]] is the exception and now leads on FID. For planning standings see [[concepts/navsim-benchmark.md]].
 
 ### nuScenes Future Frame Generation (FID ↓)
 
@@ -602,7 +638,11 @@ These two tables cover *visual generation* quality, not planning, and have not b
 | Doe-1        | Autoregressive            | 384×672    | 15.9    | —        |
 | FSDrive      | Autoregressive            | 128×192    | 10.1    | —        |
 | [Epona](../sources/epona.md) | AR+Diffusion | — | 7.5 | 82.8 |
-| **UniUGP**   | **AR+Diffusion (Wan2.1)** | **—**      | **7.4** | **75.9** |
+| Vista        | Diffusion                 | —          | 6.9     | 89.4     |
+| UniUGP       | AR+Diffusion (Wan2.1)     | —          | 7.4     | **75.9** |
+| **[DriveLaW](../sources/drivelaw.md)** | **Latent diffusion (LTX-Video 2B)** | **1280×704** | **4.6** | 81.3 |
+
+DriveLaW holds the best FID (4.6, a 33% improvement over Vista's 6.9) while UniUGP retains the best FVD (75.9 vs DriveLaW's 81.3) — the two metrics do not agree on a single leader. FID is also resolution-dependent, and DriveLaW generates at by far the highest resolution here, which cuts against it rather than for it. On nuPlan, DriveLaW beats Epona up to 80 frames but **loses at 100 frames** (FVD 296.1 vs 277.3), so its advantage is horizon-limited.
 
 Note: FID is resolution-dependent — methods at higher resolution (Doe-1 384×672) would achieve lower FID at lower resolution. FSDrive's 10.1 at 128×192 is competitive for its resolution tier and model size (2B).
 

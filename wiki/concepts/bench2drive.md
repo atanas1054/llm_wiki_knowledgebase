@@ -79,7 +79,7 @@ Five standardized scenario categories; reported separately by ORION and LinkVLA:
 | SimLingo | 85.07 | 67.27 | 259.23 | 33.67 | Fast MLP head (34ms) |
 | AutoMoT | 87.34 | — | — | — | Frozen Qwen3-VL-4B + 1.6B AE; async MoT (7.6× speedup) |
 | DeepSight (Think2Drive) | 86.23 | 71.36 | 201.71 | 16.11 | Parallel 5-frame DINOv3 latent world model in BEV + adaptive CoT; strongest Think2Drive-protocol VLM in its own table (see expert caveat below) |
-| DynVLA | 88.34 | 72.73 | â€” | â€” | Dynamics CoT with ego/environment VQ dynamics tokens; below LinkVLA, above AutoMoT; table omits LinkVLA |
+| DynVLA | 88.34 | 72.73 | — | — | Dynamics CoT with ego/environment VQ dynamics tokens; below LinkVLA, above AutoMoT; table omits LinkVLA |
 | **LinkVLA** | **91.01** | **74.55** | **255.84** | **34.62** | **Shared codebook + C2F; current SOTA** |
 
 **PDM-Lite caveat**: PDM-Lite is a privileged oracle planner (uses ground-truth waypoints or HD map access) that some Bench2Drive methods use as a fallback or auxiliary module. UniDriveVLA (78.37) is explicitly noted as the best result *without* PDM-Lite. Methods that use PDM-Lite score higher but are not fairly comparable to methods that do not. The precise PDM-Lite usage for each method above is not always disclosed.
