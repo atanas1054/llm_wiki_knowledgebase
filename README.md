@@ -16,7 +16,15 @@ wiki/
 CLAUDE.md      # Workflow instructions for the LLM assistant
 ```
 
-## Papers Ingested (43)
+## At a Glance
+
+- **55 papers** ingested into `wiki/sources/`, **29 concept pages** in `wiki/concepts/`
+- Dominant benchmark is **NAVSIM** (v1 PDMS / v2 EPDMS); also Bench2Drive, nuPlan, nuScenes, WOD-E2E, HUGSIM, PhysicalAI-AV
+- Current NAVSIM-v1 leaders (single-pass, non-BoN): **CLEAR 93.7** > DriveSuprim 93.5 > Drive-JEPA 93.3 > HybridDriveVLA 92.1 (ensemble) > DynVLA 91.7 > SimWAM 91.5
+- Current NAVSIM-v2 leader: **WAM-Diff 89.7 EPDMS**; Best-of-6 ceiling: **Curious-VLA 94.8 PDMS** (= human GT)
+- Every leaderboard claim in this wiki carries a **comparison-scope caveat** — most papers omit the actual frontier from their tables. See [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md).
+
+## Papers Ingested (55)
 
 | Paper | Org | Key Contribution | Benchmark |
 |-------|-----|-----------------|-----------|
@@ -63,8 +71,22 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [Drive-JEPA](wiki/sources/drive-jepa.md) | — | V-JEPA driving-video pretraining plus proposal-centric multimodal trajectory distillation and momentum-aware selection | 93.3 PDMS NAVSIM-v1; 87.8 EPDMS NAVSIM-v2; 64.52 DS Bench2Drive |
 | [FeaXDrive](wiki/sources/feaxdrive.md) | Tongji + NTU | Trajectory-centric diffusion planning with curvature regularization, drivable-area guidance, and feasibility-aware GRPO | 90.0 PDMS NAVSIM-v1; 2.40% curvature violation |
 | [Policy World Model](wiki/sources/policy-world-model.md) | Dalian University of Technology | Show-o-based policy world model with action-free future video forecasting, 28-token frames, and collaborative state-action prediction | 88.1 PDMS NAVSIM-v1; 0.41 L2 / 0.04 collision nuScenes w/ ego |
+| [CLEAR](wiki/sources/clear.md) | Tsinghua | Drive-JEPA encoder + Qwen hidden-state adaptive scheduler/scorer + single-step VAE latent drift | **93.7 PDMS NAVSIM-v1** (highest non-BoN); 88.6 EPDMS NAVSIM-v2 |
+| [DeepSight](wiki/sources/deepsight.md) | — (ICML) | Parallel 5-frame DINOv3 latent prediction in BEV via World Queries + adaptive CoT; +3.57% latency vs. FSDrive's +60.71% | 86.23 DS / 71.36 SR Bench2Drive (Think2Drive) |
+| [DriveWAM](wiki/sources/drivewam.md) | CUHK-Shenzhen + Didi Chuxing | Wan2.2-TI2V-5B as policy core; chunked AR video→action inverse dynamics; frozen VLM chunk guidance + selective KV memory (12× cheaper at 300s) | 90.1 PDMS NAVSIM-v1; 0.83 ADE@4s PhysicalAI-AV |
+| [SimWAM](wiki/sources/simwam.md) | HUST + Dongfeng | Isolated attention mask makes future-video prediction training-time-only; Flow-GRPO SDE + LoRA RL; swappable video prior (1.3B ≈ 5B) | **91.5 PDMS NAVSIM-v1** (highest WAM) at 518ms; 0.04% zero-shot nuScenes collision |
+| [PaIR-Drive](wiki/sources/pair-drive.md) | — | Parallel IL and GRPO residual-refinement branches; intention-conditioned trajectory tree + RWM selection; reusable across base planners | 91.2 PDMS / 87.9 EPDMS single-plan; 94.0 / 89.6 BoN-6 |
+| [DIAL](wiki/sources/dial.md) | — | Eight-intent CFG expands continuous-flow proposal support; multi-intent GRPO preserves preference contrast | WOD-E2E held RFS 7.696→8.211; BoN-128 ceiling 9.14 |
+| [PlannerRFT](wiki/sources/plannerrft.md) | — | Diffusion-planner RFT with PPO-learned lateral/longitudinal exploration, GRPO survival reward, and nuMax acceleration | 72.21 Test14-hard / 85.80 Test14-random reactive nuPlan |
+| [Plan-R1](wiki/sources/plan-r1.md) | — | Trajectory planning as motion-token language modeling; dual-model reactive rollout; VD-GRPO fixes variance downweighting of unsafe groups | 90.04 reactive Test14-random nuPlan |
+| [DAPO](wiki/sources/dapo.md) | ByteDance Seed + Tsinghua | Open-source 32B reasoning-RL system: Clip-Higher, dynamic sampling, token-level loss, overlong shaping (methodological reference) | Qwen2.5-32B AIME24 avg@32 30→50 |
+| [DisCO](wiki/sources/disco.md) | — | Binary-reward discriminative RL replacing GRPO weighting/clipping; DRO hard negatives + KL constraint (methodological reference) | 1.5B six-task math avg 0.533 vs. GRPO 0.457 |
+| [Understanding R1-Zero-Like Training](wiki/sources/understanding-r1-zero-like-training.md) | Sea AI Lab + NUS + SMU | Critical analysis of R1-Zero RL: template/pretraining confounds, GRPO length + difficulty bias, Dr. GRPO (methodological reference) | Oat-Zero-7B 43.3 AIME24 |
+| [All Roads Lead to Rome](wiki/sources/all-roads-lead-to-rome.md) | ANU + Shanghai AI Lab + GE Research | GRPO diversity collapse in VLM reasoning; base models retain broader parallel reasoning; MUPO multi-group optimization (methodological reference) | MUPO-Thinker-7B 51.6/58.8 math acc@1/4 |
 
-## Concept Pages (21)
+The last four entries are **methodological references** — LLM/VLM reasoning-RL papers ingested for their optimizer analysis rather than for driving results. They inform [RL for AD](wiki/concepts/rl-for-ad.md), [GSPO vs. GRPO](wiki/concepts/gspo-vs-grpo.md), and [R1-Zero-Like Training](wiki/concepts/r1-zero-like-training.md).
+
+## Concept Pages (29)
 
 | Concept | Description |
 |---------|-------------|
@@ -89,6 +111,28 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [Foundation Backbones for AD](wiki/concepts/foundation-backbones-for-ad.md) | Qwen, InternVL, Cosmos, Wan, Show-o, and other backbone choices in driving VLAs |
 | [Navhard and OOD Evaluation](wiki/concepts/navhard-ood-evaluation.md) | NAVSIM-v2 navhard, distribution-shift scoring, and OOD caveats |
 | [HUGSIM Benchmark](wiki/concepts/hugsim-benchmark.md) | Closed-loop interactive benchmark with route completion and HD-Score; HAD reports 47.5 RC / 30.8 HDS |
+| [nuPlan Benchmark](wiki/concepts/nuplan-benchmark.md) | Reactive/non-reactive closed-loop evaluation, Val14/Test14 splits, scorer caveats, nuMax training acceleration |
+| [PhysicalAI-AV Benchmark](wiki/concepts/physicalai-av-benchmark.md) | NVIDIA's 1,700h / 306K-clip real-world open-loop benchmark (ADE/FDE); no shared test protocol yet |
+| [Adaptive Routing](wiki/concepts/adaptive-routing.md) | Scene-conditioned candidate budget and diversity control; LLM hidden states choose `(alpha, N)` and score trajectories |
+| [Intent-Conditioned Planning](wiki/concepts/intent-conditioned-planning.md) | Discrete maneuver variables for multimodal proposals; intent-CFG, intent-balanced GRPO, ontology requirements |
+| [Parallel Imitation and RL](wiki/concepts/parallel-il-rl.md) | Separate IL and RL parameter spaces; reusable residual proposal policies; modularity conditions and reference-shift caveats |
+| [Discriminative Policy Optimization](wiki/concepts/discriminative-policy-optimization.md) | Positive/negative rollout scoring, GRPO difficulty-weight analysis, hard-negative DRO, and conditions for driving transfer |
+| [R1-Zero-Like Training](wiki/concepts/r1-zero-like-training.md) | RL directly on base models; template/base-prior confounds; Dr./VD-GRPO corrections and their relevance to AD GRPO claims |
+| [Divergent Thinking in VLMs](wiki/concepts/divergent-thinking-in-vlms.md) | Reasoning-strategy diversity, MUPO, acc@k scaling, and why correlated samples limit parallel test-time gains |
+
+## Open Threads
+
+Questions the wiki has surfaced but not resolved, in rough order of how much they'd change the picture:
+
+1. **Does test-time future imagination help at all?** SimWAM's controlled mask ablation says no on NAVSIM (bidirectional 90.2 / action→video 90.1 / isolated 90.3), which challenges the imagine-then-act premise behind DriveVA, DriveWAM, FSDrive, PWM, and DriveLaW. Unresolved for long-horizon rollout, counterfactual maneuver evaluation, and reactive interaction. See [World Models for AD](wiki/concepts/world-model-for-ad.md#test-time-imagination).
+2. **Is NAVSIM-v1 saturated?** Best-of-6 reaches 94.8 = the human ground-truth score (Curious-VLA). If oracle selection already matches the logged human, single-sample gains above ~93 may be measuring selection quality rather than driving quality. See [Best-of-N Sampling](wiki/concepts/best-of-n.md).
+3. **Are video-prior gains about scale or objective?** SimWAM shows video-prior scale barely matters (Wan2.1-1.3B 90.2 ≈ Wan2.2-5B 90.3) while DriveWAM shows dropping the video objective is catastrophic. Together they point at the training signal, not the backbone — but no paper has tested this across architectures.
+4. **Do PDMS gains transfer to closed-loop?** Most 90+ PDMS methods report no Bench2Drive, HUGSIM, or navhard result. Stage-2 navhard remains near 40 EPDMS for everything measured.
+5. **Comparison-scope inflation is systemic.** Nearly every ingested paper claims SOTA against a table that omits the actual frontier. The wiki tracks this per-paper, but it makes cross-paper ranking unreliable in principle.
+
+## Known Gaps
+
+Methods cited frequently across ingested papers but **not yet ingested** (mention counts across the wiki): Hydra-MDP (59), SimLingo (23), WorldRFT (19), iPad (18), GoalFlow (13), Doe-1 (13), Vista (12), DriveLaW (8), World4Drive (8), VaVAM (7), SGDrive (6), ColaVLA (6). SGDrive (91.1 PDMS) and DriveLaW (89.1 PDMS, imagine-then-act WAM) are the highest-value next ingests.
 
 ## Workflow
 

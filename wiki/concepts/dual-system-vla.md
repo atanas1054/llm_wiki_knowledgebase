@@ -111,7 +111,9 @@ $$\tilde{K}^l(t)=[K^l_{scene}(\tau(t))\;\|\;K^l_{act}(t)], \quad \mathrm{Attn}^l
 
 This enables AE to run at high frequency (0.05s latency) while UE updates at low frequency — **86.8% latency reduction (7.6× speedup)** vs. synchronous execution with only +1.24% L2 degradation. AutoMoT also trains on *asynchronous samples* (UE context 0.5–1s ahead of AE step), teaching the AE to tolerate temporal misalignment explicitly.
 
-## State of the Art (as of April 2026)
+## Closed-Loop 3DGS Results (single-source, Senna-2 paper)
+
+The table below comes entirely from Senna-2's own reconstructed-3DGS evaluation and has no independent replication in the wiki — no other ingested paper reports AF-CR / CR / Safety@1 on a comparable 3DGS environment. It is evidence for the alignment mechanism, not a benchmark standing.
 
 ### Closed-Loop 3DGS Benchmark (Senna-2 paper)
 

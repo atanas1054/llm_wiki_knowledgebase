@@ -564,7 +564,9 @@ Note: FID/FVD measure distributional realism, not planning-relevant accuracy. A 
 | **DriveWAM** | **✓ (Wan2.2-TI2V-5B is the policy core; chunked AR video generation at inference)** | **Advisory only (frozen Qwen3-VL-8B emits chunk-level text guidance; never decodes actions)** |
 | **SimWAM** | **✓ at training (Wan2.2-5B co-trained); ✗ at inference (isolated mask drops the branch)** | **✗ (no VLM; lightweight action DiT only)** |
 
-## State of the Art (as of April 2026)
+## Generation-Quality Tables (last refreshed April 2026)
+
+These two tables cover *visual generation* quality, not planning, and have not been updated since the UniUGP/DDP ingests — later world-model entries (DriveVA, DriveWAM, SimWAM, DeepSight, Latent-WAM, Drive-JEPA) report no FID/FVD at all, since they either never decode pixels or treat generation as a training-time means rather than an output. Treat these as a snapshot of the pixel-generating era of the wiki, not a current leaderboard. For planning standings see [[concepts/navsim-benchmark.md]].
 
 ### nuScenes Future Frame Generation (FID ↓)
 
