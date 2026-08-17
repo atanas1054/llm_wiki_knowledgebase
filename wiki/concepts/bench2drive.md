@@ -1,10 +1,10 @@
 ---
 title: Bench2Drive Benchmark
 type: concept
-sources: [raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md]
-related: [sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md]
+sources: [raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
+related: [sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, sources/deepsight.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md, concepts/pdm-lite.md]
 created: 2026-04-15
-updated: 2026-05-01
+updated: 2026-07-01
 confidence: high
 ---
 
@@ -78,10 +78,13 @@ Five standardized scenario categories; reported separately by ORION and LinkVLA:
 | UniDriveVLA | 78.37 | — | — | — | Best result without PDM-Lite oracle; MoT 3-expert |
 | SimLingo | 85.07 | 67.27 | 259.23 | 33.67 | Fast MLP head (34ms) |
 | AutoMoT | 87.34 | — | — | — | Frozen Qwen3-VL-4B + 1.6B AE; async MoT (7.6× speedup) |
+| DeepSight (Think2Drive) | 86.23 | 71.36 | 201.71 | 16.11 | Parallel 5-frame DINOv3 latent world model in BEV + adaptive CoT; strongest Think2Drive-protocol VLM in its own table (see expert caveat below) |
 | DynVLA | 88.34 | 72.73 | â€” | â€” | Dynamics CoT with ego/environment VQ dynamics tokens; below LinkVLA, above AutoMoT; table omits LinkVLA |
 | **LinkVLA** | **91.01** | **74.55** | **255.84** | **34.62** | **Shared codebook + C2F; current SOTA** |
 
 **PDM-Lite caveat**: PDM-Lite is a privileged oracle planner (uses ground-truth waypoints or HD map access) that some Bench2Drive methods use as a fallback or auxiliary module. UniDriveVLA (78.37) is explicitly noted as the best result *without* PDM-Lite. Methods that use PDM-Lite score higher but are not fairly comparable to methods that do not. The precise PDM-Lite usage for each method above is not always disclosed.
+
+**Expert-data protocol caveat (Think2Drive vs. PDM-Lite)**: separate from inference-time privileged fallback, papers also differ in which *expert planner generated their training data*. Bench2Drive's official base set uses **Think2Drive** expert data; some methods (SimLingo, DiffusionDrive, AutoMoT) train on stronger **PDM-Lite** expert data, which raises DS. [[sources/deepsight.md]] deliberately restricts its comparison to the Think2Drive protocol and marks PDM-Lite rows (SimLingo 85.94, DiffusionDrive 77.68) as reference-only, reporting +7.39 DS over AutoVLA (78.84) as its headline. **Attribution is inconsistent across papers**: DeepSight labels AutoVLA as Think2Drive, while AutoMoT's table labels AutoVLA as PDM-Lite. Treat cross-paper DS deltas as fragile unless both papers use the same expert-data protocol. DeepSight's own table omits LinkVLA (91.01), DynVLA (88.34), and AutoMoT (87.34), so its "SOTA" is comparison-scope-limited to the Think2Drive VLM set.
 
 ---
 
@@ -97,6 +100,8 @@ Five standardized scenario categories; reported separately by ORION and LinkVLA:
 | **Mean** | 67.28 | 54.72 | **73.40** |
 
 Braking (+11.7 vs. SimLingo) and overtaking (+11.1) drive LinkVLA's gains. ORION's give-way (30.00) is the weakest result — the VAE planner may not handle reactive yielding well.
+
+**DeepSight multi-ability** (Table 2, vs. ORION as its strongest baseline): Merging 60.00, Overtaking 91.11, Emergency Brake 78.33, Give Way 50.00, Traffic Sign 71.58, **Mean 70.20** (+15.48 over ORION 54.72). Its overtaking (91.11) and merging (60.00) match or exceed LinkVLA's, which the paper attributes to long-horizon BEV spatial modeling of multi-vehicle interactions; give-way (50.00) ties LinkVLA. Note DeepSight uses Think2Drive expert data whereas LinkVLA's expert protocol is undisclosed in the wiki, so the per-scenario comparison is indicative, not head-to-head.
 
 ---
 

@@ -1,10 +1,10 @@
 ---
 title: World Models for Autonomous Driving
 type: concept
-sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md]
-related: [sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md]
+sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
+related: [sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md]
 created: 2026-04-05
-updated: 2026-05-01
+updated: 2026-07-01
 confidence: high
 ---
 
@@ -413,6 +413,31 @@ The important distinction is ordering: the world model runs **before** the plann
 
 Empirically, PWM's signature is collision reduction rather than best L2: with ego status it reports 0.41 average L2 and 0.04 average collision on nuScenes. The NAVSIM result is 88.1 PDMS with one front camera, which is no longer leaderboard-level in this wiki but remains useful evidence for the future-frame rationale mechanism.
 
+### 17. Parallel Multi-Frame DINOv3 Latent Prediction in BEV (DeepSight)
+
+**DeepSight** ([[sources/deepsight.md]]) is the wiki's clearest example of predicting **semantic latent features for several future frames at once**, rather than one frame autoregressively. A set of learnable **World Queries** $\mathbf{Q}_\text{world}=[q_0,\dots,q_4]$ lets the VLM (Qwen2.5-VL-3B) regress the DINOv3 features of five consecutive future BEV frames ($\Delta t=0.5$s → 2s) in a **single forward pass**, supervised by MSE against $\phi_\text{dino}(I^\text{bev})$ ground truth.
+
+This combines three design choices that other patterns take separately:
+
+| Choice | DeepSight | Closest prior |
+|--------|-----------|---------------|
+| Target | DINOv3 semantic features (not pixels/VAE tokens) | FLARE (DINOv2), Latent-WAM (latent status) |
+| Horizon | 5 frames predicted **in parallel** | most predict 1 frame (FLARE, DriveVLA-W0) or AR-sequential (Epona, PWM) |
+| Space | BEV (surrounding agents) | FSDrive/PWM front-view only |
+
+**Why parallel latent prediction matters** (Table 6): predicting features rather than pixels, all frames in one pass, costs only **+3.57%** latency over a native VLM — versus **+60.71%** for FSDrive's autoregressive VQ-VAE pixel CoT. The world model is effectively "free" foresight.
+
+**Two ablations that sharpen the pattern's claim** (Table 3, Dev-10 DS):
+- **Semantic latent ≫ pixel reconstruction**: DINOv3 vs. VAE at one frame is +47.04 DS (74.79 vs. 27.75). Texture-oriented VAE codebooks lose the planning-relevant semantics.
+- **Long horizon helps *only* latent modeling**: five-frame VAE *drops* −13.09 DS vs. one-frame VAE, while five-frame DINOv3 *gains* +11.78 DS vs. one-frame DINOv3. Pixel world models degrade over horizon; latent-feature world models improve.
+- **BEV vs. front-view** (Table 4): +8.8 DS for BEV — surrounding-agent modeling is what long-horizon safety needs.
+
+**Contrast with FLARE (Pattern 8)**: both predict DINO features as the world-model signal, but FLARE uses a *single* next-frame feature as an **auxiliary training loss** (no inference-time world output, action-conditioned), whereas DeepSight predicts a *five-frame* trajectory of features as a first-class output of the forward pass (produced before CoT and action). FLARE's target is front-view patches; DeepSight's is BEV.
+
+**Contrast with DreamerAD (Pattern 9) / DynVLA**: DeepSight uses latent features as a **supervision target that shapes representation**, not as an RL reward (DreamerAD) or as a decoded CoT the planner reads (DynVLA). At inference, DeepSight's latents are an internal state, not a separately consumed reasoning artifact.
+
+**Deployment note**: the DINOv3 targets are built from BEV-rendered images or semantic segmentation maps — a training-time rendering/annotation dependency (removed at inference). Evaluated only on Bench2Drive (closed-loop) and nuScenes (open-loop); no NAVSIM.
+
 ### 1. Coupling world model and trajectory planner
 The world model must receive the planned trajectory as a condition, but the trajectory is what we're trying to optimize. Solutions:
 - **Teacher forcing**: use ground-truth trajectories 50% of training time (UniUGP)
@@ -452,6 +477,7 @@ Note: FID/FVD measure distributional realism, not planning-relevant accuracy. A 
 | **Latent-WAM** | **Compact latent future-status prediction** | **No VLM; DINOv2 + trajectory decoder** |
 | **Drive-JEPA** | **V-JEPA latent predictive video pretraining** | **No VLM; ViT + proposal planner** |
 | **Policy World Model** | **Action-free future video forecasting used as planning rationale** | **Show-o-style unified AR policy; no separate VLM reasoning focus** |
+| **DeepSight** | **Parallel 5-frame DINOv3 latent prediction in BEV (training target)** | **✓ (Qwen2.5-VL-3B + adaptive CoT + tokenized trajectory)** |
 
 ## State of the Art (as of April 2026)
 

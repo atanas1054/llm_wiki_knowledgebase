@@ -4,7 +4,7 @@ type: comparison
 sources: []
 related: [concepts/discrete-flow-matching.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md, concepts/discriminative-policy-optimization.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/nuplan-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/mixture-of-experts.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/pdm-lite.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md]
 created: 2026-04-05
-updated: 2026-06-23
+updated: 2026-07-01
 confidence: high
 ---
 
@@ -70,6 +70,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [CLEAR](sources/clear.md) | Drive-JEPA encoder + Qwen hidden-state scheduler/scorer + single-step VAE latent drift; **93.7 PDMS NAVSIM-v1**; 88.6 EPDMS NAVSIM-v2 |
 | [FeaXDrive](sources/feaxdrive.md) | Feasibility-aware trajectory-centric diffusion planning with adaptive curvature regularization, drivable-area guidance, and FA-GRPO; 90.0 PDMS NAVSIM-v1 |
 | [Policy World Model](sources/policy-world-model.md) | Action-free video world model + future-frame rationales for planning; 28-token frame tokenizer; 88.1 PDMS NAVSIM-v1; 0.41 L2 / 0.04 collision nuScenes w/ ego |
+| [DeepSight](sources/deepsight.md) | Parallel multi-frame DINOv3 latent-feature prediction in BEV (5 frames, one pass) + adaptive CoT; Qwen2.5-VL-3B; 86.23 DS / 71.36 SR Bench2Drive (Think2Drive protocol); +3.57% latency vs. FSDrive's +60.71% |
 
 ---
 
