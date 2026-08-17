@@ -2,9 +2,9 @@
 title: Wiki Index
 type: comparison
 sources: []
-related: [concepts/discrete-flow-matching.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md, concepts/discriminative-policy-optimization.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/nuplan-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/mixture-of-experts.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/pdm-lite.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md]
+related: [concepts/discrete-flow-matching.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md, concepts/discriminative-policy-optimization.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/nuplan-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/mixture-of-experts.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/pdm-lite.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md, concepts/physicalai-av-benchmark.md]
 created: 2026-04-05
-updated: 2026-07-01
+updated: 2026-08-17
 confidence: high
 ---
 
@@ -71,6 +71,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [FeaXDrive](sources/feaxdrive.md) | Feasibility-aware trajectory-centric diffusion planning with adaptive curvature regularization, drivable-area guidance, and FA-GRPO; 90.0 PDMS NAVSIM-v1 |
 | [Policy World Model](sources/policy-world-model.md) | Action-free video world model + future-frame rationales for planning; 28-token frame tokenizer; 88.1 PDMS NAVSIM-v1; 0.41 L2 / 0.04 collision nuScenes w/ ego |
 | [DeepSight](sources/deepsight.md) | Parallel multi-frame DINOv3 latent-feature prediction in BEV (5 frames, one pass) + adaptive CoT; Qwen2.5-VL-3B; 86.23 DS / 71.36 SR Bench2Drive (Think2Drive protocol); +3.57% latency vs. FSDrive's +60.71% |
+| [DriveWAM](sources/drivewam.md) | Wan2.2-TI2V-5B as policy core; chunked AR video→action inverse dynamics; frozen Qwen3-VL-8B chunk guidance + selective KV memory (12× cheaper at 300s); 90.1 PDMS NAVSIM-v1; 0.83 ADE@4s PhysicalAI-AV; 4k→100k scaling unsaturated |
 
 ---
 
@@ -106,6 +107,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [Adaptive Routing for Trajectory Planning](concepts/adaptive-routing.md) | Scene-conditioned candidate budget and diversity control; CLEAR uses Qwen hidden states to choose `(alpha, N)` and score generated trajectories |
 | [Navhard and OOD Evaluation](concepts/navhard-ood-evaluation.md) | NAVSIM-v2 navhard, distribution-shift scoring, and OOD caveats |
 | [HUGSIM Benchmark](concepts/hugsim-benchmark.md) | Closed-loop planning benchmark with route completion and HD-Score; HAD reports 47.5 RC / 30.8 HDS |
+| [PhysicalAI-AV Benchmark](concepts/physicalai-av-benchmark.md) | NVIDIA's 1,700h / 306K-clip real-world open-loop benchmark (ADE/FDE); DriveWAM's data-scaling testbed; no shared test protocol yet |
 
 ---
 

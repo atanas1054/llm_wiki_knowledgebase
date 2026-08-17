@@ -2,9 +2,9 @@
 title: "Alpamayo-R1: Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail"
 type: source-summary
 sources: [raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md]
-related: [concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/navsim-benchmark.md]
+related: [concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/navsim-benchmark.md, concepts/physicalai-av-benchmark.md, sources/drivewam.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-08-17
 confidence: high
 ---
 
@@ -317,7 +317,7 @@ Figure 14: On-vehicle test — AR1 generates correct causal reasoning at a traff
 
 ## Limitations
 
-1. **No public benchmark comparison**: all evaluations on internal NVIDIA datasets + LingoQA; no NAVSIM, nuScenes, or Bench2Drive results — direct comparison with wiki peers is impossible
+1. **No public benchmark comparison**: all evaluations on internal NVIDIA datasets + LingoQA; no NAVSIM, nuScenes, or Bench2Drive results — direct comparison with wiki peers is impossible. **Update (2026-08-17)**: the underlying driving data has since been released publicly as the PhysicalAI-Autonomous-Vehicles benchmark (~1,700 h, 306,152 clips — see [[concepts/physicalai-av-benchmark.md]]), and [[sources/drivewam.md]] now reports third-party numbers for Alpamayo-1.5 on it (1.44 ADE@4s / 4.18 FDE@4s vs. DriveWAM's 0.83 / 2.47), though on DriveWAM's own curated 1,000-clip test subset. AlpaSim closed-loop evaluation remains internal.
 2. **Small closed-loop eval set**: 75 scenarios only; AlpaSim is internal (not reproducible externally)
 3. **Reasoning every frame**: no adaptive compute; future work flags "reasoning on demand" as an open direction
 4. **Rule-based consistency reward**: unparseable reasoning → conservative $r_\text{consistency} = 0$; may unfairly penalize novel but valid reasoning styles

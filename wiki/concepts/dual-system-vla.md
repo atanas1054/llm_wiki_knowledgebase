@@ -1,10 +1,10 @@
 ---
 title: Dual-System VLA for Autonomous Driving
 type: concept
-sources: [raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md]
-related: [sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md]
+sources: [raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
+related: [sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md]
 created: 2026-04-05
-updated: 2026-05-01
+updated: 2026-08-17
 confidence: high
 ---
 
@@ -257,9 +257,31 @@ The planner compresses heterogeneous visual signals into a more shared decision 
 
 **Key negative result**: trying to predict per-scenario winners using representation features alone (SAE shared/unique energies, CCA statistics, Random Forest, attention gate) yields at most 90.96 PDMS — barely above the 90.80 VLM baseline and far below the 93.58 oracle. Representation statistics are poor predictors of trajectory superiority; trajectory-level scoring is necessary.
 
+## Inverted Dual System: DriveWAM's Advisory VLM {#inverted-dual-system-drivewam}
+
+Every dual-system design above puts the VLM **on top**: it decides, and the low-level policy executes. DriveWAM ([[sources/drivewam.md]]) inverts the hierarchy. A pretrained video diffusion transformer is the policy and produces both the future video and the ego action; a **frozen** Qwen3-VL-8B sits beside it and contributes two sentences of guidance per 4-second chunk.
+
+| Dimension | Senna-2 (alignment) | AutoMoT (async MoT) | DriveWAM (advisory) |
+|---|---|---|---|
+| Who plans | E2E planner, guided by VLM meta-action | Action expert, conditioned on cached UE context | Video DiT, from its own generated future |
+| VLM output | Discrete meta-action (4×5) | Hidden KV pairs per layer | Free-text, two sentences, <50 words |
+| Bridge | Decision Adapter (tokens + AdaLN) | Layer-wise shared KV cache | Cross-attention with block-diagonal text mask |
+| VLM training | Fine-tuned | Frozen | Frozen, and outside the gradient path entirely |
+| Update rate | Per frame (cached) | Low frequency, async | Once per 4s chunk (125 ms, amortized) |
+| Consistency enforcement | Explicit (kinematic mapping + selective loss) | None | None — guidance is a soft condition, never verified against the action |
+
+Three properties distinguish it:
+
+**Text as the interface.** The bridge is natural language, not embeddings or categories. The VLM could be replaced without retraining the policy, and the guidance is human-readable at every decision step — stronger interpretability than hidden-state conditioning, weaker controllability than Senna-2's meta-actions since nothing forces the trajectory to obey the text.
+
+**Temporal locality is enforced structurally.** Because guidance is regenerated per chunk, a block-diagonal text mask restricts chunk $k{+}1$ to attend only to $g_k$. Without it, full-clip parallel training would let early chunks read guidance generated at later decision steps — a causality leak specific to chunk-wise guidance that clip-level conditioning never faces.
+
+**No consistency mechanism, and the paper does not claim one.** This is the clearest structural gap versus Senna-2: DriveWAM never checks whether the generated action matches the guidance text. The guidance ablation shows it helps (ADE@4s 0.92 → 0.83 at 100k clips), but "helps on average" is weaker than Senna-2's per-sample consistency objective, and there is no reported measurement of how often the trajectory contradicts its own stated intent.
+
 ## Open Questions
 
 - Can the kinematic mapping $f_K$ be learned (soft/continuous) rather than rule-based, to avoid category-boundary noise?
+- Does DriveWAM's advisory arrangement need a consistency mechanism? Senna-2's evidence suggests unaligned VLM guidance under-delivers; DriveWAM reports aggregate gains but no VLM-action agreement rate.
 - Does dual-system consistency generalize to more fine-grained decision spaces (beyond 20 meta-actions)?
 - Can the VLM be distilled into the E2E policy after alignment training, eliminating the runtime VLM latency?
 - How does dual-system alignment interact with GRPO-style reward shaping (used in WAM-Flow/ReCogDrive)?

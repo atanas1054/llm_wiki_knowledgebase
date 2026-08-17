@@ -2,9 +2,9 @@
 title: "DriveVA: Video Action Models are Zero-Shot Drivers"
 type: source-summary
 sources: [raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md]
-related: [concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md]
+related: [concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/foundation-backbones-for-ad.md, sources/drivewam.md]
 created: 2026-04-23
-updated: 2026-04-23
+updated: 2026-08-17
 confidence: medium
 ---
 
@@ -150,19 +150,21 @@ Same caveat: absolute numbers missing; comparison is against PWM only.
 
 ## Contrast with Related Wiki Methods
 
-| Aspect | Epona (P2) | DDP (P6) | DriveVLA-W0 (P7) | FLARE (P8) | **DriveVA (P11)** |
-|---|---|---|---|---|---|
-| Backbone | From-scratch AR+DiT | Wan-2.1-1.3B | Emu3/Qwen2.5-VL | DINOv2+DiT | **Wan2.2-5B** |
-| Video-action coupling | Parallel branches (shared F) | Causal stages (depth→video→action) | Training only | Auxiliary loss only | **Joint target, one DiT** |
-| Video at inference | Optional VisDiT | Optional depth/video | ✗ | ✗ | ✓ (required) |
-| Zero-shot eval | ✗ | ✗ | ✗ | ✗ | ✓ nuScenes + B2D |
-| NAVSIM-v1 PDMS | 86.2 | 89.2 | 90.2★ | 91.4 | **90.9** |
-| No. params | 2.5B | ~2B (Qwen3-VL) | 7–8B | 4B | **5B** |
-| RL stage | ✗ | ✗ | ✗ | ✓ GRPO | ✗ |
+| Aspect | Epona (P2) | DDP (P6) | DriveVLA-W0 (P7) | FLARE (P8) | **DriveVA (P11)** | DriveWAM (P18) |
+|---|---|---|---|---|---|---|
+| Backbone | From-scratch AR+DiT | Wan-2.1-1.3B | Emu3/Qwen2.5-VL | DINOv2+DiT | **Wan2.2-5B** | Wan2.2-5B + frozen Qwen3-VL-8B |
+| Video-action coupling | Parallel branches (shared F) | Causal stages (depth→video→action) | Training only | Auxiliary loss only | **Joint target, one DiT** | Sequential inverse dynamics (action from generated latent) |
+| Video at inference | Optional VisDiT | Optional depth/video | ✗ | ✗ | ✓ (required) | ✓ (required) |
+| Zero-shot eval | ✗ | ✗ | ✗ | ✗ | ✓ nuScenes + B2D | ✗ |
+| NAVSIM-v1 PDMS | 86.2 | 89.2 | 90.2★ | 91.4 | **90.9** | 90.1 |
+| No. params | 2.5B | ~2B (Qwen3-VL) | 7–8B | 4B | **5B** | 5B + 8B |
+| RL stage | ✗ | ✗ | ✗ | ✓ GRPO | ✗ | ✗ |
 
 ★ DriveVLA-W0's 90.2 uses trajectory anchors (multi-candidate selection); single-pass = 88.4.
 
 DriveVA's strongest differentiator is **zero-shot generalization**, which no other wiki world-model paper demonstrates quantitatively at this scale.
+
+**Same-backbone counterpart**: [[sources/drivewam.md]] (ingested 2026-08-17) independently fine-tunes the *same* Wan2.2-TI2V-5B video DiT into a driving policy, reaching 90.1 PDMS — 0.8 below DriveVA. The two papers do not cite each other and differ in coupling (joint denoising vs. inverse dynamics from the generated latent), temporal structure (sliding window vs. 4s chunked autoregression), semantic conditioning (none vs. frozen VLM guidance), and training data, so the PDMS gap cannot be attributed to any single design choice. DriveWAM independently corroborates DriveVA's central claim from the opposite direction: keeping the pretrained backbone but *removing* video supervision (ADE@4s 1.23) is worse than training from scratch *with* it (1.10).
 
 ---
 

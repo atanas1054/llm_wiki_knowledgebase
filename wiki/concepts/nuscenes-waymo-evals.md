@@ -2,9 +2,9 @@
 title: nuScenes and Waymo Evaluations
 type: concept
 sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
-related: [concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/intent-conditioned-planning.md, concepts/best-of-n.md, sources/autovla.md, sources/hermes.md, sources/uniugp.md, sources/reasoning-vla.md, sources/driveva.md, sources/explorevla.md, sources/onedrive.md, sources/policy-world-model.md, sources/dial.md]
+related: [concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/intent-conditioned-planning.md, concepts/best-of-n.md, concepts/physicalai-av-benchmark.md, sources/autovla.md, sources/hermes.md, sources/uniugp.md, sources/reasoning-vla.md, sources/driveva.md, sources/explorevla.md, sources/onedrive.md, sources/policy-world-model.md, sources/dial.md, sources/drivewam.md]
 created: 2026-05-01
-updated: 2026-06-23
+updated: 2026-08-17
 confidence: high
 ---
 
@@ -41,6 +41,7 @@ Protocol caveats:
 - Treat nuScenes/Waymo as complementary evidence for generalization, not as direct leaderboard substitutes for NAVSIM or Bench2Drive.
 - Zero-shot transfer claims should report absolute values, not only percent improvement over one baseline.
 - World-model papers need both generation metrics and downstream planning metrics; strong FVD alone is insufficient.
+- The same caveats extend to the newer, much larger [[concepts/physicalai-av-benchmark.md]], which also reports ADE/FDE only. Scale improves coverage of rare events but does not convert an open-loop displacement metric into evidence about closed-loop behavior — and where a paper curates its own test subset (as [[sources/drivewam.md]] does), the comparison is not yet leaderboard-grade.
 
 ## OneDrive nuScenes Result
 
