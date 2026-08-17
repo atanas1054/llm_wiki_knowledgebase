@@ -262,7 +262,7 @@ The latency scaling (≈45 ms per step plus ≈70 ms fixed) implies the action e
 6. **RL depends on early stopping and a hand-set difficulty threshold.** Both curves in Figure 3 decline after 15k steps, and the hard subset is defined by a fixed PDMS < 90 cut. No sensitivity analysis for the threshold, and the peak is selected on the evaluation benchmark.
 7. **No comfort reported in the ablations.** Tables 2–5 and 7–10 omit the C column even though it enters PDMS; only Table 1 reports it (100.0). Sub-metric trade-offs involving comfort cannot be checked.
 8. **The video expert's inference cost is unquantified.** The paper says the future-frame decoder "could be discarded after training," but never reports the parameter count or FLOPs actually executed at inference, and latency scales with sampling steps in a way that suggests the shared stack is re-entered per step.
-9. **Several Table 1 baselines are absent from this wiki** (SGDrive 91.1, UniWorldVLA 89.4, DriveLaW 89.1, SeerDrive 88.9, ImagiDrive 87.4, WorldRFT 87.8), so their numbers are transcribed but not independently corroborated here.
+9. **Several Table 1 baselines are absent from this wiki** (UniWorldVLA 89.4, DriveLaW 89.1, SeerDrive 88.9, ImagiDrive 87.4, WorldRFT 87.8), so their numbers are transcribed but not independently corroborated here. **SGDrive has since been ingested** ([[sources/sgdrive.md]]) and its own paper reports 91.1 PDMS, exactly matching SimWAM's row — the only Table 1 entry independently confirmed so far.
 
 ---
 
@@ -273,3 +273,4 @@ The latency scaling (≈45 ms per step plus ≈70 ms fixed) implies the action e
 - **Same conclusion, different mechanism**: [[sources/drivevla-w0.md]] and [[sources/flare.md]] also use world modeling purely as training-time signal, but from VLM/DINOv2 backbones rather than a video generative model.
 - **RL**: [[concepts/rl-for-ad.md]] — Flow-GRPO SDE exploration plus LoRA-only updates on the action expert, and hard-subset scene selection that echoes PlannerRFT's below-90 subset finding.
 - **Backbones**: [[concepts/foundation-backbones-for-ad.md]] — the backbone-swap table (LTX-Video / Wan2.1-1.3B / Cosmos-Predict2.5 / Wan2.2-5B) is the wiki's only controlled comparison of video priors under a fixed planner.
+- **Nearest competitor**: [[sources/sgdrive.md]] (91.1 PDMS) is the runner-up in SimWAM's own table and takes the opposite route to world knowledge — supervised structured symbolic state (occupancy, agent boxes, goal pose) inside a 2B VLM rather than a video generative prior. Both reach ~91 with a single front camera and no future generation at inference, from entirely different supervision. SGDrive needs 3D and occupancy annotations; SimWAM needs only raw video.

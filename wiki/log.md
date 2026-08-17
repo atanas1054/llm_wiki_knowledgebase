@@ -1530,3 +1530,50 @@ Append-only log of all wiki operations.
 - Ablation tables omit the comfort column even though it enters PDMS.
 - The video expert's actual inference cost is unquantified, and latency scaling with sampling steps suggests the shared stack is re-entered per step.
 - Six Table 1 baselines are not ingested in this wiki (SGDrive, UniWorldVLA, DriveLaW, SeerDrive, ImagiDrive, WorldRFT).
+
+## 2026-08-17 - Ingest: SGDrive
+
+**Source**: `raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md`
+
+**Pages created**:
+- `wiki/sources/sgdrive.md` - source summary covering the scene-agent-goal world query hierarchy, the three supervision heads, the block-wise structured attention mask, the DiT planner with learned-prior initialization, all nine figures, Tables 1-6, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/world-model-for-ad.md` - added Pattern 20 (structured symbolic state forecasting) with a world-model-target taxonomy table; linked it from the existing occupancy world-model pattern; added the capability-table row
+- `wiki/concepts/navsim-benchmark.md` - added the SGDrive v1 row and v2 EPDMS row plus a comparison-scope caveat covering both claims
+- `wiki/concepts/perception-for-planning.md` - added the ego-relevance filtering section contrasting task-level filtering with representational sparsity
+- `wiki/concepts/intent-conditioned-planning.md` - added continuous goal pose as a third intent mechanism and a section on what continuity buys and costs
+- `wiki/concepts/foundation-backbones-for-ad.md` - added the VLM-as-frozen-world-model role and the 2B-beats-8B takeaway
+- `wiki/concepts/rl-for-ad.md` - added the SGDrive section using its reuse of ReCogDrive's RL config as a controlled read on what RL adds
+
+**Source pages updated**:
+- `wiki/sources/simwam.md` - SGDrive is now an ingested and independently confirmed Table 1 entry; added it as the nearest competitor
+
+**Index and README updated**: added SGDrive; README count 55 to 56; known-gaps list refreshed with DriveLaW as the top next ingest.
+
+**Key facts**:
+- Learnable <world> queries are appended to the VLM token stream and split into five subqueries: three for current-world knowledge and two for future forecasting.
+- Three supervision heads: occupancy geometry via a VAE decoder with resampled CE plus BCE, safety-critical agent detection via DETR bipartite matching with lambda_cls = 10, and a short-term goal pose about 4s ahead under L1.
+- Scene geometry is deliberately semantic-free; agents are filtered by ego-trajectory relevance and front-camera frustum visibility rather than detecting everything.
+- A block-wise structured mask forbids attention between scene/agent/goal blocks, allows temporal attention within a block, and leaves cross-attention to visual and text tokens open.
+- The <world> query hidden states condition the DiT directly and are never decoded at inference; the diffusion prior is initialized from those queries plus the historical ego trajectory rather than pure Gaussian noise.
+- Two-stage training: stage 1 SFT on VQA plus the three heads with lambda_agent = 0.1; stage 2 freezes the VLM and trains the planner alone for 220 epochs.
+- Backbone is InternVL3-2B; 3.1M QA pairs of domain adaptation following ReCogDrive, then 85k trajectory QA pairs; 32 H20 GPUs.
+- NAVSIM v1: 87.4 PDMS SFT and 91.1 PDMS RFT, with best NC and TTC in both blocks; NAVSIM v2: 86.2 EPDMS.
+- SFT at 2B beats ReCogDrive-8B (86.8) and beats plain InternVL3-8B and QwenVL2.5-8B (both 83.3) by 4.1.
+- Table 3 (stage 1, text trajectories): base 82.2, plus current-state hierarchy 84.7, plus future forecasting 85.5 - structured present-state perception carries most of the gain.
+- Table 4 (with planner): scene 86.0, plus agent 86.3, plus goal 87.0, plus future 87.4; the goal subquery's gain is concentrated in Ego Progress.
+- Structured versus causal mask is worth only +0.3 PDMS, entirely in EP, with TTC slightly regressing.
+- RL reuses ReCogDrive's configuration exactly, giving a comparable +3.7 SFT-to-RFT delta.
+
+**Limitations**:
+- The SOTA claim is scoped to camera-only VLM methods in its own table; 91.1 sits below CLEAR, DriveSuprim, Drive-JEPA, HybridDriveVLA, DynVLA, SimWAM, FLARE, and DiffusionDriveV2.
+- The v2 claim is weaker still: 86.2 EPDMS is compared against seven baselines ending at DiffusionDrive and lands mid-table in the wiki.
+- DAC 94.3 and EC 85.9 on v2 are the weakest modern entries in its own table.
+- Occupancy labels (or LiDAR to derive them) and 3D boxes are required at training, so it is camera-only at inference but not annotation-free - unlike FLARE or SimWAM.
+- The structured mask, presented as a core contribution, is the smallest measured effect at +0.3 PDMS with no seed variance.
+- Stage 2 freezes the VLM, so the world heads never receive gradient from trajectory quality and joint fine-tuning is untested.
+- SGDrive reports DiffusionDrive at 84.3 EPDMS where the wiki records 84.5 from other sources.
+- Front-camera-only input causes lane-change errors under extreme turns, acknowledged in the failure cases.
+- No latency numbers despite an efficiency argument for feeding query hidden states directly to the planner.
+- Compute is substantial for a 2B model: 32 H20 GPUs, 3.1M QA pairs, and 220 planner epochs.

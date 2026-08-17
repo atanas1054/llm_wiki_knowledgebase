@@ -18,13 +18,13 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 
 ## At a Glance
 
-- **55 papers** ingested into `wiki/sources/`, **29 concept pages** in `wiki/concepts/`
+- **56 papers** ingested into `wiki/sources/`, **29 concept pages** in `wiki/concepts/`
 - Dominant benchmark is **NAVSIM** (v1 PDMS / v2 EPDMS); also Bench2Drive, nuPlan, nuScenes, WOD-E2E, HUGSIM, PhysicalAI-AV
 - Current NAVSIM-v1 leaders (single-pass, non-BoN): **CLEAR 93.7** > DriveSuprim 93.5 > Drive-JEPA 93.3 > HybridDriveVLA 92.1 (ensemble) > DynVLA 91.7 > SimWAM 91.5
 - Current NAVSIM-v2 leader: **WAM-Diff 89.7 EPDMS**; Best-of-6 ceiling: **Curious-VLA 94.8 PDMS** (= human GT)
 - Every leaderboard claim in this wiki carries a **comparison-scope caveat** — most papers omit the actual frontier from their tables. See [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md).
 
-## Papers Ingested (55)
+## Papers Ingested (56)
 
 | Paper | Org | Key Contribution | Benchmark |
 |-------|-----|-----------------|-----------|
@@ -75,6 +75,7 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [DeepSight](wiki/sources/deepsight.md) | — (ICML) | Parallel 5-frame DINOv3 latent prediction in BEV via World Queries + adaptive CoT; +3.57% latency vs. FSDrive's +60.71% | 86.23 DS / 71.36 SR Bench2Drive (Think2Drive) |
 | [DriveWAM](wiki/sources/drivewam.md) | CUHK-Shenzhen + Didi Chuxing | Wan2.2-TI2V-5B as policy core; chunked AR video→action inverse dynamics; frozen VLM chunk guidance + selective KV memory (12× cheaper at 300s) | 90.1 PDMS NAVSIM-v1; 0.83 ADE@4s PhysicalAI-AV |
 | [SimWAM](wiki/sources/simwam.md) | HUST + Dongfeng | Isolated attention mask makes future-video prediction training-time-only; Flow-GRPO SDE + LoRA RL; swappable video prior (1.3B ≈ 5B) | **91.5 PDMS NAVSIM-v1** (highest WAM) at 518ms; 0.04% zero-shot nuScenes collision |
+| [SGDrive](wiki/sources/sgdrive.md) | Li Auto + Fudan + Tongji + Surrey | Scene-agent-goal ⟨world⟩ queries (occupancy + safety-critical boxes + 4s goal, at t and t+n) + block-wise anti-leakage mask + DiT planner | 87.4 PDMS SFT / 91.1 RFT NAVSIM-v1; 86.2 EPDMS NAVSIM-v2 |
 | [PaIR-Drive](wiki/sources/pair-drive.md) | — | Parallel IL and GRPO residual-refinement branches; intention-conditioned trajectory tree + RWM selection; reusable across base planners | 91.2 PDMS / 87.9 EPDMS single-plan; 94.0 / 89.6 BoN-6 |
 | [DIAL](wiki/sources/dial.md) | — | Eight-intent CFG expands continuous-flow proposal support; multi-intent GRPO preserves preference contrast | WOD-E2E held RFS 7.696→8.211; BoN-128 ceiling 9.14 |
 | [PlannerRFT](wiki/sources/plannerrft.md) | — | Diffusion-planner RFT with PPO-learned lateral/longitudinal exploration, GRPO survival reward, and nuMax acceleration | 72.21 Test14-hard / 85.80 Test14-random reactive nuPlan |
@@ -132,7 +133,7 @@ Questions the wiki has surfaced but not resolved, in rough order of how much the
 
 ## Known Gaps
 
-Methods cited frequently across ingested papers but **not yet ingested** (mention counts across the wiki): Hydra-MDP (59), SimLingo (23), WorldRFT (19), iPad (18), GoalFlow (13), Doe-1 (13), Vista (12), DriveLaW (8), World4Drive (8), VaVAM (7), SGDrive (6), ColaVLA (6). SGDrive (91.1 PDMS) and DriveLaW (89.1 PDMS, imagine-then-act WAM) are the highest-value next ingests.
+Methods cited frequently across ingested papers but **not yet ingested** (mention counts as of the last lint): Hydra-MDP (59), SimLingo (23), WorldRFT (19), iPad (18), GoalFlow (13), Doe-1 (13), Vista (12), DriveLaW (8), World4Drive (8), VaVAM (7), ColaVLA (6), SeerDrive (3), UniWorldVLA (3). **DriveLaW** (89.1 PDMS, imagine-then-act WAM) is now the highest-value next ingest — it is the method SimWAM beats by the widest margin, so it would sharpen open thread #1.
 
 ## Workflow
 

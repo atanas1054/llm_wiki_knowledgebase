@@ -1,8 +1,8 @@
 ---
 title: World Models for Autonomous Driving
 type: concept
-sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md]
-related: [sources/simwam.md, sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md]
+sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
+related: [sources/simwam.md, sources/sgdrive.md, sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md]
 created: 2026-04-05
 updated: 2026-08-17
 confidence: high
@@ -77,6 +77,8 @@ Predicts 3D occupancy grids rather than video frames.
 **Example: OccWorld**
 - Codebook-based discrete occupancy prediction
 - Less computationally expensive than video generation; loses appearance detail
+
+**Modern instance**: [[sources/sgdrive.md]] (Pattern 20) revives occupancy forecasting inside a VLM, but predicts *geometry only* — deliberately dropping semantic class distributions to "remove redundant semantic dependencies" — and supervises it through a VAE decoder over the VLM's own query hidden states rather than a separate occupancy codebook.
 
 ### 5. Visual CoT as Planning Intermediate (FSDrive)
 
@@ -494,6 +496,28 @@ This places SimWAM at the intersection of two existing patterns: it shares its *
 
 **Temporal coverage beats frame density** (Table 8): shortening the supervision horizon 4 s → 2 s costs 0.4 PDMS, while halving the frame rate at fixed 4 s costs 0.1. What the representation needs is a long enough view of how the scene evolves, not a finely sampled one.
 
+### 20. Structured Symbolic State Forecasting (SGDrive)
+
+**SGDrive** ([[sources/sgdrive.md]]) forecasts the future without generating anything perceptual. Where Patterns 11/18/19 transfer appearance dynamics from a pretrained video model and Patterns 8/14/17 regress latent or semantic features, SGDrive predicts **structured symbolic state**: occupancy voxels, 3D agent boxes, and a goal pose — each at both the current time $t$ and a future time $t{+}n$.
+
+The mechanism is supervised query tokens rather than a generator. A set of learnable ⟨world⟩ queries is appended to the VLM's token stream and decoded by three heads into a **scene → agent → goal** hierarchy meant to mirror human driving cognition: perceive the layout, attend to the agents that matter, then form a short-term objective. The queries' hidden states are then fed directly to a DiT planner, so nothing is explicitly decoded at inference.
+
+| World-model target | Methods | Needs annotation? | Decoded at inference? |
+|---|---|---|---|
+| Pixels / video latents | DriveVA, DriveWAM, SimWAM, Epona, FSDrive, PWM | No (raw video) | Varies by method |
+| Semantic features | FLARE (DINOv2), DeepSight (DINOv3 in BEV) | No (frozen extractor) | No |
+| Latent world status | Latent-WAM, Drive-JEPA, OneVL | No | No |
+| Dynamics tokens | DynVLA | No | Yes (as CoT) |
+| **Structured symbolic state** | **SGDrive (occupancy + boxes + goal)** | **Yes (occupancy labels / LiDAR, 3D boxes)** | **No (hidden states condition the DiT)** |
+
+**Two properties make this pattern distinct.** It is the only world model in the wiki whose targets are *human-interpretable by construction* — Figure 5 of the paper shows predicted occupancy, boxes, and goal directly against ground truth, which no pixel or latent world model can offer. And it is the only one requiring **3D annotation at training time**; every other pattern here is either self-supervised on raw video or distills a frozen feature extractor. That is a real cost when comparing against "camera-only" methods.
+
+**Where the gain actually comes from** (Table 3, Stage-1 text-trajectory setting, isolating the representation from the planner): base 82.2 → current-state hierarchy 84.7 → adding future forecasting 85.5. **Structured perception of the present is worth +2.5 PDMS; forecasting the future adds +0.8.** This is a useful corrective to the paper's world-model framing — most of the benefit is knowing what is there now, not what happens next. It also echoes DeepSight's finding from the opposite direction, where the horizon mattered a great deal for *latent* targets.
+
+**The hierarchy's components do distinguishable jobs** (Table 4, with the diffusion planner): agents mainly lift NC/DAC, the goal query mainly lifts Ego Progress (80.4 → 81.2, the single largest jump), and future forecasting mainly lifts NC/TTC. That functional separation is the strongest evidence that the scene-agent-goal decomposition is more than a multi-task loss.
+
+**Anti-leakage via masking**, not parameter separation. A block-wise mask forbids attention between the scene/agent/goal blocks while allowing temporal attention within a block and free cross-attention to visual/text tokens. This is a third answer to the representational-interference problem that [[concepts/mixture-of-experts.md]] tracks: UniDriveVLA decouples expert *parameters*, OneDrive isolates heterogeneity in task FFNs, and SGDrive simply masks *attention* between query blocks. It is by far the cheapest of the three — and also the weakest measured effect, worth only +0.3 PDMS, entirely in EP.
+
 ## Does Test-Time Future Imagination Help? {#test-time-imagination}
 
 This is now the central open dispute among world-model planners in the wiki, and SimWAM supplies the first controlled evidence.
@@ -563,6 +587,7 @@ Note: FID/FVD measure distributional realism, not planning-relevant accuracy. A 
 | **DeepSight** | **Parallel 5-frame DINOv3 latent prediction in BEV (training target)** | **✓ (Qwen2.5-VL-3B + adaptive CoT + tokenized trajectory)** |
 | **DriveWAM** | **✓ (Wan2.2-TI2V-5B is the policy core; chunked AR video generation at inference)** | **Advisory only (frozen Qwen3-VL-8B emits chunk-level text guidance; never decodes actions)** |
 | **SimWAM** | **✓ at training (Wan2.2-5B co-trained); ✗ at inference (isolated mask drops the branch)** | **✗ (no VLM; lightweight action DiT only)** |
+| **SGDrive** | **Structured symbolic forecast (occupancy + agent boxes at t and t+n); no generation** | **✓ (InternVL3-2B hosts the ⟨world⟩ queries and does VQA)** |
 
 ## Generation-Quality Tables (last refreshed April 2026)
 

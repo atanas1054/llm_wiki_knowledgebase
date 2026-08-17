@@ -1,10 +1,10 @@
 ---
 title: Perception-Enhanced Planning in VLA Models
 type: concept
-sources: [raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md]
-related: [sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md]
+sources: [raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
+related: [sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md]
 created: 2026-04-05
-updated: 2026-05-01
+updated: 2026-08-17
 confidence: high
 ---
 
@@ -136,6 +136,18 @@ This is a useful middle ground:
 | **Latent-WAM** | **WorldMirror feature distillation into DINOv2 patches** | **Teacher removed at inference** |
 
 The ablation is sharp: no geometric feature gives 88.3 EPDMS, direct feature concatenation gives 88.0, and distillation gives 89.3. The lesson is that spatial foundation features help only when aligned into the trainable planning representation, not when appended as frozen key-value inputs.
+
+## Ego-Relevance Filtering: SGDrive
+
+[[sources/sgdrive.md]] adds a selection criterion the other entries here do not have. Rather than detecting every visible object, it restricts detection targets to **safety-critical agents** — vehicles, pedestrians, and cyclists chosen by proximity to the ego trajectory and visibility in the front-camera frustum. The stated rationale is capacity allocation: forcing a finite set of queries onto the agents that can actually influence the ego decision, "rather than exhaustively perceiving all objects in the scene."
+
+This is a different lever from the sparsity in [[sources/unidrivevla.md]] and [[sources/percept-wam.md]]. Those reduce *representational* cost (fewer queries, sparser tokens) while still aiming at the full scene; SGDrive reduces the *task* itself, changing what counts as a positive detection. The supervision is otherwise conventional — DETR bipartite matching with $\lambda_{\text{cls}}=10$ and $L_1$ regression — applied at both the current time and a future step.
+
+Two further distinctions. Agents are predicted at $t$ **and** $t{+}n$, so the detection head doubles as a motion-forecasting head. And nothing is decoded at inference: the agent subquery's hidden states pass straight to the DiT planner, so the detection head exists purely to shape the representation.
+
+The ablation isolates its contribution cleanly. Adding the agent subquery on top of scene geometry moves PDMS 86.0 → 86.3, with the gain concentrated in NC and DAC — exactly the collision-and-compliance metrics an ego-relevance filter should affect. That is a small absolute number, but the functional signature is the right one, and it comes on top of an already-strong geometric representation.
+
+**Cost**: 3D box annotations at training time. Along with occupancy labels for the scene head, this makes SGDrive markedly more annotation-hungry than the perception-free world models ([[sources/latent-wam.md]], Drive-JEPA) tracked on this page.
 
 ## Comparison: Perception Integration Approaches in AD VLMs
 

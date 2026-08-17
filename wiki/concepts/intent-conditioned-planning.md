@@ -1,10 +1,10 @@
 ---
 title: Intent-Conditioned Trajectory Planning
 type: concept
-sources: [raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
-related: [sources/dial.md, sources/pair-drive.md, concepts/rl-for-ad.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/parallel-il-rl.md, concepts/nuscenes-waymo-evals.md]
+sources: [raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
+related: [sources/dial.md, sources/pair-drive.md, sources/sgdrive.md, concepts/rl-for-ad.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/parallel-il-rl.md, concepts/nuscenes-waymo-evals.md, concepts/perception-for-planning.md]
 created: 2026-06-23
-updated: 2026-06-23
+updated: 2026-08-17
 confidence: high
 ---
 
@@ -24,8 +24,21 @@ Intent conditioning supplies an explicit axis along which proposals can differ. 
 | --- | --- | --- | --- |
 | [[sources/pair-drive.md]] | Learned intention tokens in a recurrent residual tree | Structure GRPO candidates around a human reference | Expand alternatives around an IL trajectory; RWM selects |
 | [[sources/dial.md]] | Eight rule-derived labels with classifier-free guidance | Expand SFT support and balance every GRPO group across intents | Intent classifier selects one mode; conditioned flow generates |
+| [[sources/sgdrive.md]] | Continuous goal pose ~4 s ahead, predicted by an MLP head on a dedicated ⟨world⟩ subquery | Auxiliary $L_1$ supervision that shapes the VLM representation | Goal subquery hidden state conditions the DiT; never decoded |
 
 PaIR-Drive treats intent as tree-branch structure in a separate RL refiner. DIAL treats intent as a condition inside one continuous generative policy and explicitly preserves all modes during preference fine-tuning.
+
+## Continuous Goal as Intent: SGDrive
+
+SGDrive is the odd one out here, and worth keeping in view because it shows the intent axis is not inherently discrete. Its "intent" is a **single continuous ego pose roughly 4 seconds into the future**, supervised by an $L_1$ loss and decoded from its own subquery. The paper's framing is that this "disentangles high-level decision-making from low-level trajectory planning" — the goal says *where* the maneuver ends, the diffusion planner works out *how* to get there.
+
+Three consequences follow from continuity:
+
+- **No ontology problem.** The design questions this page raises for DIAL — class frequency, coverage, boundary noise, label derivation — simply do not arise. A pose is derived unambiguously from the demonstration.
+- **No multimodality either.** A regressed goal is a point estimate, so it cannot expand proposal support the way intent-CFG does. Where DIAL uses intent to *create* distinct maneuver basins, SGDrive uses the goal to *commit* to one. It offers nothing for Best-of-N or for GRPO group diversity.
+- **The measured effect is efficiency, not safety.** In SGDrive's Table 4 the goal subquery moves PDMS 86.3 → 87.0, and the gain is concentrated in Ego Progress (80.4 → 81.2) — the largest single jump in that ablation. The paper's motivation matches: without goal prediction the ego "may exhibit incomplete or suboptimal maneuvers, such as covering only part of the planned path."
+
+This is a useful contrast for the ontology discussion below. A continuous goal buys progress and sidesteps every labeling difficulty, at the cost of the mode-spanning property that makes discrete intent valuable for preference optimization. The two uses are complementary rather than competing, and no ingested paper has combined them.
 
 ## Intent-CFG
 
