@@ -2,7 +2,7 @@
 title: "DriveWAM: Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/physicalai-av-benchmark.md, concepts/dual-system-vla.md, concepts/nuscenes-waymo-evals.md, sources/driveva.md, sources/epona.md, sources/drivevla-w0.md, sources/drivedreamer-policy.md, sources/alpamayo-r1.md, sources/futuresightdrive.md, sources/automot.md, sources/spanvla.md]
+related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/physicalai-av-benchmark.md, concepts/dual-system-vla.md, concepts/nuscenes-waymo-evals.md, sources/simwam.md, sources/driveva.md, sources/epona.md, sources/drivevla-w0.md, sources/drivedreamer-policy.md, sources/alpamayo-r1.md, sources/futuresightdrive.md, sources/automot.md, sources/spanvla.md]
 created: 2026-08-17
 updated: 2026-08-17
 confidence: high
@@ -227,6 +227,18 @@ PhysicalAI-AV: ~1,700 h, 306,152 clips of 20 s (153,625 train / 90,928 val / 61,
 10. **Extraction gaps.** Figure 3 (KV retention visualization) and Figure 5 (data-scaling plot) images are absent from the raw clipping; the References section is empty (footnotes only); the body text cites "Table 5" for both the backbone ablation (labeled Table 4) and the KV ablation — an off-by-one labeling quirk in the source.
 
 ---
+
+## Superseded by SimWAM on NAVSIM (added 2026-08-17)
+
+[[sources/simwam.md]] (HUST + Dongfeng) reports **91.5 PDMS versus DriveWAM's 90.1** under the same single-front-camera setting, and reproduces DriveWAM's Table 1 row exactly (98.3 / 98.1 / 84.3 / 95.2 / 100.0 → 90.1), so the comparison is directly grounded rather than inferred.
+
+The disagreement is architectural and matters more than the 1.4-point gap. DriveWAM is an imagine-then-act policy: it generates the future latent, then reads the action out of it by inverse dynamics. SimWAM co-trains the same class of video backbone but inserts an **isolated attention mask** so the action tokens never see the future-frame tokens, and drops the future branch entirely at inference. Its Table 3 ablation — bidirectional 90.2, action→video 90.1, isolated 90.3 — finds that giving the action expert access to generated future tokens yields no measurable benefit within its architecture, which is a direct challenge to DriveWAM's central design choice. See [Does Test-Time Future Imagination Help?](../concepts/world-model-for-ad.md#test-time-imagination).
+
+Latency compounds the point: SimWAM plans in 518 ms (297 ms at 5 sampling steps) against DriveWAM's 871–1262 ms per 4-second chunk.
+
+Two caveats keep this from being a clean refutation. SimWAM's mask ablation spans only 0.2 PDMS with no seed variance, so it supports "future conditioning is unnecessary," not "harmful." And the two systems differ in far more than the mask — SimWAM adds a Flow-GRPO RL stage (its imitation-only score is 90.3, statistically level with DriveWAM's 90.1), uses a different resolution and action expert, and has no VLM guidance or long-horizon memory. DriveWAM's selective KV memory and scene-evolving guidance address long-horizon rollout, which SimWAM does not attempt.
+
+**Unverified cross-reference**: SimWAM's Table 6 attributes zero-shot nuScenes results to DriveWAM (0.28 / 0.81 / 1.80 → 0.96 avg L2; 0.06 avg collision). The v1 clipping ingested here reports **no nuScenes evaluation**, only NAVSIM and PhysicalAI-AV. Either SimWAM ran it independently or cited a later DriveWAM revision.
 
 ## Key Cross-References
 

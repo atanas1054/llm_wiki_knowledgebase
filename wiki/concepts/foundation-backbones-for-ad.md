@@ -1,8 +1,8 @@
 ---
 title: Foundation Backbones for AD
 type: concept
-sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
-related: [concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, sources/autovla.md, sources/nord.md, sources/elf-vla.md, sources/spanvla.md, sources/driveva.md, sources/alpamayo-r1.md, sources/explorevla.md, sources/onedrive.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/clear.md, sources/understanding-r1-zero-like-training.md, sources/drivewam.md]
+sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md]
+related: [sources/simwam.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, sources/autovla.md, sources/nord.md, sources/elf-vla.md, sources/spanvla.md, sources/driveva.md, sources/alpamayo-r1.md, sources/explorevla.md, sources/onedrive.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/clear.md, sources/understanding-r1-zero-like-training.md, sources/drivewam.md]
 created: 2026-05-01
 updated: 2026-08-17
 confidence: high
@@ -28,6 +28,7 @@ Driving VLA papers increasingly differ less by whether they use a foundation mod
 | Shared attention backbone | OneDrive | Reuses VLM causal attention for image, perception, planning, and text tokens while replacing task FFNs. |
 | Latent reasoning backbone | OneVL | Fine-tunes Qwen3-VL-4B so visual/language latent tokens can be decoded into future frames and text explanations during training. |
 | Video backbone **as** the policy core | Wan2.2-TI2V-5B in DriveVA and DriveWAM | The video DiT is fine-tuned into the action path itself, not attached as a generation branch. |
+| Swappable video prior | LTX-Video / Wan2.1-1.3B / Wan2.2-5B / Cosmos-Predict2.5 in SimWAM | Co-trained through shared attention only, so the backbone can be replaced without touching the action expert. |
 | Frozen advisory VLM | Qwen3-VL-8B in DriveWAM | Emits chunk-level text guidance consumed by cross-attention; never decodes actions and is never fine-tuned. |
 
 ## Takeaways
@@ -41,6 +42,7 @@ Driving VLA papers increasingly differ less by whether they use a foundation mod
 - CLEAR shows a compact language model can be useful even when it does not emit actions: hidden states can route generation budget and score candidates.
 - Understanding R1-Zero-like Training shows that base-model pretraining and templates can dominate the apparent benefit of RL; this caveat should carry over to Qwen-family VLA backbones.
 - DriveWAM shows that a pretrained video backbone's prior is only retained if the video objective is retained: initializing from Wan2.2-TI2V-5B and then dropping video supervision is worse than training from scratch with it. Backbone choice and training objective cannot be selected independently.
+- SimWAM shows the converse for capacity: with the objective held fixed, video-prior scale barely matters (1.3B ≈ 5B), while prior quality and driving-domain pretraining do. Read together, the two papers say the training signal dominates the backbone.
 
 ## Qwen Prior Caveat
 
@@ -71,6 +73,21 @@ The backbone ablation is unusually strong. DINOv2-Base full fine-tuning reaches 
 Drive-JEPA ([[sources/drive-jepa.md]]) adds a self-supervised video-encoder role that is not a language model and not a pixel-generating video backbone. It initializes from V-JEPA 2, then pretrains a ViT-L encoder on 208 hours of curated front-view driving videos with a JEPA latent-prediction objective.
 
 The vision-pretraining ablation is the main evidence: ImageNet ResNet34 reaches 76.0 PDMS, DINOv2 ViT/L 76.1, SigLIP ViT/L 83.4, V-JEPA 2 ViT/L 86.1, and Drive-JEPA's driving-video-pretrained ViT/L 89.0. MAE and DepthAnything did not converge in the paper's setup. This suggests that temporal latent prediction transfers better to planning than static image-level pretraining when the downstream decoder is intentionally simple.
+
+## SimWAM: The Only Controlled Video-Prior Swap
+
+SimWAM ([[sources/simwam.md]]) is the wiki's only paper that holds the planner fixed and swaps the video backbone, because its two experts share no parameters and communicate only through a shared attention stream. Four priors under an identical action expert and training recipe (NAVSIM-v1 PDMS):
+
+| Video prior | Params | PDMS | Note |
+| --- | --- | ---: | --- |
+| LTX-Video | lightweight | 88.7 | Weak prior costs 1.6 PDMS |
+| Wan2.1-1.3B | 1.3B | 90.2 | Essentially matches the 5B model |
+| Wan2.2-5B | 5B | 90.3 | The default |
+| Cosmos-Predict2.5 | – | **90.4** | Pretrained on driving video; best EP and TTC |
+
+Two conclusions the field should absorb. **Prior scale is nearly irrelevant in this regime**: 1.3B versus 5B is a 0.1 PDMS difference, so papers reporting gains from a larger video backbone should check whether the gain is really from scale. **Domain relevance beats capacity**: Cosmos-Predict2.5, pretrained on driving video, edges out a substantially larger general-purpose model. Prior *quality* still matters — LTX-Video's 88.7 shows the floor is real.
+
+SimWAM's action expert scales just as shallowly: 0.21B → 1.02B moves PDMS 89.9 → 90.3. Both capacity axes are flat, which makes the cheap configuration (small action expert on Wan2.1-1.3B) attractive and suggests the bottleneck lies in the training signal rather than either model's size.
 
 ## DriveWAM: Video Backbone as Policy, VLM as Advisor
 

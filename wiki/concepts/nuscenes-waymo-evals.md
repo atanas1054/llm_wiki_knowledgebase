@@ -1,8 +1,8 @@
 ---
 title: nuScenes and Waymo Evaluations
 type: concept
-sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
-related: [concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/intent-conditioned-planning.md, concepts/best-of-n.md, concepts/physicalai-av-benchmark.md, sources/autovla.md, sources/hermes.md, sources/uniugp.md, sources/reasoning-vla.md, sources/driveva.md, sources/explorevla.md, sources/onedrive.md, sources/policy-world-model.md, sources/dial.md, sources/drivewam.md]
+sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md]
+related: [concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/intent-conditioned-planning.md, concepts/best-of-n.md, concepts/physicalai-av-benchmark.md, sources/autovla.md, sources/hermes.md, sources/uniugp.md, sources/reasoning-vla.md, sources/driveva.md, sources/explorevla.md, sources/onedrive.md, sources/policy-world-model.md, sources/dial.md, sources/drivewam.md, sources/simwam.md]
 created: 2026-05-01
 updated: 2026-08-17
 confidence: high
@@ -39,7 +39,7 @@ Protocol caveats:
 ## Takeaways
 
 - Treat nuScenes/Waymo as complementary evidence for generalization, not as direct leaderboard substitutes for NAVSIM or Bench2Drive.
-- Zero-shot transfer claims should report absolute values, not only percent improvement over one baseline.
+- Zero-shot transfer claims should report absolute values, not only percent improvement over one baseline. (DriveVA's paper did not; SimWAM's Table 6 supplied them later — 0.84 L2 / 0.06 collision.)
 - World-model papers need both generation metrics and downstream planning metrics; strong FVD alone is insufficient.
 - The same caveats extend to the newer, much larger [[concepts/physicalai-av-benchmark.md]], which also reports ADE/FDE only. Scale improves coverage of rare events but does not convert an open-loop displacement metric into evidence about closed-loop behavior — and where a paper curates its own test subset (as [[sources/drivewam.md]] does), the comparison is not yet leaderboard-grade.
 
@@ -54,6 +54,23 @@ Protocol caveats:
 | **OneDrive** | **0.28** | **0.18** | Single causal decoder; detection/lane/planning query sequence |
 
 This is meaningful evidence for the architecture, but it remains open-loop: the result should not be treated as equivalent to NAVSIM PDMS or Bench2Drive driving score.
+
+## Zero-Shot NAVSIM → nuScenes: The WAM Cluster
+
+[[sources/simwam.md]]'s Table 6 is the wiki's first side-by-side of NAVSIM-trained world-action models evaluated on nuScenes **without fine-tuning or auxiliary supervision**, and it resolves a gap this page previously flagged: DriveVA's paper reported only percentage improvements over PWM, never absolutes.
+
+| Method | Finetuned | L2 Avg ↓ | Collision Avg ↓ |
+| --- | --- | ---: | ---: |
+| UniAD (reference, finetuned) | ✓ | 1.03 | 0.31 |
+| GenAD (reference, finetuned) | ✓ | 0.91 | 0.43 |
+| Epona (reference, finetuned) | ✓ | 1.25 | 0.36 |
+| DriveVA | ✗ | **0.84** | 0.06 |
+| DriveWAM | ✗ | 0.96 | 0.06 |
+| SimWAM | ✗ | 0.96 | **0.04** |
+
+Two things stand out. All three zero-shot WAMs beat every finetuned baseline on collision rate by roughly an order of magnitude, which is the strongest evidence in the wiki that video-prior training transfers as a *safety* prior rather than a trajectory-matching one. And the L2/collision split is stark: SimWAM ties DriveWAM on L2 (0.96) while halving collisions (0.04 versus 0.06), and DriveVA leads on L2 (0.84) without leading on collisions. This is the clearest illustration on this page of why L2 and collision rate should not be collapsed into one ranking — L2 rewards agreement with the logged nuScenes expert, which a NAVSIM-trained policy has no reason to reproduce.
+
+**Caveat**: the DriveWAM row is not corroborated by [[sources/drivewam.md]], whose ingested v1 clipping contains no nuScenes evaluation at all. Either SimWAM reproduced it or cited a later revision.
 
 ## Policy World Model nuScenes Result
 

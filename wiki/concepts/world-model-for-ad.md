@@ -1,8 +1,8 @@
 ---
 title: World Models for Autonomous Driving
 type: concept
-sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
-related: [sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md]
+sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md]
+related: [sources/simwam.md, sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md]
 created: 2026-04-05
 updated: 2026-08-17
 confidence: high
@@ -273,6 +273,7 @@ A **single DiT** denoises both halves simultaneously at the same flow time $s$. 
 | FLARE | Auxiliary semantic prediction only, no video generation at inference |
 | **DriveVA** | **Single DiT over joint [video_latents ‖ action_tokens] target** |
 | **DriveWAM** | **Shared DiT, sequential: generated future latent conditions the action flow (inverse dynamics)** |
+| **SimWAM** | **Shared attention only, with an isolated mask: no coupling at inference by construction** |
 
 **Video continuation module**: history observation buffer (m frames) encoded as condition latents; after each action chunk is executed, the window slides and a new short clip is predicted. Inference requires only **2 flow-matching steps** for near-optimal NAVSIM performance.
 
@@ -471,6 +472,52 @@ Initializing from the pretrained video backbone and then *removing* the video fl
 
 **Data scaling**: 4k → 20k → 100k clips at fixed 50k iterations improves monotonically with no saturation ([[concepts/physicalai-av-benchmark.md]]), supporting the paper's claim that world-action modeling is a scalable policy foundation. This is the wiki's first real-world (non-proprietary) data-scaling curve for a world-model policy; DriveVLA-W0's is on an in-house 70M-frame set.
 
+### 19. Video Backbone as Training-Time-Only Prior (SimWAM)
+
+**SimWAM** ([[sources/simwam.md]]) completes a natural progression. DriveVA and DriveWAM both fine-tune a Wan-family video DiT into a policy and both generate the future at inference. SimWAM keeps the video generative backbone as the representation source but **deletes the future-frame branch at inference entirely**, using an isolated attention mask so the action tokens never depend on future-frame tokens in the first place.
+
+The mask is the whole mechanism. The shared attention stream holds the current-observation latents $z(o_t)$, the future-frame latents $z_{t+1:t+N}$, and the action tokens. Both future-frame and action tokens attend to $z(o_t)$; the two are mutually invisible. Future-video prediction therefore shapes $z(o_t)$ during training and is discarded afterwards, collapsing the imagine-then-act integral to a direct policy $p_\theta(a\mid z(o_t), s_t, l)$.
+
+This places SimWAM at the intersection of two existing patterns: it shares its *deployment* profile with Pattern 7 (DriveVLA-W0) and Pattern 8 (FLARE) — world model as training-time signal only — but its *representation source* is a pretrained video generative model, as in Patterns 11 and 18.
+
+| Method | World-model backbone | Future generated at inference? | NAVSIM-v1 |
+|---|---|---|---|
+| DriveVA (P11) | Wan2.2-TI2V-5B | Yes (joint denoising target) | 90.9 |
+| DriveWAM (P18) | Wan2.2-TI2V-5B | Yes (action is inverse dynamics from it) | 90.1 |
+| **SimWAM (P19)** | **Wan2.2-5B (swappable)** | **No (isolated mask; branch dropped)** | **91.5** |
+| DriveVLA-W0 (P7) | Emu3 / Qwen2.5-VL | No | 90.2★ |
+| FLARE (P8) | DINOv2 features | No | 91.4 |
+
+**Video co-training is where the gain lives** (Table 2): an action-only DiT reaches 86.6 PDMS; adding the video expert lifts it to 90.3 (+3.7, improving every sub-metric); RL adds 1.2 more. That +3.7 is the same phenomenon DriveVA measured as +19.5 PDMS and DriveWAM measured as a catastrophic 1.23-vs-1.10 ADE reversal — three independent confirmations that future-video supervision, not future-video *generation*, carries the benefit.
+
+**Two scaling axes are both nearly flat.** Swapping the video backbone (Table 4) gives LTX-Video 88.7, Wan2.1-1.3B 90.2, Wan2.2-5B 90.3, Cosmos-Predict2.5 90.4 — prior *quality* matters (the lightweight LTX-Video loses 1.6) but prior *scale* barely does, and a driving-pretrained backbone (Cosmos) edges out a 4× larger general one. Scaling the action expert 0.21B → 1.02B (Table 5) buys only 0.4 PDMS. This is the wiki's only controlled comparison of interchangeable video priors under a fixed planner, and it argues the field's video backbones are already past the point of diminishing returns for this task.
+
+**Temporal coverage beats frame density** (Table 8): shortening the supervision horizon 4 s → 2 s costs 0.4 PDMS, while halving the frame rate at fixed 4 s costs 0.1. What the representation needs is a long enough view of how the scene evolves, not a finely sampled one.
+
+## Does Test-Time Future Imagination Help? {#test-time-imagination}
+
+This is now the central open dispute among world-model planners in the wiki, and SimWAM supplies the first controlled evidence.
+
+**The imagine-then-act camp** conditions planning on generated future states at inference: FSDrive (mandatory visual CoT), PWM (future frame tokens rolled out before action), DriveVA (joint video-action denoising), DriveWAM (action as inverse dynamics from the generated latent), DriveLaW. The premise is that grounding the action in an explicit imagined future improves it.
+
+**The training-time-only camp** uses future prediction purely to shape representations: DriveVLA-W0, FLARE, Latent-WAM, OneVL, Drive-JEPA, and now SimWAM.
+
+Until SimWAM, no paper varied *only* the inference-time dependency. SimWAM's Table 3 does exactly that — same backbone, same co-training, same data, three attention masks:
+
+| Mask | Action sees future tokens? | NC | TTC | PDMS |
+|---|---|---:|---:|---:|
+| Bidirectional | Yes | 98.4 | 95.1 | 90.2 |
+| Action → video | Yes | 98.5 | 95.5 | 90.1 |
+| **Isolated** | **No** | **98.7** | **95.9** | **90.3** |
+
+Access to future-frame tokens produces **no measurable benefit**, while forcing future-frame instantiation at inference. The isolated variant also has the best NC and TTC.
+
+**How much weight this deserves.** The spread is 0.2 PDMS with no reported seed variance, so the supportable conclusion is that test-time future conditioning is *unnecessary here*, not that it is harmful. Three further caveats: the comparison is within SimWAM's own architecture (a shared-attention two-expert design where the action expert already reads a video-model-shaped representation), it is single-benchmark, and it uses a 4 s horizon at 2 Hz. A method whose future generation is longer-horizon, geometry-grounded (DriveDreamer-Policy's depth stage), or semantically guided (DriveWAM's per-chunk VLM intent) might still extract value the mask ablation cannot see.
+
+**What survives across all three same-backbone papers**: every one finds video *supervision* essential, and none demonstrates that video *generation at inference* is. DriveVA's +19.5 PDMS and DriveWAM's backbone ablation both isolate the training objective, not the inference path. The efficiency implication is immediate — SimWAM reaches 91.5 PDMS at 518 ms while DriveWAM's imagine-then-act loop costs 871–1262 ms per 4 s chunk.
+
+**What is still unresolved**: whether imagined futures matter for capabilities NAVSIM does not measure — long-horizon rollout, counterfactual evaluation of candidate maneuvers, reactive interaction, or the instruction-conditioned generation Vega targets. NAVSIM's 4 s non-reactive horizon may simply be too short for anticipation to pay off.
+
 ### 1. Coupling world model and trajectory planner
 The world model must receive the planned trajectory as a condition, but the trajectory is what we're trying to optimize. Solutions:
 - **Teacher forcing**: use ground-truth trajectories 50% of training time (UniUGP)
@@ -515,6 +562,7 @@ Note: FID/FVD measure distributional realism, not planning-relevant accuracy. A 
 | **Policy World Model** | **Action-free future video forecasting used as planning rationale** | **Show-o-style unified AR policy; no separate VLM reasoning focus** |
 | **DeepSight** | **Parallel 5-frame DINOv3 latent prediction in BEV (training target)** | **✓ (Qwen2.5-VL-3B + adaptive CoT + tokenized trajectory)** |
 | **DriveWAM** | **✓ (Wan2.2-TI2V-5B is the policy core; chunked AR video generation at inference)** | **Advisory only (frozen Qwen3-VL-8B emits chunk-level text guidance; never decodes actions)** |
+| **SimWAM** | **✓ at training (Wan2.2-5B co-trained); ✗ at inference (isolated mask drops the branch)** | **✗ (no VLM; lightweight action DiT only)** |
 
 ## State of the Art (as of April 2026)
 
@@ -560,8 +608,9 @@ DDP substantially improves video coherence (−38% FVD) vs. PWM. The improvement
 - **DDP depth grounding**: DDP uses Depth Anything 3 pseudo-labels for both training and evaluation — does real LiDAR depth provide further improvement? Is geometric grounding from pseudo-labels sufficient for embodied planning?
 - **Comfort under extended metrics**: both DDP (EC=79.4) and WAM-Flow (EC=73.9) score poorly on NAVSIM-v2 extended comfort. Does world model training inherently produce more aggressive trajectories? (FLARE achieves EC=87.5 without video generation — suggests comfort is driven by RL reward design, not world model type)
 - **FLARE multi-step**: does extending FFP to predict features at t+2, t+3 provide further planning gains over single next-frame prediction?
-- **Video backbone scale**: DriveVA uses Wan2.2-TI2V-5B (5B params) and achieves 90.9 PDMS without RL. Would a smaller video backbone (e.g., 1.3B as in DDP) achieve comparable generalization? Is the zero-shot transfer a function of backbone size, joint coupling, or both?
-- **Joint vs. sequential video-action coupling**: DriveVA (joint denoising, 90.9 PDMS) and DriveWAM (inverse dynamics from the generated latent, 90.1 PDMS) use the *same* Wan2.2-TI2V-5B backbone but neither cites the other, and their other components differ (VLM guidance, chunk length, memory, training data). The 0.8 PDMS gap is not attributable to the coupling mechanism. A controlled comparison would settle whether actions should be denoised *with* the future or *from* it.
+- **[Largely answered by SimWAM] Video backbone scale**: DriveVA uses Wan2.2-TI2V-5B (5B params) and achieves 90.9 PDMS without RL. Would a smaller video backbone achieve comparable results? — SimWAM's Table 4 holds the planner fixed and swaps the prior: Wan2.1-1.3B reaches 90.2 versus Wan2.2-5B's 90.3, so **scale is nearly irrelevant in this regime**, while a weak prior (LTX-Video, 88.7) does cost, and a driving-pretrained prior (Cosmos-Predict2.5, 90.4) helps most. Whether the same holds for *zero-shot transfer* — DriveVA's distinguishing claim — is untested.
+- **[Partially answered by SimWAM] Joint vs. sequential video-action coupling**: DriveVA (joint denoising, 90.9) and DriveWAM (inverse dynamics from the generated latent, 90.1) use the *same* backbone but neither cites the other, and their other components differ, so the 0.8 gap is unattributable. SimWAM adds a third option — no inference-time coupling at all — and scores highest (91.5), but likewise differs in RL stage, resolution, and action expert. SimWAM's Table 3 *is* controlled and finds bidirectional and action→video coupling give no benefit over isolation within its own architecture. A controlled comparison across the three papers is still missing.
+- **Does test-time future imagination ever pay off?** SimWAM shows it does not on NAVSIM's 4 s non-reactive horizon (see [Does Test-Time Future Imagination Help?](#test-time-imagination)). The open part is whether it matters for what NAVSIM cannot measure: long-horizon rollout, counterfactual comparison of candidate maneuvers, reactive closed-loop interaction, or instruction-conditioned generation. If the answer is no everywhere, the imagine-then-act line (FSDrive, PWM, DriveVA, DriveWAM, DriveLaW) is paying inference cost for nothing.
 - **Does a frozen advisory VLM beat a fine-tuned VLA backbone?** DriveWAM's frozen Qwen3-VL-8B only emits text guidance and never decodes actions, yet the guidance helps at every data scale. Is the advisory role sufficient, or does it leave value on the table versus VLM-centric policies (DriveVLA-W0, DynVLA) that fine-tune the VLM into the action path? No paper compares the two arrangements at matched backbone and data.
 - **Long-horizon memory validity**: DriveWAM validates selective KV memory's accuracy only on 20s clips while profiling cost at 300s. Does content-based eviction hold up over minutes of rollout, and does the training/inference mismatch (full-history attention at training, bounded pools at inference) compound?
 - **Zero-shot transfer ceiling**: DriveVA's zero-shot nuScenes/Bench2Drive gains are measured relative to PWM only. How does DriveVA compare zero-shot against VLA methods (FLARE, DriveFine) that are fine-tuned on the target domain? Does joint video-action training provide a sustainable generalization advantage at matched data scale?

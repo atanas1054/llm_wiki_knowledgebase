@@ -2,7 +2,7 @@
 title: "DriveVA: Video Action Models are Zero-Shot Drivers"
 type: source-summary
 sources: [raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md]
-related: [concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/foundation-backbones-for-ad.md, sources/drivewam.md]
+related: [concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/foundation-backbones-for-ad.md, concepts/nuscenes-waymo-evals.md, sources/drivewam.md, sources/simwam.md]
 created: 2026-04-23
 updated: 2026-08-17
 confidence: medium
@@ -164,6 +164,10 @@ Same caveat: absolute numbers missing; comparison is against PWM only.
 
 DriveVA's strongest differentiator is **zero-shot generalization**, which no other wiki world-model paper demonstrates quantitatively at this scale.
 
+**Third same-backbone entry**: [[sources/simwam.md]] co-trains a Wan2.2-5B video expert with a separate lightweight action DiT and reaches **91.5 PDMS**, above both DriveVA (90.9) and DriveWAM (90.1) — but it discards future generation at inference via an isolated attention mask, and its Table 3 finds that letting the action expert attend to future-frame tokens gives no measurable gain. That is a direct challenge to DriveVA's joint-target premise, though not a controlled one: SimWAM's 91.5 includes an RL stage (its imitation-only score is 90.3, below DriveVA's 90.9).
+
+SimWAM's Table 6 also supplies what DriveVA's own paper omitted — **absolute zero-shot nuScenes numbers for DriveVA: 0.84 avg L2 and 0.06 avg collision**, the best L2 among the three zero-shot WAMs. This retires Limitation 2 below in part: the transfer claim now has third-party absolute values, not just percentages against PWM.
+
 **Same-backbone counterpart**: [[sources/drivewam.md]] (ingested 2026-08-17) independently fine-tunes the *same* Wan2.2-TI2V-5B video DiT into a driving policy, reaching 90.1 PDMS — 0.8 below DriveVA. The two papers do not cite each other and differ in coupling (joint denoising vs. inverse dynamics from the generated latent), temporal structure (sliding window vs. 4s chunked autoregression), semantic conditioning (none vs. frozen VLM guidance), and training data, so the PDMS gap cannot be attributed to any single design choice. DriveWAM independently corroborates DriveVA's central claim from the opposite direction: keeping the pretrained backbone but *removing* video supervision (ADE@4s 1.23) is worse than training from scratch *with* it (1.10).
 
 ---
@@ -171,7 +175,7 @@ DriveVA's strongest differentiator is **zero-shot generalization**, which no oth
 ## Limitations
 
 1. **Table 1 truncated**: NAVSIM sub-scores (NC, DAC, EP, TTC, C) unavailable from source. Cannot verify which specific methods were compared against, or whether the comparison includes DriveSuprim (93.5), HybridDriveVLA (92.1), FLARE (91.4), or DiffusionDriveV2 (91.2).
-2. **Zero-shot comparison vs. PWM only**: the zero-shot nuScenes and Bench2Drive improvements are reported relative to PWM (a specific world-model planner), not against full SOTA on those benchmarks. The percentage improvements are impressive but not verifiable without absolute numbers.
+2. **Zero-shot comparison vs. PWM only**: the zero-shot nuScenes and Bench2Drive improvements are reported relative to PWM (a specific world-model planner), not against full SOTA on those benchmarks. The percentage improvements are impressive but not verifiable without absolute numbers. **Partially resolved (2026-08-17)**: [[sources/simwam.md]]'s Table 6 reports DriveVA's absolute zero-shot nuScenes figures as 0.33/0.76/1.43 L2 (0.84 avg) and 0.00/0.07/0.12 collision (0.06 avg) — best L2 among zero-shot WAMs and far below every finetuned baseline on collision. Bench2Drive zero-shot remains unverified.
 3. **No NAVSIM-v2 / EPDMS**: only v1 PDMS reported. Cannot compare with v2 leaders (WAM-Diff 89.7, DreamerAD 87.7, DriveDreamer-Policy 88.7).
 4. **5B backbone**: Wan2.2-TI2V-5B is substantially larger than most wiki methods. No latency or throughput numbers reported.
 5. **No RL**: purely SFT + flow matching fine-tuning. Most competitive wiki methods (FLARE 91.4, DriveFine 90.7, WAM-Diff 91.0) include RL stages.

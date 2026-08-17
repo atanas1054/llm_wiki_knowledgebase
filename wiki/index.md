@@ -72,6 +72,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [Policy World Model](sources/policy-world-model.md) | Action-free video world model + future-frame rationales for planning; 28-token frame tokenizer; 88.1 PDMS NAVSIM-v1; 0.41 L2 / 0.04 collision nuScenes w/ ego |
 | [DeepSight](sources/deepsight.md) | Parallel multi-frame DINOv3 latent-feature prediction in BEV (5 frames, one pass) + adaptive CoT; Qwen2.5-VL-3B; 86.23 DS / 71.36 SR Bench2Drive (Think2Drive protocol); +3.57% latency vs. FSDrive's +60.71% |
 | [DriveWAM](sources/drivewam.md) | Wan2.2-TI2V-5B as policy core; chunked AR video→action inverse dynamics; frozen Qwen3-VL-8B chunk guidance + selective KV memory (12× cheaper at 300s); 90.1 PDMS NAVSIM-v1; 0.83 ADE@4s PhysicalAI-AV; 4k→100k scaling unsaturated |
+| [SimWAM](sources/simwam.md) | Isolated attention mask makes future-video prediction training-time-only; **91.5 PDMS NAVSIM-v1** (highest WAM in wiki) at 518ms; Flow-GRPO SDE + LoRA RL on hard subset; swappable video prior (1.3B ≈ 5B); best zero-shot nuScenes collision 0.04%; code released |
 
 ---
 

@@ -1486,3 +1486,47 @@ Append-only log of all wiki operations.
 - The route command is derived from ground-truth ego yaw change over the upcoming chunk, leaking coarse directional future at training and evaluation time.
 - 5B DiT plus 8B frozen VLM with per-chunk latency near 0.87-1.26s; no RL/RFT stage; the guidance ablation compares only against a fixed global prompt.
 - Figure 3 (KV retention visualization) and Figure 5 (data-scaling plot) images are absent from the raw clipping, and the body text labels both the backbone and KV ablations "Table 5".
+
+## 2026-08-17 - Ingest: SimWAM
+
+**Source**: `raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md`
+
+**Pages created**:
+- `wiki/sources/simwam.md` - source summary covering the isolated attention mask, joint video-action flow matching, Flow-GRPO SDE reinforcement, all four figures, Tables 1-10, and limitations
+
+**Concept pages updated**:
+- `wiki/concepts/world-model-for-ad.md` - added Pattern 19 (video backbone as training-time-only prior) and a new synthesis section "Does Test-Time Future Imagination Help?" collecting the imagine-then-act vs. training-time-only evidence; updated the coupling table, the world-model/VLA capability table, and three open questions
+- `wiki/concepts/navsim-benchmark.md` - added the SimWAM row at 91.5 PDMS, a comparison-scope caveat, and reordered the single-pass frontier list
+- `wiki/concepts/foundation-backbones-for-ad.md` - added the controlled video-prior swap section, a swappable-prior backbone role, and the scale-versus-quality takeaway
+- `wiki/concepts/rl-for-ad.md` - added the SimWAM RL section (SDE vs. random noise, LoRA-only updates, hard-subset selection) and flagged the tension with DreamerAD's characterization of Flow-GRPO
+- `wiki/concepts/nuscenes-waymo-evals.md` - added the zero-shot NAVSIM-to-nuScenes WAM comparison table and noted that DriveVA's absolute numbers are now available
+
+**Source pages updated**:
+- `wiki/sources/drivewam.md` - added a "superseded by SimWAM on NAVSIM" section and flagged the unverified nuScenes row
+- `wiki/sources/driveva.md` - added SimWAM as the third same-backbone entry and partially resolved the missing-absolute-numbers limitation
+
+**Index updated**: added SimWAM.
+
+**Key facts**:
+- A pretrained Wan2.2-5B video expert and a 1.02B action DiT are co-trained under joint flow matching with lambda = 1; they share no parameters and interact only through a shared attention stream.
+- The isolated attention mask lets future-frame tokens and action tokens each attend to the current-observation latents while remaining mutually invisible, so the future branch is dropped at inference.
+- Component analysis: action-only 86.6 PDMS, plus video co-training 90.3, plus RL 91.5.
+- Mask ablation: bidirectional 90.2, action-to-video 90.1, isolated 90.3 - future-token access gives no measurable benefit.
+- Video prior swap under a fixed planner: LTX-Video 88.7, Wan2.1-1.3B 90.2, Wan2.2-5B 90.3, Cosmos-Predict2.5 90.4.
+- Action expert scaling 0.21B to 1.02B moves PDMS only 89.9 to 90.3.
+- RL replaces the flow ODE with a marginal-preserving SDE, samples G = 8, and updates only rank-32 LoRA adapters on the action expert's attention projections, training on navtrain scenes below 90 PDMS and peaking at 15k steps.
+- Sampler comparison: random noise 91.3 PDMS with best EP 88.0 but NC 97.7; SDE 91.5 with NC 98.4 and TTC 95.5.
+- Future-video target: 4s horizon matters more than frame density (2s costs 0.4 PDMS; halving frame rate at 4s costs 0.1).
+- Latency: 518 ms at 384x672 with 10 sampling steps; 297 ms at 5 steps for 90.1 PDMS; one step collapses to 68.9.
+- Zero-shot nuScenes without fine-tuning: 0.96 avg L2 and 0.04 avg collision, the lowest collision rate in its table.
+
+**Limitations**:
+- The end-to-end SOTA claim is comparison-scope limited; Table 1 omits CLEAR 93.7, DriveSuprim 93.5, Drive-JEPA 93.3, HybridDriveVLA 92.1, DynVLA 91.7, and DiffusionDriveV2 91.2.
+- The isolated-mask conclusion rests on a 0.2 PDMS spread with no seed variance, supporting "unnecessary" rather than "harmful".
+- 518 ms is efficient for a 5B-video-backbone WAM but far above DiffusionDrive, HAD, and OneDrive in absolute terms.
+- Table 6 attributes zero-shot nuScenes results to DriveWAM, but the DriveWAM v1 clipping in this wiki contains no nuScenes evaluation.
+- NAVSIM-v1 only; no NAVSIM-v2/EPDMS, no navhard, no Bench2Drive or HUGSIM.
+- RL depends on early stopping at 15k steps and a hand-set below-90 difficulty threshold, with the peak selected on the evaluation benchmark.
+- Ablation tables omit the comfort column even though it enters PDMS.
+- The video expert's actual inference cost is unquantified, and latency scaling with sampling steps suggests the shared stack is re-entered per step.
+- Six Table 1 baselines are not ingested in this wiki (SGDrive, UniWorldVLA, DriveLaW, SeerDrive, ImagiDrive, WorldRFT).
