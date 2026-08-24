@@ -2,9 +2,9 @@
 title: Wiki Index
 type: comparison
 sources: []
-related: [concepts/discrete-flow-matching.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md, concepts/discriminative-policy-optimization.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/nuplan-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/mixture-of-experts.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/pdm-lite.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md, concepts/physicalai-av-benchmark.md]
+related: [concepts/discrete-flow-matching.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md, concepts/discriminative-policy-optimization.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/nuplan-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/mixture-of-experts.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/pdm-lite.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md, concepts/physicalai-av-benchmark.md, concepts/counterfactual-prediction.md]
 created: 2026-04-05
-updated: 2026-08-17
+updated: 2026-08-24
 confidence: high
 ---
 
@@ -75,6 +75,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [SimWAM](sources/simwam.md) | Isolated attention mask makes future-video prediction training-time-only; **91.5 PDMS NAVSIM-v1** (highest WAM in wiki) at 518ms; Flow-GRPO SDE + LoRA RL on hard subset; swappable video prior (1.3B ≈ 5B); best zero-shot nuScenes collision 0.04%; code released |
 | [SGDrive](sources/sgdrive.md) | Scene-agent-goal ⟨world⟩ queries (occupancy + safety-critical boxes + 4s goal, at t and t+n) + block-wise anti-leakage mask + DiT; InternVL3-2B beats ReCogDrive-8B at SFT (87.4 vs 86.8); 91.1 PDMS RFT; 86.2 EPDMS; needs 3D/occupancy labels |
 | [DriveLaW](sources/drivelaw.md) | Chained gen→plan: Video DiT first-step latents are the planning state; **video latents > VLM hidden states > BEV under a fixed planner (89.1 / 86.5 / 84.1)**; conditioning on clean futures collapses to 23.2; NC 99.0 / TTC 96.7 highest in wiki; FID 4.6 nuScenes; no RL |
+| [How Can Driving World Models Do Counterfactual Prediction?](sources/driving-wm-counterfactuals.md) | Direct action-conditioned prediction is rung-2, not counterfactual: it ignores the factual continuation; 186-case CARLA benchmark with matched counterfactual GT; **Vista 0.38 / DrivingWorld 0.31 recovered fraction** (below the 0.5 no-preference point); training-free evidence transport lifts to 0.70 / 0.67 |
 
 ---
 
@@ -111,6 +112,7 @@ Master catalog of all wiki pages. Updated on every ingest.
 | [Navhard and OOD Evaluation](concepts/navhard-ood-evaluation.md) | NAVSIM-v2 navhard, distribution-shift scoring, and OOD caveats |
 | [HUGSIM Benchmark](concepts/hugsim-benchmark.md) | Closed-loop planning benchmark with route completion and HD-Score; HAD reports 47.5 RC / 30.8 HDS |
 | [PhysicalAI-AV Benchmark](concepts/physicalai-av-benchmark.md) | NVIDIA's 1,700h / 306K-clip real-world open-loop benchmark (ADE/FDE); DriveWAM's data-scaling testbed; no shared test protocol yet |
+| [Counterfactual Prediction](concepts/counterfactual-prediction.md) | Pearl's ladder applied to driving; four distinct senses of "counterfactual" in AD; abduction as the missing step; three-arm CARLA construction and the recovered-fraction metric with its category-vs-identity caveat |
 
 ---
 

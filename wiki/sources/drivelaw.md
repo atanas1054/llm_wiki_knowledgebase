@@ -2,9 +2,9 @@
 title: "DriveLaW: Unifying Planning and Video Generation in a Latent Driving World"
 type: source-summary
 sources: [raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, concepts/nuscenes-waymo-evals.md, sources/simwam.md, sources/drivewam.md, sources/driveva.md, sources/epona.md, sources/policy-world-model.md, sources/drivevla-w0.md, sources/recogdrive.md, sources/sgdrive.md, sources/uniugp.md, sources/futuresightdrive.md, sources/dreameraD.md]
+related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, concepts/nuscenes-waymo-evals.md, sources/simwam.md, sources/drivewam.md, sources/driveva.md, sources/epona.md, sources/policy-world-model.md, sources/drivevla-w0.md, sources/recogdrive.md, sources/sgdrive.md, sources/uniugp.md, sources/futuresightdrive.md, sources/dreameraD.md, sources/driving-wm-counterfactuals.md, concepts/counterfactual-prediction.md]
 created: 2026-08-17
-updated: 2026-08-17
+updated: 2026-08-24
 confidence: high
 ---
 
@@ -262,3 +262,4 @@ Video generation is ~5× faster than Epona at matched resolution, but **trajecto
 - **Direct predecessor**: [[sources/epona.md]] — DriveLaW's main generation baseline, beaten on FID/FVD and on speed, but not at the 100-frame horizon.
 - **Generation quality**: FID 4.6 is the best in the wiki, displacing UniUGP's 7.4 — see the generation tables in [[concepts/world-model-for-ad.md]].
 - **The competing answer**: [[sources/simwam.md]] reaches 91.5 by discarding future generation at inference entirely; DriveLaW reaches 89.1 by keeping the generator but reading it early. Both point away from conditioning on fully generated futures.
+- **What the generator still cannot do**: [[sources/driving-wm-counterfactuals.md]] shows that action-conditioned generation does not produce counterfactuals for recorded episodes (recovered fraction 0.38 Vista / 0.31 DrivingWorld) because it never conditions on the factual continuation. This is orthogonal to DriveLaW's Table 6 but points the same way — the value of a video generator lies in its representation, not in the futures it renders. See [[concepts/counterfactual-prediction.md]].

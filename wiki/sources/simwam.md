@@ -2,9 +2,9 @@
 title: "SimWAM: A Simple World Action Model for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/rl-for-ad.md, concepts/nuscenes-waymo-evals.md, concepts/diffusion-planner.md, sources/drivewam.md, sources/driveva.md, sources/epona.md, sources/policy-world-model.md, sources/drivevla-w0.md, sources/flare.md, sources/explorevla.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/dreameraD.md, sources/recogdrive.md]
+related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/rl-for-ad.md, concepts/nuscenes-waymo-evals.md, concepts/diffusion-planner.md, sources/drivewam.md, sources/driveva.md, sources/epona.md, sources/policy-world-model.md, sources/drivevla-w0.md, sources/flare.md, sources/explorevla.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/dreameraD.md, sources/recogdrive.md, sources/driving-wm-counterfactuals.md, concepts/counterfactual-prediction.md]
 created: 2026-08-17
-updated: 2026-08-17
+updated: 2026-08-24
 confidence: high
 ---
 
@@ -275,3 +275,4 @@ The latency scaling (≈45 ms per step plus ≈70 ms fixed) implies the action e
 - **Backbones**: [[concepts/foundation-backbones-for-ad.md]] — the backbone-swap table (LTX-Video / Wan2.1-1.3B / Cosmos-Predict2.5 / Wan2.2-5B) is the wiki's only controlled comparison of video priors under a fixed planner.
 - **Unexpected ally**: [[sources/drivelaw.md]] is the imagine-then-act WAM SimWAM beats by the widest margin (89.1 vs 91.5), yet its own denoising-step ablation independently supports SimWAM's thesis — conditioning on latents from the *first* denoising step scores 89.1 while nearly-clean generated futures at t=10 collapse the policy to 23.2 PDMS. Two papers, opposite designs, same conclusion about test-time imagination.
 - **Nearest competitor**: [[sources/sgdrive.md]] (91.1 PDMS) is the runner-up in SimWAM's own table and takes the opposite route to world knowledge — supervised structured symbolic state (occupancy, agent boxes, goal pose) inside a 2B VLM rather than a video generative prior. Both reach ~91 with a single front camera and no future generation at inference, from entirely different supervision. SGDrive needs 3D and occupancy annotations; SimWAM needs only raw video.
+- **The escape hatch, tested**: [[sources/driving-wm-counterfactuals.md]] attacks the one defence SimWAM's mask ablation leaves standing — that imagined futures must matter for counterfactual evaluation even if they do not help NAVSIM planning. On a CARLA benchmark with matched counterfactual ground truth, action-conditioned generation from Vista and DrivingWorld recovers only 0.38 / 0.31 of the event signal, so the machinery is not delivering counterfactuals either. It does not test SimWAM's own setting (comparing candidate maneuvers before acting is rung 2, not rung 3), but it removes the retrospective version of the argument.

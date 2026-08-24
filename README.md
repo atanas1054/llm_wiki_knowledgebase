@@ -18,13 +18,13 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 
 ## At a Glance
 
-- **57 papers** ingested into `wiki/sources/`, **29 concept pages** in `wiki/concepts/`
+- **58 papers** ingested into `wiki/sources/`, **30 concept pages** in `wiki/concepts/`
 - Dominant benchmark is **NAVSIM** (v1 PDMS / v2 EPDMS); also Bench2Drive, nuPlan, nuScenes, WOD-E2E, HUGSIM, PhysicalAI-AV
 - Current NAVSIM-v1 leaders (single-pass, non-BoN): **CLEAR 93.7** > DriveSuprim 93.5 > Drive-JEPA 93.3 > HybridDriveVLA 92.1 (ensemble) > DynVLA 91.7 > SimWAM 91.5
 - Current NAVSIM-v2 leader: **WAM-Diff 89.7 EPDMS**; Best-of-6 ceiling: **Curious-VLA 94.8 PDMS** (= human GT)
 - Every leaderboard claim in this wiki carries a **comparison-scope caveat** — most papers omit the actual frontier from their tables. See [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md).
 
-## Papers Ingested (57)
+## Papers Ingested (58)
 
 | Paper | Org | Key Contribution | Benchmark |
 |-------|-----|-----------------|-----------|
@@ -77,6 +77,7 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [SimWAM](wiki/sources/simwam.md) | HUST + Dongfeng | Isolated attention mask makes future-video prediction training-time-only; Flow-GRPO SDE + LoRA RL; swappable video prior (1.3B ≈ 5B) | **91.5 PDMS NAVSIM-v1** (highest WAM) at 518ms; 0.04% zero-shot nuScenes collision |
 | [SGDrive](wiki/sources/sgdrive.md) | Li Auto + Fudan + Tongji + Surrey | Scene-agent-goal ⟨world⟩ queries (occupancy + safety-critical boxes + 4s goal, at t and t+n) + block-wise anti-leakage mask + DiT planner | 87.4 PDMS SFT / 91.1 RFT NAVSIM-v1; 86.2 EPDMS NAVSIM-v2 |
 | [DriveLaW](wiki/sources/drivelaw.md) | HUST + Xiaomi EV | Chained generation→planning: Video DiT mid-denoising latents are the planning state; noise reinjection; controlled representation comparison (video > VLM > BEV) | 89.1 PDMS NAVSIM-v1 (no RL); **FID 4.6 nuScenes** (best in wiki) |
+| [How Can Driving World Models Do Counterfactual Prediction?](wiki/sources/driving-wm-counterfactuals.md) | Purdue + Bosch CAI | Action-conditioned generation is rung-2, not counterfactual: it discards the factual continuation; 186-case CARLA benchmark with matched counterfactual ground truth; training-free evidence transport as a constructive check | 0.38 / 0.31 recovered fraction for Vista / DrivingWorld → 0.70 / 0.67 |
 | [PaIR-Drive](wiki/sources/pair-drive.md) | — | Parallel IL and GRPO residual-refinement branches; intention-conditioned trajectory tree + RWM selection; reusable across base planners | 91.2 PDMS / 87.9 EPDMS single-plan; 94.0 / 89.6 BoN-6 |
 | [DIAL](wiki/sources/dial.md) | — | Eight-intent CFG expands continuous-flow proposal support; multi-intent GRPO preserves preference contrast | WOD-E2E held RFS 7.696→8.211; BoN-128 ceiling 9.14 |
 | [PlannerRFT](wiki/sources/plannerrft.md) | — | Diffusion-planner RFT with PPO-learned lateral/longitudinal exploration, GRPO survival reward, and nuMax acceleration | 72.21 Test14-hard / 85.80 Test14-random reactive nuPlan |
@@ -88,7 +89,7 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 
 The last four entries are **methodological references** — LLM/VLM reasoning-RL papers ingested for their optimizer analysis rather than for driving results. They inform [RL for AD](wiki/concepts/rl-for-ad.md), [GSPO vs. GRPO](wiki/concepts/gspo-vs-grpo.md), and [R1-Zero-Like Training](wiki/concepts/r1-zero-like-training.md).
 
-## Concept Pages (29)
+## Concept Pages (30)
 
 | Concept | Description |
 |---------|-------------|
@@ -121,12 +122,13 @@ The last four entries are **methodological references** — LLM/VLM reasoning-RL
 | [Discriminative Policy Optimization](wiki/concepts/discriminative-policy-optimization.md) | Positive/negative rollout scoring, GRPO difficulty-weight analysis, hard-negative DRO, and conditions for driving transfer |
 | [R1-Zero-Like Training](wiki/concepts/r1-zero-like-training.md) | RL directly on base models; template/base-prior confounds; Dr./VD-GRPO corrections and their relevance to AD GRPO claims |
 | [Divergent Thinking in VLMs](wiki/concepts/divergent-thinking-in-vlms.md) | Reasoning-strategy diversity, MUPO, acc@k scaling, and why correlated samples limit parallel test-time gains |
+| [Counterfactual Prediction](wiki/concepts/counterfactual-prediction.md) | Pearl's ladder applied to driving; four senses of "counterfactual" in AD; abduction as the missing step; matched-ground-truth benchmarking and the recovered-fraction metric |
 
 ## Open Threads
 
 Questions the wiki has surfaced but not resolved, in rough order of how much they'd change the picture:
 
-1. **Does test-time future imagination help at all?** Two independent results now say no on NAVSIM. SimWAM's mask ablation removes the action expert's access to future tokens and loses nothing (isolated 90.3 vs bidirectional 90.2). DriveLaW, an imagine-then-act method, finds that *earlier* denoising latents plan better and that nearly-clean generated futures **collapse the policy** (t=1 → 89.1, t=10 → 23.2 PDMS). The video generator is clearly valuable as a representation learner — DriveLaW's video latents beat VLM hidden states by 2.6 PDMS and BEV by 5.0 under a fixed planner — but running it forward to a clean future at decision time is unsupported. Unresolved for long-horizon rollout, counterfactual maneuver evaluation, and reactive interaction. See [World Models for AD](wiki/concepts/world-model-for-ad.md#test-time-imagination).
+1. **Does test-time future imagination help at all?** Three independent results now say no. SimWAM's mask ablation removes the action expert's access to future tokens and loses nothing (isolated 90.3 vs bidirectional 90.2). DriveLaW, an imagine-then-act method, finds that *earlier* denoising latents plan better and that nearly-clean generated futures **collapse the policy** (t=1 → 89.1, t=10 → 23.2 PDMS). And the counterfactual escape hatch — "imagination must matter for evaluating alternative maneuvers" — is now partly closed from the other side: on a CARLA benchmark with matched counterfactual ground truth, action-conditioned generation scores a recovered fraction of **0.38 (Vista) / 0.31 (DrivingWorld)**, i.e. closer to a replay where the event never happened than to the true counterfactual, because direct prediction never conditions on the factual continuation. The video generator is clearly valuable as a representation learner — DriveLaW's video latents beat VLM hidden states by 2.6 PDMS and BEV by 5.0 under a fixed planner — but running it forward to a clean future at decision time remains unsupported. Still open for long-horizon rollout and reactive interaction. See [World Models for AD](wiki/concepts/world-model-for-ad.md#test-time-imagination) and [Counterfactual Prediction](wiki/concepts/counterfactual-prediction.md).
 2. **Is NAVSIM-v1 saturated?** Best-of-6 reaches 94.8 = the human ground-truth score (Curious-VLA). If oracle selection already matches the logged human, single-sample gains above ~93 may be measuring selection quality rather than driving quality. See [Best-of-N Sampling](wiki/concepts/best-of-n.md).
 3. **Are video-prior gains about scale or objective?** SimWAM shows video-prior scale barely matters (Wan2.1-1.3B 90.2 ≈ Wan2.2-5B 90.3) while DriveWAM shows dropping the video objective is catastrophic. Together they point at the training signal, not the backbone — but no paper has tested this across architectures.
 4. **Do PDMS gains transfer to closed-loop?** Most 90+ PDMS methods report no Bench2Drive, HUGSIM, or navhard result. Stage-2 navhard remains near 40 EPDMS for everything measured.
@@ -134,7 +136,7 @@ Questions the wiki has surfaced but not resolved, in rough order of how much the
 
 ## Known Gaps
 
-Methods cited frequently across ingested papers but **not yet ingested** (mention counts as of the last lint): Hydra-MDP (59), SimLingo (23), WorldRFT (19), iPad (18), GoalFlow (13), Doe-1 (13), Vista (12), World4Drive (8), VaVAM (7), ColaVLA (6), SeerDrive (3), UniWorldVLA (3). **Hydra-MDP** is by a wide margin the most-cited un-ingested method and underpins the EPDMS / Hydra-MDP++ metric definitions used throughout the wiki; **SimLingo** and **WorldRFT** are next.
+Methods cited frequently across ingested papers but **not yet ingested** (mention counts as of the last lint): Hydra-MDP (59), SimLingo (23), WorldRFT (19), iPad (18), GoalFlow (13), Doe-1 (13), Vista (12), World4Drive (8), VaVAM (7), ColaVLA (6), SeerDrive (3), UniWorldVLA (3). **Hydra-MDP** is by a wide margin the most-cited un-ingested method and underpins the EPDMS / Hydra-MDP++ metric definitions used throughout the wiki; **SimLingo** and **WorldRFT** are next. **Vista** and **DrivingWorld** have additional priority now that they are the two frozen backbones evaluated in [How Can Driving World Models Do Counterfactual Prediction?](wiki/sources/driving-wm-counterfactuals.md).
 
 ## Workflow
 

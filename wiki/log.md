@@ -4,7 +4,7 @@ type: comparison
 sources: []
 related: [wiki/index.md]
 created: 2026-04-05
-updated: 2026-05-01
+updated: 2026-08-24
 confidence: high
 ---
 
@@ -1623,3 +1623,54 @@ Append-only log of all wiki operations.
 - The claim of gradient isolation between generator and planner sits awkwardly with the statement that stage 3 updates both the Video DiT and the Planning DiT.
 
 **Process note**: a PowerShell read-modify-write round-trip corrupted UTF-8 characters in `README.md` and `wiki/concepts/diffusion-planner.md` (84 mojibake sequences). Both files were restored from HEAD and the edits reapplied with the editing tool. Future frontmatter edits should not use `Get-Content -Raw` piped to `Set-Content` on files containing non-ASCII characters.
+
+---
+
+## 2026-08-24 - Ingest: How Can Driving World Models Do Counterfactual Prediction?
+
+**Source**: `raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md`
+**arXiv**: 2608.11601v1
+**Authors**: Jiaru Zhang (corresponding), Can Cui, Yi Xu, Xin Ye, Ruqi Zhang, Ziran Wang (Purdue University + Bosch Center for Artificial Intelligence)
+**Confidence**: high - the local markdown includes the full method text, all four figures, all five tables (main results, component ablation, benchmark composition, stage checkpoints, evidence-source controls), and appendices A-D
+
+**Pages created**:
+- `wiki/sources/driving-wm-counterfactuals.md` - source summary covering the causal analysis, the four-stage Abduce/Transport/Complete/Combine pipeline, the three-arm CARLA benchmark, both metrics, all four figures, all five tables, cost and implementation details, and limitations
+- `wiki/concepts/counterfactual-prediction.md` - new concept page on Pearl's ladder applied to driving, the four distinct senses of "counterfactual" in the AD literature, the abduction requirement, matched-ground-truth benchmark construction, and the recovered-fraction metric
+
+**Concept pages updated**:
+- `wiki/concepts/world-model-for-ad.md` - corrected the long-standing intro claim that world models "enable counterfactual reasoning" (it is interventional, rung 2); added the "Action-Conditioned != Counterfactual" section to the test-time-imagination synthesis; added LPIPS-vs-matched-reference and recovered fraction to the world-model quality metrics table; rewrote the test-time-imagination open question and added a new one on whether a world model can do abduction
+
+**Source pages updated**:
+- `wiki/sources/simwam.md` - the counterfactual escape hatch its mask ablation left standing is now partly closed
+- `wiki/sources/drivelaw.md` - orthogonal evidence pointing the same way: the generator's value is its representation, not its rendered futures
+
+**Index and README updated**: added the source and concept rows; README counts 57 to 58 papers and 29 to 30 concept pages; Open Thread #1 rewritten around three independent results; Known Gaps notes that Vista and DrivingWorld now have added priority as the two evaluated backbones.
+
+**Key facts**:
+- The core claim is a conditioning argument, not a capability argument: the counterfactual and the direct prediction integrate the same mechanism and differ only in the posterior over the world, p(w | H, F+) versus p(w | H). Scaling the generator cannot close the gap.
+- Direct action-conditioned prediction is rung 2 at best because the alternative action is specified by the query rather than observed, so it does not update the posterior over the world beyond the history.
+- Benchmark: 186 CARLA cases from 72 placements across Town01 (60), Town03 (72), Town10HD (54); three scenario types (side street 60, lead cuts in 45, lead brake 81) and three action edits (accelerate 1.6x, brake 0.4x, full stop 0x displacement scaling); 25 frames at 10 fps, 576x320, 15-frame shared history and 10-frame prediction window.
+- Each case is three replays of one placement: F (executed action, event occurs), P (target action, event occurs, the counterfactual ground truth), U (target action, event never triggered, the null reference).
+- Recovered fraction rescales the preference for P over U so that Rec(U)=0, Rec(P)=1, and 0.5 means no preference. Encoders DINOv2 ViT-B/14 and CLIP ViT-L/14. LPIPS (AlexNet) is measured against P.
+- Main result: direct prediction reaches 0.38 (Vista) and 0.31 (DrivingWorld) overall recovered fraction under DINOv2, below 0.5 in every cell but Vista's lead brake (0.50). Evidence transport raises this to 0.70 and 0.67 and cuts LPIPS from 0.423 to 0.169 and from 0.291 to 0.211.
+- The internal gradient matters more than the averages: direct prediction is worst on side street (0.29 / 0.25), where the event is revealed only in the factual continuation, and best on lead brake (0.50 / 0.37), the confounded control where an already-visible lead looms under acceleration.
+- Component ablation: transport plus multi-frame filling alone reaches 0.68 / 0.67 with no completion at all. Complete and Combine add at most 0.02 recovered fraction and buy fidelity instead (LPIPS 0.195 to 0.169 on Vista, 0.238 to 0.211 on DrivingWorld).
+- Stage checkpoints: on DrivingWorld the recovered fraction drops from 0.67 to 0.52 after completion and returns to 0.67 after Combine, a direct measurement of VQ encode/decode loss on evidence-bearing pixels. Vista, completing in a continuous latent space, barely dips.
+- Evidence-source controls: matching evidence 0.66 / 0.67; five frames earlier 0.40 / 0.41; final history frame 0.35 / 0.36 (indistinguishable from direct prediction); different case 0.62 / 0.64 but LPIPS 0.564 / 0.556.
+- Method components: Depth Anything V2 Small for depth, forward splatting with a depth buffer for transport, SDEdit-style mid-schedule start plus RePaint-style evidence restoration for Vista (25 EDM steps from schedule index 14), token fixing at 60 percent patch coverage for DrivingWorld, and a feathered alpha blend with temporally smoothed color correction for Combine.
+- Cost: about 90 s per Vista case and 108 s per DrivingWorld case versus 47 s and 45 s for direct prediction on one A100. The pipeline computes the direct prediction once because it fills the unsupported regions of the Complete stage's input video.
+
+**Limitations**:
+- Scripted agents are what make the matched reference obtainable, but transported evidence preserves behavior the counterfactual action would have changed (the paper's example: a pedestrian who would have stopped keeps walking). Beyond about a second the method fails confidently rather than by omission.
+- Both backbones are real-world-trained and evaluated on CARLA renders. The scenario-type gradient argues against pure domain shift as the explanation, but a world model trained in the benchmark's render domain would settle it.
+- The method is retrospective by construction, since it reads the factual continuation, which exists only after the episode is recorded. It therefore says nothing about what a planner could do at decision time, where no factual continuation exists.
+- The frozen world model contributes almost none of the recovery; geometric transport does the work. The paper demonstrates that evidence closes the gap, not that world models can be made to abduce.
+- The recovered fraction is category-sensitive rather than identity-sensitive: evidence from a different episode of the same scenario type scores 0.62-0.64 against 0.66-0.67 for the matching episode, while LPIPS more than doubles. It must not be reported alone.
+- Lead brake is 81 of 186 cases and is both the confounded control and the type with the smallest metric denominator, so it is simultaneously the least informative and the noisiest third of the benchmark.
+- 19 of 186 cases fail the post-hoc image check and are retained; the claim that excluding them changes nothing is asserted without numbers.
+- The ceiling is 0.70, with no decomposition of the residual between depth error, splatting artifacts, completion quality, and encoder noise.
+- Only two open backbones. The industrial claims that motivate the paper (Waymo's world model, Genie 3) are untestable, and Drive-WM, whose counterfactual claim is quoted directly, is not evaluated.
+- Ten pedestrian-crossing cases were collected and dropped, which removes exactly the case where the scripted-agent assumption is least defensible and the liability application most consequential.
+- No stated release of benchmark, code, or data.
+
+**Cross-page effect**: this is the first ingested paper that constrains a capability claim rather than proposing a method, and it forced a correction in `world-model-for-ad.md`, which had listed counterfactual reasoning among the reasons world models help planning since 2026-04-05.
