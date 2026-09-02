@@ -2,9 +2,9 @@
 title: "Drive-JEPA: Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving"
 type: source-summary
 sources: [raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/foundation-backbones-for-ad.md, sources/latent-wam.md, sources/epona.md, sources/drivesuprim.md, sources/diffusiondrive.md]
+related: [sources/wa-jepa.md, sources/auto-jepa.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/foundation-backbones-for-ad.md, sources/latent-wam.md, sources/epona.md, sources/drivesuprim.md, sources/diffusiondrive.md]
 created: 2026-05-01
-updated: 2026-05-01
+updated: 2026-09-02
 confidence: high
 ---
 
@@ -190,6 +190,12 @@ This mechanism is important: in Table 5, adding MTD without momentum-aware selec
 - **Latent-WAM**: both are non-VLM world-model-style methods that avoid inference-time video generation. Latent-WAM predicts future latent world status with geometric distillation; Drive-JEPA pretrains a latent predictive video encoder and then uses simulator-distilled proposal supervision.
 - **DiffusionDrive / HAD**: Drive-JEPA is not a diffusion planner. It uses iterative proposal refinement and selection, with simulator-derived pseudo-teachers, while diffusion methods generate trajectories through denoising/refinement objectives.
 - **Bench2Drive VLA methods**: Drive-JEPA reports 64.52 DS, above older non-VLM and proposal-centric baselines like iPad but far below current wiki leaders such as LinkVLA and DynVLA.
+
+- **WA-JEPA** ([[sources/wa-jepa.md]]) is the closest follow-up and reads Drive-JEPA as the incomplete version of its own idea: it "attempts to bridge this gap by introducing a V-JEPA encoder into an end-to-end driving model, but still relies on a separate downstream trajectory planner." Both of WA-JEPA's structural complaints target Drive-JEPA specifically — V-JEPA's random masking is a *completion* objective with no future-directed component, and L1 latent regression cannot generate genuinely unseen future tokens. WA-JEPA measures the second at 1.0 EPDMS within its own architecture. Two things run the other way, though: WA-JEPA's encoder ablation independently reproduces Drive-JEPA's Table 7 ordering (V-JEPA 2 ahead of MAE, DINOv3, and SigLIP2 by +5.7 EPDMS), and Drive-JEPA still holds the higher NAVSIM-v1 score, 93.3 vs. 91.8.
+
+  Note also that **WA-JEPA's NAVSIM-v1 table cites Drive-JEPA at 89.0** — the perception-free baseline from Table 1, not the 93.3 full planner — while its NAVSIM-v2 table cites the strong ViT-L configuration at 87.8 EPDMS*. Check which Drive-JEPA number is in play when reading the two papers together.
+
+- **Auto-JEPA** ([[sources/auto-jepa.md]]) is a different paper with a confusingly similar name that also builds on V-JEPA 2 and evaluates on NAVSIM. It freezes the encoder entirely and moves the JEPA objective to a trajectory latent space. The comparison puts a rough price on Drive-JEPA's driving-video pretraining: 208 h of curated video and a 3-day 8-GPU stage for +2.0 PDMS over Auto-JEPA's un-adapted encoder (93.3 vs. 91.3), though the planners differ too, so that is an upper bound rather than a clean measurement.
 
 ## Limitations
 

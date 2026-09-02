@@ -1,10 +1,10 @@
 ---
 title: Perception-Enhanced Planning in VLA Models
 type: concept
-sources: [raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md]
+sources: [raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
+related: [sources/geowam.md, sources/auto-jepa.md, sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md]
 created: 2026-04-05
-updated: 2026-08-17
+updated: 2026-09-02
 confidence: high
 ---
 
@@ -149,6 +149,75 @@ The ablation isolates its contribution cleanly. Adding the agent subquery on top
 
 **Cost**: 3D box annotations at training time. Along with occupancy labels for the scene head, this makes SGDrive markedly more annotation-hungry than the perception-free world models ([[sources/latent-wam.md]], Drive-JEPA) tracked on this page.
 
+## Emergent Ego-Relevance Without Perception: Auto-JEPA
+
+SGDrive above buys agent relevance by *supervising* it. [[sources/auto-jepa.md]] gets the same behavior with no perception supervision of any kind, and — more usefully for this page — supplies a protocol for **measuring** it.
+
+The model never sees a box, an agent identity, an interaction label, or surrounding-agent motion. Its only target is the latent encoding of the future ego trajectory. Yet the predicted latent responds selectively to traffic participants, and in the per-vehicle case to *the right* traffic participants: occluding an interacting lead vehicle shifts both the intent and the selected trajectory, while occluding a non-interacting adjacent vehicle leaves both essentially unchanged.
+
+The mechanism is a claim about supervision sufficiency: **if the prediction target depends on the agents, the model must attend to the agents, whether or not you name them.** This is the strongest counterweight in the wiki to the assumption running through the rest of this page — that planning-relevant spatial understanding has to be *installed* via detection, occupancy, or BEV heads.
+
+### The Semantic Occlusion Protocol
+
+This is worth adopting independently of Auto-JEPA, because it addresses something attention maps and CKA plots do not: whether a planner's representation is *causally* dependent on the objects we think matter.
+
+```
+For each validation scene:
+  1. Build a dynamic-agent mask from projected regions of visible traffic participants
+  2. Apply it identically to all four input frames
+  3. Build a control mask of equal total image area from randomly sampled regions
+  4. Hold ego-motion history and navigation command fixed in both arms
+  5. Measure Δ_intent = 1 − cos(Ẑ, Ẑ_m) over the flattened latent
+```
+
+| Intervention | Mean $\Delta_\mathrm{intent}$ ($n=15{,}364$) |
+|---|---:|
+| Dynamic-agent masking | 0.080 |
+| Equal-area random masking | 0.027 |
+| **Ratio** | **2.97×** |
+| Larger on dynamic-agent arm | **71.1% of scenes** |
+
+Three design choices do the work. It is **paired** — the same scene under both interventions, so scene difficulty cancels. It is **area-matched**, removing the standard confound where the salient region is simply the large one. And it **holds the non-visual inputs fixed**, so the measured change is attributable to visual evidence rather than to ego history or command.
+
+### What It Does Not Yet Control
+
+Two gaps keep this from being a finished methodology, and both are cheap to close:
+
+- **Shape, contiguity, and placement are uncontrolled.** Agent masks are object-shaped, road-level, and clustered near the vanishing point; the random control is described only as "independently sampled equal-area random regions," which can land on sky or periphery. Part of the 2.97× is plausibly a *road-region* effect rather than an *agent-semantics* effect. The missing arm is equal-area masks placed on the drivable surface or on static road furniture.
+- **Latent change is not shown to be behavioral change.** The dataset-level statistic is measured in embedding space; the link to a different *selected trajectory* is shown on three hand-picked scenes. No correlation between $\Delta_\mathrm{intent}$ and PDMS, collision rate, or interaction-scenario performance is reported.
+
+Also worth keeping in proportion: $1-\cos = 0.080$ means cosine similarity 0.92. Removing **every visible dynamic agent from all four frames** still leaves the intent 92% aligned with the unoccluded one. The *ratio* is the finding; the absolute dependence on agents is modest.
+
+### How This Compares to the Page's Other Evidence
+
+| Evidence type | Method | What it shows | Limitation |
+|---|---|---|---|
+| Cosine collapse across layers | [[sources/unidrivevla.md]] | Perception and semantic tokens become indistinguishable in a shared decoder | Diagnostic of interference, not of relevance |
+| Detection-head ablation | [[sources/sgdrive.md]] | Ego-relevant boxes lift NC/DAC by +0.3 PDMS | Confounded with added capacity and supervision |
+| Attention visualization | UniUGP and others | Attention moves to distant causal objects with a world model | Qualitative; no area or placement control |
+| **Paired semantic occlusion** | **Auto-JEPA** | **Intent depends 2.97× more on agent regions than on matched random regions** | **Shape/placement uncontrolled; latent-space only** |
+
+The interventional design is the advance. Everything above it in that table either observes the model's internals or compares two trained models; occlusion perturbs the input and measures the response, which is the only one of the four that supports a dependence claim. Whether the dependence is on *agents* specifically or on *road-region content* is the question the missing control arm would settle.
+
+## Metric Geometry Without Annotation: GeoWAM
+
+This page's running cost question is what spatial understanding *costs in labels*. [[sources/sgdrive.md]] buys ego-relevant 3D structure with occupancy and box annotation; [[sources/latent-wam.md]] avoids labels by distilling a frozen geometry foundation model; [[sources/auto-jepa.md]] gets agent selectivity from an ego-motion target with no spatial supervision at all. [[sources/geowam.md]] adds a fourth position: **dense metric 3D structure, supervised, but with pseudo-labels rather than human annotation**.
+
+Its targets are dense point maps — one 3D point per pixel in the ego frame — derived from off-the-shelf geometry foundation models. Training needs only RGB. The paper contrasts this explicitly with occupancy world models (OccWorld, Drive-OccWorld), which need voxelized ground truth to construct their prediction space.
+
+| Approach | Spatial supervision | Label cost | Available at inference? |
+|---|---|---|---|
+| [[sources/sgdrive.md]] | Occupancy voxels + 3D boxes + goal pose | **Occupancy + box annotation** | No — hidden states condition the DiT |
+| [[sources/latent-wam.md]] | WorldMirror/VGGT feature distillation | None (frozen teacher, discarded) | No — teacher removed |
+| [[sources/auto-jepa.md]] | None | None | No spatial output exists |
+| **[[sources/geowam.md]]** | **Dense metric point maps + surface normals** | **None (geometry-model pseudo-labels)** | **Yes — point maps are decoded** |
+
+Two things follow. GeoWAM is the only entry here that **produces inspectable 3D output at inference** without having paid for 3D annotation — Figure 3 of the paper shows forecast trees, poles, and road markings, and a following vehicle tracked through a left turn. And it is supervising *future* geometry, so the same head doubles as a motion-forecasting mechanism, much as SGDrive's agent head predicts boxes at $t$ and $t{+}n$.
+
+**The cost is a dependency the paper does not discuss.** Pseudo-labels bound the supervision ceiling at whatever the geometry foundation model gets right, and GeoWAM's encoder is *initialized from DVGT-2* while its targets come from that same family of models. "Requires only RGB" is presented as a pure advantage; part of what is being learned is another model's biases. Compare Latent-WAM, which has the same dependency but discards the teacher at inference, and whose ablation showed the distillation target demanded full backbone updates — LoRA collapsed it from 89.3 to 68.5 EPDMS.
+
+**On the page's central tension**, GeoWAM sits with Latent-WAM on the side that says explicit perception heads are not required: there is no detection, no segmentation, no occupancy classification. What it shares with the perception camp is the belief that *metric spatial structure* must be represented explicitly rather than left implicit in features — it just gets that structure from geometry rather than from semantics.
+
 ## Comparison: Perception Integration Approaches in AD VLMs
 
 | Approach | Spatial supervision | World state type | Shared params? | Planning benefit |
@@ -160,6 +229,8 @@ The ablation isolates its contribution cleanly. Adding the agent subquery on top
 | **Sparse MoT (UniDriveVLA)** | **Direct (sparse queries)** | **K-Means instance banks (5 tasks)** | **✗ (decoupled)** | **Spatial precision + preserved reasoning** |
 | **Single causal decoder (OneDrive)** | **Direct (det/lane/planning queries)** | **Structured query tokens in VLM sequence** | **Yes, shared attention with task FFNs** | **Unified text/perception/planning; 0.28 L2 / 0.18 collision on nuScenes** |
 | Latent-WAM | Geometry foundation distillation | Compact scene/world-status tokens | No VLM | Spatial grounding without inference-time perception heads |
+| **Auto-JEPA** | **None — ego-trajectory latent target only** | **No scene state is represented at all** | No VLM; frozen V-JEPA 2 | **Agent selectivity emerges (2.97× occlusion ratio); no spatial output available** |
+| **GeoWAM** | **Dense metric point maps (pseudo-labelled)** | **Future 3D point clouds in the ego frame** | No VLM; DVGT-2 encoder | **Explicit metric structure with no human annotation; decoded and inspectable at inference** |
 | World model (UniUGP) | Video generation | Future frame prediction | ✓ | Causal feature grounding |
 
 UniAD's planning-oriented multi-task learning is the closest philosophical predecessor to both Percept-WAM and UniDriveVLA. The key architectural divergence: Percept-WAM uses shared-weight tokens with a four-query decoder; UniDriveVLA uses decoupled MoT experts with sparse queries. Both share the insight that explicit spatial supervision improves planning, but they resolve the perception–reasoning conflict differently.
@@ -190,3 +261,7 @@ This contrasts with Reasoning-VLA's single set of learnable action queries (whic
 4. **Grid resolution trade-offs**: higher BEV grid resolution gives +9.1% mAP but the relationship between grid granularity and planning accuracy is not ablated.
 
 5. **Task interference**: the model trains on 7+ tasks simultaneously. While joint training generally helps, negative transfer is possible — PV semantic segmentation training could harm trajectory prediction quality. No systematic analysis provided.
+
+6. **Is explicit perception supervision necessary at all?** Everything on this page above the Auto-JEPA section assumes planning-relevant spatial understanding must be installed via detection, occupancy, or BEV heads. [[sources/auto-jepa.md]] reaches 91.3 PDMS with a frozen encoder, no perception labels, and demonstrable agent selectivity — but also with no spatial output, no interpretability, and no reusable scene representation. The honest reading is that supervision buys *inspectable* perception, not necessarily *better* planning, and no paper has compared the two routes at matched capacity and data.
+
+7. **Does the occlusion protocol generalize?** It has been run on exactly one model. Applying it to SGDrive (supervised relevance), Latent-WAM (geometric distillation), and a plain imitation baseline would turn a single-paper observation into a comparable diagnostic — and would show whether explicit agent supervision produces *more* selectivity than an ego-motion target, or merely more legible selectivity.

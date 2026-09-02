@@ -18,13 +18,15 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 
 ## At a Glance
 
-- **58 papers** ingested into `wiki/sources/`, **30 concept pages** in `wiki/concepts/`
+- **62 papers** ingested into `wiki/sources/`, **30 concept pages** in `wiki/concepts/`
 - Dominant benchmark is **NAVSIM** (v1 PDMS / v2 EPDMS); also Bench2Drive, nuPlan, nuScenes, WOD-E2E, HUGSIM, PhysicalAI-AV
-- Current NAVSIM-v1 leaders (single-pass, non-BoN): **CLEAR 93.7** > DriveSuprim 93.5 > Drive-JEPA 93.3 > HybridDriveVLA 92.1 (ensemble) > DynVLA 91.7 > SimWAM 91.5
-- Current NAVSIM-v2 leader: **WAM-Diff 89.7 EPDMS**; Best-of-6 ceiling: **Curious-VLA 94.8 PDMS** (= human GT)
+- Current NAVSIM-v1 leaders (single-pass, non-BoN): **CLEAR 93.7 = DA-WAM 93.7** > DriveSuprim 93.5 > Drive-JEPA 93.3 > HybridDriveVLA 92.1 (ensemble) > WA-JEPA 91.8 > DynVLA 91.7 > SimWAM 91.5
+- Highest NAVSIM-v2 EPDMS: **WA-JEPA 91.7** — but **v2 EPDMS is not currently comparable across papers.** Two papers score Transfuser at 76.7 and 84.0 from *identical* submetrics. See [Evaluator Drift](wiki/concepts/navsim-benchmark.md). Best-of-6 ceiling: **Curious-VLA 94.8 PDMS** (= human GT)
+- Reactive/OOD leader: **GeoWAM 36.6 EPDMS navhard** — navhard is far from saturated and Stage 2 collapses every method's lane keeping to ~48
+- Closed-loop HUGSIM leader: **WA-JEPA 0.4462 HD-Score** zero-shot — on a scenario set and controller version that make earlier HUGSIM numbers in this wiki incomparable
 - Every leaderboard claim in this wiki carries a **comparison-scope caveat** — most papers omit the actual frontier from their tables. See [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md).
 
-## Papers Ingested (58)
+## Papers Ingested (62)
 
 | Paper | Org | Key Contribution | Benchmark |
 |-------|-----|-----------------|-----------|
@@ -78,6 +80,10 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 | [SGDrive](wiki/sources/sgdrive.md) | Li Auto + Fudan + Tongji + Surrey | Scene-agent-goal ⟨world⟩ queries (occupancy + safety-critical boxes + 4s goal, at t and t+n) + block-wise anti-leakage mask + DiT planner | 87.4 PDMS SFT / 91.1 RFT NAVSIM-v1; 86.2 EPDMS NAVSIM-v2 |
 | [DriveLaW](wiki/sources/drivelaw.md) | HUST + Xiaomi EV | Chained generation→planning: Video DiT mid-denoising latents are the planning state; noise reinjection; controlled representation comparison (video > VLM > BEV) | 89.1 PDMS NAVSIM-v1 (no RL); **FID 4.6 nuScenes** (best in wiki) |
 | [How Can Driving World Models Do Counterfactual Prediction?](wiki/sources/driving-wm-counterfactuals.md) | Purdue + Bosch CAI | Action-conditioned generation is rung-2, not counterfactual: it discards the factual continuation; 186-case CARLA benchmark with matched counterfactual ground truth; training-free evidence transport as a constructive check | 0.38 / 0.31 recovered fraction for Vista / DrivingWorld → 0.70 / 0.67 |
+| [Auto-JEPA](wiki/sources/auto-jepa.md) | Tsinghua | JEPA prediction of the future **ego-trajectory** latent, used as a retrieval key over 110,335 recorded trajectories; frozen V-JEPA 2, no perception labels, no trajectory generator | 91.3 PDMS NAVSIM-v1; 85.6 EPDMS matched-protocol |
+| [WA-JEPA](wiki/sources/wa-jepa.md) | Afari Intelligent Drive + UESTC | Rebuilds V-JEPA for planning: future masking, flow-matched latent futures, joint scene-action MMDiT; regression future-prediction shown *worse than none* | 91.7 EPDMS NAVSIM-v2 (corrected); 0.4462 HD-Score HUGSIM |
+| [GeoWAM](wiki/sources/geowam.md) | Uber AV Labs + Case Western | Forecasts dense metric point maps instead of pixels; geometry-conditioned deterministic action head; annotation-free 3D structure | 36.6 EPDMS navhard (SOTA); 90.2 navtest (protocol-incomparable) |
+| [DA-WAM](wiki/sources/da-wam.md) | HKUST-GZ + Leapmotor | One future latent per candidate, scored against its own; live JEPA supervision during planning; retrieved hard negatives | 93.7 PDMS NAVSIM-v1 (ties CLEAR) |
 | [PaIR-Drive](wiki/sources/pair-drive.md) | — | Parallel IL and GRPO residual-refinement branches; intention-conditioned trajectory tree + RWM selection; reusable across base planners | 91.2 PDMS / 87.9 EPDMS single-plan; 94.0 / 89.6 BoN-6 |
 | [DIAL](wiki/sources/dial.md) | — | Eight-intent CFG expands continuous-flow proposal support; multi-intent GRPO preserves preference contrast | WOD-E2E held RFS 7.696→8.211; BoN-128 ceiling 9.14 |
 | [PlannerRFT](wiki/sources/plannerrft.md) | — | Diffusion-planner RFT with PPO-learned lateral/longitudinal exploration, GRPO survival reward, and nuMax acceleration | 72.21 Test14-hard / 85.80 Test14-random reactive nuPlan |
@@ -128,15 +134,39 @@ The last four entries are **methodological references** — LLM/VLM reasoning-RL
 
 Questions the wiki has surfaced but not resolved, in rough order of how much they'd change the picture:
 
-1. **Does test-time future imagination help at all?** Three independent results now say no. SimWAM's mask ablation removes the action expert's access to future tokens and loses nothing (isolated 90.3 vs bidirectional 90.2). DriveLaW, an imagine-then-act method, finds that *earlier* denoising latents plan better and that nearly-clean generated futures **collapse the policy** (t=1 → 89.1, t=10 → 23.2 PDMS). And the counterfactual escape hatch — "imagination must matter for evaluating alternative maneuvers" — is now partly closed from the other side: on a CARLA benchmark with matched counterfactual ground truth, action-conditioned generation scores a recovered fraction of **0.38 (Vista) / 0.31 (DrivingWorld)**, i.e. closer to a replay where the event never happened than to the true counterfactual, because direct prediction never conditions on the factual continuation. The video generator is clearly valuable as a representation learner — DriveLaW's video latents beat VLM hidden states by 2.6 PDMS and BEV by 5.0 under a fixed planner — but running it forward to a clean future at decision time remains unsupported. Still open for long-horizon rollout and reactive interaction. See [World Models for AD](wiki/concepts/world-model-for-ad.md#test-time-imagination) and [Counterfactual Prediction](wiki/concepts/counterfactual-prediction.md).
+1. **Does test-time future imagination help at all?** Three independent results now say no. SimWAM's mask ablation removes the action expert's access to future tokens and loses nothing (isolated 90.3 vs bidirectional 90.2). DriveLaW, an imagine-then-act method, finds that *earlier* denoising latents plan better and that nearly-clean generated futures **collapse the policy** (t=1 → 89.1, t=10 → 23.2 PDMS). And the counterfactual escape hatch — "imagination must matter for evaluating alternative maneuvers" — is now partly closed from the other side: on a CARLA benchmark with matched counterfactual ground truth, action-conditioned generation scores a recovered fraction of **0.38 (Vista) / 0.31 (DrivingWorld)**, i.e. closer to a replay where the event never happened than to the true counterfactual, because direct prediction never conditions on the factual continuation. The video generator is clearly valuable as a representation learner — DriveLaW's video latents beat VLM hidden states by 2.6 PDMS and BEV by 5.0 under a fixed planner — but running it forward to a clean future at decision time remains unsupported. [Auto-JEPA](wiki/sources/auto-jepa.md) suggests the question has been posed on the wrong axis: it *does* predict at inference and the prediction carries the entire system (remove it and PDMS falls 91.3 → 52.6), but what it predicts is the future **ego trajectory** latent, not a world state. The generalization that survives all five papers is therefore **future-prediction objectives are valuable; instantiated future world states at decision time are not**. [DA-WAM](wiki/sources/da-wam.md) then supplied the variable everyone was missing — **how many futures**. Its matched ablation: shared-across-candidates 92.81 < **no future at all 93.31** < one future per candidate 93.46. A *shared* future is worse than not modelling the future, because an averaged future cannot tell the scorer which candidate causes the hazard (ego progress collapses 91.36 → 88.68 while NC/TTC rise). That retro-explains SimWAM and DriveLaW, which both tested shared futures. The positive half is thin: +0.15 PDMS, single run, and the predicted horizon is only 0.5 s. [WA-JEPA](wiki/sources/wa-jepa.md) adds a third axis: the objective's *form* matters as much as its presence — on multi-view scene latents, deterministic regression scores **worse than no future prediction at all** (90.7 vs 91.1 EPDMS) while flow matching on the same target reaches 91.7, because regression collapses to a temporal mean. That puts DeepSight, FLARE, and Latent-WAM's deterministic objectives under a question none of them has answered. Still open for long-horizon rollout and reactive interaction. See [World Models for AD](wiki/concepts/world-model-for-ad.md#test-time-imagination) and [Counterfactual Prediction](wiki/concepts/counterfactual-prediction.md).
 2. **Is NAVSIM-v1 saturated?** Best-of-6 reaches 94.8 = the human ground-truth score (Curious-VLA). If oracle selection already matches the logged human, single-sample gains above ~93 may be measuring selection quality rather than driving quality. See [Best-of-N Sampling](wiki/concepts/best-of-n.md).
 3. **Are video-prior gains about scale or objective?** SimWAM shows video-prior scale barely matters (Wan2.1-1.3B 90.2 ≈ Wan2.2-5B 90.3) while DriveWAM shows dropping the video objective is catastrophic. Together they point at the training signal, not the backbone — but no paper has tested this across architectures.
 4. **Do PDMS gains transfer to closed-loop?** Most 90+ PDMS methods report no Bench2Drive, HUGSIM, or navhard result. Stage-2 navhard remains near 40 EPDMS for everything measured.
-5. **Comparison-scope inflation is systemic.** Nearly every ingested paper claims SOTA against a table that omits the actual frontier. The wiki tracks this per-paper, but it makes cross-paper ranking unreliable in principle.
+5. **Is navtest measuring the wrong thing for world models?** [GeoWAM](wiki/sources/geowam.md) adds future-geometry forecasting to DVGT-2 and gains **+0.6 EPDMS on navtest but +4.9 on navhard** — the same change worth eight times more under the reactive protocol, exactly as a world-model thesis predicts. Every world-model paper in the wiki optimizes navtest; only two report navhard at all. If the asymmetry replicates, the field has been evaluating anticipation on a benchmark where anticipation barely pays.
+6. **Comparison-scope inflation is systemic.** Nearly every ingested paper claims SOTA against a table that omits the actual frontier. The wiki tracks this per-paper, but it makes cross-paper ranking unreliable in principle.
 
 ## Known Gaps
 
-Methods cited frequently across ingested papers but **not yet ingested** (mention counts as of the last lint): Hydra-MDP (59), SimLingo (23), WorldRFT (19), iPad (18), GoalFlow (13), Doe-1 (13), Vista (12), World4Drive (8), VaVAM (7), ColaVLA (6), SeerDrive (3), UniWorldVLA (3). **Hydra-MDP** is by a wide margin the most-cited un-ingested method and underpins the EPDMS / Hydra-MDP++ metric definitions used throughout the wiki; **SimLingo** and **WorldRFT** are next. **Vista** and **DrivingWorld** have additional priority now that they are the two frozen backbones evaluated in [How Can Driving World Models Do Counterfactual Prediction?](wiki/sources/driving-wm-counterfactuals.md).
+Methods cited frequently across ingested papers but **not yet ingested** (mention counts refreshed at the 2026-09-02 lint, `wiki/log.md` excluded):
+
+| Method | Mentions | Why it matters |
+|---|---:|---|
+| **Hydra-MDP / ++** | 85 | Most-cited un-ingested method by a wide margin; underpins the EPDMS / Hydra-MDP++ metric definitions used throughout the wiki |
+| **DVGT-2** | 56 | [GeoWAM](wiki/sources/geowam.md)'s encoder, point-head initialization, *and* strongest baseline on both navtest (89.6) and navhard (31.7) — GeoWAM's own contribution over it is only +0.6 / +4.9 |
+| **Vista** | 72 | One of two frozen backbones evaluated in [How Can Driving World Models Do Counterfactual Prediction?](wiki/sources/driving-wm-counterfactuals.md) |
+| **DrivingWorld** | 40 | The other one |
+| **DrivoR** | 40 | 93.1 PDMS in DA-WAM's table; also GeoWAM's strongest HUGSIM baseline |
+| **CLOVER** | 24 | [Auto-JEPA](wiki/sources/auto-jepa.md) initializes its scorer from CLOVER's released checkpoint, and that scorer contributes +3.7 of Auto-JEPA's 91.3 PDMS |
+| **SparseDriveV2** | 23 | 92.0 PDMS / 90.1 corrected EPDMS |
+| **WorldRFT** | 23 | Recurring NAVSIM-v2 baseline |
+| **SimLingo** | 26 | Recurring closed-loop baseline |
+| **iPad** | 29 | 91.7 PDMS |
+| **EponaV2** | 17 | 36.1 navhard EPDMS — second only to GeoWAM, and it uses RL supervision |
+| **DriveFuture** | 13 | 89.9 corrected EPDMS; DA-WAM's closest cited relative |
+| **CoWorld-VLA** | 11 | 90.0 corrected EPDMS; shares four authors with WA-JEPA |
+| **Discrete-WAM** | 10 | 90.4 corrected EPDMS |
+| **Centaur** | 10 | 92.6 PDMS |
+| **NavFormer** / **LEAD (LTFv6)** | 8 / 8 | 34.1 / 31.9 navhard EPDMS, both RL-supervised |
+
+Also cited but not ingested: WoTE (25), WorldMirror (23), LAW (21), GoalFlow (18), VGGT (16), Doe-1 (14), DrivingGPT (14), VaVAM (12), World4Drive (10), Drive-WM (10), OccWorld (9), GTRS (9), DIVER (9), ColaVLA (8), DriveWorld (8), SeerDrive (6), UniWorldVLA (5), VGGT-World (5), ZTRS (4), ResAD (3), IDOL / LCDrive / BeyondDrive / MapAnything / CUT3R / DUSt3R (2 each).
+
+**Highest-value next ingests**: DVGT-2 (an attribution gap in a current result), CLOVER (same), and Hydra-MDP (a definitional dependency for the whole EPDMS discussion).
 
 ## Workflow
 

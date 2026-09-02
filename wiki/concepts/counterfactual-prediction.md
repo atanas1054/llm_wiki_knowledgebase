@@ -1,10 +1,10 @@
 ---
 title: Counterfactual Prediction for Driving World Models
 type: concept
-sources: [raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md]
-related: [sources/driving-wm-counterfactuals.md, concepts/world-model-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/bench2drive.md, concepts/hugsim-benchmark.md, concepts/nuscenes-waymo-evals.md, concepts/best-of-n.md, sources/simwam.md, sources/drivelaw.md, sources/dreameraD.md, sources/vega.md, sources/policy-world-model.md]
+sources: [raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md]
+related: [sources/da-wam.md, sources/auto-jepa.md, sources/driving-wm-counterfactuals.md, concepts/world-model-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/bench2drive.md, concepts/hugsim-benchmark.md, concepts/nuscenes-waymo-evals.md, concepts/best-of-n.md, sources/simwam.md, sources/drivelaw.md, sources/dreameraD.md, sources/vega.md, sources/policy-world-model.md]
 created: 2026-08-24
-updated: 2026-08-24
+updated: 2026-09-02
 confidence: high
 ---
 
@@ -45,7 +45,9 @@ Keeping these apart resolves most apparent disagreements between papers:
 | **A. Action-conditioned generation** — feed an alternative/abnormal trajectory, generate video | Vista, Drive-WM, Genie 3 promptable events | Rung 2 at best | **No.** This is intervention, not counterfactual |
 | **B. Retrospective log replay** — re-simulate a recorded drive under a different route | Waymo World Model blog | Rung 3 *if* the recorded episode's state is preserved; rung 2 if only the history is | Depends on whether the realized state is carried over |
 | **C. Counterfactual VQA** — ask a VLM, in language, what would happen under a hypothetical | OmniDrive counterfactual planning (see [[concepts/vlm-domain-adaptation.md]]: frozen VLM 18.20 → fine-tuned 67.80) | Language-space reasoning, not a prediction task | Different object entirely; don't compare scores across senses |
-| **D. Candidate-manoeuvre rollout for planning** — imagine futures for several proposals and score them | [[sources/dreameraD.md]] latent rollouts + reward model, world-model-as-scorer designs | **Rung 2, correctly** | The label is often loose but the *computation* is the right one for planning |
+| **D. Candidate-manoeuvre rollout for planning** — imagine futures for several proposals and score them | [[sources/dreameraD.md]] latent rollouts + reward model, [[sources/da-wam.md]] per-candidate future latents, world-model-as-scorer designs | **Rung 2, correctly** | The label is often loose but the *computation* is the right one for planning |
+
+[[sources/da-wam.md]] is the wiki's purest instance of sense D and shows how entrenched the loose label is: it describes its per-candidate predicted latents as "counterfactual latent futures" and "candidate-specific counterfactual evidence" throughout, and titles a section "Action-Conditioned Counterfactual World Modeling." There is no abduction step anywhere — the alternative action is specified by the candidate set rather than observed, and nothing conditions on a factual continuation, which is the strict rung-2 situation. Its *engineering* is sound and appropriate; the terminology is exactly what this page exists to disambiguate. Worth noting in DA-WAM's favour that it is unusually careful about the underlying data problem even while using the wrong word: it refuses to apply the observed future as a target for unexecuted candidates, restricting dense supervision to the expert-matched one, which is precisely the recognition that the other 31 outcomes were never realized.
 
 Sense D deserves emphasis because it is where most of this wiki's world-model planners live. At decision time there **is no factual continuation** — the future has not happened yet. Rung 2 is therefore the correct and only available target for a planner. The critique below applies to systems that claim rung 3 for *already recorded* episodes; it does not say action-conditioned generation is the wrong tool for planning.
 
@@ -152,6 +154,8 @@ Performance tracks *how much of the event is inferable from the shared history* 
 **2. It narrows the escape hatch in the test-time-imagination debate.** [[sources/simwam.md]]'s mask ablation and [[sources/drivelaw.md]]'s denoising-step sweep both found no planning benefit from conditioning on generated futures on NAVSIM, leaving "but imagination must matter for counterfactual manoeuvre evaluation" as the last untested defence of imagine-then-act designs. This paper tests counterfactual evaluation directly and finds the standard procedure does not deliver it either. The defence is not dead — sense D above (comparing *candidate* manoeuvres before acting) is rung 2 and remains untested by this benchmark — but the specific "world models are counterfactual simulators" version of it is now contradicted by measurement.
 
 **3. It does not condemn action-conditioned generation for planning.** A planner has no $F^{+}$. Rung 2 is the right target at decision time, and every action-conditioned generator in this wiki is doing an appropriate computation for that purpose. What the paper removes is the *retrospective* claim: that the same machinery can answer "what would have happened in that recorded incident."
+
+**5. Some world models opt out of the ladder entirely, and say so.** [[sources/auto-jepa.md]] predicts only the latent of the future ego trajectory, and its limitations section states plainly that the learned representation "does not provide the scene-level forecasts required by applications such as interactive simulation or counterfactual environment generation." This is worth recording as the honest boundary case: it is a *world model* in the sense of predicting the future, and it is on **no rung of this ladder for the environment**, because it never represents an environment state that could be intervened on. The trade is explicit — planning-relevant selectivity (masking dynamic agents changes its intent 2.97× more than equal-area random masks) without any queryable model of what those agents will do. Papers that want both must pay for both; Auto-JEPA is the demonstration that planning alone does not require the second.
 
 **4. Retrospective analysis needs a different architecture, not a bigger one.** For incident analysis, safety auditing, and liability assessment — where the full log exists by definition — the missing component is an abduction path that ingests the observed continuation. No ingested method in this wiki has one.
 

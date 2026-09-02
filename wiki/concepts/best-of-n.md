@@ -144,7 +144,7 @@ Both demonstrate that the oracle BoN gap can be partially closed by a learned se
 
 When reading NAVSIM SOTA tables:
 - A method that reports only BoN without a single-sample number is not directly comparable to single-sample results
-- Curious-VLA BoN-6 (94.8) is the highest absolute PDMS in the wiki, but it uses an oracle selection regime. The strongest non-BoN wiki result is CLEAR (93.7), which uses learned adaptive routing and candidate scoring; the strongest fixed-vocabulary selector remains DriveSuprim (93.5). Among VLM-style single-sample methods, DynVLA/Reasoning-VLA report 91.7 with comparison-scope caveats, FLARE reports 91.4, and DriveFine remains one of the most broadly verified direct-comparison baselines at 90.7.
+- Curious-VLA BoN-6 (94.8) is the highest absolute PDMS in the wiki, but it uses an oracle selection regime. The strongest non-BoN wiki results are CLEAR and DA-WAM, tied at 93.7, which uses learned adaptive routing and candidate scoring; the strongest fixed-vocabulary selector remains DriveSuprim (93.5). Among VLM-style single-sample methods, DynVLA/Reasoning-VLA report 91.7 with comparison-scope caveats, FLARE reports 91.4, and DriveFine remains one of the most broadly verified direct-comparison baselines at 90.7.
 - BoN results are most informative when paired with the single-sample result — the gap indicates how much a learned selector could theoretically recover
 
 See [[concepts/navsim-benchmark.md]] for the full SOTA table with BoN and single-sample results labeled separately.

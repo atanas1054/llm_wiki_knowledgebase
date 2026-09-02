@@ -1674,3 +1674,281 @@ Append-only log of all wiki operations.
 - No stated release of benchmark, code, or data.
 
 **Cross-page effect**: this is the first ingested paper that constrains a capability claim rather than proposing a method, and it forced a correction in `world-model-for-ad.md`, which had listed counterfactual reasoning among the reasons world models help planning since 2026-04-05.
+---
+
+## 2026-09-02 - Ingest: Auto-JEPA
+
+**Source**: `raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md`
+**arXiv**: 2607.29031v1
+**Code**: https://github.com/NoctYang/Auto-JEPA
+**Authors**: Jiwei Yang, Zhengxian Chen, Chaosheng Huang, Jun Li (Tsinghua University, School of Vehicle and Mobility)
+**Confidence**: high - the local markdown includes the full method text, all five figures, all five tables (NAVSIM v1, NAVSIM v2, component ablation, candidate-pool sweep, hyperparameters), and appendices A-G
+
+**Pages created**:
+- `wiki/sources/auto-jepa.md` - full source summary: four-stage pipeline, all loss definitions, all five figures embedded, all five tables reproduced, the semantic occlusion protocol, relationships to seven other wiki entries, and a four-part limitations section
+
+**Concept pages updated**:
+- `wiki/concepts/world-model-for-ad.md` - added Pattern 22 "The Ego Trajectory as the Prediction Target"; added a third position to the test-time-imagination synthesis (predicts at inference, prediction is load-bearing, but the target is an action rather than a world state) and reframed the surviving generalization as "future-prediction objectives are valuable; instantiated future world states at decision time are not"; added an Auto-JEPA row to the World Model vs. VLA table; noted that FID/FVD are undefined rather than merely unreported for this method; two new open questions (is the JEPA objective load-bearing on the trajectory side; does occlusion selectivity predict driving quality)
+- `wiki/concepts/selection-based-planning.md` - added "latent retrieval" as a fifth paradigm row; new section contrasting retrieval against fixed-vocabulary selection, including the point that DriveSuprim's 98.7 oracle ceiling does not transfer because retrieval introduces a recall failure mode fixed vocabularies do not have; methods table row
+- `wiki/concepts/perception-for-planning.md` - new "Emergent Ego-Relevance Without Perception" section documenting the semantic occlusion protocol as a reusable methodology, its two missing controls, and a table comparing it against the page's three other evidence types (cosine collapse, detection ablation, attention visualization); two new open questions
+- `wiki/concepts/intent-conditioned-planning.md` - new "Full-Trajectory Latent as Intent" section with a three-way table separating discrete class labels (DIAL/PaIR-Drive), continuous terminal pose (SGDrive), and full-trajectory latent (Auto-JEPA); corrected the stale "Two Uses in the Wiki" heading to "Four Uses"
+- `wiki/concepts/navsim-benchmark.md` - v1 SOTA row, two v2 rows (matched and updated protocol), a long caveat covering both the stale v1 comparison set and the v2 protocol mismatch, and a new "Evaluator Drift Is Now a First-Class Confound" section tabulating DriveFine (+2.6) and Auto-JEPA (+3.5) same-checkpoint swings under different evaluators
+- `wiki/concepts/foundation-backbones-for-ad.md` - new backbone role (frozen off-the-shelf video encoder); new "Freezing the Encoder, Moving the Objective" section comparing Drive-JEPA's and Auto-JEPA's opposite allocations of the same V-JEPA 2 starting point; takeaway putting an upper bound of 2.0 PDMS on driving-domain encoder adaptation
+- `wiki/concepts/counterfactual-prediction.md` - added consequence #5: a world model that is on no rung of the ladder for the environment, by its own admission, and what that trade buys
+
+**Index and README updated**: source row added to both; README counts 58 to 59 papers; Open Thread #1 reframed around the axis Auto-JEPA exposes; CLOVER added to Known Gaps.
+
+**Key facts**:
+- Prediction target is the latent of the future ego trajectory, not any scene state. A trajectory autoencoder (4 Transformer blocks, 1024-d, 16 heads, 8 Fourier bands) is trained first with coordinate/endpoint/velocity/acceleration losses (weights 1 / 2.0 / 0.5 / 0.2), then its decoder is discarded and the encoder frozen.
+- Eight waypoints over 4 s at 0.5 s intervals, coordinates normalized by 64, encoded to 8x1024. The eight tokens describe one continuous realization, explicitly not eight maneuver classes.
+- Visual predictor: frozen V-JEPA 2 encoder (no driving adaptation), history and command encoders, 24-layer / 16-head / 1024-d Transformer with eight learnable future-time query tokens. Input is four 256x256 front-camera frames, four ego positions, a 4-d command.
+- Objective is 0.1 L_feat + 2.0 L_cos + L_NCE with tau=0.07; no ADE/FDE supervision. InfoNCE is the anti-collapse term and its negative set is bounded by batch size x GPU count (8/GPU, 1-2 GPUs).
+- Memory is 110,335 GT trajectory-latent pairs from NAVSIM training, navtest excluded. Retrieval is flat cosine over the whole memory, top-K = 300.
+- Scorer is initialized from the released CLOVER checkpoint and re-optimized with L_comp + 0.5 L_rank on labels from the NAVSIM/CLOVER get_sub_score evaluator (batched navsim_v1_style path, per-proposal two-way rollout disabled). DAC gate is BCE + 0.3 rank with positive-class weight 8, threshold 0.2, candidate-set self-attention; all-rejected falls back to ungated ranking.
+- NAVSIM v1: 91.3 PDMS (NC 98.4, DAC 98.3, TTC 95.0, C 100.0, EP 87.1). EP is second only to Curious-VLA in the paper's own table and close to the human 87.5.
+- NAVSIM v2: 85.6 EPDMS original evaluator, 89.1 with the updated official implementation and human-behavior filtering. The entire 3.5-point gap is TL 97.2 to 99.7 and LK 84.0 to 94.7; every other submetric moves at most 0.1.
+- Component ablation (read conditionally, not sequentially): no-intent 52.6, no-scorer 87.6, no-gate 91.0, full 91.3. Scorer is worth +3.7 given the gate; gate is worth +0.3 PDMS and +0.4 DAC given the scorer.
+- Candidate pool: K=1 gives 87.6, K=200 gives 91.1, K=300 gives 91.3. K=1 is pure retrieval with no selection and is the cleanest measure of the JEPA component alone.
+- Semantic occlusion over 15,364 validation scenes: dynamic-agent masking gives mean 1-cos of 0.080 vs. 0.027 for equal-area random masking, a 2.97x ratio, larger on the agent arm in 71.1% of scenes. Both arms hold ego history and command fixed. Seed 42.
+- One deterministic full-navtest evaluation of one checkpoint; no seed variance. Intent-predictor checkpoint selected as "epoch 10", not by a validation criterion. A100-SXM4 80 GB, Python 3.12, BF16.
+
+**Limitations**:
+- The 89.1 EPDMS headline requires an evaluator no baseline in its own table used. Under the matched protocol the score is 85.6, which ties HydraMDP++ and falls below DriveSuprim 87.1 and DriveWorld-VLA 86.8 within that same table, and far below the wiki frontier.
+- LK 84.0 under the original evaluator is a 12-point outlier against every other camera method, and the paper does not explain it or why a retrieval planner would be uniquely exposed.
+- NAVSIM v1 Table 1 tops out at 90.3 and omits CLEAR 93.7, DriveSuprim 93.5, Drive-JEPA 93.3, HybridDriveVLA 92.1, DriveFine 91.8, DynVLA 91.7, SimWAM 91.5, iPad, and GoalFlow.
+- EC 75.2/75.4 is near the bottom of the wiki's v2 entries. Retrieval has no frame-to-frame continuity mechanism; consecutive frames can land on different memory entries with nothing penalizing the jump. Drive-JEPA hit exactly this and needed a momentum-aware selector (EC 47.9 to 84.8); Auto-JEPA does not discuss it.
+- The scorer is inherited from CLOVER rather than built, and contributes +3.7 of the 91.3. No row isolates CLOVER's scorer on CLOVER's own candidates versus Auto-JEPA's.
+- "No perception annotations" is true; "no privileged supervision" is not. Scorer and gate train on NAVSIM evaluator-derived labels - the same simulator-label distillation Hydra-MDP-style methods use.
+- The no-intent ablation substitutes a scene-independent codebook medoid, so it shows scene conditioning matters at all, not that this representation is good. The missing control is retrieval keyed by a regressed trajectory encoded through the same frozen encoder - which would isolate whether the JEPA objective or the shared retrieval space is doing the work.
+- Retrieval cannot synthesize a maneuver the memory lacks, and the K=200 to 300 saturation (+0.2) suggests enlarging the pool is not the fix. No retrieval-recall study exists.
+- Memory inherits NAVSIM's forward-heavy trajectory distribution (only ~8% of GT trajectories turn more than 30 degrees per DriveSuprim). No rotation augmentation analogue and no turn-vs-straight breakdown.
+- No latency, FPS, or memory-footprint number anywhere, despite a flat cosine scan over 110,335 x 8 x 1024 latents per frame (~1.8 GB at BF16). Every competing wiki method reports latency.
+- All-rejected fallback firing rate is never reported, so the gate's measured +0.3 is an average over two different systems. Gate threshold 0.2 has no sensitivity sweep.
+- NAVSIM only - no Bench2Drive, HUGSIM, navhard, nuScenes, or Waymo. This matters more than usual for a retrieval planner: a 4 s non-reactive horizon is exactly the regime where a memory of recorded human trajectories should look best.
+- 256x256 input, well below the 1024x256 used by TransFuser, HydraMDP++, DriveSuprim, and GoalFlow, with no resolution ablation.
+- Occlusion controls match area but not shape, contiguity, or placement. Agent masks are object-shaped and road-level; random masks may land on sky or periphery. The missing arm is equal-area masks on the drivable surface.
+- 28.9% of scenes respond more to random masking, and that tail is uncharacterized. Absolute dependence is modest: 1-cos of 0.080 means the intent stays 92% aligned after removing every visible dynamic agent from all four frames.
+- The link from latent change to behavioral change is shown on three hand-picked scenes only. No dataset-level statistic connects delta-intent to a changed selected trajectory or to PDMS.
+- By the paper's own admission the representation gives no scene-level forecasts, so interactive simulation and counterfactual environment generation are out of scope by construction.
+
+**Cross-page effect**: this is the first ingested method whose world-model target is the ego action rather than the environment, which required a new architecture pattern on the world-model page and a reframing of the test-time-imagination question from "does predicting the future help at inference" to "what should be predicted". It also introduced retrieval as a distinct planning paradigm alongside fixed-vocabulary selection, and supplied the wiki's first interventional protocol for testing whether a planner's representation actually depends on the agents we assume matter.
+
+**Naming hazard recorded**: Auto-JEPA and Drive-JEPA are different papers by different groups, both using V-JEPA 2 on NAVSIM. The source page opens with an explicit warning and a difference table.
+---
+
+## 2026-09-02 - Ingest: WA-JEPA
+
+**Source**: `raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md`
+**arXiv**: 2608.20974v1
+**Code**: https://github.com/AFARI-Research/WA-JEPA
+**Authors**: Xinlin Wang, Yujiao Xiang, Yuheng Zhou, Jingqi Wang, Minqing Huang (corresponding), Jiajie Huang, Dongxu Wei (project lead), Tingguang Zhou, Xiyang Wang, Gong Chen, Zhi Xu, Feiyang Tan, Hangning Zhou, Mu Yang - Afari Intelligent Drive, UESTC, Southeast University, BUPT, Tianjin University
+**Confidence**: high - full method text, five of six figures, all seven tables, and appendices A-E. Figure 4 (temporal-collapse bar chart) is missing its image in the local conversion; both plotted values appear in the body text.
+
+**Pages created**:
+- `wiki/sources/wa-jepa.md` - two-stage method with all loss definitions, five figures embedded, all seven tables reproduced (NAVSIM-v2 with both EPDMS columns, HUGSIM main + aggregation + per-dataset, NAVSIM-v1, three ablations, temporal metrics, seed variance), a three-way JEPA comparison table, and a five-part limitations section
+
+**Concept pages updated**:
+- `wiki/concepts/navsim-benchmark.md` - **substantially rewritten around evaluator drift**. The old two-row "Evaluator Drift" section became a full section documenting the devkit commit 359c7f7 correction, an eight-method delta table (+2.0 to +3.8), and a three-way partition of the wiki's own v2 entries into corrected / pre-fix / unclassified cohorts. Added a new seed-variance section. Added v1 and two v2 rows for WA-JEPA plus a scope caveat. Softened the WAM-Diff SOTA claim and narrowed the Auto-JEPA caveat.
+- `wiki/concepts/hugsim-benchmark.md` - **rewritten**. New current-snapshot table (436 scenarios, commit ead17f2), aggregation-robustness and per-dataset tables, an explicit two-era warning that HAD-L and Latent-WAM are not comparable to WA-JEPA, and four open questions. Confidence stays medium.
+- `wiki/concepts/world-model-for-ad.md` - added Pattern 23 with an `{#objective-form}` anchor covering the FM-vs-regression result and the temporal-collapse diagnosis; added the entropy-of-the-target framing that reconciles it with Auto-JEPA; noted WA-JEPA does not test SimWAM's control; World-Model-vs-VLA row; two open questions.
+- `wiki/concepts/foundation-backbones-for-ad.md` - new section putting Drive-JEPA's and WA-JEPA's encoder ablations side by side as two independent confirmations, plus the shared image-vs-video confound neither paper breaks; new backbone-role row.
+- `wiki/concepts/diffusion-planner.md` - new section on flow matching over latents rather than trajectories, the asymmetric stop-gradient coupling, and the FM-vs-regression table read alongside SpanVLA's L1-head result.
+
+**Source pages updated**:
+- `wiki/sources/auto-jepa.md` - corrected yesterday's over-strong claim that 89.1 is incomparable to everything; it belongs to the corrected cohort where it ranks ninth. Added a WA-JEPA relationship entry on target entropy.
+- `wiki/sources/drive-jepa.md` - added WA-JEPA's direct critique, the corroborating encoder ablation, and the note that WA-JEPA's v1 table cites Drive-JEPA's 89.0 perception-free baseline rather than 93.3. Added the Auto-JEPA cross-reference.
+
+**Index and README updated**: rows added to both; README counts 59 to 60 papers; NAVSIM-v2 leader line changed from WAM-Diff 89.7 to WA-JEPA 91.7 with the protocol caveat; new HUGSIM leader line; Open Thread #1 extended with the objective-form axis; Known Gaps now leads with the four un-ingested 89.9-90.4 EPDMS methods.
+
+**Key facts**:
+- Three-part critique of V-JEPA for planning: random spatiotemporal masking is a completion objective with no future-directed component; deterministic regression cannot generate unseen future tokens; V-JEPA 2's action-conditioned variant needs a goal image plus MPC, which is not online planning.
+- Stage 1 pretrains on multi-view nuPlan video with no action supervision. History tokens always visible; masking applies only to future tokens under two patterns. Full-mask makes every future token a target (strictly causal); Patch-mask keeps a subset visible. Visible future tokens are scattered back into a sequence of learnable mask tokens via a mask-aware fill-and-scatter operation. An EMA target encoder supplies clean targets.
+- Flow matching uses linear interpolation Z_t = (1-t) eps + t Z*, x-prediction (clean-endpoint) parameterization, MSE loss against the stop-gradiented target, MMDiT-style predictor doing joint self-attention between context and future scene tokens.
+- Stage 2 uses Full-mask only. Actions are noised in a normalized space in parallel; noisy future actions, historical actions, and ego state are separately encoded and concatenated into action tokens. One MMDiT predictor emits both streams.
+- Asymmetric stop-gradient: the scene stream reads action tokens but its loss cannot update them; the action stream reads differentiable scene tokens. Action supervision shapes the world representation, world modeling never perturbs the policy. Never ablated. Lambda weights never reported.
+- Inference: 12 sampling steps, both future scene latents and actions initialized from Gaussian noise, clean endpoints converted to velocities and integrated. No future images, no GT actions.
+- Inputs: 4 historical frames, 4 cameras (left/front/right/rear), 256x512. Outputs 8 actions at 2 Hz including heading phi_k, which most NAVSIM planners do not predict.
+- NAVSIM-v2: 91.7 EPDMS corrected, 88.0 EPDMS* pre-fix. NC 99.4, DAC 98.2, DDC 99.7, TLC 99.9, EP 87.8, TTC 98.9, LK 98.3, HC 98.3, EC 88.1. NC/TTC/LK best in its table.
+- NAVSIM-v1: 91.8 PDMS with NC 99.5, the highest NC in the wiki.
+- HUGSIM zero-shot: HD-Score 0.4462, RC 0.5689, NC 0.6856, DAC 0.9635, TTC 0.6120, Comf 0.6620. Baselines rescored by the authors at commit ead17f2 including PR #57's heading-order fix: DrivoR 0.3252, UniAD 0.3124, LTF 0.2310, VAD 0.1393. Best on all four source datasets separately.
+- Encoder ablation, all trained directly in Stage 2 with no Stage 1: V-JEPA 2 89.5, MAE 83.8, DINOv3 83.8, SigLIP2 83.1.
+- Stage 1 masking: no Stage 1 89.5, Patch-mask 91.0, Full-mask 91.3, both 91.7.
+- Stage 2 components: cascaded historical-latents baseline 89.9, separate FM future predictor cross-attended 90.8, joint without future supervision 91.1, joint + regression 90.7, joint + FM 91.7.
+- Temporal metrics on the K=64 most dynamic locations, F=4 future token steps: directional-similarity collapse gap 0.30 (Reg) to 0.10 (FM); change-magnitude ratio 0.45 (Reg) to 0.80 (FM). For FM the metric uses the one-step x-prediction at the sampled training flow time, not the multi-step sampler.
+- Seed variance over 10 seeds: mean 91.7014, std 0.0531, SE 0.0168, 95% CI [91.6634, 91.7393], median 91.6960, range [91.6294, 91.8070]. First NAVSIM seed-variance table in the wiki.
+- Six methods in Table 1 report both EPDMS columns, making the correction measurable: DiffusionDriveV2 +2.0, DriveFuture +3.5, CoWorld-VLA +3.8, SparseDriveV2 +3.4, Discrete-WAM +3.4, WA-JEPA +3.7. With DriveFine's +2.6 and Auto-JEPA's +3.5 that is eight measured deltas.
+- Hardware: 64 A800 for Stage 1, 32 A800 for Stage 2, batch 4/GPU, AdamW, bf16, DeepSpeed ZeRO-2. LRs encoder 1e-5, scene projector 1e-4, joint predictor 1.5e-4, weight decay 0.04.
+
+**Limitations**:
+- The NAVSIM-v1 table cites Drive-JEPA at 89.0, its perception-free baseline, rather than its 93.3 full planner - a 4.3-PDMS understatement of the nearest methodological competitor. Submetrics confirm the identification. The v2 table does cite Drive-JEPA's strong configuration, flagged with a dagger.
+- The v1 table also omits CLEAR 93.7, DriveSuprim 93.5, HybridDriveVLA 92.1, DynVLA 91.7, SimWAM 91.5, and DriveFine, so 91.8 PDMS is mid-frontier in this wiki.
+- The abstract's +1.6 and +1.3 margins are corrected-column figures. In the pre-fix column WA-JEPA leads Drive-JEPA-dagger by 0.2. Both claims are internally sound but the two columns tell different stories about the size of the lead.
+- WA-JEPA loses the HUGSIM Extreme tier to DrivoR, 0.1362 vs 0.1407, on 103 of 436 scenarios. Every method is near the floor there.
+- HUGSIM comfort is 0.6620 against about 0.95 for LTF, DrivoR, and VAD. A 12-step noise-initialized sampler has no mechanism enforcing kinematic consistency across closed-loop timesteps, and nothing in the method addresses it.
+- HUGSIM baselines are LTF, DrivoR, UniAD, and VAD - three of them pre-2024 architectures. No world-model or VLA baseline. DrivoR's number is the authors' reproduction, since its published scores used the 345-scenario release.
+- No ablation separates the future-prediction training objective from the inference-time generation; every row that removes one removes both. This is exactly the control SimWAM ran and found empty. The live hypothesis is that the 12-step scene denoising at inference contributes nothing.
+- The encoder ablation confounds JEPA objective with video pretraining: MAE, DINOv3, and SigLIP2 are all image-level, and no video-pretrained non-JEPA control is included. Drive-JEPA's Table 7 has the identical hole.
+- The asymmetric stop-gradient is described at length in Appendix C and never ablated. Lambda_future and lambda_act are never given values.
+- 64 + 32 A800 GPUs with no wall-clock or GPU-hour total. No latency, FPS, or parameter count anywhere, against Latent-WAM's 107 ms and SimWAM's 518 ms.
+- No scaling study on either axis. Stage 1 data volume is never quantified beyond "multi-view driving videos from nuPlan"; no encoder-size or predictor-size sweep.
+- Stage 1 pretrains on nuPlan and NAVSIM navtest derives from OpenScene which derives from nuPlan. The paper never states whether navtest scenes are excluded from the pretraining corpus. No action labels are used in Stage 1, so this is not label leakage, but visual familiarity with the eval scenes would still inflate results.
+- The 10-seed study covers only the main experiment; ablations are presumably single-seed, so the 0.3-0.4 gaps within Table 4(b) sit near the measured noise floor.
+- NAVSIM and HUGSIM only. No Bench2Drive, navhard, nuScenes, or Waymo.
+
+**Cross-page effect**: two structural corrections to the wiki. First, NAVSIM-v2's EPDMS column has been mixing pre-fix and corrected evaluator results for several ingests, and WA-JEPA's two-column table makes the partition legible for the first time - WAM-Diff is no longer the v2 leader, the correction is worth more than the spread between the top six entries, and it does not preserve ranking. Second, HUGSIM has the same problem independently: the wiki's HAD-L and Latent-WAM scores predate a scenario-set expansion and a controller heading-order fix, so they cannot be read against WA-JEPA's. Protocol drift is now tracked as a first-class confound on both benchmark pages.
+
+**New synthesis**: the FM-vs-regression result opens an axis the wiki had not tracked - the *form* of the future-prediction objective, not just its presence. Regression on multi-view scene latents is worse than no future prediction at all (90.7 vs 91.1) because it collapses to a temporal mean, measured directly. Reconciled with Auto-JEPA via target entropy: deterministic objectives suffice for low-entropy targets (a single ego trajectory) and fail on high-entropy ones (a four-camera scene), which leaves Drive-JEPA in the awkward middle and puts DeepSight's, FLARE's, and Latent-WAM's deterministic scene-level objectives under a testable question.
+
+**Naming hazard, updated**: the wiki now holds three V-JEPA 2 papers evaluated on NAVSIM - Drive-JEPA, Auto-JEPA, and WA-JEPA - by three different groups, sharing almost nothing beyond the backbone. All three source pages now open with or contain an explicit disambiguation, and `wiki/sources/wa-jepa.md` carries the three-way comparison table.
+---
+
+## 2026-09-02 - Ingest: GeoWAM
+
+**Source**: `raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md`
+**arXiv**: 2608.23486v2 (published 2026-08-25)
+**Project page**: https://yiren-lu.com/project_pages/geowam/
+**Authors**: Yiren Lu, Xin Ye (corresponding), Jiaming Liu, Philip Jacobson, Jin Yao, Yi-chung Chen, Liam Merino, Dhruva Dixith Kurra, Min Cai, Tom Lampo, Yu Yin (corresponding), Danhua Guo, Burhan Yaman (project lead) - Uber AV Labs + Case Western Reserve University
+**Confidence**: high - full method text, all three figures, all three tables, complete implementation details. The paper contains no ablation section.
+
+**Pages created**:
+- `wiki/sources/geowam.md` - two-stage method with all loss definitions, three figures embedded, all three tables reproduced, a dedicated section documenting the protocol incommensurability, eight relationship entries, and a five-part limitations section
+
+**Concept pages updated**:
+- `wiki/concepts/navsim-benchmark.md` - **added "GeoWAM Breaks the Two-Protocol Model"**, which retracts the clean corrected/pre-fix partition written during the WA-JEPA ingest. Transfuser has digit-for-digit identical submetrics in WA-JEPA and GeoWAM but EPDMS 76.7 vs 84.0; DiffusionDrive differs by at most 0.3 on submetrics but 84.5 vs 88.2 on EPDMS. GeoWAM's own table is internally mixed - its DriveSuprim and Hydra-MDP++ rows are byte-identical to Drive-JEPA's including EPDMS while Transfuser and DiffusionDrive are recomputed. Added a navtest row and a caveat; reframed the cohort partition as WA-JEPA's attribution rather than ground truth.
+- `wiki/concepts/navhard-ood-evaluation.md` - **rewritten**. Was three thin rows; now has the combined-EPDMS leaderboard from GeoWAM's Table 3 (ten methods), an explicit warning about the two incompatible reporting conventions (combined vs per-stage), a Stage-2 collapse table showing every method losing about half its lane keeping, the per-stage reports section, and four open questions. Confidence stays medium.
+- `wiki/concepts/world-model-for-ad.md` - added Pattern 24 "Metric Geometry as the World-Model State Space" with an updated prediction-target table including annotation cost and coordinate-frame alignment; World-Model-vs-VLA row; three open questions including the navtest/navhard asymmetry.
+- `wiki/concepts/perception-for-planning.md` - new "Metric Geometry Without Annotation" section positioning GeoWAM as a fourth answer to the label-cost question alongside SGDrive (annotation), Latent-WAM (distillation), and Auto-JEPA (nothing); comparison-table row.
+- `wiki/concepts/foundation-backbones-for-ad.md` - new section establishing visual geometry models (DUSt3R/CUT3R/VGGT/MapAnything, specialized as DVGT/DVGT-2) as a third backbone family alongside language/VLM and video-generation; notes GeoWAM credits a strong initialization and a novel objective together; new backbone-role row and takeaway.
+- `wiki/concepts/diffusion-planner.md` - new "A Deterministic Counterexample" section: GeoWAM tops two tables with single-trajectory L1 regression and no sampling, its EC of 86.8 against the 77-band is the likely mechanism, and the honest reading is that it never varies the head so it is evidence about representation quality rather than head design.
+
+**Index and README updated**: rows added to both; README counts 60 to 61 papers; at-a-glance now says v2 EPDMS is not comparable across papers and adds a navhard leader line; Known Gaps now leads with DVGT-2; new Open Thread on whether navtest is the wrong benchmark for world models.
+
+**Key facts**:
+- Thesis: pixels encode geometry and motion indirectly, entangled with appearance/texture/illumination, so a video world model can produce plausible futures via photometric regularities without recovering 3D transformations. Geometry is native because point clouds explicitly encode structure and because scene geometry and ego trajectories live in the same 3D coordinate frame.
+- Stage 1: DVGT-2 geometry encoder produces multi-level geometry tokens X and ego tokens E. A 6-layer, 1024-d, 16-head future decoder takes learned queries with time/view/2D-sinusoidal embeddings, applies causal temporal self-attention across F future steps then cross-attends to historical memory. A shared Point DPT head decodes to dense point maps plus per-pixel confidence, one 3D point per pixel in the ego frame at t+k.
+- Supervision is hybrid: L_feat is cosine alignment to features from pushing future images through the same encoder with stop-gradient (JEPA-like, but a plain shared encoder rather than an EMA target), plus L_point_future = reg + conf + multi-scale surface normal, plus L_point_current anchoring the encoder. Future images never reach the forecasting branch or inference.
+- Stage 2: N_e learned ego-query seeds, causal temporal self-attention, cross-attention to both historical memory and stop-gradiented predicted future geometry. Trajectory loss cannot propagate into the geometry - the paper's inverse-dynamics-like reading. Action head concatenates historical and predicted future ego tokens, refines with a causal temporal transformer, and a learned trajectory query plus regression head emits ONE trajectory (x, y, theta) with no anchors, mode classification, or sampling.
+- L_plan = L_pre + 5*L_traj + 5*L_pose, both loss weights 5, auxiliary L1 on relative poses between historical frames.
+- The stop-gradient points opposite to WA-JEPA's: GeoWAM protects the world model from the policy, WA-JEPA lets action supervision shape the world model. Neither ablates it.
+- Pretraining: OpenScene, nuScenes, Bench2Drive, Waymo, KITTI, Argoverse 2, DDAD. 3 historical frames, F=8 future frames at 2 Hz, 2-8 camera views dynamically sampled, 161 epochs, AdamW wd 0.05, future decoder LR 1e-4, pretrained components 2e-5, 5% warmup + cosine, bf16. Planning: 40 epochs on navtrain with 8 camera views.
+- Future geometry (nuScenes val, ray depth): mean Abs Rel 0.257 vs Epona+DVGT 0.274, VGGT-World 0.325, Cosmos3+DVGT 0.376. Mean delta<1.25 0.754 vs 0.655 / 0.544 / 0.503. At 1s Epona+DVGT is better on delta<1.25 (0.732 vs 0.708); GeoWAM leads only from 2s. GeoWAM's own delta<1.25 is non-monotone (0.708 at 1s, 0.769 at 2s), unexplained.
+- NAVSIM v2 navtest: 90.2 EPDMS, EC 86.8. DVGT-2 89.6, EponaV2 88.9, DriveLaW 88.6, PWM 88.2, DiffusionDrive 88.2, WoTE 87.7, DriveVLA-W0 86.9.
+- navhard combined: GeoWAM 36.6, EponaV2-dagger 36.1, NavFormer-dagger 34.1, LTFv6-dagger 31.9, DVGT-2 31.7, DriveLaW 30.6, LTF 25.1, DriveVLA-W0 24.4, Ego MLP 14.1, CV 11.4. Dagger marks RL or PDMS-score supervision, which GeoWAM does not use.
+- The gain over DVGT-2 - GeoWAM's own initialization and already a geometry model - is +0.6 on navtest and +4.9 on navhard.
+- Stage 2 of navhard collapses everything: lane keeping falls from about 96 to about 48 for every learned planner and from 78.6 to 47.9 even for constant velocity; NC falls from about 97 to about 80. Stage 2 LK spread across learned methods is under 5 points against over 12 in Stage 1.
+
+**Limitations**:
+- The navtest number cannot be placed. GeoWAM scores Transfuser at 84.0 from nine submetrics digit-for-digit identical to the ones WA-JEPA, Drive-JEPA, and the wiki score at 76.7, and DiffusionDrive at 88.2 against WA-JEPA's 84.5 from submetrics differing by at most 0.3. Its own DriveSuprim 83.1 and Hydra-MDP++ 81.4 rows are byte-identical to Drive-JEPA's including EPDMS, so the table mixes conventions internally and there is no way to tell which convention 90.2 belongs to.
+- The gain over DVGT-2 is +0.6 EPDMS on navtest, and DVGT-2 is the paper's own initialization. The abstract's claim of "substantially stronger driving policies than image-based alternatives" rests entirely on cross-paper comparisons where backbone, data, and training all differ.
+- There are no ablations in the paper. No geometry-pretraining vs none, no L_feat vs L_point decomposition, no stop-gradient ablation, no horizon or camera-count sweep. Most importantly the paper never trains its own architecture with a pixel-prediction objective, which is the experiment its geometry-beats-pixels thesis requires.
+- The action head is deterministic and unimodal. It buys EC 86.8 and costs Best-of-N, proposal diversity, and any handle for a scorer or preference optimizer. Not discussed.
+- Point-map targets are pseudo-labels from geometry foundation models, and the encoder is initialized from DVGT-2, so supervision is bounded by that family's biases. "Requires only RGB" is presented as a pure advantage without discussing the dependency.
+- L_feat uses a plain shared encoder with stop-gradient rather than an EMA target, the classic collapse risk. The dense point objectives presumably prevent it, but no representation-health metric is reported.
+- "Inverse-dynamics-like" is loose: a learned decoder produces ego tokens conditioned on predicted geometry, which is conditioning with a stop-gradient, not inversion.
+- Geometry prediction is evaluated on nuScenes validation while nuScenes is in the pretraining mix, and OpenScene is a pretraining dataset while NAVSIM navtest derives from OpenScene. Neither exclusion is stated. Same undisclosed overlap flagged for WA-JEPA's nuPlan pretraining; it now looks systemic.
+- Two of three geometry baselines are two-stage video-then-reconstruct pipelines whose errors compound by construction, so part of the margin is pipeline depth rather than representation choice.
+- Bench2Drive is in the pretraining mix but no Bench2Drive result is reported. No HUGSIM, no NAVSIM-v1.
+- No compute reported at all - no GPU count, no hours - for 161 pretraining epochs across seven datasets plus 40 finetuning epochs at 8 camera views. No latency, FPS, or parameter count. No seed variance.
+
+**Cross-page effect**: this ingest retracts a claim made one ingest earlier. The WA-JEPA ingest established a clean corrected/pre-fix partition of NAVSIM-v2 EPDMS and used it to re-rank the wiki's v2 table. GeoWAM shows that partition is not reliable: identical submetrics produce EPDMS values 7.3 points apart across papers, GeoWAM's own table mixes conventions, and at least one of "more than two variants exist", "WA-JEPA's attribution is partly wrong", or "papers copy baseline rows without recomputing" must be true. The defensible position is now stronger and simpler - NAVSIM-v2 EPDMS is not comparable across papers, and cross-paper v2 rankings including this wiki's own table should be read as indicative only.
+
+**New synthesis**: the navtest/navhard asymmetry. GeoWAM's future-geometry forecasting is worth +0.6 EPDMS open-loop and +4.9 under the reactive protocol, the same architectural change worth eight times more where errors compound. This is what a world-model thesis predicts and it is the first measurement of it in the wiki. It also means the benchmark nearly every world-model paper optimizes may be the one where world modeling matters least. Recorded as an open question on both the world-model and navhard pages and as a new README open thread.
+
+**Second synthesis**: geometry joins language/VLM and video generation as a third backbone family, and the wiki now has three families each with papers reporting 89-92 on NAVSIM-v2 and no experiment holding the planner fixed across families. DriveLaW ran the controlled comparison for BEV vs VLM hidden states vs video latents; geometry was not in it, and pixels are not in GeoWAM's.
+---
+
+## 2026-09-02 - Ingest: DA-WAM
+
+**Source**: `raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md`
+**arXiv**: 2608.19085v2
+**Code**: https://github.com/LeapWM/da-wam
+**Authors**: Ruiguo Zhong, Benshan Ma, Xiaolong Chen, Lang Zhang, Mingyue Feng, Yaonong Wang, Pei Liu, Jun Ma - HKUST (Guangzhou), Leapmotor, HKUST
+**Confidence**: high - full method text, all four figures (present locally in raw/assets under generic filenames), all six tables including the notation appendix, complete ablations
+
+**Pages created**:
+- `wiki/sources/da-wam.md` - method with all loss definitions, four figures embedded, all six tables reproduced, a four-way JEPA comparison table, six relationship entries, and a six-part limitations section
+
+**Concept pages updated**:
+- `wiki/concepts/world-model-for-ad.md` - added Pattern 25 "One Future Per Candidate" with DA-WAM's four-design taxonomy; **substantially revised the test-time-imagination synthesis** with a new subsection "DA-WAM Supplies the Missing Variable"; World-Model-vs-VLA row; two open questions on whether the 31 unsupervised futures are futures and whether the effect survives a realistic horizon
+- `wiki/concepts/navsim-benchmark.md` - v1 row (ties CLEAR at 93.7) and v2 row; DA-WAM's TransFuser 76.7 makes the protocol tally three papers to one against GeoWAM's 84.0; documented DA-WAM's table as the second provably mixed-convention table; scope-and-attribution caveat
+- `wiki/concepts/selection-based-planning.md` - new section on scoring candidates against their own predicted futures, the retrieval-based hard-negative construction contrasted against DriveSuprim's filtering-based one, the anti-pooling scorer design, and the candidate-count comparison against Auto-JEPA; methods-table row
+- `wiki/concepts/counterfactual-prediction.md` - DA-WAM added to sense D with a note that it is the wiki's purest instance and uses "counterfactual" throughout for a strict rung-2 computation, while being unusually careful about the underlying data problem
+- `wiki/concepts/foundation-backbones-for-ad.md` - new section "LoRA vs. Full Fine-Tuning: Two Papers, Opposite Answers" reconciling Latent-WAM's LoRA collapse (89.3 to 68.5) against DA-WAM's LoRA win (92.98 vs 92.62) via distance between pretrained representation and target; V-JEPA 2.1 backbone-role row; the EMA target-policy ablation
+
+**Index and README updated**: rows added to both; README counts 61 to 62 papers; NAVSIM-v1 leader line now shows CLEAR 93.7 = DA-WAM 93.7; Open Thread #1 substantially rewritten around the shared-vs-per-candidate variable; Known Gaps now leads with DrivoR, Centaur, SparseDriveV2, iPad and the six cited-but-uningested related methods.
+
+**Key facts**:
+- Thesis: the planning value of a world model is bounded by how directly its predictions influence candidate-level scoring. Figure 1 taxonomy: (a) trajectory-only, (b) loosely coupled fusion with a single proposal, (c) one future shared across candidates, (d) DA-WAM's one future per candidate.
+- Online encoder is V-JEPA 2.1 with LoRA on selected layers, base frozen, LoRA updated by both future-prediction and planning gradients. EMA target encoder with stop-gradient supplies Z_{t+delta} from the observed future frame, training only.
+- Action-conditioned prediction: a_i = E_tau(tau_i), then Zhat_i = P_phi(Q=a_i, K=Z_t, V=Z_t). The predictor is shared across all candidates deliberately, so differences among Zhat_i come from the action queries rather than per-candidate parameters.
+- Expert matching: i_exp = argmin_i ADE(tau_i, tau_exp). L_pred is applied token-wise ONLY to the expert-matched candidate. The other N-1 latents get no feature-level supervision and are shaped solely by scoring losses.
+- Scorer cross-attends (Z_t, Zhat_i, a_i) and explicitly avoids pooling futures into a proposal-invariant vector. Factorized heads emit NC/DAC/EP/TTC/Comfort, then a utility head aggregates h_i and qhat_i into a scalar. Factors supervised by simulation-derived or rule-based metrics.
+- Hard negatives retrieved from an offline trajectory bank under dual constraints: d_traj < eps_geo (geometrically close to expert) and Delta_safety > eps_safety (substantially worse safety). Appended to the candidate set, given their own future latent, excluded from expert matching and L_pred, upweighted in ranking pairs.
+- L = lambda_pred L_pred + lambda_factor L_factor + lambda_score L_score + lambda_rank L_rank. Pairwise ranking uses cross-entropy over sigmoid score differences.
+- Implementation: 2 historical frames, front camera only, 32 candidates of 8 poses each, prediction horizon 0.5 seconds, 20 epochs on 8 GPUs at batch 8/GPU.
+- NAVSIM-v1: 93.7 PDMS (NC 99.1, DAC 98.9, TTC 96.8, Comfort 99.8, EP 90.0). Ties CLEAR for the highest non-BoN result in the wiki.
+- NAVSIM-v2: 87.7 EPDMS with ViT/L, claimed to exceed the strongest comparison by 0.2.
+- Table 3 matched ablation: no future 93.31, shared global future 92.81, current-latent 93.25, action-conditioned 93.46, action-conditioned + hard negatives 93.68. The shared-future row improves NC (99.02) and TTC (96.54) while EP collapses 91.36 to 88.68.
+- Table 4: frozen+2.0+frozen 91.26, frozen+dense+frozen 91.95, LoRA+2.0+frozen 92.74, LoRA+dense+frozen 92.98, full-ft+dense+frozen 92.62, LoRA+dense+separate 93.10, LoRA+dense+shared 93.34, LoRA+dense+EMA 93.68. LoRA beats full fine-tuning by 0.36; EMA target beats frozen by 0.70.
+- Table 5 candidate count: 1 -> 87.11, 8 -> 90.76, 16 -> 91.89, 32 -> 93.68, 64 -> 93.68.
+- Introduces V-JEPA 2.1 (arXiv 2603.14482, dense features in video SSL) to the wiki. Its dense objective is worth +0.69 PDMS frozen and +0.24 under LoRA.
+- Fourth JEPA paper in the wiki and the first to cite two others (Drive-JEPA and Auto-JEPA), both described accurately.
+
+**Limitations**:
+- The headline mechanism is worth +0.15 PDMS. The no-future ablation baseline is already 93.31, which would rank third in this wiki on its own. Hard negatives add +0.22 and are not a world-model contribution. The representation choices add +2.42. The mechanism the paper is named for is the smallest measured effect in it.
+- Single run, no seed variance. WA-JEPA measured 0.053 EPDMS seed std for a stochastic sampler and training-seed variance is typically larger, so a 0.15 gap is not demonstrated to exceed noise.
+- The predicted future horizon is 0.5 seconds while candidates span 8 future poses. Collisions, lane departures, and rule violations - the action-specific consequences the introduction promises the scorer will exploit - mostly occur beyond 0.5 s. Never discussed, never ablated.
+- 31 of 32 predicted futures receive no feature-level supervision. Nothing shows they encode anything future-like; no decoding, no cross-candidate divergence statistics, no check that a braking candidate's latent differs from an accelerating one's as physics requires. WA-JEPA's temporal-collapse metrics are the right instrument and are not applied.
+- The paper calls its per-candidate latents "counterfactual" throughout, including a section heading, for a computation with no abduction step where the alternative action is specified rather than observed. Strict rung 2. The engineering is appropriate; the terminology is what the counterfactual-prediction page exists to disambiguate.
+- The NAVSIM-v2 table mixes conventions: TransFuser 76.7, SparseDriveV2 86.7, DriveSuprim ViT/L 86.0, and ARTEMIS 83.1 match WA-JEPA's pre-fix column while DiffusionDriveV2 87.5 matches its corrected column. The "+0.2 over the strongest comparison" claim is measured against that one corrected row. DA-WAM's own 87.7 cannot be assigned to either convention.
+- ARTEMIS's EC is reported as 98.3, duplicating its HC, where WA-JEPA and GeoWAM both report "-". A transcription error carried into a published comparison.
+- NAVSIM-v1 table omits CLEAR 93.7, Drive-JEPA 93.3, HybridDriveVLA 92.1, WA-JEPA 91.8, DynVLA 91.7, SimWAM 91.5 - though it is better populated than most, including DrivoR, Centaur, SparseDriveV2, iPad, and DIVER.
+- The EMA momentum mu is never given despite the EMA target being the single largest isolated design gain (+0.70). Also unreported: all four lambda weights, the per-factor lambda_k, eps_geo, eps_safety, LoRA rank, which layers get LoRA, M, and D.
+- No latency, FPS, or parameter count, despite running the predictor 32 times per frame plus a token-level scorer over each candidate's full future latent.
+- Only 2 historical frames from a single front camera, against WA-JEPA's 4 frames x 4 cameras and GeoWAM's 3 frames x 8 cameras.
+- NAVSIM only. No navhard, HUGSIM, Bench2Drive, nuScenes, or Waymo - a notable gap for a paper claiming future prediction sharpens safety-critical discrimination.
+- Factor heads are supervised by simulation-derived metrics, so this is Hydra-MDP-style privileged distillation, the same caveat as Auto-JEPA's CLOVER-initialized scorer.
+
+**Cross-page effect**: this ingest reorganizes Open Thread #1, which has been the wiki's central dispute since the SimWAM ingest. The question had been framed as "does conditioning on a generated future help at inference," with SimWAM's mask ablation and DriveLaW's denoising sweep both answering no. DA-WAM shows the question was underspecified: those experiments varied whether a *shared* future reaches the planner, and DA-WAM measures that exact configuration at 0.50 PDMS *below* not modelling the future at all, with a visible mechanism (an averaged future cannot attribute a hazard to a candidate, so the scorer becomes uniformly cautious and ego progress collapses). Only per-candidate futures help. The synthesis now reads: shared future conditioning is useless to harmful, only per-candidate futures help, and then by little. The negative half of DA-WAM's result is better supported than the positive half.
+
+**Second cross-page effect**: the LoRA contradiction. Latent-WAM found LoRA collapsed geometric distillation from 89.3 to 68.5 EPDMS and concluded low-rank adaptation is too restrictive; DA-WAM finds LoRA beats full fine-tuning by 0.36 PDMS for JEPA latent adaptation. Reconciled on the backbones page by the distance between the pretrained representation and the target - geometric distillation asks a semantic encoder for metric features (a large move LoRA cannot express), JEPA adaptation asks a video-predictive encoder to keep predicting video (where the risk is destroying a prior that is already close). Predicts that GeoWAM's DVGT-2 fine-tuning should also favour LoRA, which it does not test.
+
+**Protocol note**: DA-WAM reports TransFuser at 76.7, agreeing with WA-JEPA and Drive-JEPA against GeoWAM's 84.0 from identical submetrics. The tally is three to one. It is also the second table provably mixing conventions, which supports the "papers copy baseline rows without recomputing" explanation over the "more than two aggregation variants" one.
+
+**Figure note**: the source markdown references figures as remote arXiv URLs rather than local wikilinks, but all four assets are present in raw/assets under the generic filenames pipeline_compare.png, overview2.png, counterfactual_trajectory_supervision2.png, and camera_bev_score_comparison_32.png. The source page uses standard local wikilinks.
+---
+
+## 2026-09-02 - Lint (post four-paper JEPA/WAM batch)
+
+Run after ingesting Auto-JEPA, WA-JEPA, GeoWAM, and DA-WAM.
+
+**Structure**: 62 source pages, 30 concept pages, 62 raw papers - counts consistent with README. **Zero orphan pages** and **zero frontmatter violations** across all 92 wiki pages (all seven required keys present everywhere). Zero broken wikilinks or asset references.
+
+**Contradictions found**:
+- **ARTEMIS extended comfort is unsourced and contradicted three ways.** The master NAVSIM-v2 table carried EC 89.1 with no provenance; every ingested paper that reproduces ARTEMIS's v2 row (WA-JEPA, GeoWAM, ExploreVLA, DiffusionDriveV2) reports EC as "-", and DA-WAM reports 98.3, which duplicates ARTEMIS's own HC of 98.3 and is almost certainly a transcription error. Marked the cell with a warning and the full provenance rather than deleting a number whose origin is unknown.
+- The TransFuser 76.7-vs-84.0 and DiffusionDrive 84.5-vs-88.2 discrepancies were already documented during the GeoWAM ingest; DA-WAM's TransFuser row (76.7) makes the tally three papers to one.
+- The Latent-WAM vs DA-WAM disagreement on LoRA is documented and reconciled on the backbones page, so it is a resolved tension rather than an open contradiction.
+
+**Stale claims corrected**:
+- `wiki/index.md` - SimWAM described as "highest WAM in wiki" at 91.5 PDMS; superseded by WA-JEPA 91.8 and DA-WAM 93.7. Now scoped to "at ingest" with the successors named.
+- `wiki/concepts/navsim-benchmark.md` - Latent-WAM "has the best EC among world-model-style entries" (87.3); WA-JEPA's 88.1 passed it. Rewritten as an at-ingest claim.
+- `wiki/concepts/navsim-benchmark.md` - CLEAR "is the highest non-BoN result in the wiki"; DA-WAM ties it at 93.7. Rewritten as a shared claim.
+- `wiki/concepts/best-of-n.md` - "The strongest non-BoN wiki result is CLEAR (93.7)"; same fix.
+- `README.md` - the Known Gaps mention counts were badly out of date (Hydra-MDP 59 -> 85, Vista 12 -> 72) and omitted every method surfaced by the last four ingests. Replaced the prose list with a table of the top 16 by mention count plus a tail listing, and added an explicit highest-value-next-ingests line.
+
+**Orphan-adjacent**: `wiki/concepts/divergent-thinking-in-vlms.md` has zero inbound `[[concepts/...]]` wikilinks and is reachable only from the index's markdown link. Not a structural orphan but substantively disconnected; worth linking from `concepts/best-of-n.md` or `concepts/gspo-vs-grpo.md` on the next relevant ingest.
+
+**Concepts recurring across many pages with no page of their own** (page spread, log.md excluded):
+- **Evaluator / protocol drift (23 pages)** - the strongest candidate. Currently split across three benchmark pages (navsim-benchmark, hugsim-benchmark, navhard-ood-evaluation), each documenting a different instance of the same phenomenon. A single page could hold the general rule, the four measured NAVSIM-v2 deltas, the HUGSIM scenario-set change, and the navhard combined-vs-per-stage convention split.
+- **Latency and deployment cost (59 pages)** - mentioned nearly everywhere, tracked nowhere. Most recent ingests report no latency at all (Auto-JEPA, WA-JEPA, GeoWAM, DA-WAM all omit it), while older entries report figures that are never compared. A page tabulating who reports what would make the omission visible.
+- **Seed variance and single-run reporting (15 pages)** - WA-JEPA supplied the wiki's only measurement (std 0.053 over 10 seeds); every other paper is single-run, and several ablation deltas the wiki quotes are smaller than that.
+- **Pretraining data overlap (13 pages)** - WA-JEPA (nuPlan -> navtest) and GeoWAM (OpenScene -> navtest, nuScenes -> nuScenes val) both leave the exclusion unstated. This now looks systemic rather than incidental.
+- **Hard negatives (12 pages)** and **EMA target / stop-gradient (12 pages)** - both currently housed inside larger pages (selection-based-planning, world-model-for-ad) and adequately covered there for now.
+
+**Questions to investigate next**, in rough order of how much they would change the picture:
+1. Does world modeling buy open-loop accuracy or closed-loop robustness? GeoWAM's +0.6 navtest / +4.9 navhard split is the only measurement and it implies the benchmark the whole field optimizes is the wrong one for the mechanism it is testing.
+2. Is DA-WAM's shared-vs-per-candidate result real at a realistic horizon? Its per-candidate futures reach 0.5 s while trajectories span 8 poses, and the positive effect is +0.15 PDMS single-run.
+3. Are the 31 unsupervised per-candidate futures in DA-WAM actually futures? WA-JEPA's temporal-collapse metrics are the right instrument and nobody has applied them.
+4. Which deterministic latent predictors are leaving performance on the table? WA-JEPA measures regression on scene latents as worse than no prediction; DeepSight, FLARE, and Latent-WAM all use deterministic objectives on scene-level targets.
+5. Geometry vs pixels vs video latents under a fixed planner. DriveLaW ran the controlled comparison without geometry; GeoWAM argued for geometry without the control.
+6. Can anything move navhard Stage 2 or HUGSIM's Extreme tier? Every method collapses to near-indistinguishable on both.
