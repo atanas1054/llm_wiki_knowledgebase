@@ -1,10 +1,10 @@
 ---
 title: Dual-System VLA for Autonomous Driving
 type: concept
-sources: [raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
-related: [sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md]
+sources: [raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
+related: [sources/brainwam.md, sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md]
 created: 2026-04-05
-updated: 2026-08-17
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -279,6 +279,47 @@ Three properties distinguish it:
 **Temporal locality is enforced structurally.** Because guidance is regenerated per chunk, a block-diagonal text mask restricts chunk $k{+}1$ to attend only to $g_k$. Without it, full-clip parallel training would let early chunks read guidance generated at later decision steps — a causality leak specific to chunk-wise guidance that clip-level conditioning never faces.
 
 **No consistency mechanism, and the paper does not claim one.** This is the clearest structural gap versus Senna-2: DriveWAM never checks whether the generated action matches the guidance text. The guidance ablation shows it helps (ADE@4s 0.92 → 0.83 at 100k clips), but "helps on average" is weaker than Senna-2's per-sample consistency objective, and there is no reported measurement of how often the trajectory contradicts its own stated intent.
+
+## BrainWAM: Coordination in Action Space, Not Representation Space {#brainwam}
+
+[[sources/brainwam.md]] is a dual-system design where **neither system is the fast one and neither is the slow one**. The two branches are a VLA (Qwen3-VL-4B, semantic priors) and a WAM (Wan2.2-TI2V-5B, predictive dynamics), run in parallel and combined at the level of **8 action tokens each**.
+
+**What it contributes that Senna-2, AutoMoT, and HybridDriveVLA do not**: a measured failure mode for the obvious alternative. Fusing the two systems' *raw tokens* in one attention pool (the paper's Tri-MoT baseline) scores 87.8 PDMS, **below the WAM branch alone at 88.1**, with strictly more information. See [Where MoT Breaks](mixture-of-experts.md#modality-competition).
+
+**Branch complementarity is measured, not assumed** (NAVSIM-v1 PDMS):
+
+| Variant | PDMS |
+|---|---:|
+| VLA-only | 86.1 |
+| WAM-only | 88.1 |
+| Tri-MoT (raw-token fusion) | 87.8 |
+| **BrainWAM** (action-space coordination) | **89.5** |
+
+Note that on NAVSIM the predictive branch beats the semantic branch by 2.0 on its own, so the coordination mechanism's honest attribution is **+1.4 over WAM-only**, not +3.4 over VLA-only.
+
+The qualitative split matches [[sources/hybriddriveVLA.md]]'s findings: VLA wins on navigation-instruction following and traffic-light / brake-light semantics; WAM wins on interactive negotiation and trajectory feasibility on curves. BrainWAM reports this as figure panels rather than the set-level failure-overlap statistics HybridDriveVLA computes — the weaker form of the same claim.
+
+### Freeze-Then-Coordinate, With a Reason
+
+The wiki's clearest quantitative argument for freezing pretrained branches in a two-backbone planner:
+
+| Stage-3 update strategy | PDMS |
+|---|---:|
+| Full-model fine-tuning | 88.8 |
+| **CAB + CIF + action decoder only** | **89.5** |
+
+The supporting datum is the useful part: **the VLA branch reaches 86.1 PDMS after 54K steps while the WAM branch needs 81K steps to reach 88.1.** Unfrozen, the two pathways update at different rates, so the coordination modules chase representations that are still moving. That is a mechanism rather than a heuristic, and it independently supports [[sources/automot.md]]'s frozen-UE choice (motivated by catastrophic forgetting) and [[sources/foresight.md]]'s two-phase schedule (motivated by capacity imbalance). Three papers, three different reasons, one conclusion.
+
+### Comparison Against the Other Two-Backbone Designs
+
+| Method | System A | System B | Interface | Score |
+|---|---|---|---|---|
+| [[sources/automot.md]] | Frozen Qwen3-VL-4B | 1.6B action expert | Layer-wise KV cache; asymmetric; async | 87.34 DS Bench2Drive |
+| [[sources/hybriddriveVLA.md]] | VLM branch | ViT branch | Style-axis interpolation + trajectory scorer | 92.1 PDMS |
+| [[sources/drivewam.md]] | Wan2.2-5B policy | Frozen Qwen3-VL-8B advisor | **Natural language**; one-way; no gradient | 90.1 PDMS |
+| **BrainWAM** | Qwen3-VL-4B VLA | Wan2.2-5B WAM | **8 action tokens**; bidirectional gated cross-attn | 89.5 PDMS |
+
+BrainWAM's interface is the narrowest that still carries gradients in both directions; DriveWAM's is narrower still (two sentences of text) but one-way and gradient-free. **The trend across all four is toward deliberately constricted interfaces**, and BrainWAM is the first to give an explicit reason why widening them hurts.
 
 ## Open Questions
 

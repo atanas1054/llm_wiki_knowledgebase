@@ -1,10 +1,10 @@
 ---
 title: Mixture of Experts for Autonomous Driving VLAs
 type: concept
-sources: [raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
-related: [sources/wam-diff.md, sources/drivefine.md, sources/drivevla-w0.md, sources/automot.md, sources/unidrivevla.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/perception-for-planning.md]
+sources: [raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
+related: [sources/brainwam.md, sources/wam-diff.md, sources/drivefine.md, sources/drivevla-w0.md, sources/automot.md, sources/unidrivevla.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/perception-for-planning.md]
 created: 2026-04-21
-updated: 2026-04-21
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -58,6 +58,29 @@ Two or more complete (or near-complete) transformer models operate in parallel a
 - **Masked joint attention**: information flows asymmetrically — understanding attends to everything, action can attend to understanding, perception interleaved via sparse queries
 - Enables a single unified training objective combining 5 perception tasks + trajectory prediction
 
+**Wiki example: BrainWAM** ([[sources/brainwam.md]]) — *the negative result that bounds this pattern*
+- Uses **Dual-MoT twice**: once inside the WAM branch (Wan2.2-5B video expert + action expert) and once inside the VLA branch (Qwen3-VL-4B + action expert). Both are shared self-attention with modality-specific FFNs, and both work.
+- Its **Tri-MoT** baseline extends this to three streams in one pool — VLM tokens, video-generator tokens, action tokens — and **scores 87.8 PDMS, below the WAM-only branch at 88.1**, with strictly more information and comparable parameters.
+- Diagnosis: **modality competition**. Action tokens attend more to VLM tokens than VGM tokens across most layers, because VLM tokens are clean large-scale-pretrained abstractions while VGM tokens are mid-denoising and low-signal. The easier modality wins the shared attention budget and suppresses the predictive one.
+- Fix: **do not share an attention pool at all**. Each branch compresses to 8 action tokens at 1024 dim; the branches exchange information only through those, via gated cross-attention (CAB, 16.8M) and a 2-layer Transformer fusion (CIF, 49.3M). 89.5 PDMS.
+
+### Where MoT Breaks: The Modality-Competition Boundary {#modality-competition}
+
+BrainWAM's Tri-MoT is the first MoT design in this wiki that **loses to its own single-branch ablation**. Comparing it against the MoT designs that succeed gives a reasonably clean boundary condition.
+
+| Design | Streams in the shared pool | Information flow | Result |
+|---|---|---|---|
+| [[sources/simwam.md]] mask ablation | video + action (**no VLM**) | bidirectional | 90.2 vs. 90.3 isolated — no effect |
+| [[sources/driveva.md]] | video + action (**no VLM**) | joint denoising | 90.9 — works |
+| [[sources/drivewam.md]] | video + action; VLM advises **in text, outside attention** | one-way, gradient-free | 90.1 — works |
+| [[sources/automot.md]] | frozen UE + trained AE | **asymmetric** (AE reads UE's KV, not the reverse) | works; enables 7.6× async speedup |
+| [[sources/unidrivevla.md]] | understanding + perception + action | **masked** (understanding attends to all; action attends to understanding) | works |
+| **BrainWAM Tri-MoT** | **VLM + VGM + action** | **symmetric, unmasked** | **87.8 < 88.1 WAM-only** |
+
+**Stream count is not the culprit** — UniDriveVLA runs three streams successfully. What separates the failures from the successes is the combination of (a) a *clean pretrained semantic stream* competing with (b) an *iteratively-denoised stream*, under (c) *symmetric, unmasked* attention. Every successful design in this table breaks at least one of those conditions, usually (c).
+
+**The untested middle ground**: nobody has tried Tri-MoT with UniDriveVLA-style masking, which would preserve raw-token access while removing the symmetric competition. BrainWAM jumps straight to an 8-token bottleneck — and its own ablation shows cross-stream communication saturates after two CAB blocks (28 blocks score the same 89.3 as 2), so whatever the branches need to exchange is low-dimensional. The bottleneck may be doing less of the work than the separation is.
+
 ### 4. Lightweight Action Expert alongside VLA Backbone
 
 A dedicated small model handles trajectory output while the large VLA backbone handles scene understanding. Unlike MoT, these are not symmetric experts — one is dominant, the other is an addendum.
@@ -78,6 +101,7 @@ A dedicated small model handles trajectory output while the large VLA backbone h
 | AutoMoT | MoT (frozen UE + trained AE) | 2 models | Implicit (role-based) | 1.6B AE | 87.34 DS Bench2Drive | Forgetting prevention + async latency |
 | UniDriveVLA | MoT (3 streams) | 3 streams | Masked joint attention | Per-stream FFN/proj | 78.37 DS Bench2Drive | Unified multi-task learning |
 | DriveVLA-W0 | Side expert | 3 variants | None (dedicated) | 500M | 63% latency | Modular action decoding |
+| BrainWAM | Dual-MoT x2 + action-space bridge | 2 branches (2 streams each) | None; 8-token CAB/CIF interface | 16.8M CAB + 49.3M CIF | 89.5 PDMS (+1.4 over WAM-only) | Avoiding modality competition |
 
 ## MoE and RL: The Routing Stability Problem
 

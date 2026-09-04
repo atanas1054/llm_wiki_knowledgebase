@@ -2,9 +2,9 @@
 title: "Epona: Autoregressive Diffusion World Model for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md]
-related: [sources/dreameraD.md, sources/drivelaw.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/foundation-backbones-for-ad.md]
+related: [sources/foresight.md, sources/dreameraD.md, sources/drivelaw.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/foundation-backbones-for-ad.md]
 created: 2026-04-17
-updated: 2026-08-17
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -281,5 +281,7 @@ DrivingGPT uses discrete tokens (AR) and predicts single-step actions. Epona pre
 5. **Front camera only for planning**: multi-camera methods have structural advantages for lateral awareness; NuScenes L2 comparison is against multi-view systems.
 
 6. **No NAVSIM-v2 / EPDMS reported**.
+
+8. **Now also a frozen encoder for a third-party planner.** [[sources/foresight.md]] takes Epona whole, finetunes it from 5 Hz to 2 Hz on nuPlan, freezes it, and makes it the *primary visual encoder* of an end-to-end planner — reaching 89.3 PDMS on NAVSIM. Two details from that paper concern Epona directly: the 2 Hz adaptation **costs generation quality** (nuPlan FVD 50.77 → 54.63), and Epona's ~870 ms inference is 96.7% of ForeSight's 900 ms budget, which is the concrete form of limitation 2 above. Three wiki papers now build on Epona and score 86.2 (Epona), 88.7 ([[sources/dreameraD.md]], latent RL), and 89.3 (ForeSight, generated-future conditioning).
 
 7. **Superseded for planning by DreamerAD**: for pure planning purposes, DreamerAD is the preferred successor (+2.5 PDMS, +1.5 EPDMS). Epona's primary value is as a **world generation model** and as evidence that joint video+trajectory training benefits planning.

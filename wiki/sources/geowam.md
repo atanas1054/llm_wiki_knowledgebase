@@ -2,9 +2,9 @@
 title: "GeoWAM: Visual Geometry World Action Models for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/perception-for-planning.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/drive-jepa.md, sources/latent-wam.md, sources/sgdrive.md, sources/drivelaw.md, sources/simwam.md, sources/policy-world-model.md, sources/epona.md, sources/drivevla-w0.md, sources/deepsight.md]
+related: [sources/geoworldad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/perception-for-planning.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/drive-jepa.md, sources/latent-wam.md, sources/sgdrive.md, sources/drivelaw.md, sources/simwam.md, sources/policy-world-model.md, sources/epona.md, sources/drivevla-w0.md, sources/deepsight.md]
 created: 2026-09-02
-updated: 2026-09-02
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -21,7 +21,7 @@ It reports 90.2 EPDMS on NAVSIM v2 navtest and **36.6 EPDMS on navhard**, the la
 **Project page**: https://yiren-lu.com/project_pages/geowam/
 **Authors**: Yiren Lu, Xin Ye (corresponding), Jiaming Liu, Philip Jacobson, Jin Yao, Yi-chung Chen, Liam Merino, Dhruva Dixith Kurra, Min Cai, Tom Lampo, Yu Yin (corresponding), Danhua Guo, Burhan Yaman (project lead) — **Uber AV Labs** + Case Western Reserve University
 
-> **Read the [protocol warning](#the-navsim-v2-number-cannot-be-placed) before comparing 90.2 EPDMS to anything else in this wiki.** GeoWAM's NAVSIM-v2 table gives Transfuser an EPDMS of 84.0 from submetrics that are *digit-for-digit identical* to the ones three other ingested papers score at 76.7.
+> **Read the [protocol warning](#the-navsim-v2-number-cannot-be-placed) before comparing 90.2 EPDMS to anything else in this wiki** — but note it has since been **narrowed to two rows**. GeoWAM's NAVSIM-v2 table gives Transfuser an EPDMS of 84.0 from submetrics *digit-for-digit identical* to the ones four other ingested papers score at 76.7. However, [[sources/geoworldad.md]] independently reproduces GeoWAM's DVGT-2 (89.6) and EponaV2 (88.9) rows exactly while reporting the standard Transfuser and DiffusionDrive values, so the Transfuser/DiffusionDrive rows are best read as anomalies rather than as evidence of a separate protocol. **90.2 and GeoWorldAD's 90.4 are comparable to each other.** See [The Sibling Paper](#the-sibling-paper-geoworldad).
 
 ## Key Takeaways
 
@@ -279,3 +279,32 @@ Three things this table shows better than anything else in the wiki:
 - **No compute is reported at all** — no GPU count, no hours, nothing — for 161 epochs of pretraining across seven datasets plus 40 epochs of finetuning with 8 camera views.
 - **No latency, FPS, or parameter count.** A DVGT-2-scale encoder over 8 views and 3 frames, a 6-layer 1024-d decoder, and a dense Point DPT head decoding $V\times H\times W$ points per future step is not obviously deployable, and the wiki's comparable entries all report inference cost.
 - No seed variance, single run. Less worrying than usual given the deterministic head, but the +0.6 over DVGT-2 sits well inside the range where it would matter.
+
+## The Sibling Paper: GeoWorldAD
+
+[[sources/geoworldad.md]] (NTU + Xiaomi EV + Zhejiang, arXiv 2607.17521) is an independent geometry world-action model from a different continent, built on the same DVGT-2 lineage, reporting **90.4 EPDMS navtest against GeoWAM's 90.2**. Neither paper cites the other.
+
+| | **GeoWAM** | GeoWorldAD |
+|---|---|---|
+| Backbone | DVGT-2 | StreamVGGT → EgoStreamVGGT |
+| Future target | **dense metric point maps**, 8 steps | **latent tokens** supervised by future depth, 4 chunks / 2 s |
+| Present grounding | multi-level memory | multi-scale tokens (layers 4/11/17/23), iteratively consumed |
+| Action head | **deterministic single-trajectory regression** | 64 proposals + simulator-distilled scorer |
+| navtest EPDMS | 90.2 | **90.4** |
+| navhard | **36.6** | not reported |
+| Ablations | **none** | three |
+
+### It supplies two of the three missing experiments
+
+This page's headline criticism has been that GeoWAM contains **no ablations at all**. GeoWorldAD runs two of the three that were most wanted:
+
+- **The coordinate-frame argument, measured.** GeoWAM asserts that geometry's advantage is living in the same frame as the trajectory. GeoWorldAD tests it: an anchor-frame StreamVGGT with 4D reconstruction supervision beats a from-scratch planner by only **0.6 PDMS** (84.2 → 84.8) *while lowering NC, DAC, and TTC*; re-expressing the same model's point maps in per-timestep ego frames — pure re-parameterization — is worth **+2.5** (→ 87.3). The argument holds, and it turns out to be conditional on actually doing the alignment rather than automatic from choosing a geometric target.
+- **With vs. without a future.** GeoWorldAD's present-geometry-only planner scores 89.3 PDMS / 87.6 EPDMS; adding latent future geometry gives 91.0 / 90.4, with the gain concentrated in ego progress (+3.3 / +2.8). That is the ablation this page notes GeoWAM lacks — though it is confounded by 64K unmatched extra training steps.
+
+**Neither paper runs the third and most important one.** *"Geometry beats pixels"* still has no controlled test: no version of either architecture is trained with a pixel or video future target under an otherwise fixed planner. Two independent papers, same thesis, same missing experiment.
+
+### It also narrows the protocol warning
+
+The [warning at the top of this page](#the-navsim-v2-number-cannot-be-placed) should now be read as covering **two rows, not the whole table**. GeoWorldAD's v2 table reports **DVGT-2 at 89.6 and EponaV2 at 88.9 — identical to GeoWAM's** — while giving **Transfuser 76.7 and DiffusionDrive 84.5**, the values GeoWAM records as 84.0 and 88.2. A second independent paper reproducing GeoWAM's headline anchors alongside the standard baseline values makes "two anomalous rows" a far more economical explanation than "a third aggregation protocol."
+
+Practical consequence: **GeoWAM's 90.2 and GeoWorldAD's 90.4 are comparable to each other**, both measured against DVGT-2 at 89.6 — so GeoWAM's honest +0.6 attribution and GeoWorldAD's +0.8 sit on the same scale. See [GeoWorldAD Narrows the GeoWAM Anomaly](../concepts/navsim-benchmark.md#geowam-narrowed).

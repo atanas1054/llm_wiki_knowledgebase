@@ -2,9 +2,9 @@
 title: "DynVLA: Learning World Dynamics for Action Reasoning in Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/chain-of-thought-for-ad.md, concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, sources/drivevla-w0.md, sources/futuresightdrive.md, sources/explorevla.md]
+related: [sources/brainwam.md, concepts/world-model-for-ad.md, concepts/chain-of-thought-for-ad.md, concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, sources/drivevla-w0.md, sources/futuresightdrive.md, sources/explorevla.md]
 created: 2026-04-28
-updated: 2026-04-28
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -327,3 +327,7 @@ Key limitations:
 | **DynVLA** | **Discrete dynamics tokens** | **Generated before action as CoT** | **Compact and fast, but vulnerable to dynamics hallucination** |
 
 DynVLA is best viewed as a middle ground between text CoT and visual CoT: it keeps an explicit "think-then-act" generation order, but the thought is a small latent dynamics trace rather than a sentence or image.
+
+## Citation Note: BrainWAM Cites the SFT Number
+
+[[sources/brainwam.md]]’s NAVSIM-v1 table lists DynVLA at **87.2 PDMS** with submetrics 98.6 / 95.3 / 95.5 / 100 / 80.6 — exactly the SFT-only row above (EMU3 + Dynamics CoT, no RFT), presented without qualification alongside methods reporting their headline results. DynVLA’s published figure is **91.7** after RFT, which would place it above BrainWAM’s own 89.5. Worth knowing before treating BrainWAM’s comparison table as a ranking.

@@ -2,10 +2,10 @@
 title: "DriveVA: Video Action Models are Zero-Shot Drivers"
 type: source-summary
 sources: [raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md]
-related: [concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/foundation-backbones-for-ad.md, concepts/nuscenes-waymo-evals.md, sources/drivewam.md, sources/simwam.md]
+related: [sources/adaptive-wam.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/foundation-backbones-for-ad.md, concepts/nuscenes-waymo-evals.md, sources/drivewam.md, sources/simwam.md]
 created: 2026-04-23
-updated: 2026-08-17
-confidence: medium
+updated: 2026-09-04
+confidence: high
 ---
 
 ## One-Line Summary
@@ -14,7 +14,7 @@ Unified video-action world model fine-tuned from Wan2.2-TI2V-5B; single DiT join
 
 **arXiv**: 2604.04198v1  
 **Org**: University of Twente + (multiple affiliations)  
-**Confidence**: medium — Table 1 (NAVSIM comparison sub-scores) is truncated in the source file; per-metric NC/DAC/EP/TTC/C breakdown unavailable.
+**Confidence**: high — Table 1 was truncated in the source file, but the sub-scores were recovered from [[sources/adaptive-wam.md]]'s reproduction of the row (NC 99.2, DAC 97.5, TTC 98.7, Comf 100, EP 83.5). See [Gap Filled](#gap-filled-the-truncated-sub-scores-recovered) at the end of this page.
 
 ---
 
@@ -191,3 +191,17 @@ DriveVA (90.9 PDMS) slots near DriveFine (90.7) and below WAM-Diff (91.0) and FL
 The critical architectural distinction from other world-model methods in the wiki is the **single shared generative process**: video latents and action tokens are noised and denoised *together* by one DiT, rather than by separate modules conditioned on shared intermediate representations.
 
 See [[concepts/world-model-for-ad.md]] (Pattern 11) for paradigm context and comparison with all other world-model approaches.
+
+## Gap Filled: The Truncated Sub-Scores, Recovered
+
+This page has carried a **medium** confidence rating because DriveVA's own NAVSIM table was truncated in the source clipping. [[sources/adaptive-wam.md]] reproduces the row in full:
+
+| Method | NC | DAC | TTC | Comf. | EP | PDMS |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| DriveVA | 99.2 | 97.5 | **98.7** | 100 | 83.5 | 90.5 |
+
+**TTC 98.7 is the highest recorded in this wiki** — above DriveLaW's 96.7, which this wiki had listed as exceptional — and NC 99.2 is second only to WA-JEPA's 99.5. DriveVA is a markedly safety-skewed policy, which was invisible while the row was truncated. EP 83.5 is the trade-off.
+
+It also **disambiguates the headline number**. Adaptive-WAM states its 92.6 exceeds "DriveVA's mixed-data headline result by 1.7 points and its NAVSIM-only result by 2.1", which places DriveVA at **90.9 with mixed data and 90.5 trained on NAVSIM alone**. This wiki has been carrying 90.9 without that qualification. For NAVSIM-only comparisons the correct figure is 90.5, and Adaptive-WAM compares against it rather than the higher one — good practice worth crediting.
+
+**One efficiency note for the same-backbone comparison**: DriveVA runs the full Wan2.2-5B backbone and generates future images; Adaptive-WAM reads an intermediate block in a single conditional forward at 170 ms. On zero-shot nuScenes DriveVA leads 0.84 vs 0.88 L2 and 0.06 vs 0.08% collision — a real but small margin, against a video path Adaptive-WAM profiles at 13.22 s if run to completion.

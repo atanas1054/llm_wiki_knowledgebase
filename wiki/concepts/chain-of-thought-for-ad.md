@@ -1,10 +1,10 @@
 ---
 title: Chain-of-Thought Reasoning for Autonomous Driving
 type: concept
-sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md]
-related: [sources/recogdrive.md, sources/uniugp.md, sources/autovla.md, sources/adathinkdrive.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/futuresightdrive.md, sources/hermes.md, sources/nord.md, sources/reasoning-vla.md, sources/elf-vla.md, sources/dynvla.md, sources/spanvla.md, sources/onevl.md, sources/deepsight.md, sources/understanding-r1-zero-like-training.md, sources/all-roads-lead-to-rome.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md]
+sources: [raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md]
+related: [sources/wcog-vla.md, sources/recogdrive.md, sources/uniugp.md, sources/autovla.md, sources/adathinkdrive.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/futuresightdrive.md, sources/hermes.md, sources/nord.md, sources/reasoning-vla.md, sources/elf-vla.md, sources/dynvla.md, sources/spanvla.md, sources/onevl.md, sources/deepsight.md, sources/understanding-r1-zero-like-training.md, sources/all-roads-lead-to-rome.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md]
 created: 2026-04-15
-updated: 2026-07-01
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -157,6 +157,39 @@ NoRD achieves 85.6 PDMS with zero reasoning annotations and only 80K training sa
 **Key implication**: reasoning annotations provide sample efficiency for strong SFT initialization. Whether they provide an irreplaceable signal depends on whether the RL optimizer can recover that signal from weaker SFT bases. NoRD suggests that with the right RL optimizer (Dr. GRPO), a reasoning-free policy can approach CoT-trained policies with 60% less data.
 
 ---
+
+## Game-Theoretic CoT (WCog-VLA)
+
+[[sources/wcog-vla.md]] adds a CoT *content* type that none of the entries above cover: the reasoning is about **what other agents will do in response to the ego**, framed as a Stackelberg game with the ego as leader and surrounding agents as followers.
+
+Four sequential steps, generated automatically by Qwen3-VL-Plus over NAVSIM:
+
+1. **Scene description**
+2. **Critical object analysis**
+3. **Game-theoretic reasoning** — enumerate candidate ego actions and infer each follower's reaction ("if-what" imagination)
+4. **Payoff evaluation** — score each hypothetical for safety and efficiency, then select
+
+85k annotations. Steps 1–2 are the standard opening of the [4-stage text CoT](#standard-4-stage-text-cot-autovla-uniugp-recogdrive); steps 3–4 are new. The distinction from AdaThinkDrive's driving-specific enrichments is that this reasons over *counterfactual ego actions and their social consequences* rather than over scene attributes.
+
+**The annotations are post-hoc rationalizations.** Ground-truth actions are supplied to the annotator as hints, so that the model "reconstruct[s] explicit causal chains linking observed scene contexts to final GT actions." The paper is candid, and the motivation (hallucination control) is sound, but the traces justify a known answer rather than deriving one. That is the same construction as [GT-trajectory-grounded CoT](#2-gt-trajectory-grounded-cot-uniugp-alpamayo-r1) and inherits the same caveat: it is supervision, not evidence of reasoning ability.
+
+### The Price of Inference-Time Text CoT, Measured
+
+WCog-VLA's Table 5 contains the sharpest efficiency datum this page has on textual CoT, on the same model and hardware:
+
+| Path | PDMS | Inference time |
+|---|---:|---:|
+| VLM text output, **no reasoning** | 85.0 | **1.131 s** |
+| VLM text output, **with Game-CoT reasoning** | 85.5 | **9.896 s** |
+| ADDT diffusion head, 5 steps | **89.3** | 0.106 s |
+
+**Generating the reasoning costs 8.8 seconds and buys 0.5 PDMS.** Meanwhile a 5-step diffusion action head, conditioned on the same VLM's hidden states, scores 3.8 points higher than the reasoning path at roughly 1/93rd the latency.
+
+**And the deployed system discards the text path entirely.** The Game-CoT data is retained as *training* supervision — it is worth +0.8 PDMS alone and +1.1 on top of open driving VQA (its Table 6) — while the reasoning is never generated at inference.
+
+This is a distinct position on this page's central question. The entries above ask *when* to reason (AdaThinkDrive, SpanVLA, DeepSight) or *whether* reasoning is needed at all (NoRD). WCog-VLA answers: **keep the CoT corpus, drop the CoT computation.** The reasoning shapes the representation during fine-tuning and is then thrown away — which makes CoT a data-curation technique rather than an inference-time mechanism, and sidesteps the adaptive-routing machinery entirely.
+
+Two caveats before generalizing it. The 0.5-point measurement is on *this* model's text head, which may simply be a weak trajectory decoder — [[sources/nord.md]] argues text-token trajectory output is the bottleneck rather than the reasoning. And WCog-VLA never tests whether an SFT run *without* Game-CoT but with the same total token budget would do as well, so the +1.1 could be data volume rather than reasoning structure.
 
 ## CoT Design Space
 

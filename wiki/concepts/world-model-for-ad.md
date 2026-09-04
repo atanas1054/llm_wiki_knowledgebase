@@ -1,10 +1,10 @@
 ---
 title: World Models for Autonomous Driving
 type: concept
-sources: [raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md]
-related: [sources/da-wam.md, sources/geowam.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/simwam.md, sources/sgdrive.md, sources/drivelaw.md, sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md, concepts/counterfactual-prediction.md, sources/driving-wm-counterfactuals.md]
+sources: [raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md]
+related: [sources/wcog-vla.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/da-wam.md, sources/geowam.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/simwam.md, sources/sgdrive.md, sources/drivelaw.md, sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md, concepts/counterfactual-prediction.md, sources/driving-wm-counterfactuals.md]
 created: 2026-04-05
-updated: 2026-09-02
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -648,13 +648,88 @@ The mechanism is a shared predictor with the **action as the query**: $\widehat{
 
 **What the numbers actually support** is covered in the synthesis immediately below, because DA-WAM's ablation is the most directly relevant experiment the wiki has on the test-time-imagination question.
 
+### 26. The Frozen Generator as the Planner's Primary Encoder (ForeSight)
+
+**ForeSight** ([[sources/foresight.md]], Fudan + Shanghai Innovation Institute + Imperial + Surrey) is the maximal version of Pattern 1. Where every other cascaded design treats the generator as one input among several, ForeSight declares it **the** visual encoder: a frozen 2.5B Epona is run forward at inference to an actual imagined future, and the trajectory decoder's job is to read it. The 52M TransFuser current-frame branch is explicitly labelled "an additional supplement."
+
+Three design elements are downstream of that commitment and are reusable independently of it:
+
+- **WM-QFormer** — a spatiotemporal Transformer with $N_{\rm wm}$ learnable queries per generated frame, compressing $F_{\rm wm}\in\mathbb{R}^{T_{\rm wm}\times C_{\rm wm}\times H\times W}$ to $T_{\rm wm}\times N_{\rm wm}\times C$. Its stated purpose is to strip "abundant fine-grained textures and noise" from generated frames before the planner sees them — the same pathology DriveLaW diagnosed at t=10, addressed by filtering the finished future instead of reading an earlier one.
+- **Time state queries** bound one-to-one to future timesteps (from the authors' BridgeAD), which is what makes per-frame temporal alignment between generated frames and trajectory poses possible at all.
+- **Factorized attention** — present and future are consumed by two separate cross-attentions, with sinusoidal position embeddings so $T_{\rm wm}\neq T_{\rm f}$ is admissible.
+
+**The one architectural question this pattern answers that no other does**: can a planner run on generated futures *alone*? Table 7 removes the current encoder entirely and scores **88.2 PDMS** — 1.4 above the same pipeline's no-world-model baseline (86.8) and level with WoTE. The current encoder is worth +1.1, concentrated in DAC and EP, i.e. exactly the side-view and geometry information a front-view-only generator cannot supply. Whether the current encoder can eventually be dropped is a question about multi-view generation, not about planning architecture.
+
+**And the cost is fully disclosed**, which is rare: 900 ms total, **870 ms of it the world model**, on an H100. That number is what makes ForeSight the wiki's cleanest cost-benefit datapoint for the synthesis below.
+
+### 27. Two Branches Meeting Only in Action Space (BrainWAM)
+
+Every pattern above couples a world model to a planner through *representations* — features, latents, tokens, point maps. **BrainWAM** ([[sources/brainwam.md]], CASIA + Li Auto) is the first in the wiki to argue that representation-level coupling is the wrong interface when a VLM is also in the room, and it has the negative result to motivate the claim.
+
+**The diagnosis first.** Putting VLM tokens, video-generator tokens, and action tokens into one shared attention space — the paper's **Tri-MoT** baseline — scores **87.8 PDMS, below its own WAM-only branch at 88.1**, despite strictly more information and comparable parameters. The mechanism is **modality competition**: action tokens attend more to VLM tokens than VGM tokens across most layers, because a large-scale-pretrained VLM stream is clean and stable while a rectified-flow video stream is still emerging from noise. The optimizer takes the semantic shortcut and the predictive dynamics go underused.
+
+**The fix is an interface constraint, not a new objective.** Each branch first compresses itself to **8 action tokens at 1024 dim**; the two branches then communicate only through those, via zero-init gated cross-attention at two layers (**CAB**, 16.8M) followed by a 2-layer Transformer fusion and element-wise mean (**CIF**, 49.3M). Raw modality tokens never share an attention pool. Result: **89.5 PDMS / 89.6 EPDMS**, +1.4 over WAM-only and +1.7 over Tri-MoT.
+
+**Where the boundary of the claim sits.** Joint video-action attention is fine on its own — [[sources/simwam.md]]'s bidirectional mask scores 90.2 against 90.3 isolated, [[sources/driveva.md]] reaches 90.9 and [[sources/drivewam.md]] 90.1 with joint denoising or shared attention. None of those has a VLM in the pool. **The harm is specific to mixing a clean semantic stream with a denoising one**, which makes this a constraint on VLA+WAM hybrids rather than on world-model coupling generally.
+
+**Two further transferable results.** Cross-stream communication **saturates after two CAB blocks** — inserting 28 (every layer) scores the same 89.3 as 2 — which suggests that whatever the branches need to exchange is low-dimensional. And **freezing both pretrained branches beats end-to-end fine-tuning by 0.7 PDMS** (89.5 vs 88.8), attributed to a measured convergence-rate mismatch: the VLA branch reaches its plateau at 54K steps, the WAM branch needs 81K.
+
+### 28. Quality-Routed Early Exit From the Generator's Middle (Adaptive-WAM)
+
+Every pattern above fixes *where* the planner reads the world model — final layer, mid-denoising latent, compressed action tokens — and then argues about how much to denoise. **Adaptive-WAM** ([[sources/adaptive-wam.md]], AIR Tsinghua + USTC + Beihang) makes the readout point a *per-scene decision variable* and shows the choice matters more than the denoising schedule does.
+
+**The representation.** A single conditional forward through Wan2.2-TI2V-5B at a fixed noise index — no denoising loop, no classifier-free-guidance unconditional branch, no VAE video decode. Six independent ReCogDrive-style 5-step trajectory heads hang off blocks {5, 9, 15, 18, 22, 30}, sharing architecture and training budget so depth is the only variable.
+
+**The controller.** At each attempted exit, decode one trajectory, score it with a fine-tuned DINOv2-Small verifier that predicts the six NAVSIM components from the current image and the candidate poses alone, and terminate when the best trajectory accumulated so far clears a threshold $\eta$. Rejected exits cost only the *unevaluated* blocks — hidden states and scores are cached.
+
+**Why route rather than just pick block 15.** Because depth ordering is not scene-wise dominance. Post-RL Jaccard overlap between exits' high-quality scene sets runs **0.69–0.82**, and while block 15 beats block 30 by ≥50 points on 598.6 scenes, block 30 beats block 15 on **422.4**. No fixed depth dominates.
+
+**What it buys**: 90.79 PDMS at **170 ms** against 90.62 at 190 ms for the best fixed exit. The routing gain (+0.17) is within plausible noise; the latency result is the real one, and the permissive-threshold control ($\eta=70$: 112 ms but −2.13 PDMS) shows the saving comes from *conditional* allocation rather than from simply being shallow.
+
+**Two design lessons that generalize past this architecture.** First, **the video prior must be adapted jointly with the action objective** — a frozen Wan scores 84.20, separately-tuned-then-cached features score 84.95, joint LoRA scores 90.62, and full fine-tuning adds 0.02 on top. Second, **the verifier should not be a ranker**: more than 95% of scenes contain candidate groups that are jointly perfect, jointly zero, or tied at the top, so Adaptive-WAM predicts un-binarized metric components with soft-label BCE and uses no rank loss at all.
+
+**Classification note.** Adaptive-WAM keeps video prediction as a *training* objective and never decodes a future at deployment, so it belongs with the training-time-only camp (SimWAM, DriveVLA-W0, FLARE) rather than with imagine-then-act — despite running a generative backbone at inference. What it consumes is the generator's internal state, not its output, which is DriveLaW's position taken to its logical end.
+
+### 29. Ego-Aligned Multi-Scale Geometry With Latent Future Tokens (GeoWorldAD)
+
+[[sources/geoworldad.md]] (NTU + Xiaomi EV + Zhejiang) is the wiki's second geometry world-action model after [Pattern 24](#24-metric-geometry-as-the-world-model-state-space-geowam), arriving independently, from a different group, with the same DVGT-2 ancestor and no mutual citation. Its architecture differs from GeoWAM's on three axes, and each is ablated.
+
+**Ego-aligned geometry, not anchor-frame geometry.** StreamVGGT reconstructs everything in the first frame's coordinate system; trajectories live in the moving ego frame, so misalignment accumulates. **EgoStreamVGGT** expresses each point map in the ego-camera frame of its own timestep and camera poses as adjacent-frame relative transforms. This is a pure re-parameterization with no added capacity, and it is worth **+2.5 PDMS** (84.8 → 87.3). The row above it is the more striking one: an off-the-shelf StreamVGGT with 4D reconstruction supervision beats a from-scratch planner by **0.6 PDMS while lowering NC, DAC, and TTC**. A geometry foundation model in the wrong frame is close to worthless — the first measurement of an argument [Pattern 24](#24-metric-geometry-as-the-world-model-state-space-geowam) makes rhetorically.
+
+**Latent future tokens, not dense future point maps.** 4 chunks × 64 tokens spanning 2 s, built by a Q-Former that cross-attends to present geometry then applies causal self-attention across chunks. Future *depth* supervises them through the shared DPT head with a stop-gradient so the present decoder is not distorted, and **the decoder is not needed at planning inference** — only the latent tokens reach the planner. Where GeoWAM forecasts dense metric point maps and infers action from them inverse-dynamics style, GeoWorldAD keeps the future compressed and uses it as one refinement stage among five.
+
+**Multi-scale, iteratively consumed.** Geometry tokens from layers {4, 11, 17, 23} of a 24-block decoder, each feeding one trajectory-refinement stage with supervision at every stage. Its Table 6 decomposes the two ideas cleanly: iterating on the final layer alone buys **progress** (EP 81.5 → 82.9) and nothing else; adding multi-scale buys **safety** (DAC 95.5 → 97.2, NC 98.6 → 98.9); and consuming all 24 layers in one stage is the *worst* of the three despite the most information. See [Pattern 28](#28-quality-routed-early-exit-from-the-generators-middle-adaptive-wam) — two papers, two backbone families, both finding that reading the final layer is the wrong default.
+
+**Result**: 91.0 PDMS v1 / 90.4 EPDMS v2, camera-only, no map/box/occupancy supervision, with the future module worth +1.7 / +2.8 — the first sizeable positive shared-future result here, discussed [below](#shared-future-reopened). The planner uses 64 proposals with a scorer distilled from NAVSIM's own PDMS composition, so it is not a single-trajectory result. No latency, FPS, or parameter count is reported anywhere.
+
+### 30. Joint Multi-Agent Trajectories as the Prediction Target (WCog-VLA)
+
+Every pattern above forecasts something about the *scene*: pixels, video latents, semantic features, occupancy voxels, metric point maps, symbolic queries, or the ego's own action latent. [[sources/wcog-vla.md]] (Tongji + NTU) forecasts something about the *other agents* — a joint diffusion over $N_m$ agents' future trajectories, generated together with the ego's.
+
+The argument for it is a gap in the taxonomy rather than a gap in fidelity. Predicting future images or future geometry is a **perceptual** task about how the world will look; it says nothing directly about the *reciprocal interplay* between ego and neighbours, because a scene forecast conditioned on one ego plan cannot express "if I go, they yield." A joint multi-agent rollout can.
+
+**Two levels, both ablated.** At the semantic level, agent tokens from a BEVFormer + TrackFormer stack enter an InternVL3-2B VLM, and the returned `O_agent` hidden states are decoded by a world head into current 3D boxes *and* future agent trajectories. At the generative level, the **ADDT** — a 16-block DiT split into an 8-block condition encoder and an 8-block generation decoder — synthesizes the joint rollout conditioned on the VLM tokens, with an agent-specific loss mask prioritizing ego accuracy.
+
+| Configuration (three-stage SFT) | PDMS |
+|---|---:|
+| Neither level | 86.5 |
+| + semantic current perception | 87.0 |
+| + semantic future agent trajectories | 87.2 |
+| + both semantic | 88.1 |
+| **+ generative joint multi-agent only** | **87.4** |
+| Both levels | **89.3** |
+
+**The row that matters for the debate below is the generative-only one: +0.9 PDMS from a shared joint rollout with no semantic world supervision at all.**
+
+**One mechanism worth stealing regardless of the target.** ADDT's condition encoder is pulled toward a latent from a GenAD-style VAE pretrained to reconstruct multi-agent trajectories, via cosine similarity at the 6th block. Its stated purpose is *stability across denoising timesteps* rather than fidelity — and its measured effect is exactly that: at 5 denoising steps the alignment and decoupling together are worth +1.9 PDMS (87.4 → 89.3), but at 20 steps only +1.1 (88.5 → 89.6). **The architectural mechanisms substitute for denoising budget**, which is the cleanest statement in the wiki of why few-step planners can match many-step ones.
+
 ## Does Test-Time Future Imagination Help? {#test-time-imagination}
 
 This is now the central open dispute among world-model planners in the wiki, and SimWAM supplies the first controlled evidence.
 
-**The imagine-then-act camp** conditions planning on generated future states at inference: FSDrive (mandatory visual CoT), PWM (future frame tokens rolled out before action), DriveVA (joint video-action denoising), DriveWAM (action as inverse dynamics from the generated latent), DriveLaW, and now WA-JEPA (future scene latents and actions denoised together over 12 sampling steps). DA-WAM belongs here too, and is the only member that predicts a *separate* future for every candidate rather than one future per scene — the distinction its ablation shows is decisive. The premise is that grounding the action in an explicit imagined future improves it.
+**The imagine-then-act camp** conditions planning on generated future states at inference: FSDrive (mandatory visual CoT), PWM (future frame tokens rolled out before action), DriveVA (joint video-action denoising), DriveWAM (action as inverse dynamics from the generated latent), DriveLaW, WA-JEPA (future scene latents and actions denoised together over 12 sampling steps), **ForeSight**, which states the premise more explicitly than anyone — the generator *is* the encoder, run to a finished future, with everything else supplementary — and **BrainWAM**, whose video expert runs 1-3 denoising steps at inference to supply predictive context to a coordinated action stream. **GeoWorldAD** belongs here as well, with a shared latent-geometry future consumed as a refinement stage. **WCog-VLA** belongs here too, generating a joint multi-agent rollout at inference through a 5-step diffusion head. DA-WAM also belongs, and is the only member that predicts a *separate* future for every candidate rather than one future per scene — the distinction its ablation shows is decisive. The premise is that grounding the action in an explicit imagined future improves it.
 
-**The training-time-only camp** uses future prediction purely to shape representations: DriveVLA-W0, FLARE, Latent-WAM, OneVL, Drive-JEPA, and now SimWAM.
+**The training-time-only camp** uses future prediction purely to shape representations: DriveVLA-W0, FLARE, Latent-WAM, OneVL, Drive-JEPA, SimWAM, and **Adaptive-WAM**, which runs a 5B generative backbone at inference but reads its intermediate activations rather than decoding any future.
 
 **A third position** was missing from this framing until Auto-JEPA ([[sources/auto-jepa.md]], Pattern 22). It predicts at inference, and the prediction is indispensable — but its target is the ego trajectory latent, not a future world state. This matters for how the question is posed. The dispute below is often stated as "does predicting the future help at decision time?", when the results actually separate along a different axis: *what* is predicted. Auto-JEPA predicts an action and the prediction carries the whole system; SimWAM and DriveLaW predict a world and find the prediction contributes nothing at inference. Reframed, the surviving generalization across all of these papers is **future-prediction objectives are valuable; instantiated future world states at decision time are not** — and Auto-JEPA is the case that shows the first half does not require the second.
 
@@ -700,15 +775,123 @@ Every experiment above varies *whether* a generated future reaches the planner. 
 
 **This retro-explains SimWAM and DriveLaW rather than contradicting them.** SimWAM's isolated-mask ablation removed the action expert's access to a *single* future stream and lost nothing; DriveLaW conditions one planner on one generated future and finds earlier latents better than cleaner ones. Both are configuration (c). DA-WAM measures (c) at −0.50 PDMS. The three results are consistent under a sharper statement than the one this page previously made:
 
-> **Shared future conditioning is useless to harmful. Only per-candidate futures help, and then by little.**
+> **Shared *photometric* future conditioning is useless to harmful. Only per-candidate futures help, and then by little.**
+>
+> *(Scoped to photometric and feature-space targets after the GeoWorldAD ingest — see [below](#shared-future-reopened). The unqualified form no longer holds.)*
 
 **How much weight the positive half deserves: not much.** +0.15 PDMS, single run, no seed variance, against a no-future baseline of 93.31 that would itself rank third in this wiki. WA-JEPA measured 0.053 seed std for a stochastic sampler and training-seed variance is typically larger. Within DA-WAM's own paper the representation choices are worth +2.42 and the hard negatives +0.22 — **the mechanism the paper is named for is the smallest effect in it.** And its predicted future reaches only **0.5 seconds** while candidates span 8 poses, so whatever it is doing, it is not evaluating the multi-second consequences the introduction promises.
 
-**What survives across all six papers**: every one finds video *supervision* or a video *prior* essential; none demonstrates that a *shared* generated future helps at inference, and one measures it as harmful; the only positive inference-time result requires a distinct future per candidate and is worth 0.15 PDMS unreplicated. DriveVA's +19.5 PDMS and DriveWAM's backbone ablation isolate the training objective; SimWAM's mask and DriveLaW's denoising sweep both isolate the inference path and find no benefit there. The efficiency implication is immediate — SimWAM reaches 91.5 PDMS at 518 ms while DriveWAM's imagine-then-act loop costs 871–1262 ms per 4 s chunk.
+### ForeSight Prices the Paradigm — and Disputes DriveLaW's Sweep
+
+[[sources/foresight.md]] is the strongest statement of the imagine-then-act thesis in the wiki, and it supplies two numbers that bear on this section from opposite directions.
+
+**The cost accounting is the more decisive one, and it is against the thesis.** ForeSight's Table 3 row 1 → row 2 is the same experiment SimWAM's mask ablation ran, from the other side: take a working planner, add a frozen 2.5B foundation world model, cross-attend to its generated future with vanilla attention, change nothing else.
+
+| Configuration | PDMS | Δ |
+|---|---:|---:|
+| Baseline: current encoder + simple action decoder | 86.8 | — |
+| **+ foundation world model, vanilla attention** | **87.1** | **+0.3** |
+| + WM-QFormer | 87.9 | +0.8 |
+| + state queries | 88.5 | +0.6 |
+| + factorized attention | 89.3 | +0.8 |
+
+**+0.3 PDMS is what an imagined future is worth when nothing is built to consume it.** The remaining +2.2 comes from a compression-and-routing stack, one component of which (state queries, from the authors' BridgeAD) has no intrinsic world-model dependency and is never tested without one. And the +0.3 is bought at **870 ms of a 900 ms inference budget** — the wiki's slowest NAVSIM planner, against SimWAM's 91.5 PDMS at 518 ms with generation removed at inference entirely.
+
+**This is also the wiki's second measurement of DA-WAM's configuration (c).** ForeSight generates one future per scene and conditions all 20 trajectory modes on it. DA-WAM's matched ablation put that configuration at −0.50 PDMS versus no future; ForeSight measures +0.3 in a different architecture. Both are single-run, both are inside their own pipelines, and they bracket zero. The reasonable reading is that **a shared generated future is worth approximately nothing at inference**, which is a weaker and better-supported claim than either paper's.
+
+**The dissenting number.** ForeSight's Table 5 sweeps the denoising budget, and it runs *opposite* to DriveLaW's Table 6:
+
+| ForeSight — total denoising steps | PDMS | | DriveLaW — extraction step | PDMS |
+|---:|---:|---|---:|---:|
+| 25 | 88.0 | | t = 1 (earliest) | **89.1** |
+| 50 | 88.3 | | t = 5 | 86.9 |
+| 75 | 89.2 | | t = 10 (near-clean) | **23.2** |
+| 100 | **89.3** | | | |
+
+ForeSight: the more fully formed the future, the better the plan. DriveLaW: the more fully formed the future, the worse the plan, catastrophically so at the end of the schedule.
+
+**These are not the same variable, and the difference matters.** DriveLaW holds the schedule fixed and moves the *extraction point* along it. ForeSight changes the *total schedule length*; its extraction step $t_{\rm d}$ is an explicitly adjustable parameter whose value the paper never reports. So ForeSight's 25-step row could be a genuinely coarser latent or an equivalently-positioned latent on a shorter schedule, and the paper gives no way to tell.
+
+**BrainWAM breaks the tie, and it sides with DriveLaW.** [[sources/brainwam.md]] decouples its video and action rectified-flow timesteps, which makes "how many video denoising steps run before the features are cached" a free parameter — the axis closest to DriveLaW's, since both ask how *formed* the latent should be when the planner reads it.
+
+| Video denoise steps | Latency | PDMS | EPDMS |
+|---:|---:|---:|---:|
+| 0 (pure noise) | 382 ms | 79.3 | 75.8 |
+| **1** | **475 ms** | **89.3** | **89.4** |
+| 2 | 565 ms | 89.5 | 89.6 |
+| 3 | 644 ms | 89.4 | 89.6 |
+
+**One step delivers 89.3 of an achievable 89.5**; the next two steps are worth 0.2 and then nothing, for 169 ms. That is DriveLaW's t=1 result reproduced in a completely different architecture — a Wan2.2-5B video expert coupled to a Qwen3-VL-4B semantic branch, versus an LTX-Video DiT chained into a 133M action DiT.
+
+The tally on denoising depth is now:
+
+| Paper | Variable | Verdict |
+|---|---|---|
+| [[sources/drivelaw.md]] | Extraction point, fixed schedule | Earliest is best; near-clean collapses |
+| [[sources/brainwam.md]] | Steps executed before caching | One step is enough |
+| [[sources/foresight.md]] | Total schedule length | More is better (+1.3 over 25→100) |
+
+**Two independent results say the planner needs an early, barely-formed latent, and one says it needs a finished future.** ForeSight is also the one whose experiment cannot be interpreted, because $t_{\rm d}$ is unreported.
+
+### Adaptive-WAM Shows the Axis Was Wrong {#three-axes}
+
+[[sources/adaptive-wam.md]] is the first paper in the wiki to point out that "how much denoising" has been three questions wearing one name, and to vary them separately:
+
+| Axis | What it controls | Measured effect |
+|---|---|---|
+| **1. Noise index** | Which diffusion timestep the backbone is *conditioned on*, in a single forward pass | **≤ 0.15 PDMS** across 5 indices of a 40-step schedule |
+| **2. Denoising iterations** | How many times the denoiser is actually run before features are read | 1 step ≈ 3 steps (BrainWAM); t=1 ≫ t=10 (DriveLaW) |
+| **3. Readout depth** | Which DiT block the features are taken from | **5.85 PDMS (IL) / 4.80 (RL)** across 6 depths |
+
+Axis 1 is the one the field has been ablating, and it is worth almost nothing. Axis 3 is the one nobody had varied, and it dominates by roughly forty times:
+
+| Block | 5 | 9 | **15** | 18 | 22 | 30 (full) |
+|---|---:|---:|---:|---:|---:|---:|
+| Imitation | 81.94 | 83.60 | **86.56** | 84.14 | 83.62 | 80.71 |
+| + planner RL | 86.02 | 87.56 | **90.62** | 88.92 | 87.42 | **85.82** |
+
+**The mid-network exit beats the full-depth exit by 4.80 PDMS.** All six exits share architecture, optimizer, batch size, epochs, and head capacity, so the difference is attributable to depth alone. This is a genuinely new design axis for this page — every other pattern above reads the final layer without comment.
+
+**How the three papers reconcile.** DriveLaW's t=1, BrainWAM's one-step, and Adaptive-WAM's single conditional forward are all *the same operation*: one pass through the video DiT. Three papers, three architectures, three coupling schemes, one conclusion — **the planning-relevant signal is present after a single forward pass, and iterating the denoiser adds nothing.** ForeSight's 100-step schedule remains the outlier, and it is also the most expensive configuration in the wiki (870 ms of a 900 ms budget) for a claimed +1.3 over 25 steps.
+
+**What Adaptive-WAM does not settle.** Its noise-index result is measured on a *single forward pass*, whereas DriveLaW's t=10 latents have been through ten actual denoising iterations and carry different activation statistics. So "noise level is nearly irrelevant" and "reading late in an iterative rollout collapses the policy" are compatible claims about different operations, and the t=10 collapse still has no diagnosis. The paper scopes this correctly and does not overclaim; neither should this page.
+
+**The cost framing this supplies.** Adaptive-WAM is also the first to decompose what the alternative actually costs on identical hardware: **170 ms to plan from an intermediate feature, 13.22 s to synthesize the future that feature encodes** — 80 DiT forwards under classifier-free guidance plus VAE decode, at 31.19 GiB peak. A factor of 78 between reading the representation and rendering the imagination.
+
+**One caveat on BrainWAM's own evidence.** Its 0-step row (79.3 PDMS, presented as proof that "video dynamics are essential to planning") feeds the action expert *pure Gaussian noise* through a pathway trained on partially-denoised features. That is a distribution-shift ablation, not a test of whether futures help; a −10.2 collapse is what feeding noise into any trained pathway produces. The clean version is SimWAM's isolated mask — retrain without the dependency — which BrainWAM does not run. Only the 1-vs-2-vs-3 rows carry information, and they say the marginal value of denoising is ≈0.2 PDMS after the first step.
+
+**One thing ForeSight settles that nobody else tested**: its Table 7 runs the planner on generated futures *alone*, with no current-frame encoder, no multi-view images, and no LiDAR, and reaches 88.2 PDMS — above its own no-world-model baseline by 1.4. Whatever the generated future is contributing, it is not nothing; it is roughly what a competent BEV world model contributes (WoTE 88.3), for two orders of magnitude more compute.
+
+**What survives across all nine papers**: every one finds video *supervision* or a video *prior* essential; none demonstrates that a *shared* generated future reliably helps at inference, and the two matched measurements of that configuration (DA-WAM −0.50, ForeSight +0.3) straddle zero; the only positive inference-time result requires a distinct future per candidate and is worth 0.15 PDMS unreplicated. DriveVA's +19.5 PDMS and DriveWAM's backbone ablation isolate the training objective; SimWAM's mask and DriveLaW's denoising sweep both isolate the inference path and find no benefit there; ForeSight isolates the price and BrainWAM isolates how little denoising that price needs to buy. The efficiency implication is immediate — SimWAM reaches 91.5 PDMS at 518 ms, DriveWAM's imagine-then-act loop costs 871–1262 ms per 4 s chunk, ForeSight's costs 900 ms for 89.3, and BrainWAM gets 89.3 at 475 ms by stopping its video branch after one step. [[sources/adaptive-wam.md]] closes the argument on cost: on one A100 it plans in **170 ms** from an intermediate feature, while synthesizing the future that feature encodes takes **13.22 s** — a factor of 78 between reading the representation and rendering the imagination.
 
 **The strongest remaining case for generation** is DriveLaW's own Table 5: video-generator latents beat VLM hidden states by 2.6 PDMS and BEV features by 5.0 under a fixed planner. The *generator* is clearly valuable as a representation learner. What is unsupported is running it forward to a clean future at decision time.
 
 **What is still unresolved**: whether imagined futures matter for capabilities NAVSIM does not measure — long-horizon rollout, counterfactual evaluation of candidate maneuvers, reactive interaction, or the instruction-conditioned generation Vega targets. NAVSIM's 4 s non-reactive horizon may simply be too short for anticipation to pay off. Also unexplained is *why* DriveLaW's t=10 conditioning collapses so completely; a 66-point PDMS drop suggests a distribution or scaling pathology rather than merely "redundant information," and no paper has diagnosed it.
+
+### GeoWorldAD Reopens the Shared-Future Question {#shared-future-reopened}
+
+The claim above was assembled entirely from methods whose future target is **photometric or feature-space** — video pixels, video latents, JEPA scene latents. [[sources/geoworldad.md]] is the first entry whose shared future is **geometric**, and it measures the same structural configuration at a very different value.
+
+| Paper | Future target | Shape | Measured effect |
+|---|---|---|---:|
+| [[sources/da-wam.md]] | JEPA scene latents (0.5 s) | shared across 32 candidates | **−0.50 PDMS** |
+| [[sources/simwam.md]] | video tokens | shared, single stream | **~0.0** (90.2 vs 90.3) |
+| [[sources/foresight.md]] | generated video frames | shared across 20 modes | **+0.3 PDMS** |
+| **[[sources/geoworldad.md]]** | **latent tokens supervised by future depth (2 s)** | **shared across 64 proposals** | **+1.7 PDMS / +2.8 EPDMS** |
+| **[[sources/wcog-vla.md]]** | **joint multi-agent trajectories** | **one shared rollout, one ego plan** | **+0.9 PDMS** |
+
+GeoWorldAD's ablation replaces its five-stage present-geometry planner's final refinement stage with one that attends to 256 latent future tokens (4 chunks × 64), and gets NC +0.1, TTC +0.1, and **EP +3.3**. The profile is the mirror image of DA-WAM's shared-future row, where NC and TTC rose while ego progress *collapsed* from 91.36 to 88.68. Same structure, opposite sign, on the sub-metric that distinguishes them.
+
+**Two candidate explanations, and the paper does not separate them.**
+
+1. **The target matters.** An averaged photometric future cannot attribute a hazard to a candidate, so it makes the policy uniformly cautious (DA-WAM's diagnosis). A shared *geometric* future does not need to attribute anything — it says where free space will be, which is useful to every candidate equally, and lets the planner commit instead of hedging. Under this reading the wiki's rule was never about sharing; it was about photometric futures carrying no decision-relevant signal once averaged.
+2. **It is the extra training.** GeoAD is the Stage-2 checkpoint at 32K planner steps; GeoWorldAD adds **64K more**. The future block is zero-initialized so the two are identical at the start of Stage 3, which makes the delta attributable to Stage 3 — but Stage 3 varies the mechanism and triples the planner budget together. A GeoAD trained for a further 64K steps is the missing row, and it is one run.
+
+**A second non-photometric target, same sign.** [[sources/wcog-vla.md]]'s Table 4 row 5 turns on joint multi-agent trajectory generation with no semantic world supervision and gains **+0.9 PDMS** over a planner with neither. Its target is neither photometric nor geometric but **behavioural** - what the other cars will do - and like GeoWorldAD it is a single shared future conditioning a single ego plan. The two positive results now share a property the four negative ones lack: **the forecast is of something the planner cannot read off the current frame**, whereas an averaged future image or scene latent is largely redundant with the observation it was conditioned on.
+
+**How the synthesis should read for now.** The negative results remain the better-supported half, and they remain specific: *a shared photometric future is useless to harmful*. That statement survives GeoWorldAD untouched. What no longer survives is the general form — "shared future conditioning is useless to harmful" — because the one geometric instance measures +1.7, and the mechanism it claims (free-space anticipation buys progress, not safety) is visible in the sub-metrics rather than only in the aggregate. [[sources/geowam.md]] points the same way from a different direction, with a +4.9 navhard gain from future point-map forecasting against +0.6 on navtest.
+
+**What would settle it**: the compute-matched GeoAD row, and a geometry-vs-pixel future target under one fixed planner. Neither geometry paper runs either. WCog-VLA's row 5 is the better-controlled of the two positives — same three-stage SFT budget across all six rows of its Table 4 — but it is +0.9 rather than +1.7, and its ADDT also adds a continuous action head that the row-1 baseline lacks.
 
 ### Action-Conditioned ≠ Counterfactual
 
@@ -732,6 +915,13 @@ The world model must receive the planned trajectory as a condition, but the traj
 - **Feedback conditioning**: the world model is conditioned on the planning expert's output, training the planner to generate trajectories consistent with realistic future video
 
 ### 2. Computational cost
+
+[[sources/foresight.md]] gives the sharpest illustration of the problem this section exists for: a 2.5B frozen Epona generator, 52M current encoder, and 21M action decoder, at **900 ms per frame on an H100 with 870 ms (96.7%) in the world model**, for 89.3 PDMS. Its own denoising sweep shows the last quarter of that budget buys +0.1 PDMS. This is the slowest NAVSIM planner in the wiki, and the papers that beat it (SimWAM 91.5 at 518 ms, DriveSuprim 93.5, CLEAR 93.7) all spend less.
+
+[[sources/brainwam.md]] shows the other half of the same picture: with **decoupled video and action rectified-flow timesteps**, the video branch can stop after one denoising step, cache its features, and let the action stream keep going. That costs 93 ms over a no-video baseline (382 -> 475 ms) and recovers 89.3 of an achievable 89.5 PDMS. **Asynchronous, truncated video denoising with feature caching is currently the cheapest way to keep a generative branch in the inference loop**, and it is a strict improvement on ForeSight's 100-step schedule.
+
+[[sources/adaptive-wam.md]] measures the gap this section exists to close, on one A100 at batch 1: **170 ms** to plan from an intermediate DiT feature versus **13.22 s** for a full 40-step classifier-free video rollout of the same nine-frame clip (12.05 s denoising over 80 DiT forwards, 0.27 s VAE encode, 0.90 s VAE decode, 31.19 GiB peak). It also adds a technique none of the entries below use: **route the backbone depth per scene**, terminating once a decoded trajectory clears a learned quality threshold. That is worth another 10% over a fixed mid-network exit (190 -> 170 ms), with 94% of scenes exiting within the first three of six blocks.
+
 Video generation models (DiT-based, e.g., Wan2.1) are expensive. Solutions:
 - Make generation expert optional at inference (UniUGP)
 - Use lower-resolution occupancy instead of video (OccWorld)
@@ -834,7 +1024,11 @@ DDP substantially improves video coherence (−38% FVD) vs. PWM. The improvement
 - **FLARE multi-step**: does extending FFP to predict features at t+2, t+3 provide further planning gains over single next-frame prediction?
 - **[Largely answered by SimWAM] Video backbone scale**: DriveVA uses Wan2.2-TI2V-5B (5B params) and achieves 90.9 PDMS without RL. Would a smaller video backbone achieve comparable results? — SimWAM's Table 4 holds the planner fixed and swaps the prior: Wan2.1-1.3B reaches 90.2 versus Wan2.2-5B's 90.3, so **scale is nearly irrelevant in this regime**, while a weak prior (LTX-Video, 88.7) does cost, and a driving-pretrained prior (Cosmos-Predict2.5, 90.4) helps most. Whether the same holds for *zero-shot transfer* — DriveVA's distinguishing claim — is untested.
 - **[Partially answered by SimWAM] Joint vs. sequential video-action coupling**: DriveVA (joint denoising, 90.9) and DriveWAM (inverse dynamics from the generated latent, 90.1) use the *same* backbone but neither cites the other, and their other components differ, so the 0.8 gap is unattributable. SimWAM adds a third option — no inference-time coupling at all — and scores highest (91.5), but likewise differs in RL stage, resolution, and action expert. SimWAM's Table 3 *is* controlled and finds bidirectional and action→video coupling give no benefit over isolation within its own architecture. A controlled comparison across the three papers is still missing.
-- **Does test-time future imagination ever pay off?** SimWAM shows it does not on NAVSIM's 4 s non-reactive horizon (see [Does Test-Time Future Imagination Help?](#test-time-imagination)). The open part is whether it matters for what NAVSIM cannot measure: long-horizon rollout, reactive closed-loop interaction, or instruction-conditioned generation. **The counterfactual branch of that question now has a partial, negative answer**: [[sources/driving-wm-counterfactuals.md]] evaluates counterfactual prediction head-on and finds action-conditioned generation does not produce counterfactuals at all — recovered fraction 0.38 (Vista) and 0.31 (DrivingWorld), below the 0.5 no-preference point. That result concerns *retrospective* counterfactuals over recorded episodes; comparing candidate maneuvers *before* acting is a rung-2 question the benchmark does not test. If the answer is no everywhere, the imagine-then-act line (FSDrive, PWM, DriveVA, DriveWAM, DriveLaW) is paying inference cost for nothing.
+- **Where should a planner read a video prior from?** [[sources/adaptive-wam.md]] shows readout *depth* dominates readout *noise level* by roughly 40x (4.80 vs 0.15 PDMS) and that the mid-network exit beats the final block, but it measures this on one backbone family with one head type. Whether block ~50% is a property of Wan2.2, of video DiTs generally, or of the planning task is untested — and no other wiki paper reports which layer it reads. Re-running DriveLaW's representation comparison across depths, or SimWAM's backbone swap at matched relative depth, would settle it cheaply.
+- **How denoised should the conditioning latent be? The question is now better posed than answered.** Three papers agree that a single forward pass suffices (DriveLaW t=1, BrainWAM one step, Adaptive-WAM one conditional forward) and one disagrees (ForeSight, 100 steps, extraction point unreported). Adaptive-WAM shows the *noise index* is worth <=0.15 PDMS in a single pass, which removes one candidate explanation but leaves DriveLaW's t=10 collapse (89.1 -> 23.2) undiagnosed — those latents went through ten actual denoising iterations and carry different activation statistics than a one-shot forward at any index. A distribution-statistics diagnostic on cached latents at increasing iteration counts would answer it. See [Adaptive-WAM Shows the Axis Was Wrong](#three-axes).
+m d}$, or running DriveLaW's extraction sweep at fixed schedule length inside ForeSight, settles it in one run. See [Does Test-Time Future Imagination Help?](#test-time-imagination).
+- **Does the modality-competition result generalize beyond VLA+WAM?** BrainWAM measures a clean VLM stream suppressing a denoising video stream in shared attention (Tri-MoT 87.8 < WAM-only 88.1), and SimWAM's two-modality mask ablation shows no such effect without a VLM. Untested: whether the same competition appears between a VLM and *any* iteratively-refined stream (occupancy diffusion, flow-matched latents, JEPA predictors), and whether asymmetric masking - UniDriveVLA's and AutoMoT's design, where information flows one way - avoids it without needing an 8-token bottleneck. No paper has run the obvious control of re-weighting attention toward the suppressed modality to see whether Tri-MoT recovers.
+- **Does test-time future imagination ever pay off?** SimWAM shows it does not on NAVSIM's 4 s non-reactive horizon, and ForeSight prices the attempt at 870 ms for +0.3 PDMS in the one row that isolates it (see [Does Test-Time Future Imagination Help?](#test-time-imagination)). The open part is whether it matters for what NAVSIM cannot measure: long-horizon rollout, reactive closed-loop interaction, or instruction-conditioned generation. **The counterfactual branch of that question now has a partial, negative answer**: [[sources/driving-wm-counterfactuals.md]] evaluates counterfactual prediction head-on and finds action-conditioned generation does not produce counterfactuals at all — recovered fraction 0.38 (Vista) and 0.31 (DrivingWorld), below the 0.5 no-preference point. That result concerns *retrospective* counterfactuals over recorded episodes; comparing candidate maneuvers *before* acting is a rung-2 question the benchmark does not test. If the answer is no everywhere, the imagine-then-act line (FSDrive, PWM, DriveVA, DriveWAM, DriveLaW) is paying inference cost for nothing.
 - **Can a world model do abduction?** Inferring the realized state of a *specific* episode from its observed continuation is the one operation no ingested method implements — every world model here conditions on history and action only. [[sources/driving-wm-counterfactuals.md]] closes the gap with monocular depth plus splatting rather than with the model, so whether a model *trained* to condition on the factual continuation would beat geometry is untested. See [[concepts/counterfactual-prediction.md]].
 - **Does a frozen advisory VLM beat a fine-tuned VLA backbone?** DriveWAM's frozen Qwen3-VL-8B only emits text guidance and never decodes actions, yet the guidance helps at every data scale. Is the advisory role sufficient, or does it leave value on the table versus VLM-centric policies (DriveVLA-W0, DynVLA) that fine-tune the VLM into the action path? No paper compares the two arrangements at matched backbone and data.
 - **Long-horizon memory validity**: DriveWAM validates selective KV memory's accuracy only on 20s clips while profiling cost at 300s. Does content-based eviction hold up over minutes of rollout, and does the training/inference mismatch (full-history attention at training, bounded pools at inference) compound?

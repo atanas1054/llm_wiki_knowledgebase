@@ -2,9 +2,9 @@
 title: "AutoVLA: VLA with Adaptive Reasoning and Reinforcement Fine-Tuning"
 type: source-summary
 sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md]
-related: [concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, sources/orion.md, sources/linkvla.md, sources/curious-vla.md]
+related: [sources/wcog-vla.md, concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, sources/orion.md, sources/linkvla.md, sources/curious-vla.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -212,3 +212,7 @@ No numeric table in paper — results reported qualitatively via bar charts (Fig
 5. **Separate codebooks per domain** — real-world and simulation codebooks diverge, complicating domain-agnostic deployment
 6. **Waymo E2E metrics unavailable** — no numeric comparison table; only relative bar charts
 7. **CoT length penalty is heuristic** — λ_r balance between driving quality and reasoning length requires tuning per dataset
+
+## Citation Note: WCog-VLA Cites the Best-of-N Number
+
+[[sources/wcog-vla.md]]'s NAVSIM-v1 table lists **AutoVLA-3B at 92.1 PDMS**, unmarked, in a column of single-sample results. That is the **Best-of-N oracle** row above (92.12), not the deployable post-RFT score of **89.11**. WCog-VLA's claim of surpassing AutoVLA "by at least 0.8 PDMS" is therefore measured against a configuration requiring the NAVSIM simulator to select the best of six samples; against 89.11 the real margin is 3.8. This is the wiki's first recorded instance of a BoN figure migrating into another paper's single-sample comparison — see [[concepts/best-of-n.md]].

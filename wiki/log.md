@@ -1952,3 +1952,318 @@ Run after ingesting Auto-JEPA, WA-JEPA, GeoWAM, and DA-WAM.
 4. Which deterministic latent predictors are leaving performance on the table? WA-JEPA measures regression on scene latents as worse than no prediction; DeepSight, FLARE, and Latent-WAM all use deterministic objectives on scene-level targets.
 5. Geometry vs pixels vs video latents under a fixed planner. DriveLaW ran the controlled comparison without geometry; GeoWAM argued for geometry without the control.
 6. Can anything move navhard Stage 2 or HUGSIM's Extreme tier? Every method collapses to near-indistinguishable on both.
+
+---
+
+## 2026-09-04 - Ingest: See Tomorrow, Act Today: Foresight-Driven Autonomous Driving (ForeSight)
+
+**Source**: `raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md` (arXiv 2605.07195v1)
+**Orgs**: Fudan University (School of Data Science) + Shanghai Innovation Institute + Imperial College London + University of Surrey. Code announced at github.com/LogosRoboticsGroup/ForeSight.
+**Page created**: `wiki/sources/foresight.md`
+
+**What it is**: the maximal statement of the imagine-then-act paradigm. A frozen 2.5B Epona is declared the planner's *primary* visual encoder, run forward at inference to a finished imagined future; a 52M TransFuser current-frame branch (multi-view + LiDAR + ego status) is explicitly labelled "an additional supplement"; a 21M state-based action decoder consumes both.
+
+**Method**:
+- WM encoder: F_wm = WM^(t_d)(I, F_cond), shape T_wm x C_wm x H x W, sampled at an adjustable denoising step t_d whose value is never reported.
+- WM-QFormer: spatiotemporal Transformer, N_wm learnable queries per generated frame, compressing to T_wm x N_wm x C. Stated purpose is to strip fine-grained texture and noise from generated frames before the planner sees them - the same pathology DriveLaW diagnosed at t=10, answered by filtering the finished future rather than reading an earlier one.
+- Time state queries Q_s in R^{M x T_f x C}, one per future timestep, from the authors' own BridgeAD.
+- Factorized attention: CrossAttn(Q_s, F_cur) then CrossAttn(Q_s + E_s, F'_wm + E_wm), sinusoidal position embeddings so T_wm and T_f may differ.
+- Two-phase training: 80 epochs action pretraining without the WM, then 20 epochs post-training with the WM frozen. L = lambda_1 L_bev + lambda_2 L_traj, weights unreported.
+- 8x H100. NAVSIM 3 cams + LiDAR at 1024x256, 4s/8 steps/20 modes. nuScenes 6 cams, images only, 640x360, 3s/6 steps/6 modes. Epona finetuned nuPlan 5 Hz to 2 Hz, then frozen.
+
+**Results**:
+- NAVSIM navtest: 89.3 PDMS (NC 98.8, DAC 97.2, TTC 94.8, Comf 100, EP 83.5). Best in its own "planning with world model" group: +0.4 over SeerDrive 88.9, +1.0 over WoTE 88.3. Correctly concedes ReCogDrive 90.8 and GoalFlow 90.3 beat it.
+- nuScenes val: 0.62 avg L2 / 0.18 avg collision. Wins no column; beaten on both by World4Drive (0.50 / 0.16), the other world-model entry in its own table.
+- Efficiency: 2.5B + 52M + 21M, **900 ms on an H100 with ~870 ms in the world model (96.7%)**. Slowest NAVSIM planner in the wiki.
+- Table 3 components: 86.8 baseline, then 87.1 (+WM, vanilla attention), 87.9 (+WM-QFormer), 88.5 (+state queries), 88.2 (+factorized, without state queries), 89.3 full.
+- Table 4: w/o WM 86.8, Simple WM 87.5, Foundation WM 89.3.
+- Table 5 denoising steps: 25 gives 88.0, 50 gives 88.3, 75 gives 89.2, 100 gives 89.3. Paper recommends 75; headline uses 100.
+- Table 6 generation: Epona FVD10 50.77, ForeSight 54.63 on nuPlan after the 2 Hz finetune.
+- Table 7 w/o current encoder: 88.2 PDMS (DAC 96.3, TTC 95.4, EP 81.7) vs 89.3 full.
+- Table 8 nuScenes with Vista instead of Epona: 0.64 L2 / 0.27 collision vs 0.62 / 0.18.
+- Failure case (a): the WM correctly predicts a right turn and the post-turn scene, but the action decoder produces an overly conservative trajectory. The paper's own conclusion is that the WM and action model "should be more tightly coupled."
+- Failure case (b): the WM degrades on a fast winding road but the trajectory stays accurate, credited to the current-frame encoder.
+
+**Limitations**:
+- The headline mechanism is worth +0.3 PDMS. Table 3 row 1 to row 2 adds the entire frozen 2.5B foundation world model under vanilla attention for +0.3; the remaining +2.2 comes from a compression-and-routing stack, one component of which (state queries, a BridgeAD mechanism) has no intrinsic world-model dependency and is never ablated without one. The causal story is not separable from "a better action decoder."
+- 900 ms for 89.3 PDMS, against SimWAM's 91.5 at 518 ms with inference-time generation removed entirely. The last 25 of 100 denoising steps buy +0.1.
+- Table 4's "Simple WM" baseline (87.5) is a reimplementation scoring below the published WoTE (88.3) and SeerDrive (88.9) in ForeSight's *own* Table 1. The argued +1.8 for foundation over simplified world models is +0.4 against real published numbers, at roughly 50x the parameters.
+- nuScenes is a loss framed as a draw ("competitive performance"), in a paragraph that also hedges that nuScenes metrics are "not entirely comprehensive."
+- Epona is finetuned on nuPlan and navtest is a nuPlan subset; whether navtest scenes were excluded is never stated. Sharper than the same gap flagged for WA-JEPA and GeoWAM, because here the finetuned generator is the primary encoder rather than a pretraining initialization.
+- Table 5 is uninterpretable without t_d: it varies the schedule length while the extraction point is an unreported free parameter.
+- The 2 Hz finetune degrades generation (FVD 50.77 to 54.63), reported as "nearly the same."
+- The Vista swap loses on 6 of 8 nuScenes columns and raises average collision 50%. Architecture-agnosticism shown as tolerance, not benefit.
+- NAVSIM-v1 only. No EPDMS, no navhard, no Bench2Drive, no HUGSIM, no reactive closed loop - the most consequential gap for a method whose thesis is anticipation in interactive scenarios.
+- Single runs, no seed variance, against deltas as small as +0.1 and +0.3.
+- No RL, acknowledged in the paper's own limitations.
+- Unreported: t_d, lambda_1, lambda_2, N_wm, C, C_wm, WM-QFormer depth and parameter count, FPS.
+
+**Protocol note (positive)**: every NAVSIM-v1 baseline row matches this wiki's canonical values - UniAD 83.4, TransFuser 84.0, PARA-Drive 84.0, DiffusionDrive 88.1, LAW 84.6, Epona 86.2, WoTE 88.3. This is the first table ingested in several papers with no evaluator-drift problem to record.
+
+**Cross-page effect 1 - the test-time-imagination synthesis gets its price tag.** Open Thread #1 has accumulated evidence that a *shared* generated future does not help at inference (SimWAM's isolated mask, DriveLaW's denoising sweep, DA-WAM's -0.50 for configuration (c)). ForeSight is the same configuration measured a third time, in a third architecture, at +0.3. The two matched measurements now straddle zero, which supports a weaker and better-founded claim than either paper makes on its own: a shared generated future is worth approximately nothing at inference. What ForeSight adds that nobody else supplied is the cost side - 870 of 900 ms - and one experiment nobody else ran: Table 7 shows a planner driven by generated futures *alone*, with no current-frame perception at all, reaches 88.2, roughly what a competent BEV world model (WoTE 88.3) delivers for two orders of magnitude less compute.
+
+**Cross-page effect 2 - the first dissent on denoising depth.** DriveLaW's Table 6 (t=1 gives 89.1, t=10 gives 23.2) has been the wiki's main evidence for "borrow the generator's representation, not its imagination." ForeSight's Table 5 runs the other way: 25 steps 88.0, 100 steps 89.3, monotone. These are different variables - DriveLaW moves the extraction point along a fixed schedule, ForeSight changes the schedule length with the extraction point unreported - so this is logged as an unresolved tension, not a contradiction. Publishing t_d, or running DriveLaW's extraction sweep inside ForeSight at fixed schedule length, resolves it in one run. Added as a new open question on the world-model page.
+
+**Pages updated**: `wiki/concepts/world-model-for-ad.md` (new Pattern 26; new synthesis subsection "ForeSight Prices the Paradigm - and Disputes DriveLaW's Sweep"; imagine-then-act camp roster; computational-cost challenge; "what survives across all seven papers"; two open questions), `wiki/concepts/navsim-benchmark.md` (SOTA row + caveat), `wiki/concepts/nuscenes-waymo-evals.md` (new section on hedging the benchmark while reporting on it), `wiki/concepts/foundation-backbones-for-ad.md` (new section: a diffusion world model as the whole visual encoder; 35:1 frozen-to-trained ratio; the lossy 2 Hz finetune), `wiki/concepts/perception-for-planning.md` (new item 8: how much perception a generated future replaces), `wiki/index.md`, `README.md` (63 papers).
+
+**Figure note**: all five figures (cmp.png, pipeline.png, visual.png, visual_supp.png, visual_fail.png) and all eight tables are present in the source markdown and reproduced on the wiki page.
+
+---
+
+## 2026-09-04 - Ingest: BrainWAM: Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving
+
+**Source**: `raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md` (arXiv 2608.12854v2)
+**Orgs**: NLPR, Institute of Automation, Chinese Academy of Sciences (CASIA) + Li Auto Inc. Bing Zhan and Shuyao Shang equal contribution; Jiahao Gu project lead.
+**Page created**: `wiki/sources/brainwam.md`
+
+**What it is**: a VLA branch (Qwen3-VL-4B) and a WAM branch (Wan2.2-TI2V-5B) run in parallel, each compressed to 8 action tokens, coordinated only through those tokens by CAB (bidirectional zero-init gated cross-attention at layers 9 and 18, 16.8M) and CIF (2-layer Transformer with AdaLN on the action timestep, then element-wise mean, 49.3M). Both branches frozen in stage 3. 89.5 PDMS NAVSIM v1, 89.6 EPDMS NAVSIM v2, 475-644 ms on an H20.
+
+**The result that carries the paper - modality competition in Tri-MoT**:
+- Tri-MoT (VLM tokens + VGM tokens + action tokens in one shared attention pool) scores 87.8 PDMS, BELOW the paper's own WAM-only branch at 88.1, with strictly more information and comparable parameters.
+- Diagnosis: action tokens attend more strongly to VLM tokens than VGM tokens across most layers (Fig. 2), because VLM tokens are clean large-scale-pretrained abstractions while VGM tokens are mid-denoising and low-signal. The easier modality wins the shared attention budget.
+- Two controls rule out simpler explanations. The VGM tokens are not uninformative: disabling video denoising drops PDMS to 79.3. And Tri-MoT is not capacity-limited: it has strictly more information than WAM-only and still loses.
+- This is the wiki's first measurement of a VLM actively degrading a world-model planner.
+
+**Method details**:
+- WAM branch: Wan2.2-TI2V-5B + lightweight rectified-flow action expert, Dual-MoT coupling (shared self-attention, modality-specific FFNs). Independent rectified-flow timesteps t_v and t_a for video and action. L_WAM = L_vid + lambda_pred * L_pred.
+- VLA branch: Qwen3-VL-4B encodes multi-view images and instructions into semantic tokens U, ego history into state tokens E; action expert denoises x_a into A_sem via Dual-MoT.
+- CAB: L=8 tokens per stream at hidden dim 1024, 8 heads x 128, no bias on QKVO, separate norms for query and context, tanh gates zero-initialised (Flamingo-style) so CAB starts as identity.
+- CIF: project both streams to 1024 with learnable source embedding, concat, 2-layer Transformer, element-wise average, decode to action velocity. Only L_fuse is supervised in stage 3.
+- Training: 3 stages x 100K steps, 8x H20, batch 6/GPU, AdamW lr 5e-5 cosine, 200 warmup, wd 0.01, bf16, DeepSpeed ZeRO-2. Inference: 3-step action sampling, 1-3 video steps.
+
+**Results**:
+- NAVSIM v1: 89.5 PDMS (NC 98.1, DAC 97.5, TTC 94.9, C 100.0, EP 83.8). DAC and EP lead its own table; NC and TTC mid-table. Camera only, no LiDAR.
+- NAVSIM v2: 89.6 EPDMS (NC 98.1, DAC 97.5, DDC 99.6, TLC 99.9, EP 88.2, TTC 97.4, LK 97.6, HC 98.4, EC 85.8). EC 85.8 is unusually strong for a generative planner (DriveVLA-W0 58.9, DriveDreamer-Policy 79.4) and is not investigated.
+- Table 3: VLA-only 86.1, WAM-only 88.1, Tri-MoT 87.8, BrainWAM 89.5. Coordination is worth +1.4 over WAM-only.
+- Table 4: CAB only 88.7, CIF only 88.5, both 89.5.
+- Table 5 asynchronous video denoising (H20): 0 steps 382 ms / 79.3 PDMS / 75.8 EPDMS; 1 step 475 ms / 89.3 / 89.4; 2 steps 565 ms / 89.5 / 89.6; 3 steps 644 ms / 89.4 / 89.6.
+- Table 6 CAB block count (10-step joint denoising reference, 89.3): 1 -> 88.9, 2 -> 89.3, 3 -> 89.2, 5 -> 89.3, 28 -> 89.3. Saturates at two.
+- Table 7 CIF fusion: MLP 88.8, Gate 89.1, Transformer 89.3.
+- Table 8 CIF depth: 1 -> 89.0, 2 -> 89.3, 3 -> 89.3.
+- Table 9 stage-3 strategy: full-model fine-tuning 88.8, frozen branches + CAB/CIF/decoder only 89.5. Supporting datum: VLA-only reaches 86.1 at 54K steps, WAM-only needs 81K steps for 88.1.
+
+**Limitations**:
+- 89.5 is mid-frontier; the v1 table tops out at AutoVLA 89.1 and DriveLaW 89.1 and omits CLEAR/DA-WAM 93.7, DriveSuprim 93.5, Drive-JEPA 93.3, HybridDriveVLA 92.1, WA-JEPA 91.8, DynVLA 91.7, SimWAM 91.5, FLARE 91.4, DiffusionDriveV2 91.2, SGDrive 91.1, DriveVA 90.9.
+- DriveSuprim appears in the v2 table but not the v1 table, where its 93.5 would beat BrainWAM by 4.0. The authors evidently know the method. No stated criterion excludes it.
+- Three v1 baseline rows are weaker configurations presented unqualified, each verifiable against wiki records. DynVLA 87.2 is its SFT-only score (submetrics 98.6/95.3/95.5/100/80.6 match the wiki's DynVLA SFT row exactly) against a published post-RFT 91.7. DriveVLA-W0 87.2 (98.4/95.3/95.2/100/80.9) is DriveLaW's flow-matching reimplementation row, which DriveLaW marks with a dagger and BrainWAM does not. ReCogDrive 86.5 is the IL-only variant against 89.6 with RL. None is fabricated; all three flatter the comparison.
+- The 0-step video ablation does not show what it is said to show. With zero denoising steps the video stream is pure Gaussian noise, not absent, fed into a pathway trained on partially-denoised features. That is a distribution-shift test. The clean version is SimWAM's isolated attention mask, which BrainWAM does not run. Only the 1-vs-2-vs-3 rows are informative.
+- 475-644 ms on H20, acknowledged as not deployable. Two large backbones (5B video + 4B VLM) resident at inference.
+- The video branch is never evaluated as a generator - no FVD, no FID, no future frames shown. Predictive dynamics is established purely by ablation, so it cannot be told apart from a well-initialised visual encoder.
+- Fig. 2 is the core evidence and is a single visualisation: no numeric ratios in text, no seed or checkpoint variance, no layer indices behind "most layers", and no causal test such as re-weighting attention toward VGM tokens to see whether Tri-MoT recovers.
+- Tri-MoT is the authors' own baseline, not a published method. "Comparable parameter counts" is asserted, never tabulated. A weak instantiation would inflate everything downstream and there is no way to check.
+- The neuroscience framing does no work: CAB is Flamingo-style zero-init gated cross-attention, CIF is a 2-layer Transformer plus a mean, and Tables 6-8 show both saturate at minimal depth.
+- Single runs, no seed variance, against deltas of +0.8, +0.7, +0.2, +0.1.
+- NAVSIM only. No navhard, Bench2Drive, HUGSIM, nuScenes, or reactive closed loop - notable given the qualitative claims centre on interactive negotiation.
+- No RL; all three stages are supervised flow matching.
+- Pretraining overlap for Wan2.2 and Qwen3-VL against OpenScene/nuPlan navtest is never discussed.
+
+**Cross-page effect 1 - the denoising-depth question is now 2 against 1.** BrainWAM's decoupled timesteps make "video steps executed before caching" a free parameter, the axis closest to DriveLaW's extraction-point sweep. One step delivers 89.3 of an achievable 89.5; steps 2 and 3 add 0.2 then nothing for 169 ms. That reproduces DriveLaW's t=1 result in a completely different architecture (Wan2.2-5B + Qwen3-VL-4B versus LTX-Video DiT + 133M action DiT). ForeSight's monotone 25-to-100-step sweep is now the outlier, and it is also the only one of the three that never reports its extraction step t_d. The world-model page's working position is updated: the useful signal lives in the generator's early internal state, with ForeSight's sweep more likely confounded by a shifting extraction point than reflecting a real preference for finished futures.
+
+**Cross-page effect 2 - a boundary condition for MoT.** BrainWAM's Tri-MoT is the first MoT design in the wiki that loses to its own single-branch ablation. Cross-referencing against the MoT designs that work gives a clean boundary: stream count is not the culprit (UniDriveVLA runs three streams successfully), and joint video-action attention is fine on its own (SimWAM bidirectional 90.2 vs isolated 90.3, DriveVA 90.9, DriveWAM 90.1 - none with a VLM in the pool). What separates failure from success is a clean pretrained semantic stream competing with an iteratively-denoised stream under symmetric unmasked attention. Every successful design breaks at least one of those conditions, usually the third. New section added to the MoE page with the comparison table, plus the untested middle ground: nobody has tried Tri-MoT with UniDriveVLA-style asymmetric masking, which would keep raw-token access while removing the competition.
+
+**Cross-page effect 3 - freeze-then-coordinate now has a mechanism.** Table 9 (frozen 89.5 vs full fine-tuning 88.8) plus the convergence-rate measurement (VLA 54K steps, WAM 81K steps) is the wiki's clearest quantitative argument for freezing pretrained branches in a two-backbone planner. Three papers now converge on this from three different motivations: AutoMoT (catastrophic forgetting), ForeSight (capacity imbalance), BrainWAM (convergence-rate mismatch).
+
+**Cross-page effect 4 - Wan2.2-TI2V-5B is now a four-way natural experiment.** SimWAM (training-time only, 91.5, 518 ms), DriveVA (joint denoising, 90.9), DriveWAM (chunked inverse dynamics, 90.1, 871-1262 ms), BrainWAM (8-token action bridge, 89.5, 475-644 ms). The ordering is inverse to how much video computation happens at inference. BrainWAM is also the only one with a VLM inside the model rather than outside the attention path, and it scores lowest of the four.
+
+**Protocol notes**:
+- ARTEMIS EC = 89.1 now has a published source. The last lint flagged this value as unsourced and contradicted; BrainWAM reports it. Tally is now one paper for 89.1, one (DA-WAM) for 98.3, four abstaining with "-". The wiki's warning marker is kept but rewritten.
+- BrainWAM is the third v2 table provably mixing conventions, and mixes differently again: TransFuser 76.7, ARTEMIS 83.1, DriveVLA-W0 86.1 match the pre-fix cohort, while HydraMDP++ 81.4 and DriveSuprim 83.1 match neither (wiki carries 84.1 and 87.1). DriveSuprim's submetrics differ throughout, so that row is a different configuration rather than a recomputation.
+- That is a fourth failure mode beyond the three already enumerated on the benchmark page: a baseline row silently drawn from a non-headline configuration. BrainWAM's v1 table does it three times. Practical consequence recorded on the page: submetric agreement, not just the aggregate, must be checked before treating two rows as commensurable.
+
+**Pages updated**: `wiki/concepts/world-model-for-ad.md` (new Pattern 27; denoising-depth tally rewritten with a three-paper table; imagine-then-act roster; "what survives across all eight papers"; computational-cost section gains the asynchronous-truncation technique; two open questions rewritten/added), `wiki/concepts/navsim-benchmark.md` (v1 SOTA row + four-paragraph caveat; ARTEMIS EC provenance resolved; fourth failure mode added to the evaluator-drift analysis), `wiki/concepts/mixture-of-experts.md` (BrainWAM under MoT pattern 3; new "Where MoT Breaks" boundary section; comparison-table row), `wiki/concepts/dual-system-vla.md` (new BrainWAM section; freeze-then-coordinate; four-way two-backbone interface comparison), `wiki/concepts/foundation-backbones-for-ad.md` (new Wan2.2 four-coupling-strategy section), `wiki/index.md`, `README.md` (64 papers).
+
+**Figure note**: all six figures (teaser 1.png, tri-mot.png, framework 1.png, training_pipeline.png, qualitative 1.png, appendix.png) and all nine tables are present in the source markdown and reproduced on the wiki page.
+
+---
+
+## 2026-09-04 - Ingest: Adaptive-WAM: Quality-Guided Early-Exit Planning from Intermediate Video-Diffusion Features
+
+**Source**: `raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md` (arXiv 2608.06008v1)
+**Orgs**: Institute for AI Industry Research (AIR), Tsinghua University + USTC + Beihang. Sining Ang, Yuguang Yang, Yan Wang. Code announced, not released.
+**Page created**: `wiki/sources/adaptive-wam.md`
+
+**What it is**: six independent ReCogDrive-style 5-step trajectory diffusion heads attached to blocks {5, 9, 15, 18, 22, 30} of a LoRA-adapted Wan2.2-TI2V-5B, fed by a SINGLE conditional forward at a fixed noise index (no denoising loop, no CFG unconditional branch, no VAE video decode). A fine-tuned DINOv2-Small verifier predicts the six NAVSIM components from the current image plus a candidate trajectory and terminates execution once the best plan accumulated so far clears a threshold. 90.8 PDMS NAVSIM v1, 89.9 EPDMS v2, 170 ms end-to-end on an A100.
+
+**The central diagnostic - two axes the field had been conflating**:
+- Video noise index, five values {1,9,17,25,32} of a 40-step schedule, single forward: block 15 gives {86.44, 86.56, 86.57, 86.55, 86.50}, range 0.13; block 18 range 0.15; 64-proposal diagnostics range 0.11 and 0.14. Essentially nothing.
+- DiT readout depth, six exits sharing architecture / optimizer / batch size / epochs / head capacity: IL 81.94 / 83.60 / 86.56 / 84.14 / 83.62 / 80.71; post-RL 86.02 / 87.56 / 90.62 / 88.92 / 87.42 / 85.82. Spread 5.85 IL and 4.80 RL. Block 15 of 30 is best at both stages and the FULL-DEPTH block 30 is worst.
+- Depth is worth roughly forty times what noise level is worth, and no prior wiki paper reports which layer it reads from.
+- Planner-only RL lifts every exit by 3.80-5.11 points without changing the depth ordering.
+
+**Why route rather than just pick block 15**: post-RL Jaccard overlap of per-exit high-quality scene sets (PDMS >= 90) runs 0.69-0.82 off-diagonal. Directional large-advantage counts (>= 50 point gaps, mean over ten paired runs): block 15 beats block 30 on 598.64 scenes but block 30 beats block 15 on 422.41. No fixed depth dominates scene-wise. Maximum cell-wise std falls 182.82 -> 84.94 after planner RL.
+
+**Method details**:
+- h_l = F_1:l(I, d(o); s*) with s* = 17. Text condition generated programmatically from deployment-available attributes (map metadata, discretised ego speed, a maneuver derived from past ego poses only, traffic density) - never a future-trajectory label.
+- Scorer inputs are only the current front image and the flattened 8x3 trajectory; no ego state, no navigation command. Six independent two-layer MLP heads for NC, DAC, DDC, TTC, EP, Comf, composed through the normalised PDMS formula as Q = 100 * Gamma.
+- Equal-weight soft-label BCE on un-binarised evaluator components, NO rank loss, because >95% of diagnostic scenes contain candidate groups that are jointly perfect, jointly zero, or tied at the top. Framed explicitly as an exit-quality verifier rather than a total-order ranker.
+- Controller keeps the best trajectory accumulated across attempted exits; rejected exits execute only the unevaluated blocks, reusing cached hidden states and scores.
+- Training: LoRA on Wan with L_actor = lambda_vid L_vid + sum_l lambda_l L_traj^l, video and trajectory sharing one s* forward; scorer trained in alternation on stop-gradient trajectories so it cannot shift the actor distribution; then planner-only DiffGRPO with backbone and scorer frozen, full five-step denoising chain as one action, NAVSIM evaluator reward.
+- Layer-wise statistics use the validation-best checkpoint per seed aggregated over TEN seeds.
+
+**Results**:
+- NAVSIM v1: 90.8 PDMS single-trajectory (NC 98.6, DAC 97.9, TTC 95.6, Comf 100, EP 85.1). EP 85.1 leads every world-model entry in its own table. Front camera only, no LiDAR.
+- Auxiliary fixed-B22 64-proposal model: 92.6 PDMS (NC 99.8, DAC 98.3, TTC 98.3, Comf 100, EP 86.6).
+- NAVSIM v2: 89.9 EPDMS (NC 98.5, DAC 98.0, DDC 99.5, TLC 99.8, EP 87.6, TTC 97.4, LK 95.4, HC 98.2, EC 75.5). Human Agent in the same table is 90.3 - the closest approach to the human reference recorded here on v2.
+- Zero-shot nuScenes: 0.88 m avg L2, 0.08% avg collision (DriveVA 0.84 / 0.06). Horizon breakdown shows a crossover: Adaptive-WAM leads at 2 s (0.71 vs 0.76) and trails at 3 s (1.58 vs 1.43).
+- Routing sweep on A100 batch 1: fixed B15 90.62 @ 190 ms; eta=70 88.49 @ 112 ms; eta=80 90.64 @ 143 ms; eta=90 90.79 @ 170 ms; eta=95 90.75 @ 284 ms; full path 85.82 @ 320 ms. 94.1% of scenes exit within the first three blocks at eta=90.
+- Wan adaptation ladder (single / 64-prop): frozen 84.20 / 89.91; separate LoRA then cache 84.95 / 90.80; joint LoRA 90.62 / 92.59; full fine-tuning 90.64 / 92.54.
+- Visual backbone: ViT-S 83.91, ViT-B 85.62, ViT-L 88.88, Wan intermediate 90.62 single-trajectory; the same comparison narrows to 92.17 / 92.21 / 92.31 / 92.59 with 64 proposals.
+- Scorer backbone diagnostic on a fixed candidate pool: best Wan exit (B22) 92.62, DINO-Small 92.59, DINO-Base 92.54, ResNet-50 92.55, ResNet-34 92.19, ViT-S/B 91.17 / 91.20. Wan buys 0.03 for a full world-model forward per attempted exit.
+- Scorer reliability on 12,146 scenes: exact top-score selection 91.2%, within 5 points 94.4%, >= 20-point failures 0.57%, >= 50-point failures 0.42% (51 scenes).
+- Full video-generation profile on the same A100: 40-step CFG rollout = 80 DiT forwards = 13.22 s (12.05 s denoising, 0.27 s VAE encode, 0.90 s VAE decode), 31.19 GiB peak. Conditional DiT 149.40 ms/step, unconditional 147.80 ms/step. VAE image encoding alone ~50 ms.
+
+**Limitations**:
+- 90.8 is mid-frontier. Table 2's caption says "baselines follow DriveVA", so it inherits that comparison set and omits CLEAR/DA-WAM 93.7, DriveSuprim 93.5, Drive-JEPA 93.3, HybridDriveVLA 92.1, WA-JEPA 91.8, DynVLA 91.7, SimWAM 91.5, FLARE 91.4, DiffusionDriveV2 91.2, SGDrive 91.1. The "SOTA among compared front-view video world-model planners" phrasing is accurate and the hedge is load-bearing. It also re-inherits DriveVLA-W0 at 87.2, the same non-headline value now propagating through DriveLaW, BrainWAM, and this paper.
+- 92.6 is a different model: fixed block-22 exit, 64 proposals, no adaptive controller, non-diffusion four-block refinement decoder, and CLOVER-derived pseudo-expert targets scored with the TRUE NAVSIM evaluator using training-time map and future occupancy. Privileged supervision of the same class flagged for Hydra-MDP distillation, Auto-JEPA, and DA-WAM. Belongs in the selection-based family, where it does not lead DriveSuprim 93.5 or CLEAR 93.7.
+- Provenance issue on that headline: Table 13's "fixed-exit 64-proposal" rows carry values identical to Table 19's "Wan-based scorer pretest", which Table 20 explicitly says "measure the true score of the selected candidate and are not end-to-end planner PDMS". One caption must be wrong, and 92.59 (Table 21) / 92.62 (Table 20) / 92.6 (Table 2) all sit in the same neighbourhood.
+- "Validation-best checkpoint over ten seeds" is a max-over-validation selection rule, not variance reporting; it is optimistic relative to single-run numbers. No PDMS standard deviation is given anywhere - only cell-wise std for the pairwise-advantage matrices. The wiki still has exactly one measured PDMS/EPDMS seed std (WA-JEPA, 0.053). The 10-seed protocol is nonetheless better discipline than almost every paper here.
+- The routing gain over the best fixed exit is +0.17 PDMS with no variance, smaller than WA-JEPA's measured std would suggest is resolvable. The defensible claim is the latency one (190 -> 170 ms). The "47% below the 320 ms fixed full-depth planner" headline compares against a configuration that is also 4.80 PDMS worse and would never be deployed.
+- The verifier is trained on evaluator-provided component targets, so the deployed controller is distilled from the benchmark's own metric.
+- Latency is a mean, not a bound: at eta=95 routing costs 284 ms, worse than the 190 ms fixed baseline. Relevant for a safety-critical scheduler.
+- The noise-robustness result is measured on a SINGLE forward pass and does not directly refute DriveLaW's t=10 collapse, whose latents went through ten actual denoising iterations and carry different activation statistics. The paper scopes this correctly.
+- Five noise indices, one scheduler, one backbone family, one head type. Whether "~50% depth" generalises is untested.
+- NAVSIM and zero-shot nuScenes only. No navhard, Bench2Drive, HUGSIM, or reactive closed loop - notable because the routing thesis (spend more on harder scenes) is exactly what a hard/OOD split would test.
+- Six trajectory heads whose combined parameter count is never reported. Front camera only.
+- Figures 2 and 3 have captions in the source markdown but no image files; the data exists only as Appendix G tables.
+
+**Cross-page effect 1 - the denoising thread is reframed, not just extended.** Open Thread #1's sub-dispute has been "how denoised should the conditioning latent be", with DriveLaW (t=1 best), BrainWAM (1 step enough), and ForeSight (100 steps better) disagreeing. Adaptive-WAM shows that was three questions wearing one name: noise index (<= 0.15 PDMS), denoising iterations (1 step suffices per BrainWAM and DriveLaW), and readout depth (4.80 PDMS, never previously varied). DriveLaW's t=1, BrainWAM's one step, and Adaptive-WAM's single conditional forward are the same operation - one pass through the video DiT - so three architectures now converge on it. ForeSight remains the outlier. New subsection "Adaptive-WAM Shows the Axis Was Wrong" on the world-model page with the three-axis table; the old two-paper tally is folded into it.
+
+**Cross-page effect 2 - readout depth is a new design axis for the backbones page.** Every other entry there implicitly reads the final layer. Adaptive-WAM's controlled sweep (identical heads, identical budgets) shows the mid-network exit beating the final block by 4.80. That also puts a caveat on DriveLaW's representation sweep and SimWAM's four-way prior swap: if depth is worth 4.8 within one backbone, a cross-backbone comparison at unmatched relative depth may be partly measuring the readout point.
+
+**Cross-page effect 3 - the strongest evidence yet against frozen generative priors.** Table 21: frozen Wan 84.20, separate LoRA then cached features 84.95, joint LoRA 90.62, full fine-tuning 90.64. A 6.42-point gap between frozen and jointly-adapted. ForeSight freezes Epona entirely and uses it as the primary encoder; DriveLaW caches Video-DiT features. Neither architecture is tested here so it is a prior rather than a refutation, but it is the most direct measurement the wiki has. Also the third LoRA-vs-full-FT data point: full FT adds 0.02, agreeing with DA-WAM against Latent-WAM, and consistent with the existing reconciliation (LoRA is safe when the pretrained representation is close to the target).
+
+**Cross-page effect 4 - the tie problem is named and measured.** >95% of scenes contain candidate groups that are jointly perfect, jointly zero, or tied at the top. That is why rank losses and rank correlations are poor instruments for trajectory scorers, why BoN oracle ceilings saturate, and it retro-explains DA-WAM's refusal to pool futures and DriveSuprim's coarse-to-fine filtering. New section on the selection-based page with the tie-aware diagnostic table. Also recorded there: Wan beats ViT-L by 1.74 with one trajectory but only 0.28 with 64 proposals, so multi-proposal scoring masks representation quality and selection leaderboards are poor encoder comparisons.
+
+**Cross-page effect 5 - adaptive routing gains a second, orthogonal knob.** CLEAR routes candidate count and diversity, decided once before generation from VLM hidden states. Adaptive-WAM routes backbone depth, decided incrementally after each decoded plan from the plan itself. The first reallocates compute, the second reduces it. Comparison table added to the routing page, plus the observation that the two knobs partly substitute (the feature-quality advantage shrinks 1.74 -> 0.28 as proposals grow), so a joint scheduler has a real trade-off to learn. Nobody has built one.
+
+**Gap filled - DriveVA's truncated table.** The DriveVA page has carried medium confidence because its NAVSIM sub-scores were truncated in the source clipping. Adaptive-WAM reproduces the row: NC 99.2, DAC 97.5, TTC 98.7, Comf 100, EP 83.5. TTC 98.7 is now the highest in the wiki (above DriveLaW's 96.7) and NC 99.2 is second only to WA-JEPA's 99.5 - DriveVA is markedly safety-skewed, which was invisible while truncated. It also disambiguates the headline: DriveVA is 90.9 with mixed data and 90.5 on NAVSIM alone, and Adaptive-WAM compares against 90.5. DriveVA page confidence raised medium -> high.
+
+**Protocol note**: the v2 table mixes conventions again - DiffusionDrive 84.5 matches the corrected cohort while ReCogDrive 83.6 and DriveVLA-W0 86.1 match the pre-fix cohort. Fourth ingested table shown to mix, after GeoWAM, DA-WAM, and BrainWAM. 89.9 EPDMS cannot be placed against the wiki's v2 leaderboard.
+
+**CLOVER note**: the first author is CLOVER's first author (arXiv 2605.15120). CLOVER supplies Auto-JEPA's scorer initialisation and this paper's pseudo-expert target protocol, and is now referenced by two ingested papers while remaining un-ingested. It stays on the Known Gaps list with a stronger case than before.
+
+**Pages updated**: `wiki/concepts/world-model-for-ad.md` (new Pattern 28; new "Adaptive-WAM Shows the Axis Was Wrong" subsection replacing the two-paper tally; training-time-only camp roster; "what survives across all nine papers"; computational-cost section; two open questions rewritten), `wiki/concepts/navsim-benchmark.md` (two SOTA rows + three-part caveat), `wiki/concepts/foundation-backbones-for-ad.md` (Wan table row + reframing; new "Readout Depth" section; new "Frozen Is Not Good Enough" adaptation ladder), `wiki/concepts/selection-based-planning.md` (table row + new "The Tie Problem, Finally Named" section), `wiki/concepts/adaptive-routing.md` (new depth-routing section with the CLEAR comparison), `wiki/concepts/nuscenes-waymo-evals.md` (extended zero-shot WAM cluster with horizon breakdown), `wiki/sources/driveva.md` (truncation gap filled, confidence medium -> high), `wiki/index.md`, `README.md` (65 papers).
+
+**Figure note**: three figures embedded (paradigm_comparison.png, main_architecture.png, supp_early_vs_deep.png) and all relevant tables reproduced. Figures 2 and 3 are referenced by caption in the source but have no image files; their data is carried as Appendix G tables on the wiki page.
+
+---
+
+## 2026-09-04 - Ingest: GeoWorldAD: Geometry World Action Model for Autonomous Driving
+
+**Source**: `raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md` (arXiv 2607.17521v2)
+**Orgs**: Nanyang Technological University + Xiaomi EV + Zhejiang University. Songyan Zhang et al., Chen Lv senior.
+**Page created**: `wiki/sources/geoworldad.md`
+
+**What it is**: the wiki's second geometry world-action model, arriving independently of GeoWAM (Uber AV Labs) from a different group, with the same DVGT-2 ancestor, a near-identical NAVSIM-v2 score, and no mutual citation. Three components: EgoStreamVGGT (a re-parameterised StreamVGGT), a Q-Former geometry world model producing latent future tokens supervised by future depth, and a geometry-oriented action model that refines 64 trajectory proposals over five stages. 91.0 PDMS NAVSIM v1, 90.4 EPDMS v2, camera-only, no map/box/occupancy supervision.
+
+**Method details**:
+- Multi-scale geometry tokens from layers {4, 11, 17, 23} of StreamVGGT's 24-block decoder, fed to DPT heads for point map, depth, and camera parameters.
+- EgoStreamVGGT: each point map expressed in the ego-camera coordinate system of ITS OWN timestep, camera poses as adjacent-frame relative transforms, instead of StreamVGGT's anchor-frame convention. Loss form unchanged (L_camera Huber + confidence-weighted L1 + gradient matching on depth and point maps); only the target frame changes.
+- Geometry world model: Q_fut in R^{K x M x C} with K=4 chunks over 2 s, M=64 tokens per chunk, learnable temporal embedding per chunk. Ego status (velocity, steering, command) MLP-projected and concatenated with geometry tokens. Four aggregation stages, one per selected layer, each cross-attending future tokens to present geometry then applying causal self-attention across chunks. Future geometry tokens produced by CrossAttn(G_t^l, Q_fut^k) and decoded to future depth through the SAME DPT head, with the future-depth loss NOT updating that head.
+- Action model: Q_traj in R^{64 x 8 x 1024}. Five refinement stages - four present-geometry (one per layer) plus one future-geometry - each supervised with min-over-proposals L1, exponentially down-weighted for earlier stages. Proposal scoring head trained with BCE against the NAVSIM simulator's own PDMS composition.
+- L = L_traj + L_score + L_recon + L_wm. Reconstruction and future-depth decoders are not needed at planning inference.
+- Training: 32x H20, global batch 64, AdamW, lr 1e-4 (stages 1-2) / 1e-5 (stage 3), cosine. Stage 1 EgoStreamVGGT 23K steps on OpenScene + nuScenes + ParallelDomain + RealDriveSim (10:10:1:1). Stage 2 world model 47K steps on OpenScene, planner 32K steps on NAVSIM navtrain (= GeoAD). Stage 3 full model +64K steps, future-geometry block zero-initialised so it starts as identity.
+
+**Results**:
+- NAVSIM v1: 91.0 PDMS (NC 99.0, DAC 97.8, TTC 95.8, Comf 99.9, EP 85.9). Claim scoped to "best among perception-free methods"; iPad 91.7 is in the same table and beats it but uses map and box supervision.
+- NAVSIM v2: 90.4 EPDMS (NC 99.0, DAC 97.8, DDC 99.6, TL 99.7, EP 89.1, TTC 98.6, LK 97.6, HC 98.0, EC 82.2). EP and TTC lead the table; EC 82.2 is strong for a world-model method (DVGT-2 and EponaV2 both ~77, DriveVLA-W0 58.9).
+- Table 3: GeoAD (present geometry only) 89.3 PDMS / 87.6 EPDMS -> GeoWorldAD 91.0 / 90.4. Deltas: NC +0.1/+0.1, TTC +0.1/+0.3, EP +3.3/+2.8, aggregate +1.7/+2.8.
+- Table 4: Scratch 84.2; StreamVGGT + 4D recon 84.8; EgoStreamVGGT no aux 87.3; EgoStreamVGGT + 4D recon 89.3.
+- Table 6: 24 layers / 1 iteration 87.6; 1 layer (final) / 4 iterations 88.2; 4 layers / 4 iterations 89.3.
+- Tables 5 and 7 (identical, printed twice) video depth: StreamVGGT -> EgoStreamVGGT AbsRel OpenScene 0.236 -> 0.141, nuScenes 0.265 -> 0.117, KITTI 0.173 -> 0.077; delta<1.25 65.6 -> 86.5, 58.2 -> 88.5, 72.2 -> 95.5.
+- Table 8 camera pose: nuScenes ATE 14.79 -> 5.78, RPE trans 1.77 -> 0.63, RPE rot 0.47 -> 1.31 (WORSE); OpenScene ATE 8.66 -> 4.07, RPE trans 1.00 -> 0.39, RPE rot 1.53 -> 0.92.
+
+**Limitations**:
+- The +1.7 future-geometry ablation is NOT compute-matched: GeoAD has 32K planner steps, GeoWorldAD has 96K. The zero-init future block means the two are identical at the start of Stage 3, so the delta is attributable to Stage 3 - but Stage 3 varies the mechanism and triples the planner budget together. A GeoAD trained a further 64K steps is the missing row and it is one run.
+- "RGB representations are redundant and provide limited geometric guidance" is asserted and never tested. Like GeoWAM, the geometry-beats-pixels thesis is argued only against other papers' methods, never against its own architecture with a pixel future target. Two independent geometry papers, same missing experiment.
+- 91.0 is below CLEAR/DA-WAM 93.7, DriveSuprim 93.5, Drive-JEPA 93.3, HybridDriveVLA 92.1, WA-JEPA 91.8, DynVLA 91.7. iPad 91.7 beats it inside its own table; the perception-free scoping is honest but "state-of-the-art" in the abstract does more work than the table supports.
+- The proposal scorer is trained on NAVSIM-simulator PDMS labels - privileged Hydra-MDP-class distillation - and the headline uses 64 proposals, so it is not a single-trajectory result.
+- 32x H20 across four training stages on four datasets including two synthetic ones. NO latency, FPS, or parameter count reported anywhere, for a model running a 24-block geometry decoder plus a Q-Former plus five refinement stages.
+- nuScenes rotational RPE regresses ~3x (0.47 -> 1.31) under the change most likely to affect it; the prose says "trajectory-level and translational pose errors", excluding rotation by careful wording, and never discusses it.
+- Tables 5 and 7 are the same table printed twice; the depth/pose comparison conflates ego-alignment with driving-domain fine-tuning (EgoStreamVGGT is fine-tuned on four datasets, StreamVGGT is off the shelf). Table 4 is the clean instrument.
+- No navhard, HUGSIM, Bench2Drive, or nuScenes planning. navhard is the conspicuous gap: GeoWAM's navhard result is its strongest and its navtest/navhard split (+0.6 vs +4.9) is the wiki's only evidence that geometry world modelling pays off more under reactive protocols. GeoWorldAD tests only the protocol where that effect was smallest.
+- Single runs, no seed variance, against sub-metric deltas of +0.1.
+- Paper's own limitation: the planner operates on fixed-length clips despite a streaming backbone; KV caching for streaming trajectory inference is future work.
+- Does not cite GeoWAM.
+- The v2 table mixes evaluator conventions by the wiki's partition (Transfuser 76.7 pre-fix, DiffusionDrive 84.5 corrected) - fifth ingested table to do so.
+
+**Cross-page effect 1 - the shared-future rule is now scoped rather than general.** The wiki's standing claim, assembled from DA-WAM (-0.50), SimWAM (~0), and ForeSight (+0.3), was "shared future conditioning is useless to harmful; only per-candidate futures help." Every one of those measurements used a photometric or feature-space target. GeoWorldAD measures the same structural configuration - one shared future for all 64 proposals - with a GEOMETRIC target and gets +1.7 PDMS / +2.8 EPDMS, with EP up 3.3 and safety flat. That is the exact mirror of DA-WAM's shared-future row, where NC and TTC rose while ego progress collapsed 91.36 -> 88.68. Two readings are open and the paper does not separate them: either the target matters (an averaged photometric future carries no candidate-discriminative signal, while a shared geometric future says where free space will be and licenses commitment), or it is the 64K unmatched training steps. The blockquote rule on the world-model page is now qualified to "shared PHOTOMETRIC future conditioning", with a new subsection laying out the four-way comparison. DA-WAM's page carries a matching scoping note.
+
+**Cross-page effect 2 - coordinate frame is a first-class backbone variable.** Table 4 is the cleanest result in the paper and new to the wiki: an off-the-shelf StreamVGGT with 4D reconstruction supervision beats a from-scratch planner by only 0.6 PDMS AND lowers NC, DAC, and TTC, buying nothing but ego progress. Re-expressing the same model's point maps in per-timestep ego frames - pure re-parameterisation, no added capacity - is worth +2.5, with gains on every metric; joint 4D recon supervision adds +2.0 more. This is the first measurement of the argument GeoWAM makes rhetorically (geometry's advantage is sharing a coordinate frame with the action) and it shows the advantage is conditional on doing the alignment rather than automatic from choosing a geometric target. New section on the backbones page, placed beside Adaptive-WAM's frozen-vs-joint-LoRA ladder, which has the same shape.
+
+**Cross-page effect 3 - readout depth confirmed on a second backbone, with a sharper answer.** Adaptive-WAM showed which single layer you read is worth up to 4.80 PDMS on Wan2.2 and that a mid-network layer beats the final one. GeoWorldAD's Table 6 runs the analogous study on StreamVGGT and decomposes it: iterating on the final layer alone buys progress (EP 81.5 -> 82.9, collision metrics flat); adding multi-scale buys safety (DAC 95.5 -> 97.2, NC 98.6 -> 98.9, EP flat); and feeding all 24 layers into one interaction stage is the WORST of the three at 87.6 despite the most information. So the field's default of reading the last layer is wrong (both papers agree), but the fix is several depths consumed progressively, not one well-chosen depth, and naive concatenation fails.
+
+**Cross-page effect 4 - the GeoWAM protocol warning is narrowed from a table to two rows.** GeoWorldAD's v2 table reports DVGT-2 at 89.6 and EponaV2 at 88.9 - digit-for-digit identical to GeoWAM - while reporting Transfuser 76.7 and DiffusionDrive 84.5, the values GeoWAM gives as 84.0 and 88.2. A second independent paper reproducing GeoWAM's headline anchors alongside the standard baseline values makes "two anomalous rows" a far more economical explanation than "a third aggregation protocol". Tally on Transfuser is now four papers to one. Practical consequence: GeoWAM's 90.2 and GeoWorldAD's 90.4 are comparable to each other, both anchored on DVGT-2 89.6, so GeoWAM's honest +0.6 attribution and GeoWorldAD's +0.8 sit on the same scale. This does NOT rescue the global corrected/pre-fix partition - GeoWorldAD's own table mixes - and the general rule stands. New section on the benchmark page; the warning banner and headline criticism on the GeoWAM page rewritten.
+
+**Cross-page effect 5 - GeoWAM's missing ablations, two of three supplied.** The GeoWAM page's headline criticism has been "There are no ablations. Not one." GeoWorldAD supplies the with/without-future comparison and the coordinate-frame comparison. Neither paper supplies the third and most important: no version of either architecture trained with a pixel or video future target under an otherwise fixed planner. Recorded on both pages.
+
+**New methods for the gap list**: DVGT-2 (arXiv 2604.00813) is now cited as a baseline by two ingested papers and is the direct ancestor of both geometry WAMs - the strongest un-ingested candidate in the wiki. Also EponaV2 (2605.14696, 90.4 v1 / 88.9 v2), iPad (2505.15111, 91.7 v1), WorldDrive (2603.14948, 89.0), LFG (CVPR'26, 85.2), StreamVGGT (2507.11539).
+
+**Baseline-hygiene note (positive)**: GeoWorldAD's v1 table matches this wiki's canonical values throughout and cites DriveVLA-W0 at its 90.2 headline rather than the 87.2 reimplementation row that DriveLaW, BrainWAM, and Adaptive-WAM all propagate. DriveSuprim appears at 89.9, the widely-circulated non-ViT-L figure.
+
+**Pages updated**: `wiki/concepts/world-model-for-ad.md` (new Pattern 29; new "GeoWorldAD Reopens the Shared-Future Question" subsection; blockquote rule scoped to photometric futures; imagine-then-act roster), `wiki/concepts/navsim-benchmark.md` (SOTA row + caveat; new "GeoWorldAD Narrows the GeoWAM Anomaly" section; Transfuser tally three -> four), `wiki/concepts/foundation-backbones-for-ad.md` (GeoWorldAD's aggregation study added to the readout-depth section; new "Coordinate Frame Beats the Foundation Model" section), `wiki/concepts/selection-based-planning.md` (table row), `wiki/sources/geowam.md` (warning banner rewritten; new "The Sibling Paper" section), `wiki/sources/da-wam.md` (shared-future verdict scoped), `wiki/sources/adaptive-wam.md` (depth confirmed on a second backbone), `wiki/index.md`, `README.md` (66 papers).
+
+**Figure note**: all nine figures embedded (teaserv3_4hist.png, frameworkv8_4hist.png, supp_planning_geo.png, recon_vis_0-3.png, wm1.png, wm2.png) and all eight distinct tables reproduced (Tables 5 and 7 are duplicates in the source).
+
+---
+
+## 2026-09-04 - Ingest: WCog-VLA: A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving
+
+**Source**: `raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md` (arXiv 2607.08375v1)
+**Orgs**: Tongji University + Nanyang Technological University. Xuerun Yan, Zhexi Lian, Nuoheng Zhang, Shiyu Fang, Haoran Wang, Chen Lv, Jia Hu, Binyang Song. (Chen Lv is also senior author on GeoWorldAD.)
+**Page created**: `wiki/sources/wcog-vla.md`
+
+**What it is**: a 2B VLA whose world model forecasts **the future trajectories of surrounding agents, jointly with the ego's** - a target no other paper in the wiki predicts. Two levels: semantic (agent tokens from BEVFormer + TrackFormer injected into InternVL3-2B, with a world head decoding current 3D boxes and future agent trajectories) and generative (ADDT, a decoupled diffusion transformer synthesising the joint multi-agent rollout). Plus Game-CoT, an 85k Stackelberg-game reasoning dataset. 92.9 PDMS NAVSIM v1, 85.9 EPDMS v2.
+
+**Architecture**:
+- VLM: InternVL3-2B (300M InternViT + Qwen2.5). Inputs: 6 surround views, navigation instruction, ego state (v, a, 2 s history at 2 Hz).
+- 3D perception: off-the-shelf BEVFormer BEV encoder + UniAD-style TrackFormer producing N_a sparse agent tokens.
+- Role-decoupled hidden states: LLM([T_vision, T_text, T_agent]) -> O_agent routed to a world head (current 3D boxes + future agent trajectories); O_vision and O_text to the language head for Game-CoT text.
+- ADDT: 16-block DiT, 8-block condition encoder + 8-block generation decoder. Encoder input F_at = concat(E_act(x_t), E_his(tau_his), mean-pooled F_VLM); t and ego state S via AdaLN; full F_VLM via cross-attention; outputs self-condition feature z_t. Decoder takes t and z_t via AdaLN plus F_VLM cross-attention. Joint action noise x_t in R^{N_m x H x 3}. Agent-specific loss mask W with separate alpha_ego and alpha_surr.
+- Representation alignment: cosine loss between the 6th encoder block feature and a latent from a GenAD-style VAE (MLP encoder, GRU decoder) pretrained to reconstruct multi-agent trajectories. Stated purpose is stability of z_t across denoising timesteps, not fidelity.
+- Game-CoT: Qwen3-VL-Plus pipeline, four steps (scene description, critical object analysis, game-theoretic reasoning as a Stackelberg game with ego as leader, payoff evaluation). GT actions supplied as hints.
+- Training: 4 stages on 4x A100 40GB. S1 3D perception 1 epoch. S2 VLM 1 epoch on 158k open VQA then 3 epochs joint with world heads on 170K NAVSIM-tailored (85k trajectory VQA + 85k Game-CoT). S3 ADDT 200 epochs DDPM, VLM frozen. S4 DiffGRPO 10 epochs, group size 6, reward r = r_PDMS - lambda_surr * L1(tau_surr).
+
+**Results**:
+- NAVSIM v1 (after all four stages): 92.9 PDMS (NC 99.4, DAC 98.8, TTC 98.5, Comf 100, EP 87.1). Fourth-highest in the wiki behind CLEAR/DA-WAM 93.7, DriveSuprim 93.5, Drive-JEPA 93.3; ahead of HybridDriveVLA 92.1. NC and TTC are both second-highest in the wiki (behind WA-JEPA 99.5 and DriveVA 98.7); DAC trails only DriveVLA-W0's 99.1. Best PDMS-per-parameter entry tracked here at 2B.
+- NAVSIM v2 (after three-stage SFT only, NO RFT): 85.9 EPDMS (NC 98.8, DAC 96.6, DDC 99.3, TLC 99.8, EP 85.8, TTC 98.2, LK 96.4, HC 98.3, EC 86.3).
+- Table 3 four stages: S2 only 84.4; +S1 85.5; +S3 89.3; +S4 92.9. RFT +3.6, ADDT +3.8, 3D perception pretraining +1.1.
+- Table 4 dual-level cognition (all three-stage SFT): neither 86.5; +Cur 87.0; +Fut 87.2; +both semantic 88.1; +generative only 87.4; all 89.3.
+- Table 5 ADDT: VLM text no reasoning 85.0 @ 1.131 s; VLM text with Game-CoT 85.5 @ 9.896 s; SDT-5 87.4 @ 0.105; SDT-20 88.5 @ 0.388; DDT-5 87.9; DDT-20 88.7; ADT-5 88.6; ADT-20 89.1; ADDT-5 89.3 @ 0.106; ADDT-20 89.6 @ 0.383.
+- Table 6 VQA data: Traj only 86.7; +Drive 88.2; +CoT 87.5; all 89.3.
+- Table 7 3D perception: without 86.0, with 89.3.
+
+**Limitations**:
+- The AutoVLA-3B baseline is listed at 92.1, which is AutoVLA's ORACLE Best-of-6 score (92.12). Its single-sample post-RFT score is 89.11. Unmarked, in a table of single-sample results, and the paper's "surpasses ReCogDrive and AutoVLA by at least 0.8 PDMS" claim is measured against it. Real margin against a deployable AutoVLA is 3.8.
+- v1 table omits CLEAR/DA-WAM 93.7, DriveSuprim 93.5, Drive-JEPA 93.3, WA-JEPA 91.8, SimWAM 91.5, FLARE 91.4, DiffusionDriveV2 91.2.
+- v1 and v2 report DIFFERENT models: 92.9 includes RFT, 85.9 does not, and RFT is worth +3.6. Stated in a caption, never flagged as a caveat.
+- The v2 baselines are a fourth distinct set. TransFuser 77.8 with submetrics matching neither the wiki's 76.7 row nor GeoWAM's 84.0 - and its NC/DAC/EP/TTC (97.7 / 92.8 / 79.2 / 92.8) are identical to its own NAVSIM-v1 row in Table 1, with LK 67.6 against 92.7 everywhere else. HydraMDP++ 80.6 (third value after 84.1 and 81.4), DiffusionDrive 84.3 (against 84.5), ARTEMIS HC 100 (against 98.3 elsewhere). Its strongest v2 baseline is DiffusionDrive 84.3, so the v2 "SOTA" claim is scoped to a weak field.
+- RFT is the largest single contribution and its reward is the benchmark's own PDMS - benchmark distillation of the Hydra-MDP class.
+- Heavily supervised: 3D boxes, per-agent future trajectories, BEV supervision, 328k VQA/CoT samples. Not comparable to annotation-free lines.
+- Game-CoT annotations use GT actions as hints, so the traces are post-hoc rationalisations of a known answer rather than independent reasoning. The paper is candid about it.
+- Latency scope is undefined. ADDT at 0.106 s cannot include an InternVL3-2B forward over six surround views, and certainly excludes Game-CoT generation (9.896 s in the same table). End-to-end deployed latency is unreported and the 10.7x speedup claim compares an action head against a full text-generation pipeline.
+- Table 3 (+1.1) and Table 7 (+3.3) disagree on the value of 3D perception, measured at different pipeline points, unreconciled.
+- No navhard, Bench2Drive, HUGSIM, nuScenes. Single runs, no seed variance. No ADDT parameter count. No code release mentioned. Figures 6-7 referenced three times in text but absent from the source clipping.
+- Paper's own limitation: semantic cognition covers agents only, omitting road geometry and map topology evolution.
+
+**Cross-page effect 1 - a genuinely new world-model target.** Pattern 30 on the world-model page. Every prior pattern forecasts the SCENE (pixels, video latents, features, occupancy, metric point maps, symbolic state) or the EGO's own action latent. WCog-VLA forecasts what the other agents will do. The argument for it is a taxonomy gap rather than a fidelity gap: a scene forecast conditioned on one ego plan cannot express "if I go, they yield", whereas a joint multi-agent rollout can. Its Table 4 row 5 measures generative joint multi-agent synthesis alone, with no semantic world supervision, at +0.9 PDMS.
+
+**Cross-page effect 2 - the shared-future question gains a second non-photometric positive.** The synthesis table now reads: DA-WAM (JEPA scene latents) -0.50, SimWAM (video tokens) ~0.0, ForeSight (generated frames) +0.3, GeoWorldAD (future depth latents) +1.7, WCog-VLA (joint multi-agent trajectories) +0.9. The two positives share a property the four negatives lack: **the forecast is of something the planner cannot read off the current frame**, whereas an averaged future image or scene latent is largely redundant with the observation it was conditioned on. WCog-VLA's is also the better-controlled of the two positives - same three-stage SFT budget across all six rows of its Table 4, against GeoWorldAD's 32K-vs-96K confound - though it is smaller and its ADDT also adds a continuous action head the row-1 baseline lacks.
+
+**Cross-page effect 3 - the price of inference-time textual CoT, measured on one model.** VLM text with Game-CoT reasoning: 85.5 PDMS at 9.896 s. VLM text without: 85.0 at 1.131 s. So reasoning costs 8.8 seconds and buys 0.5 points. Meanwhile the 5-step ADDT head, conditioned on the same VLM hidden states, scores 89.3 at 0.106 s. And the deployed system never generates the reasoning at all - Game-CoT is retained as training data (worth +0.8 alone, +1.1 on top of open driving VQA) while the CoT path is discarded. That is a distinct position for the CoT page: the existing entries ask WHEN to reason (AdaThinkDrive, SpanVLA, DeepSight) or WHETHER reasoning is needed (NoRD); WCog-VLA answers keep the corpus, drop the computation. Two caveats recorded: the 0.5 measurement is on this model's possibly-weak text trajectory head, and no run controls for total token budget without Game-CoT.
+
+**Cross-page effect 4 - architecture substitutes for denoising budget, measured.** Table 5 varies decoupling and alignment at 5 and 20 steps on an identical DiT backbone. The two mechanisms are worth +1.9 PDMS at 5 steps but only +1.1 at 20; conversely the value of going 5 -> 20 steps shrinks from +1.1 (plain SDT) to +0.3 (full ADDT). Added to the diffusion-planner page as the clearest statement in the wiki of why few-step planners can match many-step ones, and connected to the video-side finding (Adaptive-WAM, BrainWAM, DriveLaW) that iterating a denoiser buys nothing - WCog-VLA finds the same for the ACTION denoiser and supplies a reason.
+
+**Cross-page effect 5 - BoN contamination is now a documented failure mode.** New section on the best-of-n page. This is the wiki's first recorded case of an oracle Best-of-N score appearing unmarked in another paper's single-sample comparison table. BoN scores sit 3-7 points above their single-sample counterparts across the wiki (AutoVLA +3.0, DriveVLA-W0 +4.6, ExploreVLA +3.3, Curious-VLA +4.5, NoRD +6.8), so once one paper carries a BoN figure into a single-sample table, downstream copying propagates it - the same mechanism already documented for evaluator drift. Noted on the AutoVLA page too.
+
+**Cross-page effect 6 - a fifth failure mode for the evaluator-drift analysis: cross-version submetric contamination.** WCog-VLA's v2 TransFuser row carries NC/DAC/EP/TTC identical to that method's NAVSIM-v1 row in the same paper's Table 1, with v2-only columns appended and LK at 67.6 against 92.7 everywhere else. That is not an aggregation difference; it is a different evaluation assembled from two sources. The benchmark page's failure-mode list now runs to five.
+
+**Cross-page effect 7 - perception ablation asymmetry.** Removing 3D perception costs 3.3 PDMS with the full ADDT stack (89.3 -> 86.0) but only 1.1 when the planner still emits text tokens (84.4 -> 85.5). Recorded on the perception page as evidence that **explicit 3D structure is worth roughly three times more once there is a continuous action head able to exploit it** - a VLM emitting waypoints as text may simply be unable to use precise spatial input.
+
+**Cross-page effect 8 - the closest comparison in the wiki.** SGDrive and WCog-VLA are both InternVL3-2B, both need 3D supervision at training, both camera-only at inference, both use a ReCogDrive-derived RL recipe. SGDrive 87.4 SFT / 91.1 RFT; WCog-VLA 89.3 / 92.9. The +1.9 and +1.8 gaps are unusually interpretable, and the two candidate explanations are agent-behaviour forecasting versus scene-structure encoding, and joint multi-agent versus ego-only generation. Neither paper cites the other and no controlled experiment separates them; comparison table added to the SGDrive page.
+
+**New methods for the gap list**: LatentVLA-3B (92.4 PDMS v1) and BevDrive (83.8). iPad 91.7 is corroborated against GeoWorldAD's value.
+
+**Pages updated**: `wiki/concepts/world-model-for-ad.md` (new Pattern 30; shared-future table and analysis extended; imagine-then-act roster), `wiki/concepts/navsim-benchmark.md` (SOTA row + caveat; fifth failure mode; ARTEMIS EC tally now 2-vs-1 for 98.3), `wiki/concepts/chain-of-thought-for-ad.md` (new Game-CoT section with the latency table), `wiki/concepts/best-of-n.md` (new BoN-leakage section), `wiki/concepts/diffusion-planner.md` (new ADDT decoupling/alignment section), `wiki/concepts/perception-for-planning.md` (new item 9), `wiki/sources/sgdrive.md` (head-to-head comparison), `wiki/sources/autovla.md` (citation note), `wiki/index.md`, `README.md` (67 papers; leaders line updated; new commensurability bullet).
+
+**Figure note**: all five figures present in the source are embedded (ECCV_intro.png, ECCV_Frame.png, ADDT.png, train_stage.png, compare_with_previous.png) and all seven tables reproduced. The text refers to "Fig. 7" three times but Figures 6 and 7 are absent from the clipping; noted on the page.

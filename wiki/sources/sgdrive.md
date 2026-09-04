@@ -2,9 +2,9 @@
 title: "SGDrive: Scene-to-Goal Hierarchical World Cognition for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/perception-for-planning.md, concepts/intent-conditioned-planning.md, concepts/diffusion-planner.md, concepts/foundation-backbones-for-ad.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, sources/recogdrive.md, sources/simwam.md, sources/percept-wam.md, sources/unidrivevla.md, sources/latent-wam.md, sources/deepsight.md, sources/orion.md, sources/futuresightdrive.md, sources/drivewam.md]
+related: [sources/wcog-vla.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/perception-for-planning.md, concepts/intent-conditioned-planning.md, concepts/diffusion-planner.md, concepts/foundation-backbones-for-ad.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, sources/recogdrive.md, sources/simwam.md, sources/percept-wam.md, sources/unidrivevla.md, sources/latent-wam.md, sources/deepsight.md, sources/orion.md, sources/futuresightdrive.md, sources/drivewam.md]
 created: 2026-08-17
-updated: 2026-08-17
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -267,3 +267,21 @@ A 0.5 PDMS spread — the paper's own reading is that all three work, confirming
 - **Goal as intent**: [[concepts/intent-conditioned-planning.md]] — a continuous 4 s goal pose is a different intent representation from DIAL's discrete labels or PaIR-Drive's intention tokens, and it is the component that most improves Ego Progress.
 - **RL comparability**: [[concepts/rl-for-ad.md]] and [[sources/recogdrive.md]] — SGDrive reuses ReCogDrive's RL configuration exactly, making its +3.7 PDMS SFT→RFT gain unusually comparable across the two papers.
 - **Backbone efficiency**: [[concepts/foundation-backbones-for-ad.md]] — InternVL3-2B beating InternVL3-8B by 4.1 PDMS is direct evidence that driving-specific structure beats backbone scale.
+
+## The Closest Comparison: WCog-VLA
+
+[[sources/wcog-vla.md]] is the wiki's nearest neighbour to this paper and beats it at both stages, which makes the differences informative rather than incidental.
+
+| | **SGDrive** | WCog-VLA |
+| --- | --- | --- |
+| Backbone | InternVL3-2B | InternVL3-2B |
+| World representation | scene-agent-goal symbolic queries (occupancy, safety-critical boxes, 4 s goal) at t and t+n | agent tokens from BEVFormer + TrackFormer; world head decodes current 3D boxes **and future agent trajectories** |
+| Generative stage | DiT over the ego trajectory | ADDT over **joint multi-agent** trajectories |
+| Leakage control | block-wise anti-leakage mask | VLM frozen during ADDT training |
+| RL | ReCogDrive's configuration | DiffGRPO with a decoupled ego/surround reward |
+| SFT / RFT PDMS | 87.4 / **91.1** | 89.3 / **92.9** |
+| Extra labels needed | occupancy + 3D boxes | 3D boxes + per-agent future trajectories |
+
+Both are 2B models needing 3D supervision at training and camera-only at inference, and both reuse a ReCogDrive-derived RL recipe — so the **+1.9 SFT and +1.8 RFT gap is unusually interpretable.** The two design differences that could account for it are (a) forecasting *agent behaviour* rather than encoding *scene structure*, and (b) generating a joint multi-agent rollout rather than an ego-only trajectory. WCog-VLA's own ablation attributes +0.9 to (b) alone and +0.7 to the future-trajectory supervision in (a).
+
+Neither paper cites the other, and no controlled experiment separates symbolic scene queries from agent-trajectory forecasting under a fixed planner. Given that both are InternVL3-2B with comparable RL, that experiment is unusually cheap and would say something real about what "world cognition" should actually represent.

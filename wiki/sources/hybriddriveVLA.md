@@ -2,9 +2,9 @@
 title: "HybridDriveVLA / DualDriveVLA: From Representational Complementarity to Dual Systems"
 type: source-summary
 sources: [raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md]
-related: [sources/recogdrive.md, concepts/dual-system-vla.md, concepts/best-of-n.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md]
+related: [sources/brainwam.md, sources/recogdrive.md, concepts/dual-system-vla.md, concepts/best-of-n.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md]
 created: 2026-04-19
-updated: 2026-04-19
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -205,3 +205,7 @@ Key operating points:
 4. **Linear interpolation may produce kinematically infeasible waypoints** in edge cases (reflected in DAC drop on NAVSIM-v2)
 5. **Analysis is on a single architecture** (RecogDrive) — whether complementarity generalizes to other VLA stacks is untested
 6. **Global confidence threshold γ** in DualDriveVLA is not adaptive per scenario type — misrouting hard scenarios remains possible
+
+## Related: BrainWAM’s VLA-vs-WAM Complementarity
+
+[[sources/brainwam.md]] asks the same complementarity question with a different second branch — a Wan2.2-5B world model rather than a vision-only ViT — and reaches 89.5 PDMS by coordinating the two through 8 action tokens. **The comparison is instructive in both directions.** BrainWAM has the sharper mechanism: it measures raw-token fusion *failing* (Tri-MoT 87.8, below its own WAM-only 88.1) and diagnoses modality competition, which is a causal story this page’s CKA/CCA/SAE analysis does not supply. HybridDriveVLA has the better evidence: **set-level failure-overlap statistics** rather than hand-picked figure panels, plus the negative result that representation-only gating fails. And it scores 2.6 higher. Neither paper cites the other.

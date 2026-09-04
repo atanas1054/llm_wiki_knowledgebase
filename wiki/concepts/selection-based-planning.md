@@ -1,10 +1,10 @@
 ---
 title: Selection-Based Trajectory Planning
 type: concept
-sources: [raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
-related: [sources/da-wam.md, sources/auto-jepa.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, sources/pair-drive.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md]
+sources: [raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
+related: [sources/geoworldad.md, sources/adaptive-wam.md, sources/da-wam.md, sources/auto-jepa.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, sources/pair-drive.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md]
 created: 2026-04-23
-updated: 2026-09-02
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -93,6 +93,8 @@ Safety scores are {0,1} per metric. BCE against binary labels creates sharp trai
 | **Drive-JEPA** | 8192 pseudo-teacher vocabulary + 32 online proposals | Proposal scoring + momentum-aware selection | Uses vocabulary for simulator-distilled supervision, not direct fixed selection; 93.3 PDMS NAVSIM-v1 |
 | **Auto-JEPA** | 110,335 recorded GT trajectories (→ top-300 by latent cosine) | CLOVER-initialized scene scorer + DAC gate | Retrieval, not classification: the candidate set is scene-dependent; 91.3 PDMS NAVSIM-v1 |
 | **DA-WAM** | 32 generated proposals + retrieved hard negatives | Factorized NC/DAC/EP/TTC/Comfort heads → utility head, conditioned on **each candidate's own predicted future latent** | First scorer conditioned on per-candidate futures rather than scene geometry alone; 93.7 PDMS NAVSIM-v1 |
+| **Adaptive-WAM** (aux model) | 64 proposals at a fixed block-22 exit | Six-component DINOv2-Small verifier (soft-label BCE, **no rank loss**) | CLOVER pseudo-expert targets scored by the true NAVSIM evaluator at training time; 92.6 PDMS; see [the tie problem](#tie-problem) |
+| **GeoWorldAD** | 64 learned proposals, refined over 5 stages | MLP head trained with BCE against the NAVSIM simulator's own PDMS composition | Min-over-proposals supervision at every refinement stage; simulator-distilled scoring like Hydra-MDP; 91.0 PDMS |
 
 ### DreamerAD as a deployable selection variant
 
@@ -233,3 +235,28 @@ Selection-based methods' trajectory on the NAVSIM-v1 leaderboard:
 *HydraMDP++ is evaluated primarily on NAVSIM-v2 (EPDMS).
 
 DriveSuprim (93.5) remains the strongest fixed-vocabulary selection result in the wiki, surpassing DiffusionDriveV2 (91.2 with Camera+LiDAR) and HybridDriveVLA (92.1 dual-model ensemble). CLEAR later reports 93.7 with online candidate generation plus learned adaptive routing, so it is adjacent to selection but not a fixed-vocabulary selector. Auto-JEPA (91.3) is adjacent in the other direction — retrieval rather than classification — and is the cheapest of the three to train, since its visual encoder is frozen and only small task modules are optimized. See [[concepts/navsim-benchmark.md]] and [[concepts/adaptive-routing.md]].
+
+## The Tie Problem, Finally Named {#tie-problem}
+
+Every method in the table above trains a scorer to order candidates, and every one of them reports oracle ceilings and selection accuracies that cluster suspiciously tightly. [[sources/adaptive-wam.md]] gives the reason, measured on a fixed offline pool of **12,146 scenes**:
+
+> More than **95% of scenes contain candidate groups that are jointly perfect, jointly zero, or tied at the top.**
+
+If that is right — and it follows directly from PDMS being a product of near-saturated multiplicative terms — then **a rank loss is fitting noise on 95% of the training signal**, and rank correlation is close to meaningless as a scorer diagnostic. It also explains why oracle Best-of-N ceilings saturate so fast (see [[concepts/best-of-n.md]]): with most groups tied at the top, the oracle has little left to pick out.
+
+**Adaptive-WAM's response is a design change worth copying.** Its verifier predicts the six evaluator components (NC, DAC, DDC, TTC, EP, Comf) with **equal-weight soft-label BCE on un-binarized targets, and no rank loss at all**, then composes them through the PDMS formula. It is explicitly framed as an *exit-quality verifier* rather than a total-order ranker. Evaluation follows the same logic — instead of Spearman correlation, it reports tie-aware selection rates and consequential-failure counts:
+
+| Diagnostic (12,146 scenes) | Rate |
+|---|---:|
+| Exact top-score selection | 91.2% |
+| Selection within 5 points of the true top | 94.4% |
+| Failure with ≥ 20-point gap | 0.57% |
+| Failure with ≥ 50-point gap | **0.42%** (51 scenes) |
+
+The last row is the one that matters for deployment, and the paper says so: *"passing the quality threshold is not a formal safety certificate."*
+
+**This retro-explains several entries above.** [[sources/da-wam.md]]'s scorer is deliberately built to avoid pooling futures into a proposal-invariant vector — a symptom of exactly this problem, since a pooled representation cannot break ties. [[sources/drivesuprim.md]]'s coarse-to-fine filtering works precisely because it discards the jointly-zero mass before scoring, leaving a harder but more informative 256. And [[sources/hybriddriveVLA.md]]'s finding that representation-only gating fails is consistent with a signal where most of the ordering is unlearnable.
+
+**One caution about the 64-proposal result.** Adaptive-WAM's auxiliary 92.6 PDMS model belongs in this table rather than on the single-trajectory ladder: fixed block-22 exit, 64 proposals, no adaptive routing, and **CLOVER-derived pseudo-expert targets scored with the true NAVSIM evaluator using training-time map and future occupancy** — the same privileged-supervision caveat that applies to Hydra-MDP distillation, Auto-JEPA, and DA-WAM. Against DriveSuprim's 93.5 and CLEAR's 93.7 it does not lead.
+
+**And one measurement that complicates encoder comparisons made through selection.** In the same paper, Wan intermediate features beat ViT-Large by **1.74 PDMS** for a single trajectory but by only **0.28** with 64 proposals. Multi-proposal scoring compensates for a weaker representation, so a selection-based leaderboard is a poor instrument for comparing encoders.

@@ -2,9 +2,9 @@
 title: "DA-WAM: Decision-Aligned Future Latents for Driving World Models"
 type: source-summary
 sources: [raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md]
-related: [concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/counterfactual-prediction.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/drive-jepa.md, sources/latent-wam.md, sources/geowam.md, sources/simwam.md, sources/drivelaw.md, sources/drivesuprim.md, sources/dreameraD.md]
+related: [sources/geoworldad.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/counterfactual-prediction.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/drive-jepa.md, sources/latent-wam.md, sources/geowam.md, sources/simwam.md, sources/drivelaw.md, sources/drivesuprim.md, sources/dreameraD.md]
 created: 2026-09-02
-updated: 2026-09-02
+updated: 2026-09-04
 confidence: high
 ---
 
@@ -334,3 +334,13 @@ Saturates exactly at 32. Worth comparing to [[sources/auto-jepa.md]], which need
 
 - **NAVSIM only** — no navhard, HUGSIM, Bench2Drive, nuScenes, or Waymo. For a paper whose thesis is that future prediction sharpens safety-critical discrimination, the absence of any reactive or OOD evaluation is a notable gap; [[concepts/navhard-ood-evaluation.md]] is where that claim would be tested.
 - Factor heads are supervised by simulation-derived metrics, so "no perception annotations" would be true but "no privileged supervision" would not — the same distinction that applies to Auto-JEPA's CLOVER-initialized scorer and every Hydra-MDP-style distillation method.
+
+## The Shared-Future Verdict, Scoped
+
+This page's most-cited result is that a future *shared* across candidates scores **0.50 PDMS below predicting no future at all** (92.81 vs 93.31), with ego progress collapsing 91.36 to 88.68 because an averaged future cannot attribute a hazard to a candidate.
+
+[[sources/geoworldad.md]] measures the same structural configuration — one shared future for all 64 proposals — at **+1.7 PDMS / +2.8 EPDMS**, with ego progress *rising* 3.3 points and safety flat. The mirror image, on the exact sub-metric that carries DA-WAM's diagnosis.
+
+The distinguishing variable is the **target**: DA-WAM predicts JEPA scene latents over 0.5 s; GeoWorldAD predicts latent tokens supervised by future *depth* over 2 s. That is consistent with a narrower reading of this page's finding — an averaged **photometric or feature-space** future carries no candidate-discriminative signal, while a shared **geometric** future says where free space will be, which is useful to every candidate equally and licenses commitment rather than caution.
+
+Two caveats keep this from overturning anything. GeoWorldAD's ablation is **not compute-matched** (its present-geometry baseline has 32K planner steps against the full model's 96K), and DA-WAM's negative result remains the better-controlled of the two. See [the synthesis](../concepts/world-model-for-ad.md#shared-future-reopened).
