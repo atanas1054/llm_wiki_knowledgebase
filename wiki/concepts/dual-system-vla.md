@@ -1,8 +1,8 @@
 ---
 title: Dual-System VLA for Autonomous Driving
 type: concept
-sources: [raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
-related: [sources/brainwam.md, sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md]
+sources: [raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
+related: [sources/lwdrive.md, sources/brainwam.md, sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md]
 created: 2026-04-05
 updated: 2026-09-04
 confidence: high
@@ -320,6 +320,23 @@ The supporting datum is the useful part: **the VLA branch reaches 86.1 PDMS afte
 | **BrainWAM** | Qwen3-VL-4B VLA | Wan2.2-5B WAM | **8 action tokens**; bidirectional gated cross-attn | 89.5 PDMS |
 
 BrainWAM's interface is the narrowest that still carries gradients in both directions; DriveWAM's is narrower still (two sentences of text) but one-way and gradient-free. **The trend across all four is toward deliberately constricted interfaces**, and BrainWAM is the first to give an explicit reason why widening them hurts.
+
+## LWDrive: One Interface, Consumed Six Times {#lwdrive}
+
+[[sources/lwdrive.md]] names the pathology this page has been circling and gives it a taxonomy. Its Figure 1 splits prior work into **(a) direct VLM-to-trajectory decoding** and **(b) single-stage fusion**, where "VLM semantics are usually injected only once and remain weakly coupled with subsequent trajectory correction," and proposes (c): the VLM output is an *intent anchor*, and refinement consumes VLM representations repeatedly at increasing depth.
+
+Structurally this is a dual-system design where **System A is Qwen2.5-VL-3B and System B is a six-stage proposal refiner over BEV features**, and the interface is not narrowed — it is *repeated*. Stage $r$ reads hidden states from Qwen layer $6r$ through Bridge Attention, which pools proposal self-memory, action-query and ego-state memory, and VLM foresight memory into one attention. The proposal pool is initialised from the **pooled action-query latent** rather than the decoded trajectory, so the coarse plan is never a bottleneck the way a text or waypoint interface is.
+
+**How this bears on the constricted-interface trend above.** BrainWAM's negative result is specific: mixing a *clean semantic stream* with a *denoising* one in a shared attention pool causes modality competition, and the fix is to compress each branch to 8 action tokens. LWDrive puts a clean semantic stream (VLM hidden states) next to a clean geometric one (BEV features) — no denoising stream anywhere at inference — and a wide repeated interface works fine. **The two results are compatible and jointly sharpen the rule**: what needs constricting is the coupling to a *generative* branch, not VLM coupling as such.
+
+**What the ablation supports and what it does not.** Removing Bridge Attention costs 2.0 PDMS and removing BEV grounding costs 2.7, so the repeated interface is doing real work. But **reading six depths instead of six times from the final layer is worth only +0.2** — so the value is in *repetition and BEV grounding*, not in depth diversity. The "inject once" complaint against category (b) is answered by the evidence; the "inject at many depths" prescription is not.
+
+| Method | System A | System B | Interface | Score |
+|---|---|---|---|---|
+| [[sources/senna2.md]] | VLM decision maker | E2E policy | 20 discrete meta-actions | 86.6 EPDMS |
+| [[sources/drivewam.md]] | Frozen Qwen3-VL-8B advisor | Wan2.2-5B policy | Natural language, one-way | 90.1 PDMS |
+| [[sources/brainwam.md]] | Qwen3-VL-4B VLA | Wan2.2-5B WAM | 8 action tokens, bidirectional | 89.5 PDMS |
+| **[[sources/lwdrive.md]]** | **Qwen2.5-VL-3B (frozen in stage 2)** | **6-stage BEV proposal refiner** | **Full hidden states, read six times at six depths** | **92.0 PDMS** |
 
 ## Open Questions
 

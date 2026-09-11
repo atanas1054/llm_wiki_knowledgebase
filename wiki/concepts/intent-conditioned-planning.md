@@ -1,10 +1,10 @@
 ---
 title: Intent-Conditioned Trajectory Planning
 type: concept
-sources: [raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [sources/auto-jepa.md, sources/dial.md, sources/pair-drive.md, sources/sgdrive.md, concepts/rl-for-ad.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/parallel-il-rl.md, concepts/nuscenes-waymo-evals.md, concepts/perception-for-planning.md]
+sources: [raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
+related: [sources/drivefuture.md, concepts/world-model-for-ad.md, sources/auto-jepa.md, sources/dial.md, sources/pair-drive.md, sources/sgdrive.md, concepts/rl-for-ad.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/parallel-il-rl.md, concepts/nuscenes-waymo-evals.md, concepts/perception-for-planning.md]
 created: 2026-06-23
-updated: 2026-09-02
+updated: 2026-09-11
 confidence: high
 ---
 
@@ -26,6 +26,7 @@ Intent conditioning supplies an explicit axis along which proposals can differ. 
 | [[sources/dial.md]] | Eight rule-derived labels with classifier-free guidance | Expand SFT support and balance every GRPO group across intents | Intent classifier selects one mode; conditioned flow generates |
 | [[sources/sgdrive.md]] | Continuous goal pose ~4 s ahead, predicted by an MLP head on a dedicated ⟨world⟩ subquery | Auxiliary $L_1$ supervision that shapes the VLM representation | Goal subquery hidden state conditions the DiT; never decoded |
 | [[sources/auto-jepa.md]] | Continuous 8×1024 latent encoding the *entire* 4 s future trajectory, predicted by a JEPA predictor | The only training objective — aligned with a frozen trajectory encoder's output | The retrieval key into a memory of 110,335 recorded trajectories |
+| [[sources/drivefuture.md]] | Tokenized trajectory (8 pose-difference tokens) fed to a **world model**, not to the planner | Drawn from expert / kinematic rollout / null token at 0.4/0.4/0.2 | Two surrogates on a phase schedule: a constant-acceleration rollout, then a Tweedie estimate of the proposal being denoised |
 
 PaIR-Drive treats intent as tree-branch structure in a separate RL refiner. DIAL treats intent as a condition inside one continuous generative policy and explicitly preserves all modes during preference fine-tuning.
 
@@ -58,6 +59,29 @@ Auto-JEPA's intent tokens are explicitly *not* maneuver classes — the paper st
 **What it gets in exchange is a shared retrieval space.** SGDrive's goal pose conditions a generator; Auto-JEPA's latent is compared directly against encodings of real trajectories under cosine similarity, which only works because target and memory pass through the same frozen encoder. That is a genuine payoff no discrete ontology can offer — and it depends on the trajectory encoder being frozen *before* the intent predictor is trained, which is the paper's key sequencing decision.
 
 **Where this leaves the multimodality argument.** Auto-JEPA recovers alternatives downstream rather than through intent: the top-300 retrieved trajectories *are* the proposal set, and they are diverse because the memory is. Note the difference from intent-CFG, though — retrieved neighbors are diverse in *geometry* but all maneuver-compatible with a single predicted intent, so they cannot span the "should I yield or go?" split that DIAL's eight classes are designed to expose. The distinction between spatial and semantic diversity in [Diversity Is Multidimensional](#diversity-is-multidimensional) below applies directly: Auto-JEPA has the first kind and, by construction, not the second. No ablation measures whether that costs anything.
+
+## Intent as the World Model's Input: The Circular Dependency (DriveFuture) {#circular-intent}
+
+Every use above puts the intent between the scene and the **planner**. [[sources/drivefuture.md]] puts it between the scene and the **world model**, and that one change creates a problem none of the others has.
+
+Its future latent is *action-conditional* by construction — $\hat{\mathbf{Z}}_{t+T}=f_\psi(\mathbf{Z}_t;\mathbf{E}_	au)$ describes the scene at horizon $T$ *under the hypothesis that the ego enacts $oldsymbol{	au}$*. That is the right thing for a world model to be. But the planner is conditioned on $\hat{\mathbf{Z}}_{t+T}$, so at inference:
+
+$$\hat{\mathbf{Z}}_{t+T}=f_\psi(\mathbf{Z}_t;\mathbf{E}_	au),\qquad oldsymbol{	au}=\operatorname{Decode}(\mathbf{Z}_t,\hat{\mathbf{Z}}_{t+T})$$
+
+**Intent is required to predict the future, and the future is required to produce the intent.** Training hides this completely — the expert trajectory is available — which is why the problem only shows up as a deployment question.
+
+**Three ways the wiki's papers avoid or solve it:**
+
+| Design | How the circularity is avoided |
+|---|---|
+| DIAL, PaIR-Drive | The intent is *predicted by a classifier* before generation, so nothing downstream is needed to produce it |
+| SGDrive, Auto-JEPA | The intent is predicted directly from the scene by a dedicated head; no world model consumes it |
+| [[sources/da-wam.md]] | Candidates are generated **first**, then each conditions its own future — the future is used for *scoring*, never for generation |
+| **DriveFuture** | **Two surrogates on a noise-phase schedule**: a constant-acceleration rollout while the sample is too noisy to trust, then a Tweedie estimate of the sample itself |
+
+DA-WAM's answer is the structurally simplest — move the action-conditional future to the scoring stage, where the action already exists — and it is why that design has no analogue of PFG. DriveFuture's answer keeps the future inside the generation loop and pays for it with a recursive estimate whose error it has to schedule around. The mechanics are on [[concepts/diffusion-planner.md]].
+
+**What this adds to the page's ontology discussion.** DriveFuture's "intent" is a full 8-pose trajectory, so by the taxonomy above it sits with Auto-JEPA at the fully-specified end and has **no mode-spanning capacity at all** — conditioning on it cannot open alternative maneuver basins. But it is used for something no other entry here uses intent for: as the *action argument of a dynamics model*, which is the sense the term carries in model-based RL rather than in behaviour prediction. **The wiki now has three unrelated objects sharing the word "intent"** — a maneuver class, a goal or path specification, and a dynamics-model action — and only the first supports the multimodality argument this page is built on.
 
 ## Intent-CFG
 

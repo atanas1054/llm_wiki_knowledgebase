@@ -1,10 +1,10 @@
 ---
 title: Adaptive Routing for Trajectory Planning
 type: concept
-sources: [raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md]
-related: [sources/adaptive-wam.md, sources/clear.md, concepts/best-of-n.md, concepts/selection-based-planning.md, concepts/diffusion-planner.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md]
+sources: [raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md]
+related: [sources/coworld-vla.md, sources/adaptive-wam.md, sources/clear.md, concepts/best-of-n.md, concepts/selection-based-planning.md, concepts/diffusion-planner.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md]
 created: 2026-06-11
-updated: 2026-09-04
+updated: 2026-09-11
 confidence: medium
 ---
 
@@ -104,6 +104,20 @@ Rejected exits cost only the *unevaluated* blocks; hidden states and cached comp
 
 Nothing about depth routing conflicts with candidate routing. A system could choose depth per scene *and* candidate count per scene, and Adaptive-WAM's own ablation hints at the interaction: the advantage of good features (Wan over ViT-L) is 1.74 PDMS with one trajectory and only 0.28 with 64 proposals, so **the two knobs partly substitute for each other**. Spending on depth and spending on candidates buy overlapping things, which means a joint scheduler has a real trade-off to learn rather than two independent dials. No paper has built one.
 
+### A Third Knob, Deliberately Not Routed (CoWorld-VLA) {#static-mixture}
+
+[[sources/coworld-vla.md]] builds the machinery for a third routing knob and then does not route it. Its HMEF planner denoises **one trajectory per conditioning expert** — semantic, geometric, dynamic, ego-trajectory — and combines them with $lpha=\operatorname{softmax}(w)$, where $w$ is a vector of **global scalars learned once and frozen at inference**. The converged mixture is dyn 0.35 / traj 0.31 / sem 0.19 / geo 0.15, from a uniform 0.25 initialization.
+
+| | [[sources/clear.md]] | [[sources/adaptive-wam.md]] | **[[sources/coworld-vla.md]]** |
+|---|---|---|---|
+| Routed quantity | candidate count and diversity | DiT depth | **expert mixture weights** |
+| Conditioned on the scene? | Yes (VLM hidden states) | Yes (decoded plan + image) | **No — one global vector** |
+| Decision timing | before generation | after each decoded plan | **at training time, once** |
+
+**This is the natural null for the whole page and nobody has run the comparison.** The experts are exactly the kind of heterogeneous-competence set routing is for — a geometry expert should plausibly matter more at a narrow intersection and a dynamics expert more in dense traffic — and the paper's own ablation says its experts are complementary rather than interchangeable. A scene-conditioned $lpha$ is a small change to an architecture that already computes all four branches, so the marginal cost of routing here is **zero extra compute**: the trajectories are all generated regardless.
+
+Two things make the omission more interesting than a missing ablation usually is. The converged weights **disagree with the paper's own representation ablation** about which expert matters (geometry ranks last at 0.15, but is the stronger *third* addition in Table 4 at 87.7 vs. 87.3) — which is what one would expect if a single global weight were averaging over scenes with different needs. And there is **no uniform-weight control**, so the value of learning even a static mixture is unmeasured.
+
 ## Why It Matters
 
 Driving scenarios vary sharply in ambiguity. A highway-following scene often needs one precise trajectory; a crowded unsignalized intersection may need several plausible futures before selection. Fixed compute budgets either waste effort on simple scenes or under-sample hard scenes. Adaptive routing exposes that trade-off as a learned policy.
@@ -113,4 +127,5 @@ Driving scenarios vary sharply in ambiguity. A highway-following scene often nee
 - Whether discrete scheme routing is enough, or continuous differentiable routing would capture better precision/diversity trade-offs.
 - Whether PDMS-supervised routing overfits NAVSIM-specific scorer preferences.
 - Whether learned scoring remains reliable outside non-reactive simulation, especially in interactive-agent settings.
+- **Would scene-conditioned expert weights beat a global mixture?** CoWorld-VLA computes four fully-denoised trajectories and then combines them with a frozen global $lpha$. Routing that mixture per scene costs nothing extra at inference, and the paper runs neither a scene-conditioned variant nor a uniform-weight control. It is the cheapest untried experiment on this page.
 - Whether adaptive candidate counts can be combined with fixed-vocabulary selectors such as DriveSuprim or with masked-diffusion refinement methods.

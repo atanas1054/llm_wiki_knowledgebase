@@ -1,10 +1,10 @@
 ---
 title: Navhard and OOD Evaluation
 type: concept
-sources: [raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md]
-related: [concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, sources/drivefine.md, sources/spanvla.md, sources/had.md, sources/geowam.md, sources/drivelaw.md, sources/drivevla-w0.md]
+sources: [raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md]
+related: [sources/drivefuture.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, sources/drivefine.md, sources/spanvla.md, sources/had.md, sources/geowam.md, sources/drivelaw.md, sources/drivevla-w0.md]
 created: 2026-05-01
-updated: 2026-09-02
+updated: 2026-09-11
 confidence: medium
 ---
 
@@ -16,7 +16,9 @@ Stage 1 evaluates the original scenes; Stage 2 evaluates synthetic reactive scen
 
 ## Why It Matters
 
-NAVSIM-v1 PDMS is saturated (Best-of-6 already matches human ground truth — see [[concepts/best-of-n.md]]) and navtest EPDMS is compressed into a few points at the top. Navhard is not close to saturated. The best combined score in the wiki is **36.6**, and the gap between methods is large enough to rank them.
+NAVSIM-v1 PDMS is saturated (Best-of-6 already matches human ground truth — see [[concepts/best-of-n.md]]) and navtest EPDMS is compressed into a few points at the top. Navhard is not close to saturated. The best combined score in the wiki is **55.5** ([[sources/drivefuture.md]]), the floor is 11.4, and the gap between methods is large enough to rank them.
+
+**The ceiling moved a long way with one ingest.** Before [[sources/drivefuture.md]], this page's leaderboard came entirely from [[sources/geowam.md]] and topped out at 36.6. DriveFuture's Table 1 contains fourteen entries, five of them above 42, and **not one method in common with GeoWAM's table.** The reason is visible at a glance: every entry above 42 scores its own candidates. See [The Scorer-Equipped Cohort](#scorer-cohort).
 
 It is also the wiki's cheapest reactive evaluation. [[concepts/bench2drive.md]] needs CARLA and [[concepts/hugsim-benchmark.md]] needs its own splatting pipeline; navhard runs inside the NAVSIM stack a paper is already using.
 
@@ -30,6 +32,66 @@ Papers report navhard in two incompatible ways, and the wiki has been mixing the
 A per-stage pair can be *roughly* converted by multiplying (DriveFine's 74.4 / 41.0 gives about 30.5), but this is an estimate only — the official aggregation multiplies within each group and branch before averaging, which is not the same as multiplying the averages. Do not treat converted values as leaderboard entries.
 
 [[sources/had.md]]'s 32.3 is ambiguous: it is reported as a single number with no Stage 2 companion, which is consistent with either convention. It sits plausibly in the combined range next to DVGT-2's 31.7, but the wiki cannot confirm this.
+
+**SpanVLA's 40.1 is resolved: it is a combined score.** [[sources/spanvla.md]] printed 40.1 against both stage rows, which this page flagged as uninterpretable. [[sources/drivefuture.md]]'s Table 1 reproduces SpanVLA's nine Stage-1 and nine Stage-2 submetrics exactly and prints **a single 40.1 spanning both rows**, in a table whose other entries are verifiably combined. SpanVLA therefore belongs on the combined leaderboard, not in the per-stage table, and a repeated headline across stage rows should be read as a formatting convention rather than a per-stage result. **One paper reprinting another's submetrics resolved an ambiguity neither paper's own text could.**
+
+## The Scorer-Equipped Cohort {#scorer-cohort}
+
+From [[sources/drivefuture.md]] Table 1. All values are the **combined** two-stage EPDMS. The **Scores?** column marks methods that rank their own candidates against a learned or rule-based proxy for the benchmark metric.
+
+| Method | Backbone | Combined EPDMS | Scores? | Family |
+|---|---|---:|:-:|---|
+| **DriveFuture + GTRS-Dense** | V2-99 | **55.5** | Yes | Latent world model + diffusion |
+| DrivoR *(not ingested)* | ViT-S | 54.6 | Yes | E2E |
+| SimScale *(not ingested)* | V2-99 | 53.2 | Yes | E2E |
+| GTRS-E *(not ingested)* | V2-99+EVA-ViT-L+ViT-L | 49.4 | Yes | Selection-based |
+| ZTRS *(not ingested)* | V2-99 | 48.1 | Yes | Selection-based |
+| DiffVLA *(not ingested)* | V2-99 + ViT-L/14 | 45.0 | Yes | VLA |
+| [[sources/drivesuprim.md]] | V2-99 | 42.1 | Yes | Selection-based |
+| [[sources/spanvla.md]] | Qwen2.5-VL-3B | 40.1 | No | VLA |
+| **DriveFuture, no scorer** | V2-99 | **34.6** | **No** | Latent world model + diffusion |
+| World4Drive *(not ingested)* | ResNet-34 | 34.9 | No | Latent world model |
+| MindDrive *(not ingested)* | ResNet-34 | 30.9 | No | World model + VLM |
+| Senna-E2E | ResNet-50 | 27.2 | No | E2E |
+| GuideFlow *(not ingested)* | ResNet-34 | 27.1 | No | Flow matching |
+| [[sources/diffusiondrive.md]] | ResNet-34 | 24.2 | No | Diffusion |
+| TransFuser | ResNet-34 | 23.1 | No | E2E |
+
+**The split is almost perfectly clean.** Every method above 42 scores its candidates; every method below 35 does not. SpanVLA at 40.1 is the only unscored entry in the gap, and DriveFuture's unscored 34.6 sits with the world models it is competing against rather than with the leaderboard it tops.
+
+### The scorer is worth +20.9, measured inside one paper {#scorer-price}
+
+[[sources/drivefuture.md]] is the first paper here to report the same checkpoint with and without a scorer on navhard. Its ablations are all run "without GTRS-Dense scorer"; the best ablation row is **34.6** and its submetrics match the unscored stage-wise row in its Table 7 digit-for-digit. So:
+
+| Configuration | Combined EPDMS |
+|---|---:|
+| No future frames in training | 30.9 |
+| + future-frame grounding (the paper's mechanism) | 34.6 |
+| + **GTRS-Dense scorer over 100 proposals** | **55.5** |
+
+**The scorer is worth 5.6x what the world model is worth**, and **85% of the distance** from the weakest configuration (30.9) to the headline (55.5). That reframes this whole page: navhard's leaderboard is currently a ranking of proposal *selectors*, and the proposal *generator* moves it by a few points. See [[concepts/selection-based-planning.md]].
+
+Two caveats before generalizing. DriveFuture's scored and unscored rows differ in nothing but selection, which is what makes the number clean — but it is one method, one run, and the scorer (GTRS-Dense) is trained against a proxy for the benchmark's own metric, so part of the +20.9 is benchmark-specific. And the trade it buys is visible: Stage-1 EC falls 76.9 -> 66.2 and Stage-2 EC 75.9 -> 45.6. Safer, more rule-compliant proposals are less comfortable; EPDMS's multiplicative penalties make that a good trade under this metric and not necessarily under any other.
+
+### Bridging the two tables {#bridge}
+
+The two navhard leaderboards on this page share **no method name**, so merging them requires an assumption. There is exactly one row that bridges them, and it is instructive:
+
+| Paper | Name given | Combined EPDMS | Stage-1 submetrics (NC/DAC/DDC/TLC/EP/TTC/LK/HC/EC) |
+|---|---|---:|---|
+| [[sources/spanvla.md]] | **LTF** | 23.1 | 96.2 / 79.6 / 99.1 / 99.6 / 84.1 / 95.1 / 94.2 / 97.6 / 79.1 |
+| [[sources/drivefuture.md]] | **TransFuser** | 23.1 | 96.2 / 79.5 / 99.1 / 99.5 / 84.1 / 95.1 / 94.2 / 97.5 / 79.1 |
+| [[sources/geowam.md]] | **LTF** | **25.1** | NC 96.2, LK 94.2 (Stage 2: NC 77.7, LK 45.4) — the four values this wiki recorded, **all identical** |
+
+Two papers agree on 23.1 for a row whose submetrics are identical to within rounding, and **disagree on what to call it** — LTF and TransFuser are distinct NAVSIM baselines (camera-only vs. camera+LiDAR), so at least one label is wrong. GeoWAM aggregates the same four submetrics this wiki has on file to **25.1**.
+
+**This is the same offset GeoWAM shows on navtest**, where it scores TransFuser at 84.0 from submetrics four other papers aggregate to 76.7 (see [[concepts/navsim-benchmark.md]]). On navhard the offset is smaller — about +2 on a weak baseline — but it points the same way. The working assumption this page adopts is that **the two tables are on approximately the same scale, +/- 2 points**, which is enough to rank across them but not enough to separate neighbours.
+
+Under that assumption GeoWAM's 36.6 is **eighth**, between SpanVLA (40.1) and World4Drive (34.9) — not the reactive/OOD leader this page previously called it. The claim that survives unchanged is the narrower one GeoWAM actually earns: it leads *its own table*, against RL-supervised methods, without RL.
+
+### Does the combined score really multiply the stages?
+
+Recomputing the EPDMS formula from DriveFuture's published submetrics and multiplying the two stage scores reproduces the combined column to within **0.5 to 3.0 points** across rows (TransFuser 23.6 vs. 23.1; SpanVLA 41.4 vs. 40.1; DriveFuture 52.5 vs. 55.5), with the sign of the residual varying. That is consistent with this page's product reading and with the official protocol's per-group, per-branch aggregation happening *before* averaging. **It is close enough to sanity-check a published row and not close enough to convert a per-stage pair into a leaderboard entry** — which is what the warning above already says.
 
 ## Combined-EPDMS Leaderboard
 
@@ -48,7 +110,9 @@ From [[sources/geowam.md]] Table 3. Methods marked † are trained with reinforc
 | Ego MLP | 14.1 | Ego-status-only baseline |
 | Constant velocity | 11.4 | Floor |
 
-**GeoWAM leads while using strictly weaker supervision than the three methods below it.** EponaV2, NavFormer, and LTFv6 all use RL or direct PDMS-score supervision; GeoWAM uses $\ell_1$ trajectory regression. Its margin over EponaV2 is only +0.5, so the ranking is not robust — but the supervision asymmetry runs against it, which makes the result more interesting than the gap size suggests.
+> **Scope note (added after [[sources/drivefuture.md]]).** This table contains no method that scores its own candidates, and [the cohort above](#scorer-cohort) shows five such methods between 42 and 55. Under the +/-2-point bridge established [here](#bridge), GeoWAM's 36.6 ranks eighth overall. Read the rankings below as internal to this table.
+
+**GeoWAM leads its own table while using strictly weaker supervision than the three methods below it.** EponaV2, NavFormer, and LTFv6 all use RL or direct PDMS-score supervision; GeoWAM uses $\ell_1$ trajectory regression. Its margin over EponaV2 is only +0.5, so the ranking is not robust — but the supervision asymmetry runs against it, which makes the result more interesting than the gap size suggests.
 
 **The +4.9 over DVGT-2 is the load-bearing number.** On navtest GeoWAM beats its own DVGT-2 initialization by only +0.6; on navhard the same architectural addition — future-geometry forecasting — is worth eight times more. That is precisely what a world-model thesis predicts: anticipation should matter most where errors compound. It is the strongest evidence in the wiki that world modeling buys robustness rather than open-loop accuracy, and neither GeoWAM nor any other paper remarks on it.
 
@@ -71,6 +135,33 @@ Lane keeping falls from ~96 to ~48 for every learned planner, and no-at-fault co
 
 This is the same picture [[concepts/hugsim-benchmark.md]] shows on its Extreme tier, where every method lands between 0.06 and 0.14 HD-Score. Two independent reactive benchmarks agree: **current planners degrade to near-indistinguishable once their own errors drive the observations**, and open-loop rankings do not predict which degrade least.
 
+### Correction: the collapse is not universal, and the exception is scoring {#lk-correction}
+
+The paragraph above generalized from GeoWAM's ten baselines, none of which scores its own candidates. [[sources/drivefuture.md]]'s table contains six methods that do, and they break the band:
+
+| Method | Stage-1 LK | Stage-2 LK | Scores candidates? |
+|---|---:|---:|:-:|
+| TransFuser | 94.2 | 45.4 | No |
+| [[sources/diffusiondrive.md]] | 90.8 | 49.2 | No |
+| MindDrive | 94.4 | 49.2 | No |
+| World4Drive | 87.7 | 52.3 | No |
+| **DriveFuture, no scorer** | 94.9 | **47.6** | **No** |
+| GTRS-E | 96.0 | 53.9 | Yes |
+| [[sources/drivesuprim.md]] | 94.7 | 53.5 | Yes |
+| DrivoR | 94.9 | 56.1 | Yes |
+| **DriveFuture + scorer** | 98.7 | **58.3** | **Yes** |
+| SimScale | 95.8 | 60.1 | Yes |
+| ZTRS | 96.2 | 60.4 | Yes |
+| [[sources/spanvla.md]] | 94.2 | **62.3** | No |
+
+**The 45-50 band was a property of the sample, not of the benchmark.** Stage-2 lane keeping ranges from 45.4 to 62.3 here — a 17-point spread against the "under 5 points" this page previously recorded — and the ordering tracks candidate scoring almost perfectly. DriveFuture supplies the controlled version: **the same checkpoint moves 47.6 to 58.3 by adding a scorer and changing nothing else.**
+
+Two things survive the correction, and one does not:
+
+- **Survives**: every method still loses roughly 35-45 points of lane keeping between stages. Stage 2 is genuinely much harder, and nothing here approaches its own Stage-1 number.
+- **Survives**: the open question below about whether part of the drop is a 3DGS rendering artifact. A scorer that evaluates candidates against map geometry would partly compensate for a degraded *observation*, which is consistent with both explanations rather than deciding between them.
+- **Does not survive**: "methods that look clearly separated collapse toward a common failure mode." They separate by 17 points on the metric that was supposed to show the collapse, and the separating variable is selection.
+
 ## Per-Stage Reports
 
 | Method | Stage 1 EPDMS | Stage 2 EPDMS | Caveat |
@@ -78,18 +169,20 @@ This is the same picture [[concepts/hugsim-benchmark.md]] shows on its Extreme t
 | [[sources/drivefine.md]] | 74.4 | 41.0 | Leads Stage 1 by +5.5 over ReCogDrive; approx. 30.5 if converted to combined |
 | ReCogDrive | 68.9 | 37.8 | Reported within DriveFine's table |
 | DiffusionDrive | 66.7 | 40.5 | Reported within DriveFine's table |
-| [[sources/spanvla.md]] | 40.1 | 40.1 | Identical headline for both stages while submetrics differ — stage interpretation uncertain |
+| ~~[[sources/spanvla.md]]~~ | – | – | **Resolved: 40.1 is a combined score.** Moved to [The Scorer-Equipped Cohort](#scorer-cohort) |
 | [[sources/had.md]] | 32.3 | – | Convention ambiguous; see the warning above |
 
-SpanVLA's 40.1 EPDMS on navhard against 86.4 on navtest remains the wiki's cleanest single-method statement of the gap: **high navtest scores do not imply robust OOD driving.** HAD-L makes the same point from 88.5 navtest down to 32.3, and attributes part of it to BEV feature sensitivity under 3DGS synthesis noise — a model-specific diagnosis, not a general one.
+SpanVLA's 40.1 combined EPDMS on navhard against 86.4 on navtest remains the wiki's cleanest single-method statement of the gap: **high navtest scores do not imply robust OOD driving.** [[sources/drivefuture.md]] makes the same point from the other end — 89.9 navtest, 55.5 navhard — and its unscored 34.6 shows most of that gap is closed by selection rather than by the policy. HAD-L makes the same point from 88.5 navtest down to 32.3, and attributes part of it to BEV feature sensitivity under 3DGS synthesis noise — a model-specific diagnosis, not a general one.
 
 ## Open Questions
 
-- **Does the combined/per-stage split hide a real ranking?** DriveFine's 74.4/41.0 converts to roughly 30.5, which would place it below DVGT-2 and DriveLaW — but the conversion is an approximation of an aggregation the wiki has not verified. Someone reporting both conventions for one checkpoint would settle it in one run.
+- **Does the combined/per-stage split hide a real ranking?** DriveFine's 74.4/41.0 converts to roughly 30.5, which would place it below DVGT-2 and DriveLaW — but the conversion is an approximation. The [product check](#does-the-combined-score-really-multiply-the-stages) now bounds the error at roughly 0.5-3 points, so the conversion is usable as a sanity check and still not as a leaderboard entry. Someone reporting both conventions for one checkpoint would settle it in one run.
+- **How much of any navhard result is the generator and how much is the selector?** [[sources/drivefuture.md]] is the only paper that answers this for its own model: +20.9 of its 55.5 is a GTRS-Dense scorer, against +3.7 for the world model it is named after. Every other entry above 42 also scores, and none reports an unscored ablation. **Until a second paper reports both, navhard rankings should be read as rankings of selection pipelines.**
+- **Does future-conditioning survive a strong scorer?** DriveFuture's ablations are all run without one, and its scored Stage-1 safety metrics are near-saturated (NC 99.8, DAC 99.8, DDC 100.0). A +3.7 proposal-quality gain has very little room left to express itself there. The experiment is one run of an existing configuration.
 - **Why does world modeling help eight times more on navhard than navtest?** GeoWAM's +0.6 / +4.9 split over DVGT-2 is the only measurement of this in the wiki, from a single paper with no ablations. If it replicates, it reframes what world-model pretraining is *for* — robustness under compounding error rather than open-loop accuracy — and implies navtest is the wrong benchmark for evaluating it.
-- **Is Stage 2 lane-keeping collapse a planner failure or a rendering artifact?** Every method including constant velocity loses about half its LK, which is suspicious. If 3DGS renderings degrade as the ego pose leaves the recorded trajectory, part of the drop measures the benchmark rather than the planner. No paper has separated these.
+- **Is Stage 2 lane-keeping collapse a planner failure or a rendering artifact?** Every method including constant velocity loses 35-45 points of LK, which is suspicious. If 3DGS renderings degrade as the ego pose leaves the recorded trajectory, part of the drop measures the benchmark rather than the planner. No paper has separated these. The [scoring correction](#lk-correction) narrows the question rather than answering it: a candidate scorer recovers 10 points of Stage-2 LK on a fixed checkpoint, which is compatible with either explanation.
 - **Does RL help here?** Three of the four methods above 31 use RL or PDMS-score supervision, but GeoWAM tops them without it. With margins of 0.5–2.5 points and single runs, the wiki cannot say whether RL buys OOD robustness.
 
 ## Lint Rule
 
-When a paper claims NAVSIM progress, check whether it reports navhard or another OOD split. If not, mark the claim as standard-split only. If it does, **check which reporting convention it uses** before placing the number.
+When a paper claims NAVSIM progress, check whether it reports navhard or another OOD split. If not, mark the claim as standard-split only. If it does, **check which reporting convention it uses** before placing the number — and **check whether the number includes a trajectory scorer**, which on this split is worth several times what any published architectural mechanism is worth.

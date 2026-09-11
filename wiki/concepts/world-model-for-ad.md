@@ -1,10 +1,10 @@
 ---
 title: World Models for Autonomous Driving
 type: concept
-sources: [raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md]
-related: [sources/wcog-vla.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/da-wam.md, sources/geowam.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/simwam.md, sources/sgdrive.md, sources/drivelaw.md, sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md, concepts/counterfactual-prediction.md, sources/driving-wm-counterfactuals.md]
+sources: [raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md]
+related: [sources/coworld-vla.md, sources/drivefuture.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/lwdrive.md, sources/wcog-vla.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/da-wam.md, sources/geowam.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/simwam.md, sources/sgdrive.md, sources/drivelaw.md, sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md, concepts/counterfactual-prediction.md, sources/driving-wm-counterfactuals.md]
 created: 2026-04-05
-updated: 2026-09-04
+updated: 2026-09-11
 confidence: high
 ---
 
@@ -604,6 +604,28 @@ Regression produces less than half the target's temporal variation and makes con
 
 **The entropy-of-the-target framing** resolves the apparent conflict with Pattern 22. Auto-JEPA uses a deterministic alignment objective and it works, because its target is a *single ego trajectory* — low-dimensional and weakly multimodal, where a conditional mean is still a usable prediction. WA-JEPA's target is a four-camera scene, where the conditional mean is a blur. **The right objective depends on the entropy of what is being predicted**, and Drive-JEPA sits in the uncomfortable middle: a high-entropy target under a deterministic objective.
 
+**DriveFuture re-runs this comparison and the sign of the regression term flips.** [[sources/drivefuture.md]]'s Table 4, on navhard with everything else fixed:
+
+| Configuration | EPDMS |
+|---|---:|
+| No future frames in training (foresight latent still conditions the planner) | 30.9 |
+| + **MSE regression** on the future latent | 32.1 |
+| + **attention grounding, no prediction loss** | **34.6** |
+
+Regression is **+1.2 over the null here**, where WA-JEPA measured it at **-0.4**. The ordering is the same in both papers and the magnitude of the gap to the better option is similar (+2.5 here, +1.0 there), but "regression on future latents is actively harmful" does not generalise — it was a property of WA-JEPA's target, not of regression.
+
+**The entropy-of-the-target framing explains the difference and survives both.** WA-JEPA regresses multi-view EMA ViT-L scene latents; DriveFuture regresses a 16-token compression of a 64-token BEV bank, an order of magnitude lower in dimension and far less multimodal. Higher target entropy, worse regression — which is the same axis that reconciles Pattern 22's deterministic ego-trajectory alignment working at all.
+
+**The third arm is the one that is new.** DriveFuture's winner has *no prediction objective*. So the design space is not "regression vs. flow matching" but:
+
+| Objective on the future latent | Best result in its own paper | Target entropy |
+|---|---|---|
+| Deterministic regression | Worst or near-worst in both papers that test it | any |
+| Generative (flow matching) | +1.0 over regression, +0.6 over null (WA-JEPA) | high |
+| **None — planning loss plus attention grounding to a real future** | **+2.5 over regression (DriveFuture)** | low |
+
+The two winners are not in competition: flow matching wins when the future latent must *stand alone* as a prediction, and no-objective-plus-grounding wins when it only has to be a useful conditioning context. **Nobody has run both arms on one target**, and that is now the cleanest open experiment on this page.
+
 ### 24. Metric Geometry as the World-Model State Space (GeoWAM)
 
 **GeoWAM** ([[sources/geowam.md]], Uber AV Labs) adds the one state space this page did not have. Patterns 1-13 and 19-21 predict pixels or video latents; 8, 14, 15, 17, 23 predict learned features; 4 and 20 predict occupancy or symbolic state; 22 predicts an action latent. GeoWAM predicts **dense metric point maps** — one 3D point per image pixel, per future step, per camera, in the ego coordinate frame.
@@ -723,13 +745,136 @@ The argument for it is a gap in the taxonomy rather than a gap in fidelity. Pred
 
 **One mechanism worth stealing regardless of the target.** ADDT's condition encoder is pulled toward a latent from a GenAD-style VAE pretrained to reconstruct multi-agent trajectories, via cosine similarity at the 6th block. Its stated purpose is *stability across denoising timesteps* rather than fidelity — and its measured effect is exactly that: at 5 denoising steps the alignment and decoupling together are worth +1.9 PDMS (87.4 → 89.3), but at 20 steps only +1.1 (88.5 → 89.6). **The architectural mechanisms substitute for denoising budget**, which is the cleanest statement in the wiki of why few-step planners can match many-step ones.
 
+### 31. Future-Frame Supervision on VLM Hidden States, Consumed at Several Depths (LWDrive)
+
+[[sources/lwdrive.md]] (Chongqing University) is the training-time-only counterpart to [Pattern 29](#29-ego-aligned-multi-scale-geometry-with-latent-future-tokens-geoworldad): the same interleaving of planner refinement stages with backbone depth, but on a **VLM** and with the future never instantiated at inference.
+
+**The world model.** A frozen VAE encodes a future frame $I_{t+\Delta}$; a denoising head conditioned on the concatenated final-layer vision and action-query hidden states, $c_t=[F_t^{\mathrm{V}};h_t^{\mathrm{A}}]$, predicts the clean latent. This runs only in Stage 1, weighted $\lambda_{\mathrm{wm}}=15$ against $\lambda_{\mathrm{traj}}=1$ — the most lopsided world-model weighting recorded on this page — and is discarded at deployment.
+
+**The consumer.** Qwen2.5-VL-3B emits an intent-aware coarse trajectory. A **Foresight Cascade Planner** initialises a proposal pool from the *pooled action-query latent* (not the decoded trajectory), then runs six refinement stages, each reading hidden states from a different Qwen layer through **Bridge Attention** — one attention over concatenated proposal-self, action-query/ego-state, and VLM-foresight memories — followed by BEV-grounded residual updates. A score head distilled from NAVSIM's PDMS composition selects. **92.0 PDMS v1 / 89.6 EPDMS v2, no RL.**
+
+**Two things this pattern contributes, and they are both boundary conditions rather than confirmations.**
+
+1. **Multi-depth readout on a VLM is worth +0.2**, against +4.80 on a video DiT ([Pattern 28](#28-quality-routed-early-exit-from-the-generators-middle-adaptive-wam)) and +1.1 on a geometry decoder (Pattern 29). The *direction* reproduces GeoWorldAD's — multi-scale buys DAC and TTC, costs ego progress — but the magnitude does not. Full treatment in [[concepts/foundation-backbones-for-ad.md]].
+2. **The world-model contribution is measured in the wrong configuration.** Its Table 4 varies future-frame supervision only with **no refinement stack present** (84.5 → 86.3, +1.8 on a directly decoded VLM trajectory), and no row runs the full FCP without it. So LWDrive's headline claim — that the cascade consumes *foresight* features rather than merely deep ones — has no experiment behind it. Of the +7.5 from ablated baseline to headline, the refinement stack is +5.5, the world model +1.8, and the layer-wise schedule +0.2.
+
+**Classification.** Training-time-only, unambiguously: no future image or latent is produced at inference, and the qualitative future frames in Figure 4 are decoded for illustration only. It is the first entry in that camp whose future target is supervised **directly on VLM hidden states** rather than on a video backbone's activations ([[sources/simwam.md]], [[sources/adaptive-wam.md]]) or a separate feature predictor ([[sources/flare.md]], [[sources/onevl.md]]).
+
+### 32. Explicitly Optimizing the Latent Pathway Itself (ReWorld)
+
+Every pattern above chooses *what* the world model predicts and *where* the planner reads it. [[sources/reworld.md]] (HUST + Xiaomi EV — the same group as [Pattern 21](#21-mid-denoising-latents-as-the-planning-state-drivelaw)) is the first to ask what should be *true of the intermediate states themselves*, and names the gap the **representation bottleneck of WAMs**: under standard output-level objectives, intermediate video states are supervised only through the final denoising output and action states only through the final trajectory, so nothing requires the connecting latents to be future-predictive, cross-modally grounded, or behaviour-sensitive.
+
+Three objectives, all derived from the model's own targets — **no external encoder, no teacher branch, 1.003× per-step training cost**:
+
+| Objective | Where | Mechanism |
+|---|---|---|
+| $\mathcal{L}_{\mathrm{Mid}}$ | Video DiT block 8 of 28 | Auxiliary head predicts the **same flow-matching velocity target** as the final head, moving the future constraint into representation formation |
+| $\mathcal{L}_{\mathrm{align}}$ | Action DiT cross-attn layer 12 | Cosine alignment of the post-attention state to its **stop-gradient attended readout** $r_i=\sum_j\alpha_{ij}v_j$ — self-distillation of an attention operation |
+| $\mathcal{L}_{\mathrm{RDE}}$ | Action DiT output | Repulsion in delta space from the **nearest low-scoring trajectory** among 64 PDM-simulator-scored candidates |
+
+**Two mechanisms here are reusable outside driving entirely.** $\mathcal{L}_{\mathrm{align}}$ is a general fix for any cross-attention interface where conditioning may be used transiently rather than retained — the stop-gradient is what makes it a grounding constraint rather than a mutual-collapse objective. And the intermediate-head design turns "supervise the middle of the network" into a free operation whenever the training target is already a per-token regression target, which is true of every flow-matching or diffusion backbone on this page.
+
+**What it achieves**: FVD 81.3 → **61.9** and FID 4.6 → **4.4** on nuScenes (the first entry here to lead both), PDMS 89.1 → **90.4** with no RL, UCF-101 frozen linear probe 68.3% → **80.2%**.
+
+**What it does not show is the thing it is named for.** Its planning ablation (DriveLaW 89.1 → +align 89.5 → +RDE 89.8 → both 90.4) contains **no row for the video-side objective**, and its implementation section says Stage 2 initializes from the *DriveLaW* checkpoint. So the entire +1.3 PDMS is attributable to two action-side objectives — one of which ($\mathcal{L}_{\mathrm{RDE}}$) compares two trajectories in delta space and touches no world information at all. Meanwhile the +19.4 FVD is 17.0 sampling trick (self-guidance at $\gamma=1.4$) and 2.4 representation objective. See [the decoupling analysis](#generation-planning-decoupling) below.
+
+### 33. The Future Latent as a Planning *Condition*, With a Training-Time Oracle Annealed Away (DriveFuture)
+
+[[sources/drivefuture.md]] (CASIA and others) varies an axis orthogonal to every pattern above: not *what* the world model predicts, not *where* the planner reads it, but **whether the future latent is an output or an input**.
+
+Patterns 8, 14, 15, 17, 22, 23, 24, 29 and 30 all define a prediction target and a distance to it. DriveFuture defines **no future-prediction loss at all**. Its total objective is $\lambda_{\mathrm{plan}}\mathcal{L}_{\mathrm{plan}}+\lambda_{\mathrm{bev}}\mathcal{L}_{\mathrm{BEV}}$; the 16-token foresight latent $\hat{\mathbf{Z}}_{t+T}$ is shaped entirely by (a) gradients from trajectory denoising and (b) an attention-based grounding against a real future observation. Appendix B.2 states the reframing directly: instead of asking whether the future latent *can be predicted*, ask whether it *improves denoising of the planned trajectory*.
+
+**The grounding mechanism is the part worth stealing.** A single cross-attention layer, training only:
+
+$$\mathbf{Z}_{t+T}=\operatorname{sg}(\phi_{\mathrm{enc}}(\mathbf{I}_{t+T}))\in\mathbb{R}^{64	imes d},\qquad 	ilde{\mathbf{Z}}_{t+T}=\operatorname{MHA}(\operatorname{LN}(\hat{\mathbf{Z}}_{t+T}),\,\mathbf{Z}_{t+T},\,\mathbf{Z}_{t+T})$$
+
+with **no residual from the query side**, so the grounded condition is a pure *selection* of ground-truth future evidence, indexed by what the model predicted. The prediction supplies the question; the real future supplies the answer. Then LatentAlign anneals it out:
+
+$$	ilde{\mathbf{Z}}^c_{t+T}=lpha(e)\,\mathbf{Z}^c_{t+T}+(1-lpha(e))\,\hat{\mathbf{Z}}_{t+T},\qquad lpha(e)=1-\sigma(eta(e-e_0))$$
+
+This is **the first privileged training-time signal in the wiki that is explicitly scheduled to zero rather than simply dropped at test time.** The other privileged-supervision cases on file — Hydra-MDP distillation, [[sources/auto-jepa.md]]'s CLOVER scorer, [[sources/adaptive-wam.md]]'s pseudo-expert targets, [[sources/da-wam.md]]'s factor heads — all distil a *simulator's labels* into a head that keeps using them. DriveFuture hands the planner a real future *observation* and then withdraws it, and the withdrawal schedule turns out to be the most sensitive hyper-parameter in the system.
+
+| Where the future enters | Trained against | Examples |
+|---|---|---|
+| Prediction target, planner reads the prediction | A distance to a future state | Patterns 8, 14, 15, 17, 23, 24, 29 |
+| Generated observation/latent, planner reads it | Generation loss | Patterns 1, 11, 19, 21, 26, 27, 28 |
+| Output-level scoring over candidates | Simulator labels | WoTE, GTRS, Pattern 25 |
+| **Conditioning context, no prediction loss** | **Only the planning loss, plus attention grounding to a real future** | **Pattern 33** |
+
+**What it is worth.** On navhard, adding future-frame grounding to an architecture that already carries the foresight latent moves 30.9 to 34.6 (+3.7) — but see the caveat below, and note that a GTRS-Dense scorer on top is worth **+20.9** on the same model.
+
+**The pattern's own price is not measured.** DriveFuture's ablation baseline removes *future frames*, not the world model: the foresight latent still conditions the DiT in every reported row. `use_wm` and `use_wm_to_dit` are named in its Appendix C.3 and varied nowhere. So Pattern 33's headline claim — that a predicted future latent conditioning a diffusion planner beats not having one — is unmeasured in the paper that proposes it.
+
+#### An oracle held too long is worse than no oracle {#oracle-annealing}
+
+DriveFuture's $e_0$ sweep (the annealing inflection, as a fraction of total epochs) is the most transferable number in the paper and it is reported without comment:
+
+| $e_0$ | EPDMS (navhard, no scorer) | Reading |
+|---:|---:|---|
+| 0.75 | 29.2 | Oracle withdrawn too early |
+| **0.83** | **34.6** | Default |
+| 0.95 | **28.9** | Oracle held nearly to the end — **below the 30.9 no-future-frame baseline** |
+
+Two swept values land *below* not using future observations at all, and so does $q_s{=}4$ (28.2). The span of the $e_0$ sweep, 5.7 EPDMS, exceeds the +3.7 the whole mechanism is worth.
+
+**This is the training-side counterpart of [[sources/drivelaw.md]]'s t=10 collapse**, and the two are worth stating together because neither paper cites the other's phenomenon:
+
+| Paper | What was fed to the planner | Result |
+|---|---|---|
+| DriveLaW | A **generated** future at increasing denoising completion | 89.1 (t=1) → 86.9 (t=5) → **23.2** (t=10, near-clean) |
+| DriveFuture | A **real** future, held for an increasing fraction of training | 34.6 ($e_0{=}0.83$) → **28.9** ($e_0{=}0.95$) |
+
+Different signals, different mechanisms, same shape: **the closer a planner's conditioning gets to a future it cannot produce at inference, the worse it does.** DriveLaW reaches the cliff by making the conditioning signal more finished; DriveFuture reaches it by leaving the privileged signal in place longer. Both are exposure bias in a world-model interface, and DriveFuture's LatentAlign is the only remedy for it anyone here has implemented — which makes its sensitivity the most important open number in this pattern.
+
+### 34. Four Future Targets in Parallel, in One Latent Space (CoWorld-VLA)
+
+Patterns 1-33 each pick **one** thing the world model predicts. That choice is the organizing axis of this entire page, and no ingested paper had questioned whether one is enough. [[sources/coworld-vla.md]] (Afari Intelligent Drive + Southeast University + others) does, and runs four future-prediction objectives against four different teachers, all landing as typed expert tokens inside a single Qwen3-VL-2B's hidden states:
+
+| Expert token | Target | Objective form | Pattern it instantiates |
+|---|---|---|---|
+| $H_{\mathrm{sem}}$ | Pooled frozen **V-JEPA** features of the *future* frame | SmoothL1 + cosine | 15 / 23 (JEPA latent prediction) |
+| $H_{\mathrm{geo}}$ | Pooled frozen **VGGT** features of the *future* frame | MSE | 24 / 29 (geometry) |
+| $H_{\mathrm{dyn}}$ | Future video latents, via a **Wan2.2-5B** DiT the token conditions | Flow matching | 19 (video prior, training-time only) |
+| $H_{\mathrm{traj}}$ | GT waypoints | MSE | 22 (ego trajectory) |
+
+**The dynamic branch is the mechanism worth extracting.** $H_{\mathrm{dyn}}$ *replaces the text condition* of the Stage-1 video model, and the video model's flow-matching loss then back-propagates into that one VLM token. The paper states the point precisely: *"The VLM itself does not directly decode future images... This design allows the dynamic tokens to learn future motion trends and temporal consistency without requiring the VLM backbone to act as a pixel-level generator."* A video generator used as a **differentiable critic on a latent** is strictly cheaper than making the planner generate, and it generalizes to any conditioning interface a generator already exposes.
+
+**Are the four complementary?** Its Table 4 says yes, weakly, and the marginal contributions are order-dependent (NAVSIM-v1 PDMS, Stage-2 readout):
+
+| | EgoT. | +Geo. | +Sem. | +Sem.+Dyn. | +Geo.+Sem. | All four |
+|---|---:|---:|---:|---:|---:|---:|
+| PDMS | 83.7 | 85.1 | 85.2 | 87.3 | 87.7 | **88.7** |
+
+No expert is redundant and the full set wins, but **the dynamic expert is never measured alone** — the one missing row, EgoT.+Dyn., is exactly the world-model branch the paper is named for. And geometry beats dynamics as the third addition (87.7 vs. 87.3), which the paper's own learned fusion weights invert (dyn 0.35 > traj 0.31 > sem 0.19 > geo 0.15).
+
+**Where the gains land is the transferable part.** Across the sweep DAC moves +3.8 and EP +3.8 while NC moves +0.7. That is the fourth instance on this page of [geometric and structural supervision buying progress and compliance rather than collision avoidance](#shared-future-reopened), after GeoWAM, GeoWorldAD and UDT.
+
+#### Objective form is assigned by target entropy, correctly and silently {#entropy-assignment}
+
+Read against [Pattern 23](#objective-form), CoWorld-VLA is an unintentional confirmation. The wiki's rule — assembled from [[sources/wa-jepa.md]]'s regression-vs-flow-matching result and [[sources/drivefuture.md]]'s reversal of its sign — is that **deterministic regression fails in proportion to the entropy of the target**. CoWorld-VLA assigns:
+
+| Target | Entropy | Objective chosen |
+|---|---|---|
+| Future multi-frame video latents | High | **Flow matching** |
+| *Pooled* V-JEPA future features | Low (pooled to a few tokens) | Regression (SmoothL1 + cosine) |
+| *Pooled* VGGT future features | Low | Regression (MSE) |
+| One future trajectory | Lowest | Regression (MSE) |
+
+This is the correct assignment on every row, and the paper never states the principle or cites anyone who does. **Pooling is the move that makes it work**: it converts a high-entropy dense feature field into a low-entropy summary, at which point a conditional mean is a usable prediction. Neither WA-JEPA nor DriveFuture tried pooling as the lever, and it is cheaper than changing the objective.
+
+#### The generator is discarded; the token it supervised is not
+
+The paper's limitations section is explicit: *"the Wan model is not used in Stage 3 or during planning inference."* So the video world model is training-time-only, alongside Patterns 8, 13, 14, 19 and LWDrive. But $H_{\mathrm{dyn}}$ — the token that video model shaped — is produced by the VLM at inference and conditions a denoising branch directly. **That is a third position between the two camps below**: not "generate a future at decision time" and not "use future prediction only to shape a shared representation," but *keep the specific latent the generator supervised, and route it into the planner as its own conditioning stream*. [[sources/drivefuture.md]] is the closest relative, with one such latent instead of four.
+
+The deployment cost lands elsewhere, and unpriced: Stage 3 still runs **frozen V-JEPA and VGGT on the current frame** for its scene stream. Discarding a 5B video model while keeping two foundation encoders in the input path is a trade nothing in the paper measures.
+
 ## Does Test-Time Future Imagination Help? {#test-time-imagination}
 
 This is now the central open dispute among world-model planners in the wiki, and SimWAM supplies the first controlled evidence.
 
-**The imagine-then-act camp** conditions planning on generated future states at inference: FSDrive (mandatory visual CoT), PWM (future frame tokens rolled out before action), DriveVA (joint video-action denoising), DriveWAM (action as inverse dynamics from the generated latent), DriveLaW, WA-JEPA (future scene latents and actions denoised together over 12 sampling steps), **ForeSight**, which states the premise more explicitly than anyone — the generator *is* the encoder, run to a finished future, with everything else supplementary — and **BrainWAM**, whose video expert runs 1-3 denoising steps at inference to supply predictive context to a coordinated action stream. **GeoWorldAD** belongs here as well, with a shared latent-geometry future consumed as a refinement stage. **WCog-VLA** belongs here too, generating a joint multi-agent rollout at inference through a 5-step diffusion head. DA-WAM also belongs, and is the only member that predicts a *separate* future for every candidate rather than one future per scene — the distinction its ablation shows is decisive. The premise is that grounding the action in an explicit imagined future improves it.
+**The imagine-then-act camp** conditions planning on generated future states at inference: FSDrive (mandatory visual CoT), PWM (future frame tokens rolled out before action), DriveVA (joint video-action denoising), DriveWAM (action as inverse dynamics from the generated latent), DriveLaW, WA-JEPA (future scene latents and actions denoised together over 12 sampling steps), **ForeSight**, which states the premise more explicitly than anyone — the generator *is* the encoder, run to a finished future, with everything else supplementary — and **BrainWAM**, whose video expert runs 1-3 denoising steps at inference to supply predictive context to a coordinated action stream. **GeoWorldAD** belongs here as well, with a shared latent-geometry future consumed as a refinement stage. **WCog-VLA** belongs here too, generating a joint multi-agent rollout at inference through a 5-step diffusion head. DA-WAM also belongs, and is the only member that predicts a *separate* future for every candidate rather than one future per scene — the distinction its ablation shows is decisive. **DriveFuture** belongs here in the weakest possible form: it instantiates a **16-token** predicted future latent at inference and routes it into every denoising step, but decodes nothing and predicts no pixels, features, or geometry - the latent exists only as a conditioning context. It is also the only member whose *training* signal is a real future observation that is then deliberately withdrawn (see [Pattern 33](#oracle-annealing)). The premise is that grounding the action in an explicit imagined future improves it.
 
-**The training-time-only camp** uses future prediction purely to shape representations: DriveVLA-W0, FLARE, Latent-WAM, OneVL, Drive-JEPA, SimWAM, and **Adaptive-WAM**, which runs a 5B generative backbone at inference but reads its intermediate activations rather than decoding any future.
+**The training-time-only camp** uses future prediction purely to shape representations: DriveVLA-W0, FLARE, Latent-WAM, OneVL, Drive-JEPA, SimWAM, **Adaptive-WAM**, which runs a 5B generative backbone at inference but reads its intermediate activations rather than decoding any future, and **LWDrive**, whose future-frame VAE-latent objective shapes Qwen hidden states in Stage 1 and is then discarded. **CoWorld-VLA** belongs here for its video model — the Wan DiT is discarded before Stage 3 and never runs at planning time — but with a qualification that puts it between the camps: the **specific VLM token that video model supervised survives into inference** and conditions its own denoising branch. See [Pattern 34](#34-four-future-targets-in-parallel-in-one-latent-space-coworld-vla).
 
 **A third position** was missing from this framing until Auto-JEPA ([[sources/auto-jepa.md]], Pattern 22). It predicts at inference, and the prediction is indispensable — but its target is the ego trajectory latent, not a future world state. This matters for how the question is posed. The dispute below is often stated as "does predicting the future help at decision time?", when the results actually separate along a different axis: *what* is predicted. Auto-JEPA predicts an action and the prediction carries the whole system; SimWAM and DriveLaW predict a world and find the prediction contributes nothing at inference. Reframed, the surviving generalization across all of these papers is **future-prediction objectives are valuable; instantiated future world states at decision time are not** — and Auto-JEPA is the case that shows the first half does not require the second.
 
@@ -780,6 +925,22 @@ Every experiment above varies *whether* a generated future reaches the planner. 
 > *(Scoped to photometric and feature-space targets after the GeoWorldAD ingest — see [below](#shared-future-reopened). The unqualified form no longer holds.)*
 
 **How much weight the positive half deserves: not much.** +0.15 PDMS, single run, no seed variance, against a no-future baseline of 93.31 that would itself rank third in this wiki. WA-JEPA measured 0.053 seed std for a stochastic sampler and training-seed variance is typically larger. Within DA-WAM's own paper the representation choices are worth +2.42 and the hard negatives +0.22 — **the mechanism the paper is named for is the smallest effect in it.** And its predicted future reaches only **0.5 seconds** while candidates span 8 poses, so whatever it is doing, it is not evaluating the multi-second consequences the introduction promises.
+
+#### DriveFuture Puts a Per-Candidate Future Inside the *Generator* {#per-candidate-in-generator}
+
+DA-WAM's taxonomy files [[sources/drivefuture.md]] under **(b) loosely coupled latent fusion - one proposal, nothing to compare**. Reading the paper itself, that is right for two of its three inference branches and wrong for the third.
+
+DriveFuture's Progressive Foresight Guidance runs three classifier-free branches per denoising step. The null and kinematic branches compute their future latents **once per scene** and broadcast them across all 100 proposals - configuration (c). But the third branch conditions the world model on a Tweedie estimate of the clean trajectory recovered from *that proposal's own noisy sample*, recomputed at every step where its weight is non-zero. That is one future latent per candidate - configuration (d) - and it dominates the guidance mixture over the last 30% of denoising.
+
+**The difference from DA-WAM is where the per-candidate future is spent.** DA-WAM builds one future per candidate and hands the triple $(Z_t, a_i, \widehat{Z}_i)$ to a **scorer**, so the futures are used to *rank* proposals that already exist. DriveFuture builds one future per candidate and feeds it back into the **denoiser**, so the futures are used to *steer* proposals as they form - and its selection is then done by an unrelated GTRS-Dense scorer that never sees a future latent at all.
+
+| | Futures per scene | Consumed by | Effect measured |
+|---|---|---|---|
+| WoTE, SimWAM, WA-JEPA, GeoWorldAD | 1 | Scorer or planner | -0.50 PDMS where isolated (DA-WAM's (c) row) |
+| DA-WAM | 32 (one per candidate) | Scorer | +0.15 PDMS |
+| **DriveFuture (Tweedie branch)** | **100 x per step, late phase** | **Denoiser, as CFG** | **Not isolated - bundled into the +2.6 for dual-source guidance** |
+
+DriveFuture's Table 4 shows removing both guidance sources costs 2.6 EPDMS, but that row removes the kinematic branch and the GT training mode as well, so the per-candidate component is not separable. **Neither paper knows what a per-candidate future is worth inside a generator**, and DriveFuture is the only architecture here that could answer it cheaply - the switch (`use_dspcfg`) already exists.
 
 ### ForeSight Prices the Paradigm — and Disputes DriveLaW's Sweep
 
@@ -891,7 +1052,34 @@ GeoWorldAD's ablation replaces its five-stage present-geometry planner's final r
 
 **How the synthesis should read for now.** The negative results remain the better-supported half, and they remain specific: *a shared photometric future is useless to harmful*. That statement survives GeoWorldAD untouched. What no longer survives is the general form — "shared future conditioning is useless to harmful" — because the one geometric instance measures +1.7, and the mechanism it claims (free-space anticipation buys progress, not safety) is visible in the sub-metrics rather than only in the aggregate. [[sources/geowam.md]] points the same way from a different direction, with a +4.9 navhard gain from future point-map forecasting against +0.6 on navtest.
 
-**What would settle it**: the compute-matched GeoAD row, and a geometry-vs-pixel future target under one fixed planner. Neither geometry paper runs either. WCog-VLA's row 5 is the better-controlled of the two positives — same three-stage SFT budget across all six rows of its Table 4 — but it is +0.9 rather than +1.7, and its ADDT also adds a continuous action head that the row-1 baseline lacks.
+**What would settle it**: the compute-matched GeoAD row, and a geometry-vs-pixel future target under one fixed planner. Neither geometry paper runs either.
+
+**A third instance, from outside the world-model architecture entirely.** [[sources/unified-driving-tokens.md]] supervises a discrete *tokenizer* with adjacent-frame depth and relative pose, then measures the effect through a frozen 20M planning readout: **+1.5 PDMS, of which EP is +4.2 while TTC goes down 0.6**. That is neither a world model nor an inference-time future — it is geometric structure baked into a representation — and it lands on the same sub-metric as GeoWorldAD's shared future (+3.3 EP, safety flat) and as the effect [[sources/geowam.md]] argues for without ablating.
+
+| Paper | Mechanism | EP | Safety |
+|---|---|---:|---|
+| [[sources/geoworldad.md]] | shared latent future-depth tokens at inference | **+3.3** | NC +0.1, TTC +0.1 |
+| [[sources/unified-driving-tokens.md]] | depth + pose supervision on a discrete tokenizer, training-time only | **+4.2** | TTC **−0.6** |
+| [[sources/geowam.md]] | dense metric point maps as the world-model state | — | +4.9 EPDMS on navhard, +0.6 navtest |
+
+**Three papers, three different mechanisms, one sub-metric.** The generalization that survives is narrower than any of their claims and more useful: **geometric supervision buys ego progress rather than safety**, plausibly because knowing where free space will be lets a planner commit instead of hedging. It also means a geometry result reported only as aggregate PDMS is hiding which half of the trade it bought — and UDT's is the one case where the safety side actually goes backwards. WCog-VLA's row 5 is the better-controlled of the two positives — same three-stage SFT budget across all six rows of its Table 4 — but it is +0.9 rather than +1.7, and its ADDT also adds a continuous action head that the row-1 baseline lacks.
+
+### ReWorld Makes the Decoupling Intra-Paper {#generation-planning-decoupling}
+
+Everything above argues about whether a *generated future* helps at decision time. A prior question has been answered only across papers: **does a better world model produce a better plan at all?** The evidence for "no" was suggestive but confounded — [[sources/drivelaw.md]] leads the wiki on FID while planning at 89.1; [[sources/simwam.md]] plans at 91.5 with generation removed at inference; [[sources/foresight.md]] runs a 2.5B generator to a finished future for 89.3; [[sources/uniugp.md]] held the best FVD and is nowhere near the planning frontier. Different architectures, different data, different everything.
+
+[[sources/reworld.md]] runs both halves inside one architecture, one codebase, and one paper — and does not connect them.
+
+| Half | Mechanism | Video-quality effect | Planning effect |
+|---|---|---|---|
+| Stage 1 | $\mathcal{L}_{\mathrm{Mid}}$ + self-guided sampling | FVD 81.3 → **61.9**; UCF-101 68.3 → 71.7 | **never measured** |
+| Stages 2–3 | $\mathcal{L}_{\mathrm{align}}$ + $\mathcal{L}_{\mathrm{RDE}}$ | not measured in isolation | 89.1 → **90.4** |
+
+Its Table VII accounts for the full +1.3 PDMS with two action-side objectives and contains no Stage-1 row; its §IV-A says Stage 2 initializes from the *DriveLaW* checkpoint, which if read literally means the planning result never sees the improved video model at all. Meanwhile Stage 1's headline improvement is 88% attributable to an inference-time guidance scale that the paper explicitly states "improves video sampling **without changing the planner-facing latent interface**."
+
+**So the sharpest available statement is now**: in a chained WAM, the mechanisms that improve future prediction and the mechanisms that improve action selection are separable, and no paper — including the one whose title asserts the link — has demonstrated that improving the first improves the second.
+
+**Two things cut the other way and belong in the record.** Stage 3 unfreezes the Video DiT and lets planning gradients reshape it, and the video representation *does* change materially: UCF-101 frozen probing jumps 71.7 → **80.2** with the Video DiT frozen throughout Stage 2, so that entire +8.5 comes from hard-negative trajectory gradients propagating into the world model. That is a real, large, and completely unanalysed influence — running **action → world**, the reverse of the thesis. And the missing experiment is a single run on released code: Stages 2–3 from the vanilla video checkpoint versus from the Stage-1 checkpoint, PDMS both ways.
 
 ### Action-Conditioned ≠ Counterfactual
 
@@ -987,9 +1175,14 @@ These tables cover *visual generation* quality, not planning. Most world-model e
 | [Epona](../sources/epona.md) | AR+Diffusion | — | 7.5 | 82.8 |
 | Vista        | Diffusion                 | —          | 6.9     | 89.4     |
 | UniUGP       | AR+Diffusion (Wan2.1)     | —          | 7.4     | **75.9** |
-| **[DriveLaW](../sources/drivelaw.md)** | **Latent diffusion (LTX-Video 2B)** | **1280×704** | **4.6** | 81.3 |
+| [DriveLaW](../sources/drivelaw.md) | Latent diffusion (LTX-Video 2B) | 1280×704 | 4.6 | 81.3 |
+| **[ReWorld](../sources/reworld.md)** | **DriveLaW + intermediate supervision + self-guidance** | **1280×704** | **4.4** | **61.9** |
 
-DriveLaW holds the best FID (4.6, a 33% improvement over Vista's 6.9) while UniUGP retains the best FVD (75.9 vs DriveLaW's 81.3) — the two metrics do not agree on a single leader. FID is also resolution-dependent, and DriveLaW generates at by far the highest resolution here, which cuts against it rather than for it. On nuPlan, DriveLaW beats Epona up to 80 frames but **loses at 100 frames** (FVD 296.1 vs 277.3), so its advantage is horizon-limited.
+**[[sources/reworld.md]] is the first entry here to lead both metrics at once.** Until it, DriveLaW held the best FID (4.6) and UniUGP the best FVD (75.9), and the two did not agree on a leader; 4.4 / 61.9 takes both. FID is resolution-dependent and both DriveLaW and ReWorld generate at by far the highest resolution here, which cuts against them rather than for them. On nuPlan, DriveLaW beats Epona up to 80 frames but **loses at 100 frames** (FVD 296.1 vs 277.3), so its advantage is horizon-limited; ReWorld does not report the nuPlan horizon sweep.
+
+**Read the 61.9 with its decomposition attached.** ReWorld's own ablation gives 78.9 FVD for the representation objective alone and 61.9 only after inference-time self-guidance at $\gamma=1.4$ — so **17.0 of the 19.4-point gain is a sampling mechanism**, non-monotonic in $\gamma$ and tuned on the reported set. FID barely moves (4.6 → 4.4), which is consistent with a temporal-coherence gain and equally consistent with a guidance-strength effect; FID at $\gamma=1.0$ is not reported.
+
+**A second table in the same paper is more useful for method comparison**, because it is controlled: from-scratch training, 120k steps, 224×224×25 clips, no text conditioning, FVD on nuScenes. ReWorld 270.4 < Self-Flow 283.3 < SRA2 295.2 < REPA-DINOv2 295.9 < SRA 296.9 < **Vanilla Flow 304.1** < REPA-DepthAnything3 319.4 < REPA-VideoMAEv2 328.3 < **REPA-V-JEPA-2 331.6** < ReDi 421.7. **Three of four external teachers are worse than no teacher**, and the worst is V-JEPA 2 — scoped to *generator feature alignment*, not planning; see [[concepts/foundation-backbones-for-ad.md]].
 
 Note: FID is resolution-dependent — methods at higher resolution (Doe-1 384×672) would achieve lower FID at lower resolution. FSDrive's 10.1 at 128×192 is competitive for its resolution tier and model size (2B).
 
@@ -997,10 +1190,17 @@ Note: FID is resolution-dependent — methods at higher resolution (Doe-1 384×6
 
 | Method | FVD ↓ | LPIPS ↓ | PSNR ↑ |
 |--------|-------|---------|--------|
+| SVD *(via CoWorld-VLA)* | 227.5 | — | — |
+| DrivingGPT *(via CoWorld-VLA)* | 142.6 | — | — |
 | PWM | 85.95 | 0.23 | 21.57 |
 | **DriveDreamer-Policy** | **53.59** | **0.20** | **21.05** |
+| **[[sources/coworld-vla.md]]** | **32.7** | — | — |
 
 DDP substantially improves video coherence (−38% FVD) vs. PWM. The improvement is attributed to depth joint learning (−18.6% FVD alone) and LLM-conditioned generation. Note: front-view only for comparability with PWM (single-view model).
+
+**CoWorld-VLA's 32.7 leads this table by a wide margin and needs three caveats attached.** Its own comparison set is SVD (227.5) and DrivingGPT (142.6) on NAVSIM plus Epona (61.3) and DriveLaW (55.6) on **nuPlan** — and its caption says so outright: *"Dataset and evaluation settings may differ across methods; cross-setting results are provided for contextual reference."* That is more honest than most generation tables here. But it **omits PWM and DriveDreamer-Policy**, the two NAVSIM entries this wiki already had, so the 32.7-vs-53.59 comparison is one this page is making rather than one the paper made. And **the generation resolution is never stated**, which FVD is strongly sensitive to. Treat it as the NAVSIM leader on the paper's own protocol, not as a settled −39% over DDP.
+
+Worth noting what produced it: CoWorld-VLA's Stage-2 improvement over Stage 1 comes from **replacing a text condition with a VLM hidden state** as the video model's conditioning input. Figures 3, 5 and 6 attribute the gain to preserved turning intent, lane-level layout, and local object fidelity. None of it is measured separately — there is no Stage-1 FVD number anywhere in the paper.
 
 ### nuScenes Planning (front/multi-camera, no heavy supervision, UniAD metrics)
 

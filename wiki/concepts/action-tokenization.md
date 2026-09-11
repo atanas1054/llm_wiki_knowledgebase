@@ -1,16 +1,18 @@
 ---
 title: Action Tokenization and Codebooks
 type: concept
-sources: [raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md]
-related: [concepts/diffusion-planner.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, sources/autovla.md, sources/drivevla-w0.md, sources/linkvla.md, sources/nord.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md, sources/spanvla.md, sources/onedrive.md, sources/plan-r1.md]
+sources: [raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md]
+related: [sources/unified-driving-tokens.md, concepts/visual-tokenization.md, concepts/diffusion-planner.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, sources/autovla.md, sources/drivevla-w0.md, sources/linkvla.md, sources/nord.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md, sources/spanvla.md, sources/onedrive.md, sources/plan-r1.md]
 created: 2026-05-01
-updated: 2026-06-18
+updated: 2026-09-04
 confidence: high
 ---
 
 ## What It Is
 
 Action tokenization is the design choice that converts continuous ego trajectories into model outputs: discrete codebook IDs, fixed-vocabulary trajectory selections, masked tokens, or continuous action vectors decoded by an expert.
+
+**Sibling page**: [[concepts/visual-tokenization.md]] covers the other half of the tokenization question — how *pixels* become discrete codes for token-based world models and planner inputs. The two axes are usually designed independently, and [[sources/unified-driving-tokens.md]] is the only ingested paper to treat the visual side as a planning-consumability problem rather than a reconstruction one.
 
 ## Main Patterns
 

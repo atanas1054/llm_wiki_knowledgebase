@@ -1,10 +1,10 @@
 ---
 title: Selection-Based Trajectory Planning
 type: concept
-sources: [raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
-related: [sources/geoworldad.md, sources/adaptive-wam.md, sources/da-wam.md, sources/auto-jepa.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, sources/pair-drive.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md]
+sources: [raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
+related: [sources/drivefuture.md, concepts/navhard-ood-evaluation.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/lwdrive.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/da-wam.md, sources/auto-jepa.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, sources/pair-drive.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md]
 created: 2026-04-23
-updated: 2026-09-04
+updated: 2026-09-11
 confidence: high
 ---
 
@@ -66,6 +66,18 @@ The vocabulary contains thousands of obviously bad trajectories ("easy negatives
 
 **Fix (DriveSuprim)**: coarse-to-fine filtering — first pass selects top-256 (mostly hard negatives once obvious ones are removed), second pass scores only those 256 at higher precision.
 
+**Three mechanisms now exist for the same problem, and only one needs no scorer at inference.**
+
+| Method | How negatives are obtained | How they are used | Worth |
+|---|---|---|---:|
+| [[sources/drivesuprim.md]] | Coarse pass discards easy negatives from an 8192 vocabulary | Stage 2 scores the surviving 256 at higher precision | part of 93.5 |
+| [[sources/da-wam.md]] | Retrieved safety-critical trajectories | Extra training rows for the candidate scorer | **+0.22** |
+| [[sources/reworld.md]] | 64 generated candidates per scene scored by the **NAVSIM PDM simulator**; take the *nearest* one below 0.6 | **Repulsive loss on a flow-matching planner's own output** — no candidate set, no scorer | **+0.7** |
+
+ReWorld's variant is the odd one out and the most transferable. It converts hard negatives from *scorer training data* into a **regularizer on a generative policy**: recover $\hat a_0$ from the same forward pass and the same $t_a$ already used by the flow-matching loss, map both trajectories to a delta representation $[\widetilde{\Delta x},\widetilde{\Delta y},\sin\psi,\cos\psi]$, and maximize L1 distance while $\mathcal{L}_{\mathrm{FM}}$ anchors to the expert. Cost is zero extra forward passes, and nothing about a candidate pool survives to inference.
+
+The selection rule is the load-bearing part, and it is DriveSuprim's insight restated: *"random negatives are often distinguishable by geometry alone"*, so the negative must be the **closest** low-scoring trajectory rather than a sampled one. All three mechanisms mine with privileged supervision — the simulator, or a scorer trained on it — so none is annotation-free. And ReWorld's is unbounded below in isolation and collapses PDMS to 85.5 at $\lambda=0.10$ against 90.4 at 0.04; it works only as a weak counterweight to the quadratic imitation term.
+
 ### 2. Directional Bias
 
 Real driving is dominated by straight-ahead motion. In NAVSIM, only 8% of ground-truth trajectories involve turns >30°. Training on this distribution naturally produces a model that underperforms on turns.
@@ -95,6 +107,10 @@ Safety scores are {0,1} per metric. BCE against binary labels creates sharp trai
 | **DA-WAM** | 32 generated proposals + retrieved hard negatives | Factorized NC/DAC/EP/TTC/Comfort heads → utility head, conditioned on **each candidate's own predicted future latent** | First scorer conditioned on per-candidate futures rather than scene geometry alone; 93.7 PDMS NAVSIM-v1 |
 | **Adaptive-WAM** (aux model) | 64 proposals at a fixed block-22 exit | Six-component DINOv2-Small verifier (soft-label BCE, **no rank loss**) | CLOVER pseudo-expert targets scored by the true NAVSIM evaluator at training time; 92.6 PDMS; see [the tie problem](#tie-problem) |
 | **GeoWorldAD** | 64 learned proposals, refined over 5 stages | MLP head trained with BCE against the NAVSIM simulator's own PDMS composition | Min-over-proposals supervision at every refinement stage; simulator-distilled scoring like Hydra-MDP; 91.0 PDMS |
+| **Unified Driving Tokens** | Multiple trajectories from a 20M readout on frozen visual tokens (**count unreported**) | MLP score head predicting PDM-style metric outcomes, BCE against a rule-based evaluator run on the *predicted* trajectory | Min-over-N regression (only the closest trajectory is supervised); the scorer is retrained per tokenizer, so representation ablations partly measure scorer quality; 91.8 PDMS |
+| **LWDrive** | $N_\mathrm{p}$ proposals (**size never stated**), refined over 6 stages | MLP head, BCE against per-candidate PDMS from **non-reactive log simulation of every candidate** | Pool initialised from the VLM's pooled action-query latent; Bridge Attention gives proposals a self-memory alongside the VLM foresight memory; min-over-$N$ at every stage with an exponential discount on earlier ones; 92.0 PDMS |
+
+**[[sources/drivefuture.md]]** is a boundary case worth listing separately: it is a *generator* (a future-conditioned diffusion planner producing 100 proposals) that submits through a GTRS-Dense scorer it did not train and does not describe. It therefore belongs in this family only at inference — and it is the one paper here that reports what that membership is worth. See [below](#scorer-price).
 
 ### DreamerAD as a deployable selection variant
 
@@ -235,6 +251,45 @@ Selection-based methods' trajectory on the NAVSIM-v1 leaderboard:
 *HydraMDP++ is evaluated primarily on NAVSIM-v2 (EPDMS).
 
 DriveSuprim (93.5) remains the strongest fixed-vocabulary selection result in the wiki, surpassing DiffusionDriveV2 (91.2 with Camera+LiDAR) and HybridDriveVLA (92.1 dual-model ensemble). CLEAR later reports 93.7 with online candidate generation plus learned adaptive routing, so it is adjacent to selection but not a fixed-vocabulary selector. Auto-JEPA (91.3) is adjacent in the other direction — retrieval rather than classification — and is the cheapest of the three to train, since its visual encoder is frozen and only small task modules are optimized. See [[concepts/navsim-benchmark.md]] and [[concepts/adaptive-routing.md]].
+
+### Nothing Above 92 PDMS Scores Its Own Candidates {#top-of-leaderboard}
+
+With [[sources/lwdrive.md]] ingested, this is now a complete statement about the top of the wiki's NAVSIM-v1 table rather than a tendency:
+
+| Rank | Method | PDMS | What the scorer is trained on |
+|---:|---|---:|---|
+| 1= | [[sources/clear.md]] | 93.7 | Pairwise hinge + MSE against per-candidate PDMS |
+| 1= | [[sources/da-wam.md]] | 93.7 | Factorized NC/DAC/EP/TTC/Comfort heads → utility, from simulator labels |
+| 3 | [[sources/drivesuprim.md]] | 93.5 | Hydra-MDP multi-teacher distillation of simulator metrics |
+| 4 | [[sources/drive-jepa.md]] | 93.3 | 8192-entry pseudo-teacher vocabulary scored by the simulator |
+| 5 | [[sources/wcog-vla.md]] | 92.9 | DiffGRPO whose reward *is* PDMS |
+| 6 | [[sources/adaptive-wam.md]] (aux) | 92.6 | Six NAVSIM components predicted with soft-label BCE |
+| 7 | [[sources/hybriddriveVLA.md]] | 92.1 | Component-wise BCE/regression on PDMS sub-scores |
+| 8 | [[sources/lwdrive.md]] | 92.0 | BCE against per-candidate PDMS from log simulation |
+
+**Every entry above 92.0 in this wiki trains against the benchmark's own scoring function**, whether as a ranking head (rows 1–4, 6–8) or as an RL reward (row 5). The highest-scoring method that does *not* is [[sources/wa-jepa.md]] at 91.8.
+
+This is not an accusation of cheating — simulator-distilled scoring is a legitimate and widely-declared design — but it does bound what the leaderboard measures. It says the last ~2 PDMS on NAVSIM-v1 has been bought by learning the evaluator rather than by improving the policy, and it predicts that the ordering among these eight would not survive a benchmark whose scoring function was withheld. The [oracle ceiling analysis](#theoretical-ceiling-oracle-study) and [the tie problem](#tie-problem) below both bear on how much headroom is actually left in that mechanism.
+
+### What a Scorer Is Actually Worth: +20.9 EPDMS on navhard {#scorer-price}
+
+The section above establishes *that* the top of NAVSIM-v1 scores its candidates. It could not say *how much* the scoring is worth, because no paper reported the same checkpoint both ways. [[sources/drivefuture.md]] does, on the harder split:
+
+| Configuration | navhard combined EPDMS |
+|---|---:|
+| No future frames in training | 30.9 |
+| + the paper's world-model mechanism | 34.6 |
+| + **GTRS-Dense scorer over 100 diffusion proposals** | **55.5** |
+
+The decomposition is recoverable because every ablation in the paper is labelled "without GTRS-Dense scorer" and the best ablation row's six submetrics match the unscored stage-wise row of its Table 7 digit-for-digit. **The scorer is worth 5.6x the architectural contribution of the paper it appears in**, and **85% of the distance** from the weakest configuration (30.9) to the headline (55.5).
+
+**Three things this does and does not license.**
+
+- It **does** establish the order of magnitude on navhard: selection is a first-order effect there, architecture a second-order one. The [navhard cohort table](../concepts/navhard-ood-evaluation.md#scorer-cohort) shows the same split across fourteen methods — every entry above 42 scores, every entry below 35 does not.
+- It **does not** transfer directly to NAVSIM-v1, where the margins are 1-2 PDMS and the scored/unscored gap has never been measured on one checkpoint. The +20.9 is large partly because navhard multiplies two stage scores, so a selector that improves both stages compounds.
+- It **does** come with a visible cost. EC falls 76.9 -> 66.2 on Stage 1 and 75.9 -> 45.6 on Stage 2: the selected proposals are safer, more rule-compliant, and less comfortable. EPDMS's multiplicative safety penalties make that trade profitable under *this* metric. A deployment objective that weighted comfort differently would score the same two checkpoints in the opposite order.
+
+**The generalization worth carrying**: a published planning number is a *pipeline* number, and the selector is usually the larger term. Papers that report only the scored configuration — which is most of them — are reporting the pipeline while describing the generator.
 
 ## The Tie Problem, Finally Named {#tie-problem}
 
