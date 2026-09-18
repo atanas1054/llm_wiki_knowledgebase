@@ -2,7 +2,7 @@
 title: Diffusion-Based Trajectory Planner
 type: concept
 sources: [raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/PlannerRFT_ Reinforcing Diffusion Planners through Closed-Loop and Sample-Efficient Fine-Tuning.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md]
-related: [sources/coworld-vla.md, sources/drivefuture.md, sources/reworld.md, sources/wcog-vla.md, sources/geowam.md, sources/wa-jepa.md, sources/drivelaw.md, sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/orion.md, sources/linkvla.md, sources/drivefine.md, sources/autovla.md, sources/alpamayo-r1.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/drivevla-w0.md, sources/percept-wam.md, sources/wam-diff.md, sources/spanvla.md, sources/onedrive.md, sources/had.md, sources/feaxdrive.md, sources/clear.md, sources/plannerrft.md, sources/dial.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md, concepts/adaptive-routing.md, concepts/nuplan-benchmark.md, concepts/intent-conditioned-planning.md]
+related: [sources/qwen-drive-1.0.md, sources/coworld-vla.md, sources/drivefuture.md, sources/reworld.md, sources/wcog-vla.md, sources/geowam.md, sources/wa-jepa.md, sources/drivelaw.md, sources/recogdrive.md, sources/wam-flow.md, sources/uniugp.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/orion.md, sources/linkvla.md, sources/drivefine.md, sources/autovla.md, sources/alpamayo-r1.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/drivevla-w0.md, sources/percept-wam.md, sources/wam-diff.md, sources/spanvla.md, sources/onedrive.md, sources/had.md, sources/feaxdrive.md, sources/clear.md, sources/plannerrft.md, sources/dial.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/discrete-flow-matching.md, concepts/world-model-for-ad.md, concepts/inference-time-safety.md, concepts/adaptive-routing.md, concepts/nuplan-benchmark.md, concepts/intent-conditioned-planning.md]
 created: 2026-04-05
 updated: 2026-09-11
 confidence: high
@@ -523,6 +523,38 @@ This makes the action expert learn a transition from past ego motion to future e
 
 The L1 head is slightly faster but loses 5.2 PDMS, suggesting that continuous FM provides a real quality gain rather than just a speed optimization. Sparse bridge ablation: last-layer-only 79.3 PDMS, interval-4 82.2, interval-2 without historical initialization 86.4, and interval-2 with historical initialization 90.3.
 
+## Reading a Backbone's Attention Memory: Qwen-Drive's Planning Expert {#cached-kv}
+
+[[sources/qwen-drive-1.0.md]]'s Planning Expert is the most literal version of the sparse-KV idea above: a 32-layer diffusion transformer ($d{=}1024$, ~1.1 B) that conditions on **the cached post-RoPE keys and values of every grouped-query softmax attention layer in the VLM** — eight caches, each feeding four consecutive expert layers, concatenated with the trajectory tokens' own KV for joint attention. Flow time, navigation command and ego state enter through shared AdaLN.
+
+Three properties distinguish it from the other couplings on this page:
+
+| | Reads | Backbone during planner training |
+|---|---|---|
+| [[sources/spanvla.md]] | sparse action-token KV emitted by the VLM | co-trained |
+| [[sources/drivelaw.md]] | mid-denoising video-DiT latents, cross-attended | updated in stage 3 |
+| [[sources/drive-hwm.md]] | one latent, FiLM-modulated into hidden states | co-trained |
+| **Qwen-Drive-1.0** | **the VLM's own attention memory, all softmax layers** | **frozen** |
+
+Because the VLM is frozen for Stages 3 and 4, the cached KV is a **fixed conditioning interface**: nothing the planner learns can reshape the representation it reads. That makes the paper's Stage-2 ablation interpretable as a measurement of how much a representation improvement can deliver *through* such an interface — and the answer there is +0.08 RFS for the entire driving adaptation. Read beside [[sources/coworld-vla.md]]'s representation × planner factorial, it is another data point that a stronger condition and a stronger denoiser are substitutes rather than complements.
+
+### $x$-prediction as a multi-source robustness choice {#x-prediction}
+
+The expert predicts the **clean endpoint** $\hat{\boldsymbol{\tau}}_1$, and induces the velocity field as $(\hat{\boldsymbol{\tau}}_1-\boldsymbol{\tau}_t)/(1-t)$, rather than regressing velocity or noise directly. The stated reason is new to this page:
+
+> "This endpoint parameterization reduces sensitivity to sensor noise in trajectories recorded across heterogeneous datasets."
+
+The conversion blows up as $t\to1$, so training samples $\tilde t\sim\mathrm{Beta}(1.5,1.0)$ and clips $t=\min\{\tilde t,0.9\}$, guaranteeing $1-t\ge0.1$; at inference $1-t_k$ is floored at $\epsilon=0.1$ and $\hat{\boldsymbol{\tau}}_1$ is clipped to $[-1,1]$ in normalized coordinates.
+
+Every other continuous-flow planner in this wiki — [[sources/uniugp.md]], [[sources/alpamayo-r1.md]], [[sources/spanvla.md]], [[sources/simwam.md]], [[sources/wa-jepa.md]] — regresses the velocity. **Nobody has ablated the parameterization**, and Qwen-Drive offers the argument without a measurement. It is a one-run experiment in any of those codebases, and it matters most for exactly the setting the field is moving toward: training one planner on four datasets recorded by four different rigs.
+
+Two further details worth carrying:
+
+- **Temporal regularization is explicit**: $\mathcal{L}_{\mathrm{plan}}=\mathcal{L}_{\mathrm{fm}}+2\times10^{-4}\mathcal{L}_{\Delta^1}+2\times10^{-5}\mathcal{L}_{\Delta^2}$, Huber penalties on first and second temporal differences of the predicted endpoint, "to discourage waypoint jitter and abrupt changes in acceleration." Most planners here leave comfort to the metric.
+- **Per-channel normalization scales are fixed and asymmetric**: 165 m longitudinal, 25 m lateral, $\pi/2$ rad heading — a 6.6:1 ratio that silently sets the geometry of every isotropic perturbation applied in normalized space (see [[concepts/rl-for-ad.md#subspace-exploration]], where the same $\sigma$ means 1.7 m longitudinally and 0.26 m laterally).
+
+**Output shape**: 50 waypoints, 5 s at 10 Hz, 10-step Euler at inference — the densest trajectory output in the wiki, subsampled to 8 poses at 2 Hz when NAVSIM scores it.
+
 ## Flow Matching Over *Latents*, Not Just Trajectories (WA-JEPA)
 
 Every other entry on this page runs its diffusion or flow process over a **trajectory**. [[sources/wa-jepa.md]] runs two flows at once — one over future multi-view **scene latents**, one over the **action** — inside a single MMDiT predictor, and integrates both over 12 shared sampling steps.
@@ -586,7 +618,8 @@ It also connects to the world-model side of the wiki: [[sources/adaptive-wam.md]
 
 [[sources/coworld-vla.md]]'s Hierarchical Multi-Expert Fusion planner is easy to mis-file, so it is worth stating plainly what it is. Four expert tokens each get their **own** action-stream branch through a shared two-stream denoiser; each branch produces a full trajectory; the four are combined by a learned convex weight:
 
-$$\mathcal{L}_{\mathrm{diff}}=rac{1}{N_e}\sum_{e=1}^{N_e}\left\|\hat A_e-A^{\mathrm{norm}}ight\|_2^2,\qquad ar A=\sum_e lpha_e\hat A_e,\qquad lpha=\operatorname{softmax}(w)$$
+$$\mathcal{L}_{\mathrm{diff}}=rac{1}{N_e}\sum_{e=1}^{N_e}\left\|\hat A_e-A^{\mathrm{norm}}
+ight\|_2^2,\qquad ar A=\sum_e lpha_e\hat A_e,\qquad lpha=\operatorname{softmax}(w)$$
 
 **Every branch regresses the same target $A^{\mathrm{norm}}$, and $lpha$ is a set of global scalars, not scene-conditioned.** So this is a **four-member ensemble whose members differ only in their conditioning**, averaged with a fixed learned mixture. It is variance reduction, not multimodal proposal generation — there is no candidate set, no scorer, and exactly one output. That matters because trajectory *averaging* is the failure mode this page opens with ("a deterministic regression head averages distinct intents into a single feasible-but-uninformative output"); averaging is safe here precisely because the branches were never trained to disagree.
 

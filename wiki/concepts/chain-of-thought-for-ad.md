@@ -2,7 +2,7 @@
 title: Chain-of-Thought Reasoning for Autonomous Driving
 type: concept
 sources: [raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md]
-related: [sources/coworld-vla.md, sources/wcog-vla.md, sources/recogdrive.md, sources/uniugp.md, sources/autovla.md, sources/adathinkdrive.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/futuresightdrive.md, sources/hermes.md, sources/nord.md, sources/reasoning-vla.md, sources/elf-vla.md, sources/dynvla.md, sources/spanvla.md, sources/onevl.md, sources/deepsight.md, sources/understanding-r1-zero-like-training.md, sources/all-roads-lead-to-rome.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md]
+related: [sources/qwen-drive-1.0.md, sources/coworld-vla.md, sources/wcog-vla.md, sources/recogdrive.md, sources/uniugp.md, sources/autovla.md, sources/adathinkdrive.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/futuresightdrive.md, sources/hermes.md, sources/nord.md, sources/reasoning-vla.md, sources/elf-vla.md, sources/dynvla.md, sources/spanvla.md, sources/onevl.md, sources/deepsight.md, sources/understanding-r1-zero-like-training.md, sources/all-roads-lead-to-rome.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/r1-zero-like-training.md, concepts/divergent-thinking-in-vlms.md]
 created: 2026-04-15
 updated: 2026-09-11
 confidence: high
@@ -207,6 +207,42 @@ WCog-VLA's Table 5 contains the sharpest efficiency datum this page has on textu
 This is a distinct position on this page's central question. The entries above ask *when* to reason (AdaThinkDrive, SpanVLA, DeepSight) or *whether* reasoning is needed at all (NoRD). WCog-VLA answers: **keep the CoT corpus, drop the CoT computation.** The reasoning shapes the representation during fine-tuning and is then thrown away — which makes CoT a data-curation technique rather than an inference-time mechanism, and sidesteps the adaptive-routing machinery entirely.
 
 Two caveats before generalizing it. The 0.5-point measurement is on *this* model's text head, which may simply be a weak trajectory decoder — [[sources/nord.md]] argues text-token trajectory output is the bottleneck rather than the reasoning. And WCog-VLA never tests whether an SFT run *without* Game-CoT but with the same total token budget would do as well, so the +1.1 could be data volume rather than reasoning structure.
+
+## Reasoning as an Optional Condition on a Separate Action Head (Qwen-Drive-1.0) {#optional-condition}
+
+[[sources/qwen-drive-1.0.md]] places a Chain-of-Causation trace in a position no other entry on this page uses: the trace is a **conditioning variable $\mathbf{r}$ that may be $\varnothing$**, consumed by a flow-matching Planning Expert that reads the VLM's cached attention KV. Three consequences:
+
+- **Reasoning is trained as an ablatable input, not a required prefix.** Only **685 K of 2.83 M planning samples (24.2 %)** carry an accepted trace; the remaining 75.8 % train with $\mathbf{r}=\varnothing$. The same checkpoint therefore has a with- and without-reasoning mode at inference by construction, with no dual-mode SFT ([[sources/autovla.md]], [[sources/adathinkdrive.md]]) and no learned router.
+- **The price is measured on three benchmarks, and it is small.** NAVSIM **+0.4 PDMS** (87.8 → 88.2, from 78 K reasoning-conditioned samples); WOD-E2E test **+0.02 RFS** (7.76 → 7.78, from 142 K); PAI-AV **−0.01 m** ADE. This sits at the low end of the range this page records, below [[sources/wcog-vla.md]]'s +0.5 PDMS for 9.9 s of Game-CoT and consistent with [[sources/nord.md]]'s position that reasoning annotations are not the bottleneck.
+- **The trace is also the RL exploration source.** In Stage 4 the frozen VLM samples **eight independent reasoning traces per scene**, each conditioning one of eight rollouts. Reasoning diversity is thus repurposed as policy diversity — a use of CoT nothing else here makes.
+
+### The paper's own doubt about what the trace is doing {#trace-doubt}
+
+The limitations section contains the most direct statement of the rationale-adherence problem in this wiki:
+
+> "The generated trajectory does not always adhere to the textual rationale. Although reasoning improves downstream planning performance, **part of this gain may stem from the additional model-internal information that the self-generated trace contributes to the conditioning context.**"
+
+That is the authors naming the alternative hypothesis: the trace may be acting as extra conditioning capacity — more tokens, more computation, a richer KV cache — rather than as a *reason*. At +0.4 PDMS and +0.02 RFS, the effect is small enough that either explanation fits.
+
+**This is the sharpest form of a question this page has circled repeatedly.** [[sources/alpamayo-r1.md]] addressed it with a binary CoC–action consistency reward; [[sources/spanvla.md]] with an action-alignment penalty; [[sources/orion.md]] with latent alignment between reasoning and action. Qwen-Drive uses **none of these** — nothing in $\mathcal{L}_{\mathrm{plan}}$ or in the RL objective requires the trajectory to match the text — and the paper correctly identifies "explicit consistency supervision between the rationale and the generated trajectory" as the missing piece.
+
+**The decisive experiment is cheap and nobody has run it**: condition the planner on a *shuffled* trace from a different scene. If PDMS holds, the gain is conditioning capacity; if it collapses, the trace carries scene-specific content.
+
+### Multi-timescale causation as an unsolved CoT content problem {#multi-timescale}
+
+The other limitation is a content taxonomy gap that applies to every CoC-style dataset on this page:
+
+> "Driving mixes causes that act at different time scales. A red light 20 m ahead calls for early, gradual deceleration, whereas a child emerging 5 m ahead demands an immediate response. When such causes coexist, the model remains unstable in identifying the governing cause and its temporal scope. Even when the suggested trend is appropriate, the decision executed within the next 1 to 2 s may not reflect the stated immediate cause."
+
+Neither Alpamayo-R1's 14-type closed decision set nor Qwen-Drive's rule-derived motion prior encodes *when* a cited cause takes effect. A CoC trace names the causes; it does not order them in time. That is a schema change, not a scale problem.
+
+### Annotation method: classification-question audits {#classification-audits}
+
+Worth adding to this page's annotation-methods section as a variant of GT-grounded CoT. Qwen-Drive's traces are written by Qwen3.7-Plus conditioned on a **rule-based motion prior** derived from the recorded future, then audited — and the audit design is the reusable part:
+
+> "Rather than requesting scalar quality scores, judge models answer classification questions, and their decisions are aggregated programmatically."
+
+The audit checks the predicted maneuver against the ground-truth trajectory, classifies the causal role of each cited factor, and **rejects traces that reveal future information** — the leakage control [[sources/alpamayo-r1.md]] enforces with a 0–2 s human observation window, here enforced by a judge. A separate rarity score prioritizes rare scenes. Against LRM-as-critic scalar grading, classification-plus-aggregation is cheaper to calibrate and produces an auditable reject reason.
 
 ## CoT Design Space
 

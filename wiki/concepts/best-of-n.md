@@ -2,9 +2,9 @@
 title: Best-of-N Sampling
 type: concept
 sources: [raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
-related: [sources/wcog-vla.md, sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, sources/drivesuprim.md, sources/explorevla.md, sources/clear.md, sources/all-roads-lead-to-rome.md, sources/pair-drive.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/divergent-thinking-in-vlms.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md]
+related: [sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, sources/drivesuprim.md, sources/explorevla.md, sources/clear.md, sources/all-roads-lead-to-rome.md, sources/pair-drive.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/divergent-thinking-in-vlms.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md]
 created: 2026-04-15
-updated: 2026-09-04
+updated: 2026-09-18
 confidence: high
 ---
 
@@ -39,8 +39,13 @@ N is typically 4 or 6 in current AD papers. Comparing BoN scores across differen
 | NoRD              | 85.6               | **92.4**  | 6   | +6.8              |
 | AutoVLA           | 89.11              | **92.12** | 6   | +3.01             |
 | Vega              | 87.9               | **89.8**  | 6   | +1.9              |
+| **Qwen-Drive-1.0-RL** | 90.7            | **91.4**  | 6   | **+0.7**          |
+| Qwen-Drive-1.0-SFT | 88.2              | **89.3**  | 6   | +1.1              |
 
 ★ DriveVLA-W0's "90.2" single-sample uses query-based expert with trajectory anchors (multi-candidate selection within the model); the underlying single-model output is 88.4 PDMS. BoN-6 adds oracle selection on top.
+
+
+**Qwen-Drive-1.0 is the smallest BoN gain recorded here, and the pattern is instructive.** Its SFT policy gains +1.1 from oracle-6 and its RL policy only +0.7 — RL consumed most of the headroom that oracle selection would otherwise have found, which is the same inverse relationship observation 2 below describes, seen *within one method* rather than across methods. Its reading of the residual is the right one: the gap "indicates that the sampled set already contains stronger trajectories than the default prediction, suggesting headroom that better inference-time selection could recover." The paper also notes independently that its six candidates are tightly clustered (PAI-AV avg-ADE 0.42 against minADE 0.39), which bounds what any selector could recover — see observation 4.
 
 ### NAVSIM-v2 (EPDMS)
 

@@ -1,10 +1,10 @@
 ---
 title: Foundation Backbones for AD
 type: concept
-sources: [raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md]
-related: [sources/coworld-vla.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/da-wam.md, sources/geowam.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/simwam.md, sources/sgdrive.md, sources/drivelaw.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, sources/autovla.md, sources/nord.md, sources/elf-vla.md, sources/spanvla.md, sources/driveva.md, sources/alpamayo-r1.md, sources/explorevla.md, sources/onedrive.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/clear.md, sources/understanding-r1-zero-like-training.md, sources/drivewam.md]
+sources: [raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md]
+related: [concepts/general-capability-retention.md, sources/qwen-drive-1.0.md, sources/drive-hwm.md, sources/coworld-vla.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/da-wam.md, sources/geowam.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/simwam.md, sources/sgdrive.md, sources/drivelaw.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/adaptive-routing.md, concepts/r1-zero-like-training.md, sources/autovla.md, sources/nord.md, sources/elf-vla.md, sources/spanvla.md, sources/driveva.md, sources/alpamayo-r1.md, sources/explorevla.md, sources/onedrive.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/clear.md, sources/understanding-r1-zero-like-training.md, sources/drivewam.md]
 created: 2026-05-01
-updated: 2026-09-11
+updated: 2026-09-18
 confidence: high
 ---
 
@@ -36,6 +36,8 @@ Driving VLA papers increasingly differ less by whether they use a foundation mod
 | Video generator as feature extractor | LTX-Video 2B in DriveLaW | Mid-denoising block latents are cached and cross-attended by a 133M action DiT; the generator is repurposed as the perception encoder. |
 | Frozen advisory VLM | Qwen3-VL-8B in DriveWAM | Emits chunk-level text guidance consumed by cross-attention; never decodes actions and is never fine-tuned. |
 | VLM as frozen world model | InternVL3-2B in SGDrive | Fine-tuned in stage 1 to host structured ⟨world⟩ queries, then frozen in stage 2 while only the DiT planner trains. |
+| Pretrained VLM **left architecturally untouched** | Qwen3.5-4B in Qwen-Drive-1.0 | No added tokens or experts; two external modules read it (a BEV head from its image-token outputs, a Planning Expert from its cached attention KV). Fully fine-tuned in one stage, then frozen. See [below](#vlm-adaptation-ladder). |
+| VLM tower as a **3D detection encoder** | SigLIP-Qwen in Qwen-Drive-1.0 | The same SigLIP-style tower, initialized from Qwen3.5-4B, swapped into BEVFormerV2/PETR/PETRv2 in place of ResNet-50: **+6.6 to +10.1 mAP** with everything else fixed. |
 | VLM read at **several depths** | Qwen2.5-VL-3B in LWDrive | Fine-tuned in stage 1 under a 15:1 future-frame world-model loss, then frozen while six planner refinement stages tap layers {6,…,36}. The multi-depth readout is worth only **+0.2 PDMS** over final-layer-only — see [below](#readout-depth-vlm). |
 
 ## Takeaways
@@ -52,6 +54,8 @@ Driving VLA papers increasingly differ less by whether they use a foundation mod
 - SimWAM shows the converse for capacity: with the objective held fixed, video-prior scale barely matters (1.3B ≈ 5B), while prior quality and driving-domain pretraining do. Read together, the two papers say the training signal dominates the backbone.
 - The wiki now has three distinct answers to "what should a driving backbone be pretrained on": language/semantics, video appearance dynamics, and metric geometry. All three have papers reporting 89-92 on NAVSIM-v2, and no experiment holds the planner fixed while swapping across families. The comparison the field most needs is the one nobody runs.
 - Auto-JEPA is the wiki's minimal position on backbone investment: the visual encoder is a stock V-JEPA 2 checkpoint, never adapted to driving, and only the predictor and small task modules train. It reaches 91.3 PDMS. Drive-JEPA spends 208 h of curated video and a 3-day 8-GPU pretraining stage adapting the same family of encoder and reaches 93.3. The 2.0-PDMS gap is the clearest available price tag on driving-domain encoder adaptation — though the two differ in planner design as well, so it is an upper bound on what adaptation buys, not a clean measurement.
+- The adaptation ladder now has a data point in every backbone family. A frozen video DiT loses 6.42 PDMS to a jointly LoRA-adapted one (Adaptive-WAM); LoRA is insufficient for geometric distillation into DINOv2 (Latent-WAM); and a converged 3D head on **frozen** vision-language features trails a dedicated detector on the same features by 6.34 mAP, recovering +10.46 once the encoder and VLM are unfrozen (Qwen-Drive-1.0). Off-the-shelf use is the expensive option everywhere it has been measured.
+- Vision-language pretraining is a strong *visual* initialization even for tasks with no language in them: swapping ResNet-50 for a Qwen-initialized SigLIP tower is worth 6.6-10.1 mAP to three separate 3D detectors under a fixed schedule.
 - SGDrive makes the same point on the VLM side: InternVL3-**2B** with a scene-agent-goal query hierarchy reaches 87.4 PDMS, beating plain InternVL3-8B and QwenVL2.5-8B (both 83.3) by 4.1 and ReCogDrive-8B (86.8) at a quarter the size. Driving-specific representational structure buys more than 4× the parameters.
 
 ## Qwen Prior Caveat
@@ -136,6 +140,49 @@ Two papers, different benchmarks, different planners, different years, same conc
 
 The distinction is not academic. [[sources/simwam.md]] and [[sources/drivelaw.md]] show video-generation priors are also highly effective for planning, and those are video-pretrained *without* a JEPA objective. If the operative variable is temporal pretraining rather than joint-embedding prediction, the two families are converging on the same explanation from opposite directions — and the cheap experiment that would tell them apart has not been run.
 
+### Drive-HWM Runs the Missing Control — Partially {#jepa-vs-generative}
+
+**[[sources/drive-hwm.md]] is the first paper here whose swap holds video pretraining constant and varies only the objective family.** Its slow world model is the future-prediction module, everything downstream is fixed (Emu3-8B fast model, FiLM conditioning, AR expert, identical recipe), and the three candidates are all video-pretrained:
+
+| Slow-model backbone | Pretraining objective | NC | DAC | PDMS |
+| --- | --- | ---: | ---: | ---: |
+| CogVideo | video **generation** | 98.8 | 98.1 | 93.0 |
+| WAN | video **generation** | 99.0 | 98.4 | 93.2 |
+| **V-JEPA** | **joint-embedding prediction** | **99.6** | **99.0** | **93.8** |
+
+**This is the complement to the two sweeps above, not a repeat of them.** WA-JEPA and Drive-JEPA vary the objective *and* the modality together, because every alternative they test is image-level. Drive-HWM varies the objective *alone*: all three arms saw video. **+0.6 over WAN and +0.8 over CogVideo is therefore the first estimate on this page of what the joint-embedding objective is worth once temporal pretraining is held fixed** — and it is roughly a fifth of the +2.7 to +5.7 the encoder sweeps attribute to V-JEPA 2 against image-level alternatives. If both numbers hold, most of that larger gap is *video pretraining*, not *JEPA*, which is the reading this page has been flagging as unsupported in WA-JEPA's stronger claim.
+
+The paper's own explanation is about what the objective *discards*:
+
+> "its latent-space predictive objective focuses more directly on temporally meaningful scene dynamics while avoiding the unnecessary complexity of reconstructing low-level visual details."
+
+**Four reasons this only partially closes the confound.**
+
+1. **It is the wrong slot.** The sweep varies the *future-predictor* backbone, not the planner's visual encoder — Emu3 does the encoding in all three arms. So it bears on "what should predict the future" rather than "what should see the present," which is the question the sweeps above are answering.
+2. **Not compute- or capacity-matched.** No parameter count is given for any of the three, and CogVideo and WAN are large generative models being asked to emit a conditioning latent, which is not what they were built to do.
+3. **The spread is small and unreplicated.** 0.8 PDMS, single runs, no seed variance, one benchmark.
+4. **Which V-JEPA was run is ambiguous** — see [below](#vjepa-naming-ambiguity).
+
+**What it does establish firmly** is consistent with [[sources/adaptive-wam.md]] (readout depth worth 4.80, video noise index ≤0.15), [[sources/foresight.md]] (a frozen 2.5B generator as the primary encoder, 870 ms, +0.3 in the row that isolates it), and [[sources/drivelaw.md]] (early denoising latents beat clean generated futures, 89.1 vs. 23.2): **the pixel-generation capacity of a video backbone is mostly not what the planner is buying.** Drive-HWM adds the cheapest version — skip the generator, predict a motion latent, 25.6 ms — and wins its own comparison.
+
+**The same paper also swaps the fast-model VLM with the slow model fixed**, which is rarer than it should be:
+
+| Fast-model backbone | NC | DAC | PDMS |
+| --- | ---: | ---: | ---: |
+| LLaVA-OneVision | 99.0 | 98.4 | 93.5 |
+| "Qwen2.5-VL" *(cited ref. is the Qwen3-VL report)* | 99.1 | 98.6 | 93.3 |
+| **Emu3** | **99.6** | **99.0** | **93.8** |
+
+**0.5 PDMS across three general-purpose multimodal backbones** — a much flatter axis than the world-model slot, and flatter than the 1.3-point spread Drive-HWM measures for *how* the slow latent is injected. That ordering is worth holding onto: on this evidence the **conditioning interface matters more than the VLM identity**, which is the opposite of where most of this literature spends its architecture budget. The paper's explanation for Emu3 is its discrete-token interface — the same property that makes FiLM rather than concatenation the natural injection point, since Emu3's sequence layout is load-bearing. Note the caveat that this sweep's Qwen row cannot be attributed to a specific model ([below](#vjepa-naming-ambiguity)).
+
+### Which V-JEPA? {#vjepa-naming-ambiguity}
+
+Drive-HWM's slow backbone is named inconsistently in four places: Fig. 2's caption says **VL-JEPA**, Table V says **V-JEPA [55]**, §IV-D's prose says **V-JEPA**, and reference [55] is **VL-JEPA** (arXiv 2512.10942), a vision-*language* JEPA from a different group than Meta's V-JEPA / V-JEPA 2.
+
+This matters because V-JEPA-family encoders now appear in six ingested papers ([[sources/drive-jepa.md]], [[sources/wa-jepa.md]], [[sources/auto-jepa.md]], [[sources/da-wam.md]], [[sources/coworld-vla.md]], Drive-HWM) and every cross-paper statement on this page assumes a common backbone. This wiki records Drive-HWM's slow backbone as **V-JEPA-family, exact variant undetermined**, and the swap above as evidence about the *objective family* rather than about a specific checkpoint.
+
+**A second citation error sits in the same table**: the fast-model row labelled "Qwen2.5-VL" cites reference [57], which is the **Qwen3-VL technical report** (arXiv 2511.21631). The two are a generation apart, so that row's 93.3 cannot be attributed to either model with confidence.
+
 ## Auto-JEPA: Freezing the Encoder, Moving the Objective
 
 [[sources/auto-jepa.md]] inverts Drive-JEPA's allocation. Drive-JEPA applies the JEPA objective *to the encoder* — masked video representation prediction over 208 hours of curated driving footage — and then trains a proposal planner on top. Auto-JEPA leaves V-JEPA 2 exactly as released and applies the JEPA objective *to a trajectory latent space*, predicting the frozen encoding of the future ego trajectory.
@@ -189,9 +236,11 @@ So the honest restatement is: **representation quality and planner capacity are 
 
 **Three caveats before generalizing.** PDMS is bounded and compresses near the top, so some sub-additivity is mechanical — though 90.0 is well short of the 94.8 human reference, so a ceiling effect cannot account for -3.9 alone. It is one architecture, one benchmark, single runs. And the two factors here are not the same objects DriveLaW and UDT varied: CoWorld-VLA's "representation" is four auxiliary token objectives, not a change of feature family. **The cheap replication is obvious**: DriveLaW already has three representations and a planner; running its weakest and strongest against a stronger head would close this.
 
-## SimWAM: The Only Controlled Video-Prior Swap
+## SimWAM: The First Controlled Video-Prior Swap
 
-SimWAM ([[sources/simwam.md]]) is the wiki's only paper that holds the planner fixed and swaps the video backbone, because its two experts share no parameters and communicate only through a shared attention stream. Four priors under an identical action expert and training recipe (NAVSIM-v1 PDMS):
+*(Second since [[sources/drive-hwm.md]] — see [JEPA vs. Generative](#jepa-vs-generative). The two are complementary: SimWAM varies **scale and domain within video generation**; Drive-HWM varies the **objective family** across video generation and joint-embedding prediction.)*
+
+SimWAM ([[sources/simwam.md]]) holds the planner fixed and swaps the video backbone, which its architecture permits because its two experts share no parameters and communicate only through a shared attention stream. Four priors under an identical action expert and training recipe (NAVSIM-v1 PDMS):
 
 | Video prior | Params | PDMS | Note |
 | --- | --- | ---: | --- |
@@ -383,6 +432,48 @@ Two wiki designs sit on the losing side. [[sources/foresight.md]] freezes Epona 
 **Third data point on LoRA vs. full fine-tuning**: full FT adds **0.02**, so LoRA is used. That agrees with [[sources/da-wam.md]] (LoRA beats full FT by 0.36 for JEPA latent adaptation) against [[sources/latent-wam.md]] (LoRA collapsed geometric distillation, 89.3 → 68.5 EPDMS). The reconciliation this page already records — LoRA is safe when the pretrained representation is close to the target and fails when a large representational move is required — survives: keeping a video DiT predicting video-like features is a small move.
 
 **And against static encoders**: Wan intermediate features beat ViT-Large by 1.74 and ViT-Small by 6.71 in the single-trajectory setting, but the gap shrinks to 0.28 with 64 proposals. **Multi-proposal scoring masks representation quality**, which is a caution for reading any selection-based leaderboard as evidence about encoders.
+
+## The VLM Side of the Adaptation Ladder {#vlm-adaptation-ladder}
+
+Everything in the section above is about a *video* prior. [[sources/qwen-drive-1.0.md]] runs the same experiment on a *vision-language* prior, with a 3D perception head as the instrument, and gets the same answer.
+
+Its encoder, **SigLIP-Qwen**, is the SigLIP-style vision tower initialized from Qwen3.5-4B's own weights. Because the paper reproduces three dedicated 3D detectors twice — once on ResNet-50, once on SigLIP-Qwen, same schedule, same $896\times512$ input, same relabelled nuScenes — it supplies the cleanest **encoder swap** measurement in the wiki:
+
+| Detector | ResNet-50 | SigLIP-Qwen | Δ mAP |
+|---|---:|---:|---:|
+| BEVFormerV2 | 33.04 | 40.78 | **+7.74** |
+| PETR | 29.77 | 37.61 | **+7.84** |
+| PETRv2 | 25.98 | 36.10 | **+10.12** |
+| BEVFormerV2* (multi-task) | 35.34 | 41.94 | **+6.60** |
+
+**Vision-language pretraining is worth 6.6–10.1 mAP as a 3D-detection initialization**, with the architecture, schedule and labels held fixed. No other paper here runs this comparison at all; the backbone-choice discussion has been conducted almost entirely on planning scores.
+
+### But the features do not contain 3D structure by themselves {#vlm-3d-probe}
+
+The same table then prices freezing:
+
+| Configuration | Encoder / VLM | nuScenes mAP | RayIoU |
+|---|---|---:|---:|
+| BEVFormerV2* trained for detection | SigLIP-Qwen, updated | 41.94 | **43.89** |
+| Converged BEV head on frozen features | **frozen** encoder + frozen VLM | 35.60 | 36.98 |
+| Qwen-Drive Stage 2 | encoder **and** VLM updated by perception loss | **43.95** | 37.02 |
+
+> "This contrast indicates that vision-language-pretrained features support visual-text alignment but do not directly expose the 3D structure required for driving perception."
+
+**−6.34 mAP for freezing; +10.46 for unfreezing.** The paper is careful to exclude the obvious alternative explanation — "the gains from Stage 2 cannot be explained by continued head optimization alone, since the head-only model had already converged."
+
+**Three backbone families now agree.** [[sources/adaptive-wam.md]] on a video DiT: frozen 84.20 → joint LoRA 90.62 PDMS. [[sources/latent-wam.md]] on geometric distillation into DINOv2: LoRA collapses (89.3 → 68.5 EPDMS), full updates required. [[sources/qwen-drive-1.0.md]] on a VLM with a perception probe: −6.34 mAP for freezing. **Using a foundation model off the shelf costs several points in every family measured, and the deficit is recovered by adapting it against the downstream objective, not by adapting it separately.**
+
+Two details that make the Qwen-Drive instance unusual:
+
+- **The gradient path is doubled.** The head reads pre-VLM encoder features *and* post-VLM image-token features, so perception loss reaches the vision encoder both directly and through the entire language model. The "unfrozen" condition therefore means the language model is being shaped by detection and occupancy losses.
+- **Adaptation is asymmetric by design**: the newly initialized head trains at **20× the VLM's learning rate.** None of the other adaptation-ladder papers report a differential rate.
+
+### Qwen3.5-4B as a backbone
+
+The paper is also the wiki's first entry to treat the *base model itself* as a reported baseline rather than an unmeasured starting point. Qwen3.5-4B unadapted scores **63.52 on a six-benchmark driving-QA average — above every driving- and embodiment-specialized model Qwen-Drive evaluates**, including Cosmos-Reason2-32B (46.62), MiMo-Embodied-7B (60.32), UniDriveVLA-8B (46.29) and Alpamayo-1.5-10B (33.33).
+
+That bears directly on the **Physical-AI-backbone** claim this page records from [[sources/alpamayo-r1.md]]: Cosmos-Reason was adopted because it beat Qwen2.5-VL-7B by 6.4 points on zero-shot LingoQA. Two model generations later, under a third party's common protocol, the plain Qwen model leads the Cosmos family on driving QA by 14–28 points and on general capability by 6–20. **Domain-specific pretraining bought a real advantage over a 2024 general backbone; it has not obviously kept it against a 2026 one.** Caveats: different protocol, different judge, and the judge shares a family with the winner — see [[concepts/general-capability-retention.md#judge-confound]].
 
 ## Coordinate Frame Beats the Foundation Model
 

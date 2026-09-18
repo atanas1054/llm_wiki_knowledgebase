@@ -2,7 +2,7 @@
 title: VLM Domain Adaptation for Autonomous Driving
 type: concept
 sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md]
-related: [sources/recogdrive.md, sources/uniugp.md, sources/senna2.md, sources/reasoning-vla.md, sources/hermes.md, sources/autovla.md, sources/automot.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/futuresightdrive.md, sources/unidrivevla.md, sources/flare.md, sources/vega.md, sources/nord.md, sources/elf-vla.md, sources/spanvla.md, sources/onedrive.md, sources/onevl.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/perception-for-planning.md]
+related: [concepts/general-capability-retention.md, sources/qwen-drive-1.0.md, sources/recogdrive.md, sources/uniugp.md, sources/senna2.md, sources/reasoning-vla.md, sources/hermes.md, sources/autovla.md, sources/automot.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/futuresightdrive.md, sources/unidrivevla.md, sources/flare.md, sources/vega.md, sources/nord.md, sources/elf-vla.md, sources/spanvla.md, sources/onedrive.md, sources/onevl.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/perception-for-planning.md]
 created: 2026-04-05
 updated: 2026-05-01
 confidence: high
@@ -759,6 +759,66 @@ OneDrive is an architecture-adaptation method rather than a data/RL method: it d
 **OneVL** ([[sources/onevl.md]]) adapts Qwen3-VL-4B by inserting visual and language latent tokens into the assistant response and training those latent positions with two auxiliary objectives. The language decoder reconstructs text CoT, while the visual decoder predicts future-frame visual tokens. This is a different adaptation recipe from adding more CoT data or RL: the model is forced to make its hidden latent states decodable as both semantic reasoning and short-horizon scene dynamics.
 
 The staged optimization is the main engineering lesson. Direct joint training of the VLM plus both decoders collapses to 67.13 PDMS, while the full warmup -> decoder alignment -> joint fine-tune curriculum reaches 88.84. This makes OneVL an example where adaptation failure is not due to insufficient model capacity, but due to unstable coupling between pretrained language representations, latent bottlenecks, and auxiliary world-model losses.
+
+## Qwen-Drive-1.0: Adaptation That Keeps the Base Model
+
+**Qwen-Drive-1.0** ([[sources/qwen-drive-1.0.md]]) is the wiki's first driving adaptation that measures what it cost the general model across a wide benchmark suite, and the first whose answer is "almost nothing." The full evidence, the cross-method table and the confounds live on the dedicated page [[concepts/general-capability-retention.md]]; what belongs here is the recipe and what it does to this page's existing positions.
+
+### The recipe
+
+| Choice | Qwen-Drive | Contrast in this wiki |
+|---|---|---|
+| Architecture | **unchanged** — no new special tokens, no vocabulary expansion, no MoT, no FFN replacement; view/frame tags use ordinary vocabulary | [[sources/futuresightdrive.md]] expands the vocabulary; [[sources/unidrivevla.md]] splits into three experts; [[sources/onedrive.md]] replaces task FFNs |
+| Backbone during adaptation | **vision encoder and full VLM unfrozen** in Stage 2 | [[sources/automot.md]] freezes the understanding expert entirely |
+| Mixture | 64.3 % driving VL / **26.0 % general-purpose VL** / 9.7 % 3D perception (→ 56.3 / 31.0 / 12.7 after repetition) | [[sources/unidrivevla.md]] uses a 3:7 driving-to-general ratio with MoT; most others use driving data only |
+| Non-language supervision | explicit 3D detection, occupancy and map losses, backpropagated **through the whole VLM** | [[sources/flare.md]] uses future DINOv2 features; most use language only |
+| After adaptation | encoder and VLM **frozen** for planner SFT and RL | [[sources/recogdrive.md]], [[sources/autovla.md]], [[sources/nord.md]] and most others run GRPO through the VLM |
+
+### Data curation: the 55.9 % number
+
+The corpus pipeline is two frontier models in series, and it produces the most quotable data-quality statistic in the wiki:
+
+1. **Qwen3.5-Plus rewrites** all 24 public driving VQA datasets into one conversational schema — normalizing boxes to $[0,1000)$, inserting view/frame tags, converting most MCQ to open-ended while deliberately retaining some MCQ "to preserve this instruction type."
+2. **Qwen3.5-Flash then checks the rewritten response against the original source annotation** — the step the rewrite itself cannot perform — and only consistent samples are kept.
+
+**5.53 M → 3.09 M, a 55.9 % retention rate.** Nearly half of the aggregated public driving VQA corpus fails a semantic-consistency check against its own source annotation. This is the empirical version of the concern [[sources/recogdrive.md]] and [[sources/flare.md]] raise about template-generated and auto-labelled QA, measured across 24 datasets rather than argued.
+
+Two self-constructed components are new to this page:
+
+- **Chain-of-Causation traces** built with a *rule-based motion prior* derived from the recorded future, written by Qwen3.7-Plus, then audited by judges that **answer classification questions rather than emit scalar quality scores**, with programmatic aggregation, a causal-role check per cited factor, and explicit rejection of traces that leak future information. A rarity score prioritizes rare scenes. Compare [[sources/alpamayo-r1.md]]'s hybrid human/auto CoC pipeline, which this one explicitly follows.
+- **Camera ordering** — surround views shuffled, all view tags removed, the model must find the front view and recover clockwise order. A zero-annotation self-supervised cross-view task; nothing else in the wiki uses one.
+
+### What it does to this page's existing positions {#qwen-drive-revisions}
+
+**1. AutoMoT's "do not fine-tune the VLM" needs a scope.** [[sources/automot.md]]'s evidence remains valid for the experiment it ran — driving-only fine-tuning destroys multi-step general reasoning (TallyQA −35 %, InfoVQA −44 %). Qwen-Drive fine-tunes *more* of the model (encoder + VLM, under perception gradients as well as language ones) and loses 0.99 points on a 10-benchmark general average. **The distinguishing variable is the mixture, not the freezing.** See [[concepts/general-capability-retention.md]] for the reconciliation and for what remains unmeasured.
+
+**2. UniDriveVLA's "MoT is necessary but not sufficient" gets an alternative.** That reading was that architectural decoupling reduces interference while driving SFT still displaces general knowledge. Qwen-Drive reaches better retention with *no* decoupling at all. Note that Qwen-Drive's own re-measurement puts UniDriveVLA-8B at **48.73** on its general average — independently consistent in direction with UniDriveVLA's self-reported degradation.
+
+**3. Adaptation is worth very little to the planner, and this paper measures it.** Table 8 trains a matched Planning Expert on top of three Stage-2 variants and reports WOD-E2E validation RFS:
+
+| Stage 2 | Driving QA Avg | CoC Overall | General VQA Avg | RFS |
+|---|---:|---:|---:|---:|
+| none (unadapted Qwen3.5-4B) | 63.52 | 2.58 | 62.60 | 7.88 |
+| + driving VL | **70.07** | 40.97 | **63.18** | 7.91 |
+| + driving VL + 3D perception | 69.43 | **41.26** | 62.26 | **7.96** |
+
+**The entire adaptation is worth +0.08 RFS.** Driving VQA supervision moves the model +6.55 on driving QA and +38.39 on causal reasoning, and moves the planner by +0.03. For comparison, RL on the Planning Expert alone is worth +0.50 on the same split.
+
+This is the most direct evidence in the wiki that **driving *knowledge* and driving *competence* are separate acquisitions.** Almost everything this page catalogues — CoT formats, data curation, QA scaling — is about the first. The second lives in the action head, and under a frozen-representation recipe the first barely reaches it. The caveat is exactly that: Stage 3 freezes the VLM, so the result bounds what adaptation delivers *through a fixed conditioning interface*, not what it could deliver if the backbone kept training with the planner.
+
+**4. The perception-as-probe result belongs here too.** A converged BEV head on frozen vision-language features trails a dedicated detector on the *same* features by 6.34 mAP; unfreezing recovers +10.46. Fluent spatial language does not imply a usable 3D representation. See [[concepts/perception-for-planning.md]].
+
+### Updated Strategy Comparison Table (with Qwen-Drive-1.0)
+
+| Approach | VLM role | VLM fine-tuned? | Data | Backbone | Deployment |
+|----------|----------|----------------|------|----------|-----------|
+| ReCogDrive | Fine-tuned feature extractor | ✓ | 3.1M QA pairs | InternVL3 | At inference |
+| AutoMoT | Frozen scene understanding expert | ✗ | NuSync + nuScenes + CARLA | Qwen3-VL-4B | At inference (async) |
+| Alpamayo-R1 | 3-stage: inject→SFT(CoC)→RL | ✓ (from Physical AI base) | 700K CoC + 80K hr driving | Cosmos-Reason | At inference |
+| UniDriveVLA | MoT: LoRA Stage 2 → frozen Stage 3 | ✓ (LoRA then frozen) | 3:7 driving-to-general SFT | Qwen3-VL-2B/8B | At inference |
+| FLARE | LoRA SFT + future DINOv2 feature prediction, no language annotations | ✓ (LoRA) | NAVSIM navtrain trajectories | Qwen3-VL-4B | At inference |
+| NoRD | Reasoning-free trajectory SFT + Dr. GRPO | ✓ (full fine-tune) | 80K NAVSIM | Qwen-2.5VL-3B | At inference |
+| **Qwen-Drive-1.0** | **Unchanged architecture; encoder+VLM jointly updated by VQA *and* 3D perception losses, then frozen for planner SFT/RL** | **✓ (full fine-tune, Stage 2 only)** | **3.09M filtered driving VQA (from 5.53M) + 26% general VL + nuScenes/OpenScene perception; 2.83M planning** | **Qwen3.5-4B** | **At inference; 3D head and Planning Expert both external** |
 
 ## Related Systems
 

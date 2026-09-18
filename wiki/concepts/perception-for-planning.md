@@ -2,13 +2,13 @@
 title: Perception-Enhanced Planning in VLA Models
 type: concept
 sources: [raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [sources/wcog-vla.md, sources/foresight.md, sources/geowam.md, sources/auto-jepa.md, sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md]
+related: [concepts/general-capability-retention.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/foresight.md, sources/geowam.md, sources/auto-jepa.md, sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md]
 created: 2026-04-05
 updated: 2026-09-04
 confidence: high
 ---
 
-## The Core Tension
+## The Core Tension {#the-core-tension}
 
 End-to-end VLA planners face a structural choice:
 
@@ -218,6 +218,53 @@ Two things follow. GeoWAM is the only entry here that **produces inspectable 3D 
 
 **On the page's central tension**, GeoWAM sits with Latent-WAM on the side that says explicit perception heads are not required: there is no detection, no segmentation, no occupancy classification. What it shares with the perception camp is the belief that *metric spatial structure* must be represented explicitly rather than left implicit in features — it just gets that structure from geometry rather than from semantics.
 
+## A Perception Head Whose Stated Purpose Is Diagnosis: Qwen-Drive-1.0 {#probe-head}
+
+Every design above installs perception to *improve planning*. [[sources/qwen-drive-1.0.md]] installs it for a different reason, and says so:
+
+> "An external bird's-eye-view (BEV) perception head jointly performs 3D object detection, semantic occupancy prediction, and BEV map segmentation. **It serves as a probe of the 3D information accessible from the shared representations** and provides an explicit, inspectable interface to 3D scene structure."
+
+That reframing is what makes its numbers useful to this page. The head reads two streams — pre-VLM vision-encoder features lifted into a voxel volume by a depth-based view transform with **no depth supervision**, and post-VLM image-token features expanded into a pyramid — and a query-based BEV transformer whose queries are *initialized from the height-collapsed voxel volume* fuses them. Geometry initializes, semantics fills.
+
+### The probe result {#probe-result}
+
+| Configuration | Encoder / VLM state | nuScenes mAP | Map mIoU | Occ mIoU | RayIoU |
+|---|---|---:|---:|---:|---:|
+| BEVFormerV2* — dedicated multi-task detector | SigLIP-Qwen, trained for the task | 41.94 | 47.76 | **25.72** | **43.89** |
+| BEV head alone, converged | **frozen** encoder + frozen VLM | 35.60 | 55.55 | 20.21 | 36.98 |
+| Qwen-Drive-1.0-SFT (Stage 2) | encoder **and** VLM unfrozen | **43.95** | **60.99** | 19.82 | 37.02 |
+
+**A vision-language model that answers spatial questions fluently is not holding a 3D scene representation.** A converged head on its frozen features trails a dedicated detector on the *same* features by 6.34 mAP and 6.91 RayIoU. Unfreezing recovers +10.46 mAP and +9.84 map mIoU.
+
+This page has carried the opposite assumption implicitly. Options A and C in [The Core Tension](#the-core-tension) both presume that a VLM's representation contains spatial structure that QA supervision merely fails to *express*; the probe says the structure largely is not there to express. The implication for [[concepts/vlm-domain-adaptation.md]] is direct: **driving VQA supervision does not install 3D competence, and no amount of it will.**
+
+Note what the head does *not* win: occupancy. 19.82 Occ mIoU and 37.02 RayIoU against the dedicated detector's 25.72 and 43.89. The paper attributes this to label provenance rather than architecture — its two occupancy sources disagree in a way joint training cannot reconcile, and the machine-generated OpenScene voxels move less than 0.3 points under full joint adaptation. Whatever the cause, **explicit occupancy is the one perception task here where the unified model is worse than a specialist.**
+
+### Cross-rig operation without camera embeddings {#no-camera-embeddings}
+
+The head uses **no rig-specific camera embeddings** — extrinsics and intrinsics enter only through the projection in the view transform. Three consequences:
+
+1. One model trains and evaluates on both the 6-camera nuScenes rig and the 8-camera OpenScene rig, with no dataset-specific branch.
+2. Its own comparison methods **cannot be run on OpenScene at all**, because they learn embeddings tied to the nuScenes rig — so the OpenScene half of its table has no external baseline.
+3. It produces qualitatively coherent boxes, occupancy and map output on **two rigs never seen in perception training** (WOD-E2E's 8-camera ring, PAI-AV's 6-camera), after only a pinhole distortion correction. No ground truth exists there, so this is a capability demonstration, not an accuracy claim.
+
+For a page organized around what perception supervision buys, (3) is the underrated part: **calibration-driven lifting transfers across sensor rigs; learned per-rig positional encodings do not.**
+
+### What the perception supervision costs, and what it buys {#perception-price}
+
+Qwen-Drive is also the first paper here to price explicit 3D supervision on *all three* axes at once. From its Stage-2 ablation:
+
+| Stage 2 contents | Driving QA Avg | CoC Overall | General VQA Avg | WOD-E2E RFS |
+|---|---:|---:|---:|---:|
+| driving VL only | **70.07** | 40.97 | **63.18** | 7.91 |
+| driving VL + 3D perception | 69.43 | **41.26** | 62.26 | **7.96** |
+
+**3D perception supervision costs 0.64 driving-QA points and 0.92 general-VQA points, and buys +0.05 RFS.** The paper declines to claim the RFS gain — "does not establish explicit 3D supervision as the source of the improvement."
+
+Set that beside [[sources/wcog-vla.md]], which measures removing its 3D perception module at **−3.3 PDMS**, and [[sources/unidrivevla.md]], whose sparse perception experts are worth a few points of planning. The difference is where the perception output goes: WCog-VLA's agent tokens are *read by the planner*; Qwen-Drive's BEV head is a **side output the Planning Expert never sees** — the expert conditions on cached VLM attention KV, not on boxes, occupancy or maps. Explicit perception here shapes the shared representation only indirectly, and the measured planning effect is correspondingly near zero.
+
+**That is a cleaner statement of this page's central question than it previously had**: perception supervision helps planning when the planner *consumes the perception output*; when it only shapes a shared trunk, the effect is within noise. Nobody has run the missing arm — the same BEV outputs fed to the same Planning Expert as explicit conditions.
+
 ## Comparison: Perception Integration Approaches in AD VLMs
 
 | Approach | Spatial supervision | World state type | Shared params? | Planning benefit |
@@ -232,6 +279,7 @@ Two things follow. GeoWAM is the only entry here that **produces inspectable 3D 
 | **Auto-JEPA** | **None — ego-trajectory latent target only** | **No scene state is represented at all** | No VLM; frozen V-JEPA 2 | **Agent selectivity emerges (2.97× occlusion ratio); no spatial output available** |
 | **GeoWAM** | **Dense metric point maps (pseudo-labelled)** | **Future 3D point clouds in the ego frame** | No VLM; DVGT-2 encoder | **Explicit metric structure with no human annotation; decoded and inspectable at inference** |
 | World model (UniUGP) | Video generation | Future frame prediction | ✓ | Causal feature grounding |
+| **Probe head (Qwen-Drive-1.0)** | **Direct (detection + occupancy + map), as a *diagnostic*** | **Ego-frame BEV + voxel volume, decoded and inspectable** | **✓ (shares encoder and VLM; head is external)** | **None measured: the planner never reads the perception output (+0.05 RFS, unattributed)** |
 
 UniAD's planning-oriented multi-task learning is the closest philosophical predecessor to both Percept-WAM and UniDriveVLA. The key architectural divergence: Percept-WAM uses shared-weight tokens with a four-query decoder; UniDriveVLA uses decoupled MoT experts with sparse queries. Both share the insight that explicit spatial supervision improves planning, but they resolve the perception–reasoning conflict differently.
 

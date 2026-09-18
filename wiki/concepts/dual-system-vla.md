@@ -1,10 +1,10 @@
 ---
 title: Dual-System VLA for Autonomous Driving
 type: concept
-sources: [raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
-related: [sources/lwdrive.md, sources/brainwam.md, sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md]
+sources: [raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
+related: [sources/drive-hwm.md, sources/lwdrive.md, sources/brainwam.md, sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md]
 created: 2026-04-05
-updated: 2026-09-04
+updated: 2026-09-14
 confidence: high
 ---
 
@@ -337,6 +337,39 @@ Structurally this is a dual-system design where **System A is Qwen2.5-VL-3B and 
 | [[sources/drivewam.md]] | Frozen Qwen3-VL-8B advisor | Wan2.2-5B policy | Natural language, one-way | 90.1 PDMS |
 | [[sources/brainwam.md]] | Qwen3-VL-4B VLA | Wan2.2-5B WAM | 8 action tokens, bidirectional | 89.5 PDMS |
 | **[[sources/lwdrive.md]]** | **Qwen2.5-VL-3B (frozen in stage 2)** | **6-stage BEV proposal refiner** | **Full hidden states, read six times at six depths** | **92.0 PDMS** |
+| **[[sources/drive-hwm.md]]** | **V-JEPA flow-latent predictor (no decision)** | **Emu3-8B + AR action expert** | **One Dynamic-Aware Latent, FiLM scale-and-shift** | **93.8 / 93.3 PDMS** |
+
+## Drive-HWM: Fast–Slow by Temporal Role {#temporal-role}
+
+Every design above splits *what kind of work* each system does. [[sources/drive-hwm.md]] splits **how often each system runs**, and it is the first entry here whose slow system emits no decision of any kind.
+
+The paper draws the boundary itself, and the distinction is real:
+
+> "Several driving VLAs further adopt fast–slow designs to balance decision quality and computational cost: routine scenarios use direct action generation, whereas challenging situations invoke more expensive semantic or chain-of-thought reasoning. These methods separate reasoning modes and allocate computation according to scenario complexity. In contrast, our hierarchy separates explicit future representation prediction from action generation according to their temporal roles."
+
+Three axes now exist on this page, and they are independent:
+
+| Axis | What triggers the slow system | Examples |
+|---|---|---|
+| **Scene difficulty** | a routing decision per scene | [[sources/autovla.md]], [[sources/adathinkdrive.md]], [[sources/deepsight.md]], [[sources/clear.md]] |
+| **Module cost** | always, but cached or downsampled | DualDriveVLA ([[sources/hybriddriveVLA.md]], 15% of frames), [[sources/drivewam.md]] (frozen advisor per chunk), [[sources/automot.md]] (layer-wise KV cache) |
+| **Temporal role** | **a fixed period — every $N$ steps, unconditionally** | **Drive-HWM** ($N=8$) |
+
+**What is genuinely new is the slow system's output type.** Senna-2 emits meta-actions, DriveWAM emits natural-language guidance, LWDrive emits an intent anchor, BrainWAM emits 8 action tokens — all of them *decisions*, at some level of abstraction. Drive-HWM's slow branch emits a **prediction about the world** and explicitly nothing else: §III-B states "the slow branch therefore does not output actions or an explicit trajectory." The fast model is not executing or refining a plan; it is reading a forecast. That removes the consistency problem this page is largely organized around — there is no decision to be inconsistent with — and replaces it with a different question, which is whether the forecast is *used*. Drive-HWM's answer is the next-frame auxiliary loss, conditioned on the Dynamic-Aware Latent specifically so that "the fast model [makes] effective use of the dynamic context instead of ignoring it during action training."
+
+**On the interface, it lands opposite BrainWAM and reaches the same place.** [[sources/brainwam.md]] found raw-token sharing in one attention pool actively harmful (Tri-MoT 87.8 below its own WAM-only 88.1) and fixed it with a narrow 8-token gated cross-attention bottleneck. Drive-HWM never puts the slow output in the token stream at all — FiLM modulates hidden-state channels, leaving "the token organization of the pretrained backbone" untouched — and its own sweep ranks the options:
+
+| Conditioning | PDMS |
+|---|---:|
+| Concatenation | 92.5 |
+| Cross-attention | 93.0 |
+| Gated cross-attention | 93.1 |
+| AdaLN | 93.3 |
+| **FiLM** | **93.8** |
+
+**Both papers put concatenation last, and both conclude the backbone's sequence layout should not be disturbed.** That is now two independent architectures agreeing, by different mechanisms, that a world-model branch should reach a pretrained multimodal policy through a *narrow, non-token* channel. FiLM is the cheaper of the two.
+
+**The caveat is large and belongs here rather than on the world-model page.** The temporal-role split is a claim about *deployment*, and NAVSIM cannot test it: the benchmark is single-shot, so with $N=8$ at its 8-pose convention the slow model fires exactly once per scenario and the fast model never receives a second observation. See [[concepts/navsim-benchmark.md]]. **What Table IV measures is a conditioning stream, not a schedule** — and it is worth +0.3 or +0.8 PDMS depending on which of the paper's [two result sets](../sources/drive-hwm.md#two-result-sets) is correct, against 1.3 for the conditioning mechanism alone. The rate hierarchy is the least-supported part of a paper whose other measurements are clean.
 
 ## Open Questions
 
@@ -347,3 +380,5 @@ Structurally this is a dual-system design where **System A is Qwen2.5-VL-3B and 
 - How does dual-system alignment interact with GRPO-style reward shaping (used in WAM-Flow/ReCogDrive)?
 - Does MoT's anti-interference benefit hold at larger scales (>8B) where shared-weight models also benefit from more parameters?
 - Can UniDriveVLA's perception + action MoT be combined with Senna-2's consistency alignment for further gains?
+- **Does a fixed-period slow branch beat a difficulty-routed one?** Drive-HWM runs its slow model every $N=8$ steps unconditionally; CLEAR, AdaThinkDrive and AutoVLA all spend slow compute only where a router says it is needed. Nobody has compared the two policies at matched average cost, and the comparison is well-posed: Drive-HWM's slow branch is 25.6 ms, so a router that fired it on a third of scenes would free budget for a larger one. See [Fast–Slow by Temporal Role](#temporal-role).
+- **Is a decision-free slow system enough?** Drive-HWM is the first design here whose slow branch emits a forecast rather than a plan, which eliminates the VLM-action consistency problem this page is built around. Whether that is a simplification or a loss is untested — no paper compares a forecast-only slow branch against a meta-action or intent-anchor one under a fixed fast policy.

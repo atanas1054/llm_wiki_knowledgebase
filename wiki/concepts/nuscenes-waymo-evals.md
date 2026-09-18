@@ -2,9 +2,9 @@
 title: nuScenes and Waymo Evaluations
 type: concept
 sources: [raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md]
-related: [sources/lwdrive.md, sources/adaptive-wam.md, sources/foresight.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/intent-conditioned-planning.md, concepts/best-of-n.md, concepts/physicalai-av-benchmark.md, sources/autovla.md, sources/hermes.md, sources/uniugp.md, sources/reasoning-vla.md, sources/driveva.md, sources/explorevla.md, sources/onedrive.md, sources/policy-world-model.md, sources/dial.md, sources/drivewam.md, sources/simwam.md]
+related: [sources/qwen-drive-1.0.md, sources/lwdrive.md, sources/adaptive-wam.md, sources/foresight.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/intent-conditioned-planning.md, concepts/best-of-n.md, concepts/physicalai-av-benchmark.md, sources/autovla.md, sources/hermes.md, sources/uniugp.md, sources/reasoning-vla.md, sources/driveva.md, sources/explorevla.md, sources/onedrive.md, sources/policy-world-model.md, sources/dial.md, sources/drivewam.md, sources/simwam.md]
 created: 2026-05-01
-updated: 2026-09-04
+updated: 2026-09-18
 confidence: high
 ---
 
@@ -35,6 +35,29 @@ Protocol caveats:
 - Standard RFS scores 3 s and 5 s anchors with a hard maximum over raters; DIAL uses denser anchors and label-softmax aggregation only during training.
 - RFS is open-loop preference alignment and does not directly measure reactive collision avoidance or closed-loop stability.
 - The paper tabulates `TR` but the available source extraction does not define it.
+
+## WOD-E2E RFS: the wiki's entries in one place {#rfs-table}
+
+[[sources/qwen-drive-1.0.md]] supplies the first table here that places several ingested methods side by side on the **test** split.
+
+| Method | Split | RFS | Note |
+|---|---|---:|---|
+| Human driver (logged trajectory) | val | 8.13 | the reference [[sources/dial.md]] also reports |
+| Qwen-Drive-1.0-RL | val | **8.45** | RL trained on this split's rater annotations - in-sample |
+| Qwen-Drive-1.0-RL, no shared-ADE anchor | val | **8.68** | ablation only; the highest number in that paper |
+| MindVLA-U1 (RL) | val | 8.20 | not ingested |
+| [[sources/dial.md]] | held-out val | 8.211 | intent-balanced GRPO; oracle Best-of-128 ceiling 9.14 |
+| Qwen-Drive-1.0-SFT | val | 7.95 | with or without reasoning |
+| **Qwen-Drive-1.0-RL** | **test** | **7.91** | **+0.13 from RL; +0.02 from reasoning** |
+| MindVLA-U1 (RL) | test | 7.87 | not ingested |
+| [[sources/nord.md]] | test | 7.71 | reasoning-free, 6-17x less data |
+| [[sources/autovla.md]] | test | 7.56 | |
+| [[sources/hermes.md]] | not stated | 6.81 | distilled risk-aware student |
+
+Two protocol notes this page now tracks:
+
+- **In-sample RFS is not a driving claim.** Qwen-Drive states it plainly: because the val rater annotations supply its reward, 8.45 above the human 8.13 "indicates effective optimization of preference alignment on the training scenarios rather than generalization beyond human driving." The un-anchored ablation reaching 8.68 makes the point harder. **Only test-split RFS should be read as a result**, and the spread there across all ingested methods is 7.56-7.91.
+- **Two papers give different counts for the annotated validation set.** DIAL uses 338 of **438** labelled validation sequences for RL and holds out 100; Qwen-Drive trains RL on **479** rater-annotated scenarios. Whether these are different dataset versions, different filters, or different definitions of "annotated" is unresolved, and it affects what "held out" means in both papers.
 
 ## Takeaways
 
