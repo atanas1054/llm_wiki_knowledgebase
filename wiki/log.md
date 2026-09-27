@@ -2822,3 +2822,23 @@ Two consequences, neither addressed by the paper: **the v1 rank is undecidable**
 **Figure note**: 9 figures embedded; Fig. 3 (mask) has no image. The Fig. 7 caption says outdoor but the image is indoor. All 12 tables are reproduced (Tables 4/8 and 5/12 are merged on the source page).
 
 **New methods for the gap list**: UniWorldVLA (89.4 v1), ImagiDrive, WorldRFT, World4Drive, ABot-N0, NavFoM, CityWalker, Fast-WAM.
+
+
+## 2026-09-27 - Lint
+
+**Structural checks**: 112 pages. No orphans; no broken wiki links; all frontmatter complete; every page in `index.md`; all embedded images resolve. `concepts/divergent-thinking-in-vlms.md` had inbound links only from frontmatter `related:` lists, so a body link was added from `rl-for-ad.md`.
+
+**Stale claims fixed**:
+- `navsim-benchmark.md`: the WAM-Diff rank list named CoWorld-VLA twice and predated SUV. Corrected to "tied seventh" in both places.
+- `qwen-drive-1.0.md`: "the wiki's best world-action model" (SimWAM 91.5) contradicted DA-WAM 93.7. Scoped to "best video-prior WAM".
+- `lwdrive.md`: "all eight highest non-BoN v1 entries train a scorer" is broken by Drive-HWM (no scorer, 93.8 / 93.3). Annotated.
+- `world-model-for-ad.md` Open Questions: the frontier updated from DriveSuprim 93.5 to CLEAR/DA-WAM 93.7. The test-time imagination question marked partially answered (SUV/Metis, navhard). The open-loop vs. robustness question gains three same-backbone navtest-small / navhard-large effects. The WA-JEPA inference question now requires navhard.
+- `README.md`: 74 → 77 papers; GRAVA / SUV / Metis rows added above the methodological block; SUV added under highest v2; the mixed-table count updated.
+
+**Contradictions recorded, not resolved**:
+- SUV (action reads future: +4.1 navhard) vs. Metis (bidirectional: worst on navhard). Hypothesis: feedback direction. See `world-model-for-ad#mask-family`.
+- navhard split size: 244 / 4,164 (Metis) vs. 450 / 5,462 (SUV); SUV copies Metis rows.
+- Residual-sign heuristic vs. WA-JEPA's protocol partition: four exceptions (DriveVLA-W0 86.1, DriveWorld-VLA 86.8, DiffusionDriveV2 87.5, DiffusionDrive 84.5).
+- Metis's own row (corrected-looking) vs. its pre-fix baselines.
+
+**Concept pages suggested** (by frequency across sources): latency and inference cost (49 source pages); flow-matching planners (29); single-run and seed-variance reporting (22); video-generation priors, i.e. Wan2.x backbones (13); attention masks in WAMs (12); reasoning faithfulness and interventions (9); teacher pseudo-labels (9).

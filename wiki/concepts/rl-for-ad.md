@@ -1052,7 +1052,7 @@ Consecutive active sets overlap by only **21.8% (Jaccard)**. The paper reports (
 **Where it fits on this page:**
 - It is an outer-loop, per-scene version of DAPO's dynamic sampling ([[sources/dapo.md]]), which only drops zero-variance groups.
 - It is a curriculum answer to [[sources/nord.md]]'s difficulty bias: scenes that are all-fail or all-pass never enter the batch.
-- It is the same move as [[sources/curious-vla.md]]'s sample refresh against policy narrowing.
+- It is the same move as [[sources/curious-vla.md]]'s sample refresh against policy narrowing (see [[concepts/divergent-thinking-in-vlms.md]] for the diversity-collapse background).
 - **None of these has been compared to the others, and GRAVA does not compare Active RL against plain GRPO on the full pool.**
 
 **Two further observations:**

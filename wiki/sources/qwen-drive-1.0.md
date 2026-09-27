@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/Qwen-Drive-1.0_ An Initial Step towards a Vision-Language Foundation Model for Autonomous Driving.md]
 related: [concepts/vlm-domain-adaptation.md, concepts/general-capability-retention.md, concepts/alpasim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/perception-for-planning.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/chain-of-thought-for-ad.md, concepts/physicalai-av-benchmark.md, concepts/nuscenes-waymo-evals.md, concepts/best-of-n.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/action-tokenization.md, concepts/mixture-of-experts.md, sources/alpamayo-r1.md, sources/unidrivevla.md, sources/automot.md, sources/percept-wam.md, sources/drivewam.md, sources/simwam.md, sources/spanvla.md, sources/autovla.md, sources/nord.md, sources/dial.md, sources/hermes.md, sources/recogdrive.md, sources/explorevla.md, sources/coworld-vla.md, sources/drivelaw.md, sources/drive-hwm.md, sources/epona.md, sources/diffusiondrive.md, sources/onedrive.md, sources/sgdrive.md, sources/adaptive-wam.md, sources/geoworldad.md, sources/latent-wam.md, sources/drivevla-w0.md, sources/da-wam.md, sources/foresight.md, sources/futuresightdrive.md, sources/wcog-vla.md]
 created: 2026-09-18
-updated: 2026-09-18
+updated: 2026-09-27
 confidence: high
 ---
 
@@ -47,7 +47,7 @@ Trained in four stages — head-only → joint perception+VQA (encoder and VLM *
 1. **The general-capability retention result is the contribution, and it is the first of its kind in this wiki.** Fifteen general VLM benchmarks, thirteen models, one decoding protocol. Every driving- or embodiment-specialized comparison model loses most of its general competence; Qwen-Drive loses 0.99 points on one group and *gains* on the other. See [Retention](#retention) and the new page [[concepts/general-capability-retention.md]].
 2. **The BEV head answers a question this wiki has asked repeatedly: do vision-language-pretrained features contain driving 3D structure? Measurably, no.** A converged head on frozen SigLIP-Qwen features trails a dedicated detector *on the same features* by 6.34 mAP. Unfreezing recovers +10.46. See [The 3D probe](#probe).
 3. **The paper's own ablation prices its entire driving adaptation at +0.08 RFS for planning** — 1.54 M curated samples, 3.09 M filtered VQA pairs, 24 public datasets and a 3D perception stack, measured against an unadapted Qwen3.5-4B under a matched Planning Expert. See [Stage 2 ablation](#stage2-ablation). The wiki's "mechanism is the smaller term" streak reaches six, and this is the largest gap between investment and measured effect it has recorded.
-4. **Its AlpaSim table is the wiki's first head-to-head closed-loop reproduction of NAVSIM leaders — and the ordering nearly inverts.** [[sources/simwam.md]] (91.5 PDMS, the wiki's best world-action model) has the *worst* at-fault AlpaSim score in the table; [[sources/drivewam.md]] posts a flattering at-fault score by barely moving; Alpamayo-R1, which reports no NAVSIM result at all, leads. See [AlpaSim](#alpasim).
+4. **Its AlpaSim table is the wiki's first head-to-head closed-loop reproduction of NAVSIM leaders — and the ordering nearly inverts.** [[sources/simwam.md]] (91.5 PDMS, the wiki's best *video-prior* world-action model; DA-WAM's 93.7 uses a V-JEPA latent world model) has the *worst* at-fault AlpaSim score in the table; [[sources/drivewam.md]] posts a flattering at-fault score by barely moving; Alpamayo-R1, which reports no NAVSIM result at all, leads. See [AlpaSim](#alpasim).
 5. **It reverses the PhysicalAI-AV ordering that [[concepts/physicalai-av-benchmark.md]] flagged as unverified.** DriveWAM's own curated subset put DriveWAM at 0.47 ADE@3s and Alpamayo-1.5 at 0.80. On the standard split, reproduced here, DriveWAM is 0.67 and Alpamayo-1.5 is 0.35. See [PAI-AV](#paiav).
 
 ---
@@ -528,7 +528,7 @@ Set the NAVSIM ordering beside the closed-loop ordering:
 
 | | NAVSIM-v1 PDMS | AlpaSim at-fault score |
 |---|---:|---:|
-| [[sources/simwam.md]] | **91.5** (wiki's best WAM) | **0.30** (last) |
+| [[sources/simwam.md]] | **91.5** (wiki's best video-prior WAM) | **0.30** (last) |
 | Qwen-Drive-1.0-RL | 90.7 | 0.37 |
 | [[sources/drivewam.md]] | 90.1 | 0.53 |
 | Alpamayo-1.5 | not reported | 0.45 |

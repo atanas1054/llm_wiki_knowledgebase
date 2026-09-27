@@ -359,7 +359,7 @@ And unusually, the same paper supplies evidence rather than leaving that as a wo
 
 DreamerAD ([[sources/dreameraD.md]]) achieves 87.7 EPDMS — surpasses Senna-2 (86.6), WorldRFT (86.7), and FLARE (86.3). Unlike DDP, DreamerAD compares directly against WorldRFT and Epona in its own table, strengthening its position.
 
-**WAM-Diff (89.7)** ([[sources/wam-diff.md]]) was the wiki's NAVSIM-v2 leader at single-sample until WA-JEPA; under the corrected protocol it is now sixth (see [Evaluator Drift](#evaluator-drift-this-table-mixes-two-protocols)). It remains a strong result — but **no direct head-to-head** with DriveDreamer-Policy (88.7), DreamerAD (87.7), or Senna-2 (86.6); those methods are absent from WAM-Diff's comparison table. The v2.2 codebase version may or may not be directly comparable to DriveFine's bug-fixed scorer. If the 89.7 number is consistent with the standard scorer, WAM-Diff sets a new single-sample NAVSIM-v2 SOTA. EC = 78.5 (below DDP 79.4 and much below FLARE 87.5).
+**WAM-Diff (89.7)** ([[sources/wam-diff.md]]) was the wiki's NAVSIM-v2 leader at single-sample until WA-JEPA; under the corrected protocol it is now tied seventh, behind WA-JEPA, SUV, Discrete-WAM, SparseDriveV2, CoWorld-VLA and DriveFuture (see [Evaluator Drift](#evaluator-drift-this-table-mixes-two-protocols)). It remains a strong result — but **no direct head-to-head** with DriveDreamer-Policy (88.7), DreamerAD (87.7), or Senna-2 (86.6); those methods are absent from WAM-Diff's comparison table. The v2.2 codebase version may or may not be directly comparable to DriveFine's bug-fixed scorer. If the 89.7 number is consistent with the standard scorer, WAM-Diff sets a new single-sample NAVSIM-v2 SOTA. EC = 78.5 (below DDP 79.4 and much below FLARE 87.5).
 
 **Vega BoN-6 (89.4)** ([[sources/vega.md]]) holds the best-of-N wiki NAVSIM-v2 result — no direct head-to-head with DriveDreamer-Policy (88.7), DreamerAD (87.7), or Senna-2 (86.6). Vega uses BoN-6 (best of 6 samples), a different inference regime from single-sample results.
 
@@ -435,7 +435,7 @@ NAVSIM-v2's EPDMS aggregation was corrected at devkit commit [`359c7f7`](https:/
 
 Two corrections to earlier wiki claims follow from this partition — though see [the next section](#three-protocols), which shows the partition itself is unreliable:
 
-1. **"WAM-Diff 89.7 is the NAVSIM-v2 SOTA" no longer holds.** Under the corrected protocol it is now sixth, behind WA-JEPA 91.7, Discrete-WAM 90.4, SparseDriveV2 90.1, CoWorld-VLA 90.0, and CoWorld-VLA 90.0 — **two** of which are still not ingested (Discrete-WAM, SparseDriveV2); [[sources/drivefuture.md]] and [[sources/coworld-vla.md]] now are, and both rows check out at the primary source.
+1. **"WAM-Diff 89.7 is the NAVSIM-v2 SOTA" no longer holds.** Under the corrected protocol it is now tied seventh with DriveFine, behind WA-JEPA 91.7, SUV 91.0, Discrete-WAM 90.4, SparseDriveV2 90.1, CoWorld-VLA 90.0, and DriveFuture 89.9 *(list corrected at the 2026-09-27 lint: it previously named CoWorld-VLA twice and predates SUV)* — **two** of which are still not ingested (Discrete-WAM, SparseDriveV2); [[sources/drivefuture.md]] and [[sources/coworld-vla.md]] now are, and both rows check out at the primary source.
 2. **The Auto-JEPA caveat was too strong.** It previously said "do not compare 89.1 against any other NAVSIM-v2 number in this wiki." The correct statement is narrower: compare it only within the corrected cohort, where 89.1 sits *ninth*, below WAM-Diff and Latent-WAM. Its 85.6 belongs in the pre-fix cohort.
 
 ### GeoWAM Breaks the Two-Protocol Model {#three-protocols}
@@ -611,10 +611,11 @@ The [residual check](#submetric-residual) was introduced to find rows whose aggr
 
 **The two pairs with known conventions flip sign exactly as predicted.** Mechanism: the corrected evaluator sets a component to 1 per scene wherever the human also fails, *after* the submetric means are reported, so its aggregate sits above the closed form of those means.
 
-**Use it as a heuristic, not a verdict. Three rows disagree with the partition above:**
+**Use it as a heuristic, not a verdict. Four rows disagree with the partition above:**
 - DriveVLA-W0 86.1 (classified pre-fix) has residual −1.3.
 - DriveWorld-VLA 86.8 (classified corrected) has +2.6.
 - DiffusionDriveV2 87.5 (corrected) has +0.1.
+- DiffusionDrive 84.5 (classified corrected) has +2.5 in Metis's table. *(Found at the 2026-09-27 lint.)*
 
 The Jensen gap from averaging per-scene products differs by method, so rows near zero are uninformative.
 
