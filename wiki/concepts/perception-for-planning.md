@@ -1,10 +1,10 @@
 ---
 title: Perception-Enhanced Planning in VLA Models
 type: concept
-sources: [raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [concepts/general-capability-retention.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/foresight.md, sources/geowam.md, sources/auto-jepa.md, sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md]
+sources: ["raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
+related: [sources/suv.md, sources/grava.md, concepts/general-capability-retention.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/foresight.md, sources/geowam.md, sources/auto-jepa.md, sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md]
 created: 2026-04-05
-updated: 2026-09-04
+updated: 2026-09-27
 confidence: high
 ---
 
@@ -264,6 +264,25 @@ Qwen-Drive is also the first paper here to price explicit 3D supervision on *all
 Set that beside [[sources/wcog-vla.md]], which measures removing its 3D perception module at **−3.3 PDMS**, and [[sources/unidrivevla.md]], whose sparse perception experts are worth a few points of planning. The difference is where the perception output goes: WCog-VLA's agent tokens are *read by the planner*; Qwen-Drive's BEV head is a **side output the Planning Expert never sees** — the expert conditions on cached VLM attention KV, not on boxes, occupancy or maps. Explicit perception here shapes the shared representation only indirectly, and the measured planning effect is correspondingly near zero.
 
 **That is a cleaner statement of this page's central question than it previously had**: perception supervision helps planning when the planner *consumes the perception output*; when it only shapes a shared trunk, the effect is within noise. Nobody has run the missing arm — the same BEV outputs fed to the same Planning Expert as explicit conditions.
+
+## Perception Inside the Reasoning Text: GRAVA {#in-trace-grounding}
+
+[[sources/grava.md]] adds no perception head and no perception query. 2D boxes (as tokens) and ego-frame 3D states (as numbers) are **written into the CoT** that precedes the action. They are learned from 2.2M graph-derived QA pairs whose 3D targets come from offline LiDAR-assisted annotation.
+
+- On an internal long-tail benchmark, **grounded QA pre-training beats ungrounded QA pre-training by +7.9 CDS** (82.2 → 90.1).
+- Removing pre-training altogether costs −10.68 PDMS on NAVSIM.
+- On held-out QA, metric 3D localization of critical objects from a single front image scores 5.7/10 for GRAVA, against ≤3.3 for zero-shot GPT-5.4, Kimi-K2.5 and the untuned backbone.
+
+This is a fourth integration option beside heads, queries and latent distillation: **the perception output is consumed by the planner because it is literally in the planner's context**. That satisfies this page's working rule, *perception helps when the planner reads its output*, by construction. The cost is decoding the perception as tokens every frame, and the paper reports no latency.
+
+## Future Perception as Generated Video: SUV {#perception-as-video}
+
+[[sources/suv.md]] has no perception head. It **generates** future segmentation, relative-depth and instance-track *videos* with the same video expert that generates future RGB, using SAM 3 and DA3 outputs as targets, and lets the planner read their latents.
+- Adding these three supervision streams gives **+1.0 navtest / +2.3 navhard** even when the planner cannot read them.
+- Access on top of that gives a further +0.3 / +4.1.
+- Per-stream removal on navhard: tracks −1.5, depth −1.1, segmentation −0.5.
+
+This extends the page's working rule, *perception helps when the planner reads its output*, with a qualification: here perception also helps as a pure training target, and reading it matters mostly out of distribution.
 
 ## Comparison: Perception Integration Approaches in AD VLMs
 

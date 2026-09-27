@@ -1,10 +1,10 @@
 ---
 title: World Models for Autonomous Driving
 type: concept
-sources: [raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md]
-related: [concepts/alpasim-benchmark.md, sources/qwen-drive-1.0.md, sources/drive-hwm.md, sources/coworld-vla.md, sources/drivefuture.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/lwdrive.md, sources/wcog-vla.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/da-wam.md, sources/geowam.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/simwam.md, sources/sgdrive.md, sources/drivelaw.md, sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md, concepts/counterfactual-prediction.md, sources/driving-wm-counterfactuals.md]
+sources: ["raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md]
+related: [sources/metis.md, sources/suv.md, concepts/alpasim-benchmark.md, sources/qwen-drive-1.0.md, sources/drive-hwm.md, sources/coworld-vla.md, sources/drivefuture.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/lwdrive.md, sources/wcog-vla.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/da-wam.md, sources/geowam.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/simwam.md, sources/sgdrive.md, sources/drivelaw.md, sources/uniugp.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/epona.md, sources/driveva.md, sources/explorevla.md, sources/dynvla.md, sources/onevl.md, sources/latent-wam.md, sources/drive-jepa.md, sources/policy-world-model.md, sources/deepsight.md, sources/drivewam.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/physicalai-av-benchmark.md, concepts/counterfactual-prediction.md, sources/driving-wm-counterfactuals.md]
 created: 2026-04-05
-updated: 2026-09-18
+updated: 2026-09-27
 confidence: high
 ---
 
@@ -940,6 +940,39 @@ Three readings, none tested by anyone:
 
 **What the pattern does establish cleanly is cost.** 25.6 ms for a parallel $K=8$ latent prediction, amortized to 3.2 ms per step, against [[sources/adaptive-wam.md]]'s 170 ms total, [[sources/simwam.md]]'s 518 ms and [[sources/foresight.md]]'s 870 ms of world model. **A flow-latent predictor is roughly two orders of magnitude cheaper than running a video generator to a finished future**, which makes it the best cost-per-point entry in the [comparison below](#test-time-imagination) if the gain is real. Note the peak step is 107.2 ms, so a real-time budget must be sized for $T_{\mathrm{peak}}$, not the amortized figure.
 
+### 36. Perception Tasks as Extra Generated Video Streams (SUV) {#perception-as-video}
+
+[[sources/suv.md]] (XJTU + USTC + Yinwang + Fudan) asks the question [[sources/coworld-vla.md]] asked (Pattern 34), whether one future target is enough, but answers it inside the *generator* instead of inside a VLM.
+- Frozen SAM 3 and Depth Anything 3 turn each recorded future clip into three more videos: palette-rendered segmentation, Turbo-colormapped relative depth, and color-coded instance tracks.
+- These are encoded by the same frozen Wan VAE, and **one Wan2.2-5B video expert generates all four streams** with no stream-specific heads. A modality prompt selects which stream is being generated.
+- A ~1B MoT action expert reads every stream's latents at every block and denoising step. Streams cannot see each other, and the future cannot see the action.
+
+| Contrast | CoWorld-VLA (34) | SUV (36) |
+|---|---|---|
+| Where the targets live | Typed VLM tokens | Native video latents in the generator |
+| Teachers | V-JEPA, VGGT feature regression; Wan as a critic | SAM 3, DA3 outputs rendered as RGB video |
+| Generator at planning time | Discarded | **Kept**; 2–10 joint denoising steps |
+| Result | 88.7 PDMS v1 | 90.8 PDMS v1 / **91.0 EPDMS v2 (corrected)** / 36.9 navhard |
+
+**Two findings are transferable:**
+1. **Structured future supervision helps planning even when the planner never reads it.** It gives +1.0 navtest and +2.3 navhard with access disabled. This is the wiki's cleanest single-codebase evidence that *what* the generator is trained to predict shapes the planner's representation beyond RGB alone. It agrees with the wiki's objective-form and target-content threads.
+2. **Native generation vs. generate-then-perceive is a split decision.** Native generation is better on depth (δ₁ 77.0 vs. 71.0) and worse on segmentation (64.2 vs. 66.8 mIoU) and tracks (84.4 vs. 86.9 AssA). It is measured against the teachers, not ground truth.
+
+**Not addressed.** The mask blocks cross-stream attention to preserve the pretrained attention pattern, so consistency across streams rests on the shared prefix and weights, and is never measured. Track IDs are encoded modulo 7 per class, and depth is clip-relative.
+
+### 37. The Future Reads the Action; the Action Never Reads the Future (Metis) {#future-reads-action}
+
+[[sources/metis.md]] (Fudan + SII + Li Auto + others) keeps the SimWAM/SUV backbone (Wan2.2-5B + ~1B MoT action expert) and inverts the usual question. Instead of asking whether the planner should see the future, it lets the **future video attend to the action tokens**, so the video expert learns to generate the future *implied by the planned trajectory*. The action attends only to the current observation, so video is dropped at inference.
+- Against the isolated mask at 320×384: **+0.5 navtest EPDMS, +2.2 navhard**.
+- Against the bidirectional mask: +1.4 / +3.6.
+- Video co-training overall is worth +1.6 EPDMS against the action expert alone.
+
+**Two things are unmeasured:**
+- *Why* it helps. Gradients through the action's keys/values versus action-conditioned video learning; a stop-gradient ablation would separate them.
+- *Whether the generated video is any good*: no FVD, FID or PSNR is reported.
+
+The design is the training-time counterpart of **action-conditioned generation**, which [Action-Conditioned ≠ Counterfactual](#action-conditioned--counterfactual) treats as the open problem for evaluation. Here it is used only as a training signal, never as a rollout.
+
 ## Does Test-Time Future Imagination Help? {#test-time-imagination}
 
 This is now the central open dispute among world-model planners in the wiki, and SimWAM supplies the first controlled evidence.
@@ -975,6 +1008,43 @@ The closer the conditioning signal gets to an actual synthesized future, the wor
 This matters because it is an **independent, differently-motivated result pointing the same way as SimWAM's mask ablation**. SimWAM removed the future-token dependency and lost nothing; DriveLaW kept the generator but found that useful signal lives in its early internal activations rather than its output. Neither paper set out to test the other's hypothesis. DriveLaW is therefore better described not as imagine-then-act but as **"borrow the generator's representation, not its imagination"** — closer to Pattern 19 than its own framing suggests.
 
 **WA-JEPA does not test this and does not contradict it.** Its Table 4(c) removes the future-prediction training objective *and* the inference-time generation in the same row, exactly the confound SimWAM's isolated mask was designed to break. So its +0.6 EPDMS is evidence for the objective — which every paper here already supports — and says nothing about the inference path. Given SimWAM's and DriveLaW's results, the live hypothesis is that WA-JEPA's 12-step scene denoising at inference is wasted compute and an isolated-mask variant would score the same. One run would settle it. What WA-JEPA *does* add is orthogonal and more interesting: **the objective's form matters as much as its presence** (see [Pattern 23](#objective-form)).
+
+### SUV: The Access Effect Appears on navhard, Not navtest {#navhard-access}
+
+[[sources/suv.md]] runs a 2×2 of structured supervision × future access on a Wan2.2-5B MoT WAM from the same family as SimWAM, and it reports **navhard as well as navtest**:
+
+| Future access | navtest EPDMS | navhard EPDMS |
+|---|---:|---:|
+| Off (RGB supervision only) | 89.7 | 30.5 |
+| **On** (RGB supervision only) | 90.6 (+0.9) | **35.0 (+4.5)** |
+| Off (+ seg/depth/track supervision) | 90.7 | 32.8 |
+| **On** (+ seg/depth/track supervision) | 91.0 (+0.3) | **36.9 (+4.1)** |
+
+**This reconciles SimWAM's null with the imagine-then-act camp.**
+- On navtest, access is worth +0.3 once supervision is rich. That is inside SimWAM's ±0.2 band, so SUV *reproduces* the null.
+- On navhard, where Stage 2 re-renders the scene from a displaced ego pose, access is worth +4.1 to +4.5, with both stages rising by about 2.5.
+- So the live hypothesis becomes: **test-time future access matters under observation shift, and navtest is not built to detect it.** Neither SimWAM nor WA-JEPA reported navhard.
+
+**How much weight this deserves.** Single runs, and only 450 Stage-1 scenes, so this is suggestive, not settled. The direct test is still missing: SimWAM's isolated-mask checkpoint evaluated on navhard would settle it with one run.
+
+**The price.** Access requires denoising the future at inference. SUV at 2 steps runs in 288 ms, against an unreported cost for the no-access variant. On navtest the trade is poor (+0.3). On navhard it is the largest single effect in SUV's ablations.
+
+### The Mask Family: Three Papers, One Backbone {#mask-family}
+
+[[sources/simwam.md]], [[sources/metis.md]] and [[sources/suv.md]] share Wan2.2-5B, a ~1B hidden-1024 MoT action expert, joint flow matching (λ=1), and a near-identical recipe (60 epochs, 8×H200, AdamW 1e-4, wd 0.01, cosine). They differ mainly in the attention mask, so this is the closest thing the wiki has to a controlled cross-paper sweep:
+
+| Mask | Action → future | Future → action | Video at inference | SimWAM v1 PDMS | Metis @320×384 v2 / navhard | SUV v2 / navhard |
+|---|:-:|:-:|:-:|---:|---:|---:|
+| Bidirectional | ✓ | ✓ | yes | 90.2 | 87.4 / 28.0 | – |
+| Action reads future | ✓ | ✗ | yes | 90.1 | – | 91.0 / 36.9 |
+| Isolated | ✗ | ✗ | no | 90.3 | 88.3 / 29.4 | 90.7 / 32.8 |
+| Future reads action | ✗ | ✓ | no | – | 88.8 / 31.6 | – |
+
+**What holds across all three.** On navtest, every non-bidirectional mask is within 0.5 of every other. On navhard, both departures from isolation that avoid feedback help: +2.2 for future-reads-action (Metis) and +4.1 for action-reads-future (SUV). SimWAM's null stands only because it never reported navhard.
+
+**The conflict, and one way to resolve it.** Metis's bidirectional mask contains SUV's helpful pathway (the action reads the future), yet it is the *worst* variant on navhard. The two results reconcile if **the damage comes from the feedback loop**: the future reads a noisy action that then reads that same future. [[sources/brainwam.md]]'s symmetric unmasked Tri-MoT losing to its isolated variant points the same way. **The deciding experiment is the missing cell**: SUV's one-way access and Metis's one-way action-conditioning in the same model, plus both at once, evaluated on navhard.
+
+**Updated position on test-time imagination.** On navtest it remains unnecessary: three papers, no effect. On navhard, one-way access to the imagined future gave the largest single mechanism effect recorded for this backbone (+4.1). That favours the imagine-then-act camp *under observation shift*. Single runs throughout.
 
 ### DA-WAM Supplies the Missing Variable: Shared vs. Per-Candidate
 

@@ -1,10 +1,10 @@
 ---
 title: Navhard and OOD Evaluation
 type: concept
-sources: [raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md]
-related: [sources/drivefuture.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, sources/drivefine.md, sources/spanvla.md, sources/had.md, sources/geowam.md, sources/drivelaw.md, sources/drivevla-w0.md]
+sources: ["raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md]
+related: [sources/metis.md, sources/suv.md, sources/drivefuture.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, sources/drivefine.md, sources/spanvla.md, sources/had.md, sources/geowam.md, sources/drivelaw.md, sources/drivevla-w0.md]
 created: 2026-05-01
-updated: 2026-09-11
+updated: 2026-09-27
 confidence: medium
 ---
 
@@ -49,6 +49,8 @@ From [[sources/drivefuture.md]] Table 1. All values are the **combined** two-sta
 | DiffVLA *(not ingested)* | V2-99 + ViT-L/14 | 45.0 | Yes | VLA |
 | [[sources/drivesuprim.md]] | V2-99 | 42.1 | Yes | Selection-based |
 | [[sources/spanvla.md]] | Qwen2.5-VL-3B | 40.1 | No | VLA |
+| [[sources/suv.md]] | Wan2.2-5B + 1B action expert | 36.9 | No | Video WAM (four future streams) |
+| [[sources/metis.md]] | Wan2.2-5B + 1B action expert | 32.2 | No | Video WAM (video dropped at inference) |
 | **DriveFuture, no scorer** | V2-99 | **34.6** | **No** | Latent world model + diffusion |
 | World4Drive *(not ingested)* | ResNet-34 | 34.9 | No | Latent world model |
 | MindDrive *(not ingested)* | ResNet-34 | 30.9 | No | World model + VLM |
@@ -115,6 +117,14 @@ From [[sources/geowam.md]] Table 3. Methods marked † are trained with reinforc
 **GeoWAM leads its own table while using strictly weaker supervision than the three methods below it.** EponaV2, NavFormer, and LTFv6 all use RL or direct PDMS-score supervision; GeoWAM uses $\ell_1$ trajectory regression. Its margin over EponaV2 is only +0.5, so the ranking is not robust — but the supervision asymmetry runs against it, which makes the result more interesting than the gap size suggests.
 
 **The +4.9 over DVGT-2 is the load-bearing number.** On navtest GeoWAM beats its own DVGT-2 initialization by only +0.6; on navhard the same architectural addition — future-geometry forecasting — is worth eight times more. That is precisely what a world-model thesis predicts: anticipation should matter most where errors compound. It is the strongest evidence in the wiki that world modeling buys robustness rather than open-loop accuracy, and neither GeoWAM nor any other paper remarks on it.
+
+**SUV adds the first controlled inference-path effect on navhard** ([[sources/suv.md]]). The paper reports 36.9 combined (Stage 1 82.3 / Stage 2 43.9, per-stage scores), second among unscored methods behind SpanVLA 40.1. Its Stage-1 DAC of 94.2 is the best unscored value here, and its Stage-2 LK of 47.2 sits in the usual 45–50 band. More important is its ablation: **letting the action expert read the generated future adds +4.1 to +4.5 on navhard but only +0.3 to +0.9 on navtest**. This is the first evidence that navhard can detect a mechanism navtest cannot. See [[concepts/world-model-for-ad.md#navhard-access]].
+
+**Metis supplies two more navhard-only effects, and a split-size discrepancy** ([[sources/metis.md]]).
+- *Mask*: at 320×384, letting future video read the action beats full isolation by +2.2 navhard, against +0.5 on navtest.
+- *Video prior*: Wan2.1-1.3B matches Wan2.2-5B on navtest but loses 2.4 on navhard.
+- Together with SUV's +4.1 access effect, **three same-backbone mechanisms are now invisible on navtest and visible on navhard**. That is the strongest case yet that navhard measures something navtest does not.
+- *Split size*: Metis describes navhard as **244 Stage-1 / 4,164 Stage-2** scenarios. SUV describes it as **450 / 5,462**, yet copies Metis's rows. Its DiffusionDrive (27.5) and LTF (24.4) baselines also differ from other papers' copies (24.2; 25.1). Treat cross-paper navhard comparisons as provisional until the split is pinned down.
 
 ## Stage 2 Is Where Everything Collapses
 

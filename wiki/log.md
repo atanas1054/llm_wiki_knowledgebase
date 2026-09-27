@@ -2713,3 +2713,112 @@ Two consequences, neither addressed by the paper: **the v1 rank is undecidable**
 **New methods for the gap list**: **MindVLA-U1** (the strongest WOD-E2E competitor, 7.87 test RFS with RL, 8.20 val), **Cosmos-Reason2** (2B/8B/32B) and **Cosmos3-nano**, **MiMo-Embodied-7B**, **Alpamayo-1.5** (evaluated in four tables here and never ingested), **RAP-DINO**, **UniPlan**, **DiffusionLTF**, **Swin-Trajectory**, **HMVLM**, **dVLM-AD**, **Ego3D-Bench**, **VLADBench**, **SURDS**, **WaymoQA**, **PAI-AV-NuRec**, **AlpaSim** itself, and **nuScenes-OccNet** / **FlashOcc** on the perception side.
 
 **Figure note**: all eleven available figures embedded (`intro.png`, `qwendrive_overview.png`, `head.png`, `training_recipe.png`, `occ_process_vis.png`, `data_analysis.png`, `perception_vis.png`, `drivevqa-vis1.png`, `planning_vis.png`, `navsim-rl.png`, `ood_perception_vis.png`) and all eight tables reproduced in full. **Figures 11 and 12 - the RL reward/mixture ablation and the PAI-AV scaling curve - are captioned with no image in the clipping**, but unlike Drive-HWM's missing Fig. 4 both are largely recoverable from prose and are tabulated on the source page from the stated values. **Table 3 arrives flattened**, its HTML column structure gone; the column mapping is recovered and verified two ways (every row average reproduces to the stated figure, and the prose's "best on MMStar and RealWorldQA" plus "first or second on 6 of 10" hold only under that mapping). Appendix B's six qualitative images are external arXiv URLs and were not downloaded; the prompts and raw responses survive as text and the MiMo-Embodied 4,000-character self-correction loop in Appendix C.1 is recorded.
+
+
+## 2026-09-27 - Ingest: GRAVA: Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving
+
+**Source**: `raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md` (arXiv 2609.15169v1)
+**Authors**: Xiao Liu, Haoyu Li, Jianghao Leng, Lin Wang, Chao Sun. Organizations are not stated; compute is H20.
+**Pages created**: `wiki/sources/grava.md`
+**Pages updated**: `concepts/navsim-benchmark.md`, `concepts/rl-for-ad.md`, `concepts/chain-of-thought-for-ad.md`, `concepts/action-tokenization.md`, `concepts/perception-for-planning.md`, `index.md`
+**Confidence**: **medium**. Tables are intact and the arithmetic checks out (+19.3% / +20.5% relative; 62,111 / 102,861 = 60.4%). However, the reasoning ablation is internal-only, five figures are missing, and the reasoning targets leak the expert trajectory.
+
+**What it is**: the wiki's 75th paper. It is a purely autoregressive VLA (Qwen3-VL-8B, one front camera) that emits box-token-grounded reasoning followed by a primitive-plus-parameters action, which a parameter-free geometric decoder turns into waypoints.
+
+**Headline**:
+- **90.48 PDMS** on NAVSIM-v1, single greedy sample; pre-RL 82.10.
+- Internal long-tail benchmark: KOC 92.3 / CDS 90.1, against action-only 77.4 / 74.8.
+- Held-out QA: 6.86, against GPT-5.4 at 5.39.
+
+**Finding 1 - the most graded CoT ablation in the wiki.** On the internal benchmark: action-only 74.8 → coarse 77.9 → grounded objects 85.5 → full GRA 90.1 CDS, which separates having reasoning, grounding it, and structuring it. Without RL, full GRA scores 73.1, below action-only with RL. Reasoning pays only after RL. The ablation has no NAVSIM counterpart.
+
+**Finding 2 - editing the trace edits the action (0.438 → 0.823 normalized PDMS; win rate 3% → 55%).** This answers Qwen-Drive's doubt for this architecture. **Caveat recorded**: in Fig. 3 and the Appendix E transcript, the ego-decision target is wired from `trajectory.intent`, which is derived from the GT trajectory. Cognition QAs also say "the future trajectory shows…". The intervention therefore shows that the planner obeys the stated maneuver, not that the grounding produced it.
+
+**Finding 3 - Active RL.** DAPO-style GRPO on scenes that are greedy-failing, best-of-8-recoverable and high-variance, re-screened every loop (26,151 → 14,398 → 4,676 cases; 21.8% Jaccard between loops). It is never compared against plain GRPO. RL gives +8.38, **mostly safety** (DAC +6.4, TTC +6.1). This is the mirror image of the four already-safe-policy cases, and the third ~+8 gain from a ~81 pre-RL level (after AutoVLA and SpanVLA).
+
+**Finding 4 - the Executable Planner** (a mode-conditioned parametric vocabulary) beats direct waypoints by +3.25 PDMS. High- and low-reward samples usually share a primitive, so RL mostly tunes continuous parameters.
+
+**Limitations recorded**:
+- The +0.18 "best purely AR" margin comes from a table that omits DynVLA 91.7.
+- "60% of demonstrations" counts only warm-up cases; RL and self-distillation touch the whole pool, and Table II's 415K planner examples are unreconciled.
+- Screening shows a greedy training score of 0.91 against a navtest pre-RL score of 82.1; the checkpoint is unspecified.
+- The QA benchmark is in-distribution, uses GRAVA's own taxonomy, and is scored by a text-only judge.
+- The showcase transcript contradicts itself (vehicle/pedestrian flip; 15–20 m vs. 24.0 m).
+- No latency, no NAVSIM-v2, no public closed loop, single runs, no code.
+
+**Figure note**: 8 images embedded. Figs. 4, 5, 6, the density half of Fig. 7, and S3 have no image. The Fig. 7 caption is attached to the qualitative figure (`nous_qualitative_compact_draft.png`). In-text table and figure numbers are misreferenced ("Table V" is used for Tables III and IV). All tables (I–VI, S1, S2) are reproduced.
+
+**New methods for the gap list**: Neuro-Symbolic Drive (rule-grounded faithful reasoning from executable planners), DriveAgent-R1, OpenDriveVLA, SimLingo, AlphaDrive, Gen-Drive, NuPlanQA.
+
+
+## 2026-09-27 - Ingest: SUV: Future Scene Understanding as Video Generation for End-to-End Driving
+
+**Source**: `raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md` (arXiv 2608.03084v1)
+**Orgs**: Xi'an Jiaotong University, USTC, Yinwang Intelligent Technology, Fudan University. Code announced (`ASH-2046/SUV`).
+**Pages created**: `wiki/sources/suv.md`
+**Pages updated**: `concepts/world-model-for-ad.md` (new Pattern 36 plus `#navhard-access`), `concepts/navsim-benchmark.md` (v1 and v2 rows, corrected-cohort list), `concepts/navhard-ood-evaluation.md`, `concepts/nuscenes-waymo-evals.md`, `concepts/perception-for-planning.md`, `index.md`
+**Confidence**: **medium**. The clipping and tables are complete, the numbers are internally consistent, and the v2 submetric residual is normal (+0.5). However, the baseline tables are selective, one "corrected" table mixes conventions, and everything is single-run.
+
+**What it is**: the wiki's 76th paper. A Wan2.2-5B video expert generates RGB, segmentation, relative-depth and instance-track futures as four native video streams, with SAM 3 and DA3 as offline teachers. A 1B MoT action expert reads their latents during joint flow-matching denoising. One front camera, no RL, no scorer.
+
+**Headline**: 91.0 EPDMS on NAVSIM-v2 (corrected), 36.9 on navhard, 7.94 RFS on WOD-E2E test, 90.8 PDMS on v1. At 2 steps, 288 ms on an RTX 4090.
+
+**Finding 1 - the test-time imagination dispute gets a benchmark-dependent answer.** Future access is worth +0.3 on navtest (reproducing SimWAM's null) and **+4.1 on navhard**; with RGB-only supervision the figures are +0.9 and +4.5. Recorded in world-model-for-ad `#navhard-access` as the live hypothesis: access matters under observation shift. The deciding experiment is SimWAM's isolated mask evaluated on navhard.
+
+**Finding 2 - structured future supervision helps without access** (+1.0 navtest / +2.3 navhard). Per-stream access removal on navhard: tracks −1.5, depth −1.1, segmentation −0.5.
+
+**Finding 3 - native generation vs. generate-then-perceive is split.** Native generation wins on depth and loses on segmentation and tracks, measured against the teachers only.
+
+**Placement**:
+- v2 corrected: second, behind WA-JEPA 91.7, which SUV omits.
+- navhard unscored: second, behind SpanVLA 40.1, which is omitted.
+- WOD-E2E: 7.94 against Qwen-Drive's 7.91, which is omitted.
+- v1: 90.8, below the uncited same-backbone SimWAM 91.5 and DriveVA 90.9.
+
+**Limitations recorded**:
+- The v2 table is captioned "corrected" but carries DriveSuprim at the pre-fix 87.1, and DriveVLA-W0 at 86.9, which matches no known value.
+- The v1 table carries weaker variants of three baselines and has a Drive-JEPA TTC/Comf column swap.
+- Future-stream metrics are measured as teacher agreement only; cross-stream consistency is never measured.
+- Track IDs are encoded modulo 7 per class, and depth is clip-relative.
+- There is no planning result for random initialization, and no latency for the cheap no-access variant.
+- Deterministic re-evaluation (90.84 / 91.01 six times) is not training variance. Scene SD is 18.2, so the evaluation SE is about 0.16.
+
+**Figure note**: teaser, pipeline, Fig. 3 and supplementary Figs. 2–3 are embedded. Supplementary Fig. 1 is an external URL. Supplementary Figs. 4–5 (horizon curves) have no image. All 8 main and 7 supplementary tables are reproduced. Prose table references are off by one ("Table 2" means Table 1; "Table 7" means Table 6).
+
+**New methods for the gap list**: Metis (WAM, 89.5 / 90.3 top-6 v2), EponaV2 (88.9 v2, 36.1 navhard), SparseDriveV2 (90.1 v2), Fast-WAM, GeoSem-WAM, X-WAM, WAM4D, ImagiDrive, AutoDrive-P³ (90.6 v1), IRL-VLA, Poutine, Fast-dDrive, HMVLM.
+
+
+## 2026-09-27 - Ingest: Metis: A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation
+
+**Source**: `raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md` (arXiv 2606.15869v1)
+**Orgs**: Fudan, Shanghai Innovation Institute, HKU, Tongji, Li Auto, HUST, Imperial College London, University of Surrey. Code: `LogosRoboticsGroup/Metis`.
+**Pages created**: `wiki/sources/metis.md`
+**Pages updated**: `concepts/world-model-for-ad.md` (Pattern 37; new `#mask-family`), `concepts/navsim-benchmark.md` (v1 and v2 rows; new `#residual-sign`; SUV residual sign corrected), `concepts/navhard-ood-evaluation.md`, `sources/suv.md` (residual sign fixed; Metis comparison; swap provenance), `sources/simwam.md` (backlinks), `index.md`
+**Confidence**: **medium**. The mechanism ablation is clean, but the paper has two copied or mislabelled ablation tables, a probably cross-protocol headline comparison, and single runs.
+
+**What it is**: the wiki's 77th paper. A Wan2.2-5B + ~1B MoT world-action model whose mask lets the future read the action but not the reverse, so video generation is only a training signal.
+
+**Headline**: 89.5 EPDMS v2 (90.3 best-of-6), 32.2 navhard, 89.1 PDMS v1 (89.7 best-of-6), CityWalker MAOE 9.8° All, 147 ms at 2 steps on an RTX 4090.
+
+**Finding 1 - the mask family.** SimWAM, Metis and SUV share a backbone and recipe and cover four visibility patterns. On navtest every mask is within 0.5; on navhard, future-reads-action gives +2.2 (Metis) and action-reads-future gives +4.1 (SUV). Metis's bidirectional mask is worst on navhard, which conflicts with SUV. Recorded hypothesis: the harm is the feedback loop. The missing experiment is named in `world-model-for-ad#mask-family`.
+
+**Finding 2 - the residual's sign as a protocol fingerprint.** Two rows with known conventions flip sign as predicted: Human +4.1 pre-fix / −0.1 corrected; DriveFine +1.2 / −0.8. Metis's own row is at −0.6, among its table's otherwise pre-fix anchors, so its "+2.4 over VLA" is likely a cross-protocol comparison. Three exceptions are recorded, so this is a heuristic only.
+
+**Finding 3 - navhard carries every mechanism claim.** The mask (+2.2), the video-prior scale (Wan2.1-1.3B −2.4) and SUV's access (+4.1) are all invisible on navtest.
+
+**Corrections to earlier pages**:
+- SUV's residual was written with the opposite sign convention (+0.5); corrected to −0.5.
+- The Drive-JEPA TTC/Comf swap flagged on SUV is traced to Metis's Table 9.
+
+**Limitations recorded**:
+- Table 10's navhard triples duplicate Table 5's step rows, and Table 6 says "Wan2.2-14B" for the 5B model.
+- The 8× speedup is really 2.9× (skipping video) × 3.3× (fewer steps).
+- v1 "SOTA" relies on best-of-6.
+- CityWalker is second overall to ABot-N0.
+- navhard split size is 244/4,164 here vs. 450/5,462 in SUV.
+- The "1,192-scenario navtrain subset" is unexplained.
+- Real-robot results are qualitative only, and there are no video-generation metrics.
+
+**Figure note**: 9 figures embedded; Fig. 3 (mask) has no image. The Fig. 7 caption says outdoor but the image is indoor. All 12 tables are reproduced (Tables 4/8 and 5/12 are merged on the source page).
+
+**New methods for the gap list**: UniWorldVLA (89.4 v1), ImagiDrive, WorldRFT, World4Drive, ABot-N0, NavFoM, CityWalker, Fast-WAM.
