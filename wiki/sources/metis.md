@@ -2,7 +2,7 @@
 title: "Metis: A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation"
 type: source-summary
 sources: ["raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md"]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/mixture-of-experts.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/simwam.md, sources/suv.md, sources/driveva.md, sources/drivewam.md, sources/drivelaw.md, sources/epona.md, sources/drivevla-w0.md, sources/drivefine.md, sources/sgdrive.md, sources/vega.md, sources/recogdrive.md, sources/brainwam.md, sources/adaptive-wam.md, sources/wa-jepa.md]
+related: [sources/hydra-mdp-pp.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/mixture-of-experts.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/simwam.md, sources/suv.md, sources/driveva.md, sources/drivewam.md, sources/drivelaw.md, sources/epona.md, sources/drivevla-w0.md, sources/drivefine.md, sources/sgdrive.md, sources/vega.md, sources/recogdrive.md, sources/brainwam.md, sources/adaptive-wam.md, sources/wa-jepa.md]
 created: 2026-09-27
 updated: 2026-09-27
 confidence: medium
@@ -390,7 +390,7 @@ The real-robot evidence is **four qualitative examples, with no success rate, no
 5. **Copied ablation rows.** Table 10's navhard columns duplicate Table 5's step rows. Table 6 labels the 5B model "Wan2.2-14B".
 6. **The speedup conflates two factors.** The 8× compares 10-step-with-video against 2-step-without; the matched-step saving is 2.9×. The "w/ video" row cannot differ in action by construction.
 7. **The mechanism is not isolated.** Gradient flow through the action K/V versus action-conditioned video learning is untested, and the co-training ablation has no navhard number.
-8. **Training data is unclear.** The paper says "the navtrain subset (1,192 scenarios)" and marks competitors "full navtrain", yet never states how many samples it uses or why.
+8. ~~**Training data is unclear.**~~ *Resolved by [[sources/hydra-mdp-pp.md]], which describes navtrain/navtest as "1192 and 136 scenarios", i.e. **log counts**. "1,192 scenarios" is the full navtrain, not a subset; Metis's † markers remain unexplained.*
 9. **The navhard split is ambiguous.** 244/4,164 scenarios here vs. 450/5,462 in SUV, which copies Metis's rows. Metis's DiffusionDrive/LTF baselines differ from other papers' copies.
 10. **Real-world results are qualitative only.** There is no success rate, and the baselines said to be deployed are never reported.
 11. **No video-generation metrics, no seeds, no RL, one front camera**, and navhard (244 Stage-1 scenes) carries every mechanism claim.

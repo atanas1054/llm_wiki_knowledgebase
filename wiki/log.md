@@ -2865,3 +2865,25 @@ Two consequences, neither addressed by the paper: **the v1 rank is undecidable**
 - **Step budgets are architecture-specific.** Metis and SUV are nearly converged at 2 steps; SimWAM collapses at 1 (68.9 PDMS).
 
 **Backlinks added from**: `world-model-for-ad.md`, `navsim-benchmark.md`, `chain-of-thought-for-ad.md`, `perception-for-planning.md`, `diffusion-planner.md`, `foundation-backbones-for-ad.md`. `index.md` and `README.md` updated (38 concept pages).
+
+
+## 2026-09-27 - Ingest: Hydra-MDP++: Advancing End-to-End Driving via Expert-Guided Hydra-Distillation
+
+**Source**: `raw/papers/Hydra-MDP++_ Advancing End-to-End Driving via Expert-Guided Hydra-Distillation.md` (arXiv 2503.12820v1)
+**Orgs**: NVIDIA, East China Normal University, Fudan. Code: `NVlabs/Hydra-MDP`.
+**Pages created**: `wiki/sources/hydra-mdp-pp.md`
+**Pages updated**: `concepts/navsim-benchmark.md` (rewritten `#hydra-formula`; a third convention lineage in the protocol partition; v1 row), `concepts/selection-based-planning.md` (`#origin`), `concepts/perception-for-planning.md`, `concepts/teacher-pseudo-labels.md`, `sources/wcog-vla.md` (limitation 3 resolved), `sources/sgdrive.md`, `sources/recogdrive.md` (provenance notes), `sources/metis.md` (1,192-scenario question resolved), `index.md`, `README.md`
+**Confidence**: **medium**. The tables are complete and the formula is verified (84.1 reproduces exactly). However, the headline numbers come from two different models and the inference weights are grid-searched on an unstated split.
+
+**What it is**: the wiki's 78th paper, and its most-cited un-ingested method (85 mentions). A ResNet-34 / V2-99 vocabulary-scoring planner: 8192 k-means trajectories, BCE heads distilled from offline PDM-simulator sub-scores, weighted-cost selection. 86.6 / 91.0 PDMS v1.
+
+**Finding 1 - its EPDMS is a different metric.** The formula is (5 TTC + 2 C + 5 EP + 5 LK + 5 EC)/22 with a 0.5 m LK. NAVSIM-v2 uses (5 TTC + 5 EP + 2 LK + 2 HC + 2 EC)/16. Its rows (TransFuser 77.8, VADv2 76.6, Hydra-MDP 79.8, Hydra-MDP++ 80.6) appear in ReCogDrive Table 7, SGDrive and WCog-VLA beside official rows, with C relabelled HC in the last two. This **resolves WCog-VLA's "fourth distinct set" puzzle** and reclassifies "HydraMDP++ 84.1" out of the pre-fix cohort.
+
+**Finding 2 - the selection lineage starts here.** Offline simulation of a vocabulary with GT perception, per-sub-score heads and a tuned weighted cost: the weighted cost is worth +1.5 PDMS, the largest effect in the paper. The scorer-cohort caveat applies from the origin.
+
+**Finding 3 - two models behind one headline.** 91.0 PDMS is the model without extended teachers; 84.1 EPDMS is the one with them (EP −1.7, DAC −0.8), contradicting "negligible effect on original metrics".
+
+**Also resolved**: Metis's "navtrain subset (1,192 scenarios)" is the full navtrain; 1,192 is the log count.
+**Also found**: ReCogDrive's v1 row labelled "Hydra-MDP++ 86.5" is the original Hydra-MDP-𝒱8192-W-EP. The downstream TransFuser 77.8 copies substitute v1 EP/TTC values.
+
+**Figure note**: 3 figures embedded (teaser, architecture, candidate-score visualization); all 5 tables reproduced. The assets `visualization_0314.png` and `visualization_two_scenarios_wide.png` are not referenced by this clipping and were not used.

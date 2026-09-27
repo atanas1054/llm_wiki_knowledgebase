@@ -2,9 +2,9 @@
 title: "SGDrive: Scene-to-Goal Hierarchical World Cognition for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [sources/wcog-vla.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/perception-for-planning.md, concepts/intent-conditioned-planning.md, concepts/diffusion-planner.md, concepts/foundation-backbones-for-ad.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, sources/recogdrive.md, sources/simwam.md, sources/percept-wam.md, sources/unidrivevla.md, sources/latent-wam.md, sources/deepsight.md, sources/orion.md, sources/futuresightdrive.md, sources/drivewam.md]
+related: [sources/hydra-mdp-pp.md, sources/wcog-vla.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/perception-for-planning.md, concepts/intent-conditioned-planning.md, concepts/diffusion-planner.md, concepts/foundation-backbones-for-ad.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, sources/recogdrive.md, sources/simwam.md, sources/percept-wam.md, sources/unidrivevla.md, sources/latent-wam.md, sources/deepsight.md, sources/orion.md, sources/futuresightdrive.md, sources/drivewam.md]
 created: 2026-08-17
-updated: 2026-09-04
+updated: 2026-09-27
 confidence: high
 ---
 
@@ -155,6 +155,8 @@ SGDrive-2B evaluated with the two-stage SFT strategy.
 | ReCogDrive-8B | 98.3 | 95.2 | 87.1 | 97.5 | 98.3 | 99.8 | 99.5 | 96.6 | 86.5 | 83.6 |
 | DiffusionDrive | 98.0 | 96.0 | 87.7 | 97.1 | 98.3 | 99.8 | 99.5 | 97.2 | 87.6 | 84.3 |
 | **SGDrive-2B** | **98.6** | 94.3 | 86.0 | **97.9** | 98.3 | 99.9 | 99.5 | 96.1 | 85.9 | **86.2** |
+
+*Provenance note (2026-09-27): the Transfuser 77.8, VADv2 76.6, Hydra-MDP 79.8 and Hydra-MDP++ 80.6 rows use [[sources/hydra-mdp-pp.md]]'s own EPDMS formula (the "HC 100" column is its C column). The remaining rows use NAVSIM-v2's. See [[concepts/navsim-benchmark.md#hydra-formula]].*
 
 Best NC and TTC again, +2.6 EPDMS over ReCogDrive-8B — but **DAC 94.3 and EC 85.9 are the weakest in the table** among the modern entries, and the comparison set stops well short of the wiki's v2 field (see Limitations).
 

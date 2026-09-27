@@ -2,9 +2,9 @@
 title: "WCog-VLA: A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/chain-of-thought-for-ad.md, concepts/diffusion-planner.md, concepts/perception-for-planning.md, concepts/rl-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/sgdrive.md, sources/recogdrive.md, sources/autovla.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/drivelaw.md, sources/da-wam.md, sources/orion.md, sources/drivevla-w0.md, sources/diffusiondrive.md, sources/wa-jepa.md, sources/driveva.md, sources/deepsight.md, sources/dynvla.md, sources/adathinkdrive.md]
+related: [sources/hydra-mdp-pp.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/chain-of-thought-for-ad.md, concepts/diffusion-planner.md, concepts/perception-for-planning.md, concepts/rl-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/sgdrive.md, sources/recogdrive.md, sources/autovla.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/drivelaw.md, sources/da-wam.md, sources/orion.md, sources/drivevla-w0.md, sources/diffusiondrive.md, sources/wa-jepa.md, sources/driveva.md, sources/deepsight.md, sources/dynvla.md, sources/adathinkdrive.md]
 created: 2026-09-04
-updated: 2026-09-04
+updated: 2026-09-27
 confidence: high
 ---
 
@@ -247,7 +247,7 @@ The text describes two further qualitative results — a left-turn-at-intersecti
 
 2. **The v1 table omits the frontier.** CLEAR/DA-WAM 93.7, DriveSuprim 93.5, and Drive-JEPA 93.3 are all above 92.9; also absent are WA-JEPA 91.8, SimWAM 91.5, FLARE 91.4, and DiffusionDriveV2 91.2. 92.9 is a strong fourth-place result in this wiki, not SOTA. That said, **at 2B parameters it is the best PDMS-per-parameter entry tracked here**, and its comparison against ReCogDrive-2B (90.8) is genuinely like-for-like.
 
-3. **The v2 baselines are a fourth distinct set and 85.9 cannot be placed.** TransFuser appears at **77.8** with submetrics matching neither the wiki's 76.7 row nor GeoWAM's 84.0 — and its NC/DAC/EP/TTC (97.7 / 92.8 / 79.2 / 92.8) are *identical to its own NAVSIM-v1 row in Table 1*, with LK 67.6 against 92.7 elsewhere. HydraMDP++ is 80.6 (wiki 84.1, BrainWAM 81.4 — a third value) and DiffusionDrive 84.3 (wiki 84.5). ARTEMIS carries HC 100 where every other source says 98.3.
+3. **The v2 baselines are a fourth distinct set and 85.9 cannot be placed.** *(Resolved 2026-09-27: VADv2 76.6, TransFuser 77.8 and HydraMDP++ 80.6 come from [[sources/hydra-mdp-pp.md]]'s **own EPDMS formula** (C instead of HC, LK weight 5, strict 0.5 m LK, /22), evaluated on the v1 navtest. That explains the v1-identical NC/DAC/EP/TTC, the LK of ~67, and the "HC 100", which is Hydra-MDP++'s C column relabelled. See [[concepts/navsim-benchmark.md#hydra-formula]].)* TransFuser appears at **77.8** with submetrics matching neither the wiki's 76.7 row nor GeoWAM's 84.0 — and its NC/DAC/EP/TTC (97.7 / 92.8 / 79.2 / 92.8) are *identical to its own NAVSIM-v1 row in Table 1*, with LK 67.6 against 92.7 elsewhere. HydraMDP++ is 80.6 (wiki 84.1, BrainWAM 81.4 — a third value) and DiffusionDrive 84.3 (wiki 84.5). ARTEMIS carries HC 100 where every other source says 98.3.
 
 4. **v1 and v2 are different models.** The 92.9 includes RFT; the 85.9 does not, and RFT is worth +3.6 on v1. Stated in a caption, never flagged.
 

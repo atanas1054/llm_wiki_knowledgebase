@@ -2,9 +2,9 @@
 title: "ReCogDrive: A Reinforced Cognitive Framework for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md]
-related: [concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, sources/wam-flow.md, sources/uniugp.md]
+related: [sources/hydra-mdp-pp.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, sources/wam-flow.md, sources/uniugp.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-09-27
 confidence: high
 ---
 
@@ -113,6 +113,8 @@ The VLM is frozen in stages 2 and 3; only the diffusion planner is trained after
 † = fine-tuned on NAVSIM trajectory data only (no driving QA).
 
 ### Extended Metrics NAVSIM (Table 7, appendix)
+
+*Provenance note (2026-09-27): the first four rows (TransFuser 77.8, VADv2 76.6, Hydra-MDP 79.8, Hydra-MDP++ 80.6) are copied from [[sources/hydra-mdp-pp.md]], whose EPDMS uses a different formula (C, strict LK, /22). ARTEMIS and ReCogDrive use NAVSIM-v2's. This appears to be the earliest ingested table to mix the two. Separately, this page's v1 row labelled "Hydra-MDP++ 86.5" is the original Hydra-MDP-𝒱8192-W-EP; Hydra-MDP++ ResNet-34 is 86.6 with different submetrics.*
 
 | Method | NC ↑ | DAC ↑ | EP ↑ | TTC ↑ | C ↑ | TL ↑ | DDC ↑ | LK ↑ | EC ↑ | EPDMS ↑ |
 |--------|------|-------|------|-------|-----|------|-------|------|------|---------|

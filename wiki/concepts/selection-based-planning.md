@@ -1,10 +1,10 @@
 ---
 title: Selection-Based Trajectory Planning
 type: concept
-sources: [raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
-related: [sources/drivefuture.md, concepts/navhard-ood-evaluation.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/lwdrive.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/da-wam.md, sources/auto-jepa.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, sources/pair-drive.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md]
+sources: ["raw/papers/Hydra-MDP++_ Advancing End-to-End Driving via Expert-Guided Hydra-Distillation.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
+related: [sources/hydra-mdp-pp.md, sources/drivefuture.md, concepts/navhard-ood-evaluation.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/lwdrive.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/da-wam.md, sources/auto-jepa.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, sources/pair-drive.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md]
 created: 2026-04-23
-updated: 2026-09-11
+updated: 2026-09-27
 confidence: high
 ---
 
@@ -97,7 +97,7 @@ Safety scores are {0,1} per metric. BCE against binary labels creates sharp trai
 | Method | Vocabulary Size | Scoring | Notes |
 |---|---|---|---|
 | **Hydra-MDP** | 8192 | Single-stage multi-head | Multi-teacher distillation; won NAVSIM challenge |
-| **HydraMDP++** | 8192 | Single-stage multi-head | Added DDC, TLC, EC metrics for NAVSIM-v2 |
+| **HydraMDP++** ([[sources/hydra-mdp-pp.md]]) | 8192 | Single-stage multi-head | Added TL, DDC, LK, EC as metrics *and* extra distillation teachers; weighted-cost selection (+1.5 PDMS); its own EPDMS formula differs from NAVSIM-v2's |
 | **DriveSuprim** | 8192 (→ 256) | Two-stage coarse-to-fine | Rotation aug + EMA self-distill; **93.5 PDMS** |
 | **DreamerAD** | 8192 (→ 256) | Learned latent AD-RM | Gaussian vocab sampling; reward from latent WM |
 | **HybridDriveVLA** | 2 + 9 interp. | Trajectory scorer | Cross-model (VLM + ViT) with linear interpolations |
@@ -248,7 +248,7 @@ Selection-based methods' trajectory on the NAVSIM-v1 leaderboard:
 | DreamerAD | 88.7 (no ViT-L) | 2025 |
 | **DriveSuprim** | **93.5** | 2025 |
 
-*HydraMDP++ is evaluated primarily on NAVSIM-v2 (EPDMS).
+*HydraMDP++'s paper evaluates on navtest with **its own** EPDMS formula (80.6 / 84.1). 85.6 is the ViT-L official-v2 value reported by later papers. See [[sources/hydra-mdp-pp.md#two-epdms]].
 
 DriveSuprim (93.5) remains the strongest fixed-vocabulary selection result in the wiki, surpassing DiffusionDriveV2 (91.2 with Camera+LiDAR) and HybridDriveVLA (92.1 dual-model ensemble). CLEAR later reports 93.7 with online candidate generation plus learned adaptive routing, so it is adjacent to selection but not a fixed-vocabulary selector. Auto-JEPA (91.3) is adjacent in the other direction — retrieval rather than classification — and is the cheapest of the three to train, since its visual encoder is frozen and only small task modules are optimized. See [[concepts/navsim-benchmark.md]] and [[concepts/adaptive-routing.md]].
 
@@ -315,3 +315,16 @@ The last row is the one that matters for deployment, and the paper says so: *"pa
 **One caution about the 64-proposal result.** Adaptive-WAM's auxiliary 92.6 PDMS model belongs in this table rather than on the single-trajectory ladder: fixed block-22 exit, 64 proposals, no adaptive routing, and **CLOVER-derived pseudo-expert targets scored with the true NAVSIM evaluator using training-time map and future occupancy** — the same privileged-supervision caveat that applies to Hydra-MDP distillation, Auto-JEPA, and DA-WAM. Against DriveSuprim's 93.5 and CLEAR's 93.7 it does not lead.
 
 **And one measurement that complicates encoder comparisons made through selection.** In the same paper, Wan intermediate features beat ViT-Large by **1.74 PDMS** for a single trajectory but by only **0.28** with 64 proposals. Multi-proposal scoring compensates for a weaker representation, so a selection-based leaderboard is a poor instrument for comparing encoders.
+
+---
+
+## Origin of the Pattern: Hydra-MDP++ {#origin}
+
+[[sources/hydra-mdp-pp.md]] states the recipe that most entries on this page reuse:
+1. **Sample** a fixed vocabulary (k-means over 700K nuPlan trajectories).
+2. **Run the PDM simulator offline** on every vocabulary trajectory in every training scene, with ground-truth perception.
+3. **Distil** each sub-score into a BCE head.
+4. **Select** by a weighted log-cost whose weights are grid-searched.
+
+Its ablation already shows the pattern this page later documents at scale. **The selection rule is the biggest lever** (weighted cost +1.5 PDMS), bigger than the temporal module (+0.1). Auxiliary perception supervision *hurts* (−0.5). The criticism attached to the scorer cohort (fitting the benchmark's own metric with privileged supervision) applies from the first paper.
+
