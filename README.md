@@ -18,7 +18,7 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 
 ## At a Glance
 
-- **77 papers** ingested into `wiki/sources/`, **33 concept pages** in `wiki/concepts/`
+- **77 papers** ingested into `wiki/sources/`, **38 concept pages** in `wiki/concepts/`
 - Dominant benchmark is **NAVSIM** (v1 PDMS / v2 EPDMS); also Bench2Drive, nuPlan, nuScenes, WOD-E2E, HUGSIM, PhysicalAI-AV, AlpaSim
 - Current NAVSIM-v1 leaders (single-pass, non-BoN): **Drive-HWM 93.8 ⚠ *or* 93.3** > **CLEAR 93.7 = DA-WAM 93.7** > DriveSuprim 93.5 > Drive-JEPA 93.3 > **WCog-VLA 92.9 (2B)** > HybridDriveVLA 92.1 (ensemble) > **LWDrive 92.0 (no RL)** > WA-JEPA 91.8 > DynVLA 91.7 > SimWAM 91.5
 - **A paper can disagree with itself about its own score.** [Drive-HWM](wiki/sources/drive-hwm.md) reports **93.8 PDMS / 86.4 EPDMS in every table and 93.3 / 86.2 in every sentence** — deciding both whether it leads the list above and whether its own named mechanism is worth +0.8 or +0.3. The wiki records both and ranks it nowhere. See [NAVSIM Benchmark](wiki/concepts/navsim-benchmark.md)
@@ -130,7 +130,7 @@ CLAUDE.md      # Workflow instructions for the LLM assistant
 
 The last four entries are **methodological references** — LLM/VLM reasoning-RL papers ingested for their optimizer analysis rather than for driving results. They inform [RL for AD](wiki/concepts/rl-for-ad.md), [GSPO vs. GRPO](wiki/concepts/gspo-vs-grpo.md), and [R1-Zero-Like Training](wiki/concepts/r1-zero-like-training.md).
 
-## Concept Pages (33)
+## Concept Pages (38)
 
 | Concept | Description |
 |---------|-------------|
@@ -167,6 +167,11 @@ The last four entries are **methodological references** — LLM/VLM reasoning-RL
 | [Discrete Visual Tokenization](wiki/concepts/visual-tokenization.md) | How pixels become codebook indices for token-based world models and planner inputs; the three-way capacity conflict and whether tokenizer quality reaches the planner |
 | [General-Capability Retention](wiki/concepts/general-capability-retention.md) | What driving adaptation costs the general VLM; the 15-benchmark / 13-model table; forgetting as a data-mixture failure; the knowledge-vs-interface confound |
 | [AlpaSim Closed-Loop Benchmark](wiki/concepts/alpasim-benchmark.md) | Reactive closed-loop simulation on reconstructed real logs; the ratio-score trap, degenerate caution vs. degenerate aggression, and the NAVSIM ordering inversion |
+| [Inference Latency and Cost](wiki/concepts/inference-latency.md) | Every recorded latency (22 ms – 1.36 s) with hardware; step count and video generation as the two dominant costs; incomparable pipeline boundaries (DriveVLA-W0 74 ms own vs 690 ms measured by SUV); papers that report none |
+| [Evaluation Variance and Single-Run Reporting](wiki/concepts/evaluation-variance.md) | Four kinds of variance (evaluator, sampler seed 0.013–0.053, scene SE ≈0.16 navtest / ~1 navhard, training seed never measured); selection effects; how to read small deltas |
+| [Attention Masks in World-Action Models](wiki/concepts/wam-attention-masks.md) | Who may attend to whom among observation, future and action tokens; the SimWAM/Metis/SUV same-backbone family; navtest-null vs navhard-large; WA-JEPA's stop-gradient counterexample |
+| [Reasoning Faithfulness](wiki/concepts/reasoning-faithfulness.md) | Rationale vs verbalized action vs capacity vs ignored; GRAVA's intervention; consistency rewards; the hindsight-annotation problem (traces written from the recorded future) |
+| [Teacher-Derived Supervision](wiki/concepts/teacher-pseudo-labels.md) | SAM 3, DA3, VGGT, V-JEPA, DINOv2 and LLM teachers; scoring students against their own teacher; unmeasured label noise (Qwen-Drive's 55.9%); privileged teachers behind "annotation-free" claims |
 
 ## Open Threads
 

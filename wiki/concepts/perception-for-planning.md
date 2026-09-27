@@ -2,7 +2,7 @@
 title: Perception-Enhanced Planning in VLA Models
 type: concept
 sources: ["raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [sources/suv.md, sources/grava.md, concepts/general-capability-retention.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/foresight.md, sources/geowam.md, sources/auto-jepa.md, sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md]
+related: [concepts/teacher-pseudo-labels.md, sources/suv.md, sources/grava.md, concepts/general-capability-retention.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/foresight.md, sources/geowam.md, sources/auto-jepa.md, sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md]
 created: 2026-04-05
 updated: 2026-09-27
 confidence: high
@@ -276,6 +276,8 @@ Set that beside [[sources/wcog-vla.md]], which measures removing its 3D percepti
 This is a fourth integration option beside heads, queries and latent distillation: **the perception output is consumed by the planner because it is literally in the planner's context**. That satisfies this page's working rule, *perception helps when the planner reads its output*, by construction. The cost is decoding the perception as tokens every frame, and the paper reports no latency.
 
 ## Future Perception as Generated Video: SUV {#perception-as-video}
+
+*Where these targets come from, and the risk of scoring against the teacher, is on [[concepts/teacher-pseudo-labels.md]].*
 
 [[sources/suv.md]] has no perception head. It **generates** future segmentation, relative-depth and instance-track *videos* with the same video expert that generates future RGB, using SAM 3 and DA3 outputs as targets, and lets the planner read their latents.
 - Adding these three supervision streams gives **+1.0 navtest / +2.3 navhard** even when the planner cannot read them.

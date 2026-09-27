@@ -2842,3 +2842,26 @@ Two consequences, neither addressed by the paper: **the v1 rank is undecidable**
 - Metis's own row (corrected-looking) vs. its pre-fix baselines.
 
 **Concept pages suggested** (by frequency across sources): latency and inference cost (49 source pages); flow-matching planners (29); single-run and seed-variance reporting (22); video-generation priors, i.e. Wan2.x backbones (13); attention masks in WAMs (12); reasoning faithfulness and interventions (9); teacher pseudo-labels (9).
+
+
+## 2026-09-27 - New concept pages (from lint suggestions)
+
+**Created**:
+- `concepts/inference-latency.md`
+- `concepts/evaluation-variance.md`
+- `concepts/wam-attention-masks.md`
+- `concepts/reasoning-faithfulness.md`
+- `concepts/teacher-pseudo-labels.md`
+
+**Not created, by design**:
+- *Flow-matching planners*: already covered in depth by `diffusion-planner.md` (31 mentions); a cross-link to the step-cost section was added instead.
+- *Wan2.x video priors*: covered by `foundation-backbones-for-ad.md#wan2.2-ti2v-5b`, which gains Metis and SUV rows and the navhard scale result.
+
+**New syntheses surfaced while writing**:
+- **WA-JEPA is a bidirectional mask with a stop-gradient on the future←action edge.** Metis's asymmetric mask deliberately *keeps* that gradient. The two papers imply opposite mechanisms for why coupling helps, and neither ran the stop-gradient ablation.
+- **Hindsight annotation is the norm.** GRAVA, Qwen-Drive and Alpamayo-R1 all write the trace's decision with access to the recorded future. Consistency rewards (Alpamayo-R1, SpanVLA) therefore make traces reliable *verbalized actions*, not explanations.
+- **DriveVLA-W0's latency is 74–240 ms by its own report and 690 ms as measured by SUV.** Treat cross-paper latency as incomparable.
+- **navhard's scene-level standard error is plausibly ~1 point**, the scale of several recent navhard-only mechanism effects.
+- **Step budgets are architecture-specific.** Metis and SUV are nearly converged at 2 steps; SimWAM collapses at 1 (68.9 PDMS).
+
+**Backlinks added from**: `world-model-for-ad.md`, `navsim-benchmark.md`, `chain-of-thought-for-ad.md`, `perception-for-planning.md`, `diffusion-planner.md`, `foundation-backbones-for-ad.md`. `index.md` and `README.md` updated (38 concept pages).
