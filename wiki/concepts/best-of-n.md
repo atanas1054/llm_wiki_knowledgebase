@@ -95,7 +95,7 @@ PhysWAM is the first paper here to report, on one set of samples, no selection, 
 
 ### 1. NAVSIM-v1 is saturated at BoN-6
 
-Curious-VLA BoN-6 (94.8 PDMS) matches the human ground-truth trajectory score on NAVSIM-v1. ExploreVLA BoN-6 (93.7) is the second-highest result in the wiki. A model that can select among 6 samples already reaches near-human-level performance on this benchmark. This suggests **NAVSIM-v1 BoN-6 is a closed frontier**: further BoN-6 improvements are marginal, and future work should emphasize single-sample scores, NAVSIM-v2 extended metrics (EPDMS), or Navhard OOD evaluation.
+Curious-VLA BoN-6 (94.8 PDMS) matches the human ground-truth trajectory score on NAVSIM-v1. ExploreVLA BoN-6 (93.7) was the second-highest result in the wiki when this was written *(lint 2026-09-30: single-pass methods now match or pass it: CLEAR and DA-WAM at 93.7, and [[sources/mm-future.md]] at 94.0 with the val split added to training)*. A model that can select among 6 samples already reaches near-human-level performance on this benchmark. This suggests **NAVSIM-v1 BoN-6 is a closed frontier**: further BoN-6 improvements are marginal, and future work should emphasize single-sample scores, NAVSIM-v2 extended metrics (EPDMS), or Navhard OOD evaluation.
 
 ### 2. BoN gain is inversely correlated with single-sample quality
 
@@ -185,7 +185,7 @@ Both demonstrate that the oracle BoN gap can be partially closed by a learned se
 
 When reading NAVSIM SOTA tables:
 - A method that reports only BoN without a single-sample number is not directly comparable to single-sample results
-- Curious-VLA BoN-6 (94.8) is the highest absolute PDMS in the wiki, but it uses an oracle selection regime. The strongest non-BoN wiki results are CLEAR and DA-WAM, tied at 93.7, which uses learned adaptive routing and candidate scoring; the strongest fixed-vocabulary selector remains DriveSuprim (93.5). Among VLM-style single-sample methods, DynVLA/Reasoning-VLA report 91.7 with comparison-scope caveats, FLARE reports 91.4, and DriveFine remains one of the most broadly verified direct-comparison baselines at 90.7.
+- Curious-VLA BoN-6 (94.8) is the highest absolute PDMS in the wiki, but it uses an oracle selection regime. The strongest non-BoN wiki results are CLEAR and DA-WAM, tied at 93.7, which uses learned adaptive routing and candidate scoring *(lint 2026-09-30: on navtrain-only training and leaving aside Drive-HWM's disputed 93.8 / 93.3; [[sources/mm-future.md]] reaches 94.0 with the val split added to training and 93.4 without)*; the strongest fixed-vocabulary selector remains DriveSuprim (93.5). Among VLM-style single-sample methods, DynVLA/Reasoning-VLA report 91.7 with comparison-scope caveats, FLARE reports 91.4, and DriveFine remains one of the most broadly verified direct-comparison baselines at 90.7.
 - BoN results are most informative when paired with the single-sample result — the gap indicates how much a learned selector could theoretically recover
 
 See [[concepts/navsim-benchmark.md]] for the full SOTA table with BoN and single-sample results labeled separately.

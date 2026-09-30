@@ -13,6 +13,7 @@ wiki/
   concepts/    # Cross-paper concept notes (updated as new papers are ingested)
   index.md     # Master catalog of all wiki pages
   log.md       # Append-only ingest log
+  research-directions.md  # Open research questions across the wiki, updated on every ingest and lint
 CLAUDE.md      # Workflow instructions for the LLM assistant
 ```
 
@@ -191,7 +192,7 @@ The last four entries are **methodological references** — LLM/VLM reasoning-RL
 
 ## Open Threads
 
-Questions the wiki has surfaced but not resolved, in rough order of how much they'd change the picture:
+Questions the wiki has surfaced but not resolved, in rough order of how much they'd change the picture. The full list, grouped by theme and updated on every ingest and lint, is in [Research Directions](wiki/research-directions.md).
 
 1. **Does test-time future imagination help at all? It now depends on the benchmark.** On navtest, three results say no. [SimWAM](wiki/sources/simwam.md)'s mask ablation loses nothing without future access (90.3 vs. 90.2); [DriveLaW](wiki/sources/drivelaw.md) finds early denoising latents beat near-clean futures; [SUV](wiki/sources/suv.md) finds access worth only +0.3. **On navhard, SUV measures +4.1 for the same access**, and [Metis](wiki/sources/metis.md) finds the bidirectional variant worst. The deciding experiment is SimWAM's isolated checkpoint scored on navhard, plus the missing one-way/one-way cell of the mask family. **The one configuration that is positive on navtest is a future per candidate, read by a scorer**: +0.15 in [DA-WAM](wiki/sources/da-wam.md) and +0.4 in [MM-Future](wiki/sources/mm-future.md), both small and both single runs. See [World Models for AD](wiki/concepts/world-model-for-ad.md)
 2. **Is NAVSIM-v1 saturated?** Best-of-6 reaches 94.8 = the human ground-truth score (Curious-VLA). If oracle selection already matches the logged human, single-sample gains above ~93 may be measuring selection quality rather than driving quality. See [Best-of-N Sampling](wiki/concepts/best-of-n.md).
@@ -205,25 +206,25 @@ Questions the wiki has surfaced but not resolved, in rough order of how much the
 
 ## Known Gaps
 
-Methods cited frequently across ingested papers but **not yet ingested** (mention counts refreshed at the 2026-09-02 lint, `wiki/log.md` excluded):
+Methods cited frequently across ingested papers but **not yet ingested** (mention counts for the numbered rows refreshed at the 2026-09-30 lint; `wiki/log.md` and `wiki/research-directions.md` excluded):
 
 | Method | Mentions | Why it matters |
 |---|---:|---|
 | ~~**Hydra-MDP / ++**~~ | ingested | Hydra-MDP++ now ingested ([source](wiki/sources/hydra-mdp-pp.md)): its EPDMS formula differs from NAVSIM-v2's and explains the 77.8 / 80.6 baseline rows. The original Hydra-MDP (NAVSIM challenge winner) remains un-ingested |
-| **DVGT-2** | 56 | [GeoWAM](wiki/sources/geowam.md)'s encoder, point-head initialization, *and* strongest baseline on both navtest (89.6) and navhard (31.7) — GeoWAM's own contribution over it is only +0.6 / +4.9 |
-| **Vista** | 72 | One of two frozen backbones evaluated in [How Can Driving World Models Do Counterfactual Prediction?](wiki/sources/driving-wm-counterfactuals.md) |
-| **DrivingWorld** | 40 | The other one |
-| **DrivoR** | 40 | 93.1 PDMS in DA-WAM's table (93.7 when trained on trainval, per [MM-Future](wiki/sources/mm-future.md)); GeoWAM's strongest HUGSIM baseline; **and 54.6 navhard EPDMS, second only to DriveFuture**. Its register-token encoder is what MM-Future builds on, which ends +0.3 above it |
-| **CLOVER** | 24 | [Auto-JEPA](wiki/sources/auto-jepa.md) initializes its scorer from CLOVER's released checkpoint, and that scorer contributes +3.7 of Auto-JEPA's 91.3 PDMS |
-| **SparseDriveV2** | 23 | 92.0 PDMS / 90.1 corrected EPDMS / **89.15 DS on Bench2Drive**, a non-VLM scorer level with the VLA leaders there |
-| **WorldRFT** | 23 | Recurring NAVSIM-v2 baseline |
-| **SimLingo** | 26 | Recurring closed-loop baseline |
-| **iPad** | 29 | 91.7 PDMS |
-| **EponaV2** | 17 | 36.1 navhard / 88.9 EPDMS v2 / 90.4 PDMS v1; cited by SUV, GeoWAM, GeoWorldAD, Qwen-Drive and PhysWAM; RL-supervised. **Now also the frozen backbone and baseline of [WALT](wiki/sources/walt.md)**, which gives its no-RL numbers (89.4 PDMS / 87.3 EPDMS, EC 68.3) and is the likely source of a second DriveVLA-W0 v2 row (86.9) |
-| **Discrete-WAM** | 10 | 90.4 corrected EPDMS |
-| **Centaur** | 10 | 92.6 PDMS |
-| **NavFormer** / **LEAD (LTFv6)** | 8 / 8 | 34.1 / 31.9 navhard EPDMS, both RL-supervised |
-| **GTRS / GTRS-Dense** | 9 | The scorer carrying **+20.9 of DriveFuture's 55.5** navhard, and GTRS-E is itself 49.4 — the single highest-leverage un-ingested component in the wiki. Also the base model of [MomWorld](wiki/sources/momworld.md) (GTRS-Dense alone: 41.7 navhard) |
+| **DVGT-2** | 96 | [GeoWAM](wiki/sources/geowam.md)'s encoder, point-head initialization, *and* strongest baseline on both navtest (89.6) and navhard (31.7) — GeoWAM's own contribution over it is only +0.6 / +4.9 |
+| **Vista** | 69 | One of two frozen backbones evaluated in [How Can Driving World Models Do Counterfactual Prediction?](wiki/sources/driving-wm-counterfactuals.md) |
+| **DrivingWorld** | 31 | The other one |
+| **DrivoR** | 64 | 93.1 PDMS in DA-WAM's table (93.7 when trained on trainval, per [MM-Future](wiki/sources/mm-future.md)); GeoWAM's strongest HUGSIM baseline; **and 54.6 navhard EPDMS, second only to DriveFuture**. Its register-token encoder is what MM-Future builds on, which ends +0.3 above it |
+| **CLOVER** | 28 | [Auto-JEPA](wiki/sources/auto-jepa.md) initializes its scorer from CLOVER's released checkpoint, and that scorer contributes +3.7 of Auto-JEPA's 91.3 PDMS |
+| **SparseDriveV2** | 42 | 92.0 PDMS / 90.1 corrected EPDMS / **89.15 DS on Bench2Drive**, a non-VLM scorer level with the VLA leaders there |
+| **WorldRFT** | 25 | Recurring NAVSIM-v2 baseline |
+| **SimLingo** | 25 | Recurring closed-loop baseline |
+| **iPad** | 38 | 91.7 PDMS |
+| **EponaV2** | 99 | 36.1 navhard / 88.9 EPDMS v2 / 90.4 PDMS v1; cited by SUV, GeoWAM, GeoWorldAD, Qwen-Drive and PhysWAM; RL-supervised. **Now also the frozen backbone and baseline of [WALT](wiki/sources/walt.md)**, which gives its no-RL numbers (89.4 PDMS / 87.3 EPDMS, EC 68.3) and is the likely source of a second DriveVLA-W0 v2 row (86.9) |
+| **Discrete-WAM** | 19 | 90.4 corrected EPDMS |
+| **Centaur** | 7 | 92.6 PDMS |
+| **NavFormer** / **LEAD (LTFv6)** | 8 / 9 | 34.1 / 31.9 navhard EPDMS, both RL-supervised |
+| **GTRS / GTRS-Dense** | 96 | The scorer carrying **+20.9 of DriveFuture's 55.5** navhard, and GTRS-E is itself 49.4 — the single highest-leverage un-ingested component in the wiki. Also the base model of [MomWorld](wiki/sources/momworld.md) (GTRS-Dense alone: 41.7 navhard) |
 | **SimScale** / **ZTRS** / **DiffVLA** | new | 53.2 / 48.1 / 45.0 navhard, from [DriveFuture](wiki/sources/drivefuture.md)'s table — the navhard frontier is now mostly un-ingested |
 | **DriveWorld-VLA** | new | 91.3 PDMS v1, the one method DriveFuture's own table does not beat, from overlapping authors |
 | **Uni-World VLA** | new | 89.4 PDMS v1 — the strongest entry in CoWorld-VLA's own table, which CoWorld-VLA does not beat; Metis's single-sample 89.1 does not beat it either |
@@ -255,4 +256,5 @@ The ingest workflow is defined in `CLAUDE.md`. Each paper goes through:
 2. Discuss key takeaways and limitations
 3. Create/update `wiki/sources/<paper>.md` with embedded figures and full tables
 4. Create/update relevant `wiki/concepts/` pages
-5. Update `wiki/index.md` and append to `wiki/log.md`
+5. Check `wiki/research-directions.md` against the paper and update its open questions
+6. Update `wiki/index.md` and append to `wiki/log.md`

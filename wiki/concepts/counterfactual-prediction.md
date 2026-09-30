@@ -2,7 +2,7 @@
 title: Counterfactual Prediction for Driving World Models
 type: concept
 sources: ["raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md"]
-related: [sources/mm-future.md, sources/redrive.md, sources/ad-e2e-jepa.md, sources/da-wam.md, sources/auto-jepa.md, sources/driving-wm-counterfactuals.md, concepts/world-model-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/bench2drive.md, concepts/hugsim-benchmark.md, concepts/nuscenes-waymo-evals.md, concepts/best-of-n.md, sources/simwam.md, sources/drivelaw.md, sources/dreameraD.md, sources/vega.md, sources/policy-world-model.md]
+related: [sources/mm-future.md, sources/redrive.md, sources/ad-e2e-jepa.md, sources/da-wam.md, sources/auto-jepa.md, sources/driving-wm-counterfactuals.md, concepts/world-model-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/bench2drive.md, concepts/hugsim-benchmark.md, concepts/nuscenes-waymo-evals.md, concepts/best-of-n.md, sources/simwam.md, sources/drivelaw.md, sources/dreameraD.md, sources/vega.md, sources/policy-world-model.md, research-directions.md]
 created: 2026-08-24
 updated: 2026-09-30
 confidence: high
@@ -181,6 +181,8 @@ Hit rate checks only the factual arm, so it says nothing about rung 3. It is a *
 ---
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - **Can abduction be learned rather than hand-built?** The paper's transport stage is monocular depth + splatting. A world model conditioned on both $H$ and $F^{+}$ (i.e. trained for the retrospective task) has never been tried in this wiki. Would it beat geometry, or only match it?
 - **What happens under reactive agents?** Transported evidence *preserves* behaviour the counterfactual action would have changed — a pedestrian who would have stopped keeps walking. Beyond ~1 s the method's central assumption breaks, and it fails confidently rather than by omission. Detecting these cases (the paper suggests posterior predictive checks on the abduced world) is unsolved.

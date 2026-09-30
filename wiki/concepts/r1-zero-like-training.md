@@ -2,9 +2,9 @@
 title: R1-Zero-Like Training
 type: concept
 sources: [raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md, raw/papers/DisCO_ Reinforcing Large Reasoning Models with Discriminative Constrained Optimization.md, raw/papers/DAPO_ An Open-Source LLM Reinforcement Learning System at Scale.md]
-related: [sources/understanding-r1-zero-like-training.md, sources/nord.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/all-roads-lead-to-rome.md, sources/plan-r1.md, sources/disco.md, sources/dapo.md, concepts/gspo-vs-grpo.md, concepts/rl-for-ad.md, concepts/chain-of-thought-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/divergent-thinking-in-vlms.md, concepts/action-tokenization.md, concepts/discriminative-policy-optimization.md]
+related: [sources/understanding-r1-zero-like-training.md, sources/nord.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/all-roads-lead-to-rome.md, sources/plan-r1.md, sources/disco.md, sources/dapo.md, concepts/gspo-vs-grpo.md, concepts/rl-for-ad.md, concepts/chain-of-thought-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/divergent-thinking-in-vlms.md, concepts/action-tokenization.md, concepts/discriminative-policy-optimization.md, research-directions.md]
 created: 2026-06-18
-updated: 2026-06-23
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -80,6 +80,8 @@ Plan-R1 ([[sources/plan-r1.md]]) is a cleaner "planning as language modeling" an
 - For safety-gated planning rewards, inspect whether normalization preserves the intended priority order. [[sources/plan-r1.md]] shows a case where collision-critical groups should be amplified but standard GRPO downweights them.
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - Does Dr. GRPO remain preferable when AD rewards are dense, continuous, and safety-gated rather than binary?
 - Can pass@k-style exploration diagnostics predict which VLA policies will benefit from RFT before expensive simulator rollouts?

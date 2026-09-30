@@ -2,9 +2,9 @@
 title: Discrete Flow Matching
 type: concept
 sources: [raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md]
-related: [sources/wam-flow.md, sources/reflectdrive.md, sources/wam-diff.md, sources/drivefine.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/inference-time-safety.md]
+related: [sources/wam-flow.md, sources/reflectdrive.md, sources/wam-diff.md, sources/drivefine.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/inference-time-safety.md, research-directions.md]
 created: 2026-04-05
-updated: 2026-04-21
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -151,6 +151,8 @@ Both DFM (WAM-Flow) and masked discrete diffusion (ReflectDrive, LLaDA) operate 
 - **WAM-Diff** — LoRA MoE masked diffusion (LLaDA-V 8.4B) + GSPO; flexible decoding schedules (reverse-causal best); 91.0 PDMS NAVSIM-v1; 89.7 EPDMS NAVSIM-v2
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - How does DFM scale with longer planning horizons or richer action spaces (3D trajectories, multi-agent)?
 - Can the token space geometry be learned end-to-end rather than requiring a separate embedding warmup stage?

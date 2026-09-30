@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md]
 related: [sources/adaptive-wam.md, sources/brainwam.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/nuscenes-waymo-evals.md, concepts/foundation-backbones-for-ad.md, concepts/perception-for-planning.md, sources/epona.md, sources/drivelaw.md, sources/simwam.md, sources/drivewam.md, sources/driveva.md, sources/policy-world-model.md, sources/drivevla-w0.md, sources/da-wam.md, sources/wa-jepa.md, sources/latent-wam.md, sources/dreameraD.md, sources/diffusiondrive.md, sources/recogdrive.md, sources/futuresightdrive.md, sources/geowam.md, sources/onedrive.md]
 created: 2026-09-04
-updated: 2026-09-04
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -156,7 +156,7 @@ The world model is finetuned from Epona's native 5 Hz to NAVSIM's 2 Hz. The pape
 | Action decoder (+ WM-QFormer) | 21 M | — |
 | **Total** | **~2.57 B** | **900 ms** |
 
-**96.7% of inference time is the world model.** For context in this wiki: [[sources/simwam.md]] reaches 91.5 PDMS at 518 ms by making future generation training-time-only; [[sources/diffusiondrive.md]] reaches 88.1 at 45 FPS (~22 ms); [[sources/onedrive.md]] runs 156 ms. ForeSight's 900 ms is the slowest NAVSIM planner recorded here.
+**96.7% of inference time is the world model.** For context in this wiki: [[sources/simwam.md]] reaches 91.5 PDMS at 518 ms by making future generation training-time-only; [[sources/diffusiondrive.md]] reaches 88.1 at 45 FPS (~22 ms); [[sources/onedrive.md]] runs 156 ms. ForeSight's 900 ms is the slowest NAVSIM planner recorded here. *(Lint 2026-09-30: no longer. [[sources/physwam.md]] takes 9.4 GPU-seconds per plan; see [[concepts/inference-latency.md]].)*
 
 ---
 

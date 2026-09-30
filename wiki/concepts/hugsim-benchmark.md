@@ -2,7 +2,7 @@
 title: HUGSIM Benchmark
 type: concept
 sources: ["raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md"]
-related: [sources/mm-future.md, sources/had.md, sources/latent-wam.md, sources/wa-jepa.md, sources/physwam.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/inference-latency.md]
+related: [sources/mm-future.md, sources/had.md, sources/latent-wam.md, sources/wa-jepa.md, sources/physwam.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/inference-latency.md, research-directions.md]
 created: 2026-05-01
 updated: 2026-09-30
 confidence: medium
@@ -169,10 +169,12 @@ HAD-L's result is useful because it evaluates the same planner family outside NA
 
 ## Open Questions
 
+*Wiki-wide open questions are collected in [[research-directions.md]].*
+
 - **Where do HAD-L and Latent-WAM actually sit now?** Both are the wiki's other closed-loop-capable planners and neither has been rescored under the current snapshot. Until someone runs them, the 44.62 vs. 30.8 gap is uninterpretable.
 - **[Answered: no] Is the comfort deficit inherent to sampled planners?** *([[sources/physwam.md]] samples video, depth and motion from noise and scores 96.3 closed-loop comfort and 90.5 navtest EC. What it does differently from WA-JEPA is unisolated; candidates are its SE(3) relative-pose action rows and a metric pose loss.)* WA-JEPA (0.662) and UniAD (0.663) are far below LTF, DrivoR, and VAD (~0.95) on closed-loop comfort, and the same ordering appears in NAVSIM-v2 EC. Drive-JEPA's momentum-aware selector fixed the open-loop version of this ([[sources/drive-jepa.md]], EC 47.9 → 84.8) by comparing each proposal against the previously selected trajectory. No closed-loop planner in the wiki has tried the analogous fix.
-- **Does anything move the Extreme tier?** Every method scores 0.06-0.14 there. This is the closest closed-loop analogue to navhard Stage 2, and like it, no ingested method has made progress.
-- **Should HUGSIM become the wiki's primary closed-loop benchmark?** It has properties Bench2Drive lacks — real-log reconstructions rather than CARLA assets, natural zero-shot structure, and per-difficulty reporting. What it lacks is adoption: only four ingested papers report it, against far more for Bench2Drive.
+- **Does anything move the Extreme tier?** Every ingested method scores 0.06-0.14 there (BeyondDrive, not ingested, is reported at 0.16 in PhysWAM's table). This is the closest closed-loop analogue to navhard Stage 2, and like it, no ingested method has made progress.
+- **Should HUGSIM become the wiki's primary closed-loop benchmark?** It has properties Bench2Drive lacks — real-log reconstructions rather than CARLA assets, natural zero-shot structure, and per-difficulty reporting. What it lacks is adoption: only five ingested papers report it (HAD, Latent-WAM, WA-JEPA, PhysWAM and MM-Future), against far more for Bench2Drive.
 - **Which protocol did PhysWAM and BeyondDrive run?** Both report on 436 episodes without naming a commit. Rescoring either under `ead17f2`, or WA-JEPA's authors confirming the benchmark paper's baseline numbers, would put all three on one table.
 - **Why do NAVSIM-only models collapse after the Easy tier?** PhysWAM (86.9 → 30.1) and Latent-WAM (72.5 → 24.0) both do; WA-JEPA, with nuPlan multi-view video pretraining, does not (79.8 → 55.6). Pretraining data, camera count (3 vs 4) and the JEPA objective are all confounded.
   *(2026-09-30: [[sources/mm-future.md]], also NAVSIM-only, has the opposite shape: a low Easy score (53.8) and the second-best Medium (40.0). So the collapse is not a property of NAVSIM-only training as such.)*

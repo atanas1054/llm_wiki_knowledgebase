@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md]
 related: [sources/hydra-mdp-pp.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/chain-of-thought-for-ad.md, concepts/diffusion-planner.md, concepts/perception-for-planning.md, concepts/rl-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/sgdrive.md, sources/recogdrive.md, sources/autovla.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/drivelaw.md, sources/da-wam.md, sources/orion.md, sources/drivevla-w0.md, sources/diffusiondrive.md, sources/wa-jepa.md, sources/driveva.md, sources/deepsight.md, sources/dynvla.md, sources/adathinkdrive.md]
 created: 2026-09-04
-updated: 2026-09-27
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -135,7 +135,7 @@ VQA corpus: 158k from DriveLM, CODA-LM, LingoQA, nuScenes-QA, NuInstruct, and Dr
 | LatentVLA-3B | ✓ | | 98.9 | 98.2 | 95.2 | 100 | **88.2** | 92.4 |
 | **WCog-VLA-2B (ours)** | ✓ | | **99.4** | **98.8** | **98.5** | 100 | 87.1 | **92.9** |
 
-**NC 99.4 and TTC 98.5 are the second-highest in this wiki** — behind WA-JEPA's NC 99.5 and DriveVA's TTC 98.7 respectively. DAC 98.8 trails only DriveVLA-W0's 99.1. This is a conspicuously safety-strong policy, which the paper attributes to anticipating surrounding-agent intent.
+**NC 99.4 and TTC 98.5 are the second-highest in this wiki** — behind WA-JEPA's NC 99.5 and DriveVA's TTC 98.7 respectively. *(Lint 2026-09-30: Drive-HWM's NC 99.6, or 99.5 in its prose, has since passed or tied WA-JEPA, so NC 99.4 is now third.)* DAC 98.8 trails only DriveVLA-W0's 99.1. This is a conspicuously safety-strong policy, which the paper attributes to anticipating surrounding-agent intent.
 
 **⚠ The AutoVLA row is the oracle Best-of-6 number, unlabelled.** AutoVLA's published single-sample post-RFT score is **89.11**; **92.12 is its Best-of-N oracle selection** ([[sources/autovla.md]], Table 1). Presented in a table of single-sample results without a marker, it makes AutoVLA look 3 points stronger than it is — and the paper's claim of surpassing it "by at least 0.8 PDMS" is measured against an oracle. See [[concepts/best-of-n.md]].
 

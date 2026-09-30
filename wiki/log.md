@@ -3195,3 +3195,69 @@ The wiki cites no component effect size from this paper on any concept page.
 **New gaps**: UniTeD, MeanFuser, IRR-Drive, GaussianFusion, MAP-World, IDOL, SeerDrive, SparseWorld; DrivoR gains its strongest reason yet to be ingested (encoder source, +0.3 baseline, trainval protocol).
 
 **Figure note**: 4 figures embedded (`teaser 3.png`, `mmfuture_framework.png`, `futurex_xtoken_attention_panorama.png`, `futurex_multimode_convergence.png`); all 4 tables reproduced (the two HUGSIM sub-tables merged into one). Author-to-affiliation mapping is not recoverable from the clipping.
+
+## 2026-09-30 - Schema: research directions file
+
+**Pages created**: `wiki/research-directions.md` (type `directions`): 33 open questions in six themes (evaluation and benchmark validity; world models; perception and representation; reasoning and the VLM; RL, selection and diversity; efficiency) plus an "Answered" section with 3 entries.
+**Pages updated**: `wiki/index.md` (new "Research Directions" section linking the file), `README.md` (structure listing)
+**Schema changes** (`CLAUDE.md`, mirrored in `AGENTS.md`):
+- Project Structure lists `wiki/research-directions.md`.
+- Frontmatter `type` gains a fifth value, `directions`.
+- New "Research Directions" section: the file is the wiki-wide list of open research questions; entry format is Status (open / partially answered), Known so far, See, Updated; no experiment plans or cost estimates.
+- Rules: update on every ingest and lint without asking first and report the changes; every claim traces to a wiki page; answered questions move to "Answered" and are never deleted; keep it consistent with page-level "Open Questions".
+- Ingest Workflow gains step 8 (check and update the directions file); the log step becomes step 9.
+- Lint Workflow gains step 6 (corrected evidence, questions answered but still marked open, page-level questions missing from the file).
+
+**Seeding**: drawn from the "Open Questions" sections of the 23 concept pages that have one, plus the cross-paper findings in `README.md`. The 15 concept pages without such a section (among them `navsim-benchmark`, `rl-for-ad`, `selection-based-planning`, `foundation-backbones-for-ad`) were not read in full for this pass, so questions that live only in their body text may be missing.
+
+**Noticed, not fixed**: `concepts/general-capability-retention.md` still says "of the 74 papers in this wiki"; the wiki is at 85. `concepts/navhard-ood-evaluation.md`'s open question "Does RL help here?" states the GeoWAM-table claim without the scorer-cohort scope note the rest of the page carries.
+
+
+## 2026-09-30 - Lint
+
+**Structural checks**: 126 pages (85 sources, 38 concepts, index, log, research directions). No broken wiki links or anchors; all frontmatter complete; every page in `index.md`; all 85 raw papers have a source page; all 532 embedded images resolve. One remote image remains by design (`sources/walt.md` Figure 1, not saved by the clipping). `research-directions.md` had inbound links only from `index.md`; a pointer line and a `related:` entry were added to the 23 concept pages that have an Open Questions section, and `README.md` links it from Open Threads. Weakly linked but not orphaned (one inbound body link each): `nuplan-benchmark`, `parallel-il-rl`, `pdm-lite`.
+
+**Stale claims fixed** (annotated in place, dated):
+- *Slowest planner*: ForeSight's 900 ms was still "the wiki's slowest NAVSIM planner" in `navsim-benchmark.md`, twice in `world-model-for-ad.md` and in `sources/foresight.md`, against PhysWAM's 9.4 GPU-seconds on `inference-latency.md`. The index row for the latency page gave the range as 22 ms – 1.36 s; now 22 ms – 9.4 s.
+- *Highest v2 ego progress*: LWDrive's 90.3 (`navsim-benchmark.md`, `sources/lwdrive.md`, `index.md`) is passed by MM-Future's 92.2, recorded four rows below it in the same table.
+- *Highest NC / TTC*: DriveLaW's NC 99.0 / TTC 96.7 (`navsim-benchmark.md`, `world-model-for-ad.md`) are passed by WA-JEPA, WCog-VLA, Drive-HWM and DriveVA. WCog-VLA's and DriveVA's "second-highest NC" are passed by Drive-HWM.
+- *Rank of WCog-VLA*: "fourth-highest" v1 result; MM-Future 93.4 and the disputed Drive-HWM now sit above it.
+- *Highest EC of a 90+ entry*: PhysWAM's 90.5 (`navsim-benchmark.md`, `sources/physwam.md`) against MomWorld's 90.6 in the next row but one (low confidence).
+- *Second-highest corrected EPDMS*: SUV's 91.0 (`sources/suv.md` twice, `index.md`) is third since MM-Future's 91.5; its "second unscored navhard entry" is also passed by PhysWAM's 38.1–39.8.
+- *Highest non-BoN v1*: CLEAR / DA-WAM 93.7 statements in `navsim-benchmark.md` and `best-of-n.md` scoped to navtrain-trained, undisputed scores (MM-Future 94.0 with the val split; Drive-HWM 93.8 / 93.3). `best-of-n.md`'s "ExploreVLA BoN-6 93.7 is the second-highest result in the wiki" annotated.
+- *Per-candidate futures*: DA-WAM was "the only member" predicting one future per candidate in `world-model-for-ad.md`; MM-Future is a second.
+- *HUGSIM*: "only four ingested papers report it" is five (HAD, Latent-WAM, WA-JEPA, PhysWAM, MM-Future); the Extreme-tier range is scoped to ingested methods (BeyondDrive is reported at 0.16).
+- *Open questions out of date*: `navhard-ood-evaluation.md` (GeoWAM's split is no longer the only navtest-small / navhard-large measurement; "Does RL help here?" gains its scope note), `world-model-for-ad.md` (video backbone scale relabelled: answered on navtest by SimWAM, reopened on navhard by Metis), `alpasim-benchmark.md` (MM-Future is the first entry above 92 PDMS with a closed-loop number), `selection-based-planning.md` (two partial scored/unscored measurements on navtest), `inference-latency.md` (AD-E2E-JEPA is no longer the only per-candidate cost report).
+- `general-capability-retention.md`: "of the 74 papers" is now 85; still three that measure it.
+- `README.md`: mention counts for un-ingested methods refreshed (EponaV2 17 → 99, GTRS 9 → 96, DVGT-2 56 → 96, DrivoR 40 → 64, SparseDriveV2 23 → 42); the Workflow list gains the research-directions step.
+
+**Contradictions recorded, not resolved**:
+- Regression on future latents: harmful in WA-JEPA (90.7 vs 91.1 EPDMS), helpful in ReDrive (+0.7 PDMS). Candidate explanations are action conditioning and isolation from the planner.
+- Bidirectional attention: best on navtest in MM-Future (with modality-specific branches), worst on navhard in Metis.
+- Encoder default: DINOv3 over V-JEPA 2 in the robotics ablation AD-E2E-JEPA inherits; V-JEPA 2 over image encoders in WA-JEPA, Drive-JEPA and ReDrive.
+- DriveVLA-W0's 86.1 EPDMS sits in different protocol columns in WA-JEPA's and CoWorld-VLA's tables, from overlapping authors.
+- Drive-HWM: 93.8 / 86.4 in every table, 93.3 / 86.2 in every sentence.
+- HUGSIM: PhysWAM, MM-Future and Latent-WAM are on 436 scenarios with no stated commit; WA-JEPA is pinned.
+- MomWorld: ablation columns that are exact functions of each other; the page stays at low confidence.
+- Carried over from 2026-09-27 and still open: navhard split size (244 vs 450 Stage-1 scenes); the four exceptions to the residual-sign heuristic.
+
+**Research directions** (`wiki/research-directions.md`): now 38 open questions and 2 answered.
+- *Corrected*: "Does a larger video backbone help?" had been filed under Answered; Metis's navhard result contradicts that, so it is back under open questions as partially answered.
+- *Updated*: the closed-loop question (MM-Future's HUGSIM 32.3 at 93.4 PDMS), the generator-versus-selector question (PhysWAM and MM-Future on navtest), the HUGSIM Extreme range.
+- *Added*: Is NAVSIM-v1 saturated? Does generation quality matter for planning? Is it video pretraining or the JEPA objective that transfers? When should a backbone be frozen, LoRA-adapted or fully fine-tuned? The last three come from concept pages without an Open Questions section (`navsim-benchmark`, `foundation-backbones-for-ad`), which the seeding pass had skipped.
+- *Left on its page only*: velocity versus x-prediction parameterization for flow-matching planners (`diffusion-planner.md`).
+
+**Concept pages suggested** (source pages mentioning each; none has its own page):
+- JEPA for driving (34): WA-JEPA, Drive-JEPA, Auto-JEPA, AD-E2E-JEPA, ReDrive and DA-WAM are spread over `world-model-for-ad` and `foundation-backbones-for-ad`.
+- Comfort and extended comfort (52): EC is where several leaders pay for progress (LWDrive 73.3, EponaV2 68.3) and HUGSIM comfort splits the planners.
+- Sensor configuration (LiDAR 39, camera count 19): one-camera, three-camera and camera + LiDAR entries share leaderboards.
+- Knowledge distillation (32).
+- Baseline-row provenance (34): currently a long section of `navsim-benchmark`.
+- Entity pages: `wiki/entities/` is still empty. Most-cited candidates are DiffusionDrive (63 source pages), TransFuser (52) and Hydra-MDP (41) as recurring baselines, and GTRS, DrivoR and EponaV2 as un-ingested components.
+
+**Questions to investigate next**:
+- Ingest GTRS / GTRS-Dense, EponaV2, DVGT-2 and DrivoR: each is now cited 64–99 times and each carries an attribution gap in a current headline result.
+- Does any entry above 92 PDMS other than MM-Future have a closed-loop result in its own paper or a follow-up?
+- Which protocol and commit did PhysWAM, MM-Future and BeyondDrive use on HUGSIM?
+- Does any paper report per-scene navhard scores, so that navhard effects can be given error bars?
+- Is there a video-pretrained, non-JEPA encoder in any planner sweep?

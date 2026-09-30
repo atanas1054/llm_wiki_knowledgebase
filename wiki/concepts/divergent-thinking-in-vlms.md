@@ -2,9 +2,9 @@
 title: Divergent Thinking in VLMs
 type: concept
 sources: [raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md]
-related: [sources/all-roads-lead-to-rome.md, sources/curious-vla.md, sources/understanding-r1-zero-like-training.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/r1-zero-like-training.md, concepts/chain-of-thought-for-ad.md]
+related: [sources/all-roads-lead-to-rome.md, sources/curious-vla.md, sources/understanding-r1-zero-like-training.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/r1-zero-like-training.md, concepts/chain-of-thought-for-ad.md, research-directions.md]
 created: 2026-06-18
-updated: 2026-06-18
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -46,6 +46,8 @@ This paper is not about driving, but the analogy is strong:
 - Reward design should distinguish superficial variation from useful diversity: in driving, that means distinct safe trajectories or reasoning modes, not jitter around the same path.
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - Can MUPO-style multi-group advantages improve NAVSIM/Bench2Drive RFT when groups are clustered by trajectory geometry rather than reasoning embeddings?
 - Should AD VLAs use separate diversity rewards for text reasoning and action trajectories?

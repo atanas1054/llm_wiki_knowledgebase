@@ -2,9 +2,9 @@
 title: Discrete Visual Tokenization for Driving
 type: concept
 sources: [raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md]
-related: [sources/unified-driving-tokens.md, sources/policy-world-model.md, sources/explorevla.md, sources/futuresightdrive.md, sources/drivevla-w0.md, sources/dynvla.md, sources/drivelaw.md, sources/reworld.md, sources/geoworldad.md, sources/geowam.md, sources/epona.md, sources/uniugp.md, sources/brainwam.md, concepts/world-model-for-ad.md, concepts/action-tokenization.md, concepts/foundation-backbones-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md]
+related: [sources/unified-driving-tokens.md, sources/policy-world-model.md, sources/explorevla.md, sources/futuresightdrive.md, sources/drivevla-w0.md, sources/dynvla.md, sources/drivelaw.md, sources/reworld.md, sources/geoworldad.md, sources/geowam.md, sources/epona.md, sources/uniugp.md, sources/brainwam.md, concepts/world-model-for-ad.md, concepts/action-tokenization.md, concepts/foundation-backbones-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, research-directions.md]
 created: 2026-09-04
-updated: 2026-09-04
+updated: 2026-09-30
 confidence: medium
 ---
 
@@ -105,6 +105,8 @@ The two come apart from PSNR in exactly the case that matters: the +Geo row abov
 ---
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - **Can one tokenizer actually serve both consumers?** [[sources/unified-driving-tokens.md]] argues yes and then uses **different tokenizers** for planning and world modelling — geometry-enhanced for the first, representation-only for the second. The experiment its thesis needs (geometry-enhanced tokens into the autoregressive world model) is not run, and its Table 1 suggests why: the geometry variant is worse on every reconstruction metric.
 - **How does $M$ trade against $K_m$?** Only 1 × 16384 and 4 × 4096 are compared, and Orbis's 2 × 16384 appears in a comparison table but not in the ablation.

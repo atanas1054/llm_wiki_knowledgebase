@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md]
 related: [sources/adaptive-wam.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/foundation-backbones-for-ad.md, concepts/nuscenes-waymo-evals.md, sources/drivewam.md, sources/simwam.md]
 created: 2026-04-23
-updated: 2026-09-04
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -200,7 +200,7 @@ This page has carried a **medium** confidence rating because DriveVA's own NAVSI
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | DriveVA | 99.2 | 97.5 | **98.7** | 100 | 83.5 | 90.5 |
 
-**TTC 98.7 is the highest recorded in this wiki** — above DriveLaW's 96.7, which this wiki had listed as exceptional — and NC 99.2 is second only to WA-JEPA's 99.5. DriveVA is a markedly safety-skewed policy, which was invisible while the row was truncated. EP 83.5 is the trade-off.
+**TTC 98.7 is the highest recorded in this wiki** — above DriveLaW's 96.7, which this wiki had listed as exceptional — and NC 99.2 is second only to WA-JEPA's 99.5 *(lint 2026-09-30: since passed by WCog-VLA 99.4 and Drive-HWM 99.6 / 99.5)*. DriveVA is a markedly safety-skewed policy, which was invisible while the row was truncated. EP 83.5 is the trade-off.
 
 It also **disambiguates the headline number**. Adaptive-WAM states its 92.6 exceeds "DriveVA's mixed-data headline result by 1.7 points and its NAVSIM-only result by 2.1", which places DriveVA at **90.9 with mixed data and 90.5 trained on NAVSIM alone**. This wiki has been carrying 90.9 without that qualification. For NAVSIM-only comparisons the correct figure is 90.5, and Adaptive-WAM compares against it rather than the higher one — good practice worth crediting.
 

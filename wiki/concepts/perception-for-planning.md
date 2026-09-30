@@ -2,7 +2,7 @@
 title: Perception-Enhanced Planning in VLA Models
 type: concept
 sources: ["raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [sources/drivereferee.md, sources/hydra-mdp-pp.md, concepts/teacher-pseudo-labels.md, sources/suv.md, sources/grava.md, concepts/general-capability-retention.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/foresight.md, sources/geowam.md, sources/auto-jepa.md, sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md]
+related: [sources/drivereferee.md, sources/hydra-mdp-pp.md, concepts/teacher-pseudo-labels.md, sources/suv.md, sources/grava.md, concepts/general-capability-retention.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/foresight.md, sources/geowam.md, sources/auto-jepa.md, sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md, research-directions.md]
 created: 2026-04-05
 updated: 2026-09-30
 confidence: high
@@ -335,6 +335,8 @@ All four trained simultaneously with Smooth-L1 loss. The separate decoders preve
 This contrasts with Reasoning-VLA's single set of learnable action queries (which attend to all VLM hidden states via cross-attention without modality partitioning).
 
 ## Limitations and Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 1. **LiDAR dependence**: camera-only BEV is 25.0 mAP vs. 58.9 with LiDAR init — a 2.4× gap. The view-lifting problem from monocular cameras to BEV remains hard without depth supervision.
 

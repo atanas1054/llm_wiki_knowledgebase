@@ -2,9 +2,9 @@
 title: AlpaSim Closed-Loop Benchmark
 type: concept
 sources: [raw/papers/Qwen-Drive-1.0_ An Initial Step towards a Vision-Language Foundation Model for Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md]
-related: [concepts/physicalai-av-benchmark.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/bench2drive.md, concepts/navhard-ood-evaluation.md, concepts/world-model-for-ad.md, concepts/nuscenes-waymo-evals.md, sources/qwen-drive-1.0.md, sources/alpamayo-r1.md, sources/drivewam.md, sources/simwam.md]
+related: [concepts/physicalai-av-benchmark.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/bench2drive.md, concepts/navhard-ood-evaluation.md, concepts/world-model-for-ad.md, concepts/nuscenes-waymo-evals.md, sources/qwen-drive-1.0.md, sources/alpamayo-r1.md, sources/drivewam.md, sources/simwam.md, research-directions.md]
 created: 2026-09-18
-updated: 2026-09-18
+updated: 2026-09-30
 confidence: medium
 ---
 
@@ -93,8 +93,10 @@ The transfer itself is worth noting on the positive side: **rewards computed ent
 
 ## Open Questions
 
+*Wiki-wide open questions are collected in [[research-directions.md]].*
+
 1. **Is the ordering inversion real or a protocol artifact?** The decisive test is a self-reported AlpaSim number from SimWAM's or DriveWAM's own authors. Until then this is one group's reproduction of two methods that were not designed for it.
 2. **What input cadence does closed-loop driving want?** Qwen-Drive's own hypothesis for its deficit is observation sampling — Alpamayo-1.5's dense 0.4 s history against its own 4 frames spanning 1.5 s — and AlpaSim replans over short intervals. Untested, and a one-variable experiment in its released codebase.
-3. **Does anything above 92 PDMS survive here?** Nothing in the wiki's NAVSIM top eight has been run in any reactive simulator. [[sources/drivesuprim.md]], [[sources/clear.md]], [[sources/da-wam.md]] and [[sources/wcog-vla.md]] are all unmeasured under compounding error.
+3. **Does anything above 92 PDMS survive here?** Nothing in the wiki's NAVSIM top eight has been run in any reactive simulator. [[sources/drivesuprim.md]], [[sources/clear.md]], [[sources/da-wam.md]] and [[sources/wcog-vla.md]] are all unmeasured under compounding error. *(Lint 2026-09-30: one entry above 92 now has a closed-loop number, though not in AlpaSim. [[sources/mm-future.md]] (93.4 PDMS) scores 32.3 HD-Score on HUGSIM's 436 scenarios, below WA-JEPA's 44.6 (91.8 PDMS) and PhysWAM's 35.5: a second case of NAVSIM order not carrying over.)*
 4. **How does AlpaSim relate to HUGSIM?** Both reconstruct real logs and re-query the planner; neither has been run alongside the other by any paper. If the two agree on a ranking, the wiki gains a usable closed-loop axis; if they disagree, it gains another protocol-drift problem.
 5. **Is version 26.02 stable?** [[concepts/hugsim-benchmark.md]] records how quickly a versioned reconstruction benchmark makes earlier numbers incomparable. Qwen-Drive names its version, which is the right practice; the wiki should watch for the second paper to report a different one.

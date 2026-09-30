@@ -2,9 +2,9 @@
 title: Reasoning Faithfulness in Driving VLAs
 type: concept
 sources: ["raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/Qwen-Drive-1.0_ An Initial Step towards a Vision-Language Foundation Model for Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md]
-related: [sources/grava.md, sources/qwen-drive-1.0.md, sources/alpamayo-r1.md, sources/senna2.md, sources/spanvla.md, sources/linkvla.md, sources/orion.md, sources/autovla.md, sources/uniugp.md, sources/autodrive-r2.md, sources/adathinkdrive.md, sources/nord.md, sources/hermes.md, sources/onevl.md, concepts/chain-of-thought-for-ad.md, concepts/dual-system-vla.md, concepts/rl-for-ad.md, concepts/teacher-pseudo-labels.md, concepts/evaluation-variance.md]
+related: [sources/grava.md, sources/qwen-drive-1.0.md, sources/alpamayo-r1.md, sources/senna2.md, sources/spanvla.md, sources/linkvla.md, sources/orion.md, sources/autovla.md, sources/uniugp.md, sources/autodrive-r2.md, sources/adathinkdrive.md, sources/nord.md, sources/hermes.md, sources/onevl.md, concepts/chain-of-thought-for-ad.md, concepts/dual-system-vla.md, concepts/rl-for-ad.md, concepts/teacher-pseudo-labels.md, concepts/evaluation-variance.md, research-directions.md]
 created: 2026-09-27
-updated: 2026-09-27
+updated: 2026-09-30
 confidence: medium
 ---
 
@@ -66,6 +66,8 @@ This is also what the consistency rewards above optimize. Alpamayo-R1 and SpanVL
 ---
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - Does any method's trace remain predictive of its action on **navhard** or other shifted inputs, where hindsight-derived maneuvers are least reliable?
 - Is a *verbalized action* sufficient for the practical uses people want from CoT (auditability, human override, rule checking)? If so, faithfulness to evidence may matter less than claimed.

@@ -2,7 +2,7 @@
 title: Inference-Time Safety for Trajectory Planning
 type: concept
 sources: ["raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md]
-related: [sources/drivereferee.md, sources/reflectdrive.md, sources/drivefine.md, sources/diffusiondrive.md, sources/feaxdrive.md, sources/plan-r1.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/rl-for-ad.md]
+related: [sources/drivereferee.md, sources/reflectdrive.md, sources/drivefine.md, sources/diffusiondrive.md, sources/feaxdrive.md, sources/plan-r1.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/rl-for-ad.md, research-directions.md]
 created: 2026-04-05
 updated: 2026-09-30
 confidence: high
@@ -153,6 +153,8 @@ GRPO-based methods are superior for deployment (no inference overhead, no runtim
 **Against the other map-based entry here.** [[sources/feaxdrive.md]] also queries a drivable-area distance field at the vehicle's corners, but it takes the local map as given and uses the gradient to steer a diffusion sample. DriveReferee predicts the map and only chooses between samples. Neither paper tests the other's combination (steering on a predicted map).
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - Can the Local Scorer be learned jointly with the base model (e.g., as a critic head) to improve quality?
 - Can the local search radius $\delta$ be dynamically adapted based on violation severity?

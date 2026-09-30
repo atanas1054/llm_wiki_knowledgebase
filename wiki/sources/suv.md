@@ -176,7 +176,7 @@ Neither consequence is discussed as a limitation.
 | SGDrive | 86.2 | Unclassified (SGDrive's own number) |
 | **DriveVLA-W0** | **86.9** | **Neither known value** (pre-fix 86.1); probably a reproduction, since the paper times DriveVLA-W0 itself in Table 8 |
 
-**This is another v2 table that mixes conventions, at least the seventh ingested.** SUV's own 91.0 is stated to be corrected. Under that protocol it is **second in the wiki, behind [[sources/wa-jepa.md]] at 91.7**, which is absent from the table. It is above SparseDriveV2 90.1, CoWorld-VLA 90.0, DriveFuture 89.9, WAM-Diff/DriveFine 89.7 and LWDrive 89.6. It is the best corrected-protocol result without a trajectory scorer or best-of-N; WA-JEPA also has neither, so WA-JEPA still leads.
+**This is another v2 table that mixes conventions, at least the seventh ingested.** SUV's own 91.0 is stated to be corrected. Under that protocol it is **second in the wiki, behind [[sources/wa-jepa.md]] at 91.7**, which is absent from the table. *(Lint 2026-09-30: now third. [[sources/mm-future.md]] reports 91.5 on the corrected protocol, from a trainval model with 64 scored proposals.)* It is above SparseDriveV2 90.1, CoWorld-VLA 90.0, DriveFuture 89.9, WAM-Diff/DriveFine 89.7 and LWDrive 89.6. It is the best corrected-protocol result without a trajectory scorer or best-of-N; WA-JEPA also has neither, so WA-JEPA still leads.
 
 **Where the score comes from.** NC 99.1, TTC 98.7 and LK 98.1 are the table's best. EP 87.8 is 3.3 below SparseDriveV2 and equal to the Human Agent's 87.4 (+0.4). SUV's profile is safety-heavy rather than progress-heavy, the pattern the wiki keeps recording for world-model planners.
 
@@ -388,7 +388,7 @@ The one failure case the paper shows is **under-progress**, consistent with EP b
 ## Key Cross-References
 
 - [[concepts/world-model-for-ad.md]] — Pattern 36: **perception tasks as extra generated video streams**. Also [the test-time imagination dispute](../concepts/world-model-for-ad.md#test-time-imagination): the first controlled access ablation that reports navhard, where access is worth +4.1 against +0.3 on navtest.
-- [[concepts/navsim-benchmark.md]] — 91.0 on the corrected v2 cohort (second, behind WA-JEPA 91.7); another mixed-convention v2 table; 90.8 on v1; the 2-step/288 ms operating point.
+- [[concepts/navsim-benchmark.md]] — 91.0 on the corrected v2 cohort (second when ingested, behind WA-JEPA 91.7; third since MM-Future's 91.5); another mixed-convention v2 table; 90.8 on v1; the 2-step/288 ms operating point.
 - [[concepts/navhard-ood-evaluation.md]] — 36.9 combined, second in the unscored cohort behind SpanVLA 40.1; an inference-path effect that is visible only on navhard.
 - [[concepts/nuscenes-waymo-evals.md]] — 7.94 RFS on WOD-E2E test, beside Qwen-Drive's 7.91.
 - [[concepts/perception-for-planning.md]] — future segmentation, depth and tracks rendered as video and read by the planner as latents: a head-free route.

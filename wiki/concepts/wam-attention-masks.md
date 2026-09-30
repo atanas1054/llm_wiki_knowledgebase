@@ -2,7 +2,7 @@
 title: Attention Masks in World-Action Models
 type: concept
 sources: ["raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md]
-related: [sources/mm-future.md, sources/redrive.md, sources/physwam.md, sources/simwam.md, sources/metis.md, sources/suv.md, sources/wa-jepa.md, sources/brainwam.md, sources/unidrivevla.md, sources/sgdrive.md, sources/drivedreamer-policy.md, sources/uniugp.md, sources/driveva.md, sources/latent-wam.md, sources/alpamayo-r1.md, concepts/world-model-for-ad.md, concepts/mixture-of-experts.md, concepts/navhard-ood-evaluation.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/perception-for-planning.md]
+related: [sources/mm-future.md, sources/redrive.md, sources/physwam.md, sources/simwam.md, sources/metis.md, sources/suv.md, sources/wa-jepa.md, sources/brainwam.md, sources/unidrivevla.md, sources/sgdrive.md, sources/drivedreamer-policy.md, sources/uniugp.md, sources/driveva.md, sources/latent-wam.md, sources/alpamayo-r1.md, concepts/world-model-for-ad.md, concepts/mixture-of-experts.md, concepts/navhard-ood-evaluation.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/perception-for-planning.md, research-directions.md]
 created: 2026-09-27
 updated: 2026-09-30
 confidence: medium
@@ -97,6 +97,8 @@ So ReDrive contains a clean instance of each of the two mechanisms Metis's mask 
 ---
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - **The missing cells.** Run A→F only, F→A only and both, in one model, on navhard. This decides between the two partial results above.
 - **Stop-gradient vs. no stop-gradient on F←A.** WA-JEPA blocks it; Metis relies on it. One ablation in either codebase would say whether gradient coupling helps (Metis) or hurts (WA-JEPA's implicit claim).

@@ -2,7 +2,7 @@
 title: Bench2Drive Benchmark
 type: concept
 sources: ["raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
-related: [sources/momworld.md, sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, sources/deepsight.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md, concepts/pdm-lite.md]
+related: [sources/momworld.md, sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, sources/deepsight.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md, concepts/pdm-lite.md, research-directions.md]
 created: 2026-04-15
 updated: 2026-09-30
 confidence: high
@@ -148,6 +148,8 @@ Drive-JEPA ([[sources/drive-jepa.md]]) also reports both NAVSIM and Bench2Drive,
 ---
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - Does Bench2Drive's interactive simulation better predict real-world safety than NAVSIM's non-reactive scoring?
 - Does LinkVLA's 91.01 DS (on a 1B backbone) scale further with a 7B backbone, and would DynVLA's dynamics-token CoT close the remaining gap if combined with LinkVLA-style action tokenization?

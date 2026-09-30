@@ -2,9 +2,9 @@
 title: Adaptive Routing for Trajectory Planning
 type: concept
 sources: [raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md]
-related: [sources/coworld-vla.md, sources/adaptive-wam.md, sources/clear.md, concepts/best-of-n.md, concepts/selection-based-planning.md, concepts/diffusion-planner.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md]
+related: [sources/coworld-vla.md, sources/adaptive-wam.md, sources/clear.md, concepts/best-of-n.md, concepts/selection-based-planning.md, concepts/diffusion-planner.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, research-directions.md]
 created: 2026-06-11
-updated: 2026-09-11
+updated: 2026-09-30
 confidence: medium
 ---
 
@@ -123,6 +123,8 @@ Two things make the omission more interesting than a missing ablation usually is
 Driving scenarios vary sharply in ambiguity. A highway-following scene often needs one precise trajectory; a crowded unsignalized intersection may need several plausible futures before selection. Fixed compute budgets either waste effort on simple scenes or under-sample hard scenes. Adaptive routing exposes that trade-off as a learned policy.
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - Whether discrete scheme routing is enough, or continuous differentiable routing would capture better precision/diversity trade-offs.
 - Whether PDMS-supervised routing overfits NAVSIM-specific scorer preferences.

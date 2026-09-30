@@ -548,7 +548,7 @@ The two evaluators define time-to-collision and ego progress differently, which 
 
 ### 5. The v2 result and its table
 
-**90.3 EPDMS looks like a corrected-evaluator number.** The closed form of its sub-scores is 90.1, a residual of −0.2, which is the corrected side of the wiki's [residual-sign heuristic](../concepts/navsim-benchmark.md#residual-sign). EC 90.5 is the highest extended comfort of any 90+ entry in the wiki and is identical with and without CPP.
+**90.3 EPDMS looks like a corrected-evaluator number.** The closed form of its sub-scores is 90.1, a residual of −0.2, which is the corrected side of the wiki's [residual-sign heuristic](../concepts/navsim-benchmark.md#residual-sign). EC 90.5 is the highest extended comfort of any 90+ entry in the wiki and is identical with and without CPP. *(Lint 2026-09-30: [[sources/momworld.md]], ingested later and held at low confidence, prints 90.6 at 90.1 EPDMS.)*
 
 **The table mixes evaluators**, in one unlabelled column:
 

@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md]
 related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/selection-based-planning.md, concepts/dual-system-vla.md, concepts/nuscenes-waymo-evals.md, concepts/rl-for-ad.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/simwam.md, sources/drivelaw.md, sources/da-wam.md, sources/wcog-vla.md, sources/onevl.md, sources/flare.md, sources/drivevla-w0.md, sources/drivesuprim.md, sources/hybriddriveVLA.md, sources/clear.md, sources/drive-jepa.md, sources/sgdrive.md, sources/recogdrive.md, sources/epona.md, sources/diffusiondrive.md, sources/autovla.md, sources/wa-jepa.md, sources/geowam.md, sources/wam-diff.md, sources/dynvla.md, sources/diffusiondrive-v2.md, sources/senna2.md, sources/drivewam.md]
 created: 2026-09-04
-updated: 2026-09-27
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -187,7 +187,7 @@ $\beta$, $\lambda_{\mathrm{ref}}$, and $\lambda_{\mathrm{score}}$ are unreported
 | DriveWorld-VLA | 98.6 | **99.1** | **99.6** | 99.8 | 87.4 | 97.9 | 97.0 | 97.8 | 78.6 | 86.8 |
 | **LWDrive (ours)** | **98.8** | 98.4 | 99.0 | 99.7 | **90.3** | **98.6** | 96.3 | 97.9 | 73.3 | **89.6** |
 
-**EP 90.3 is the highest NAVSIM-v2 ego progress recorded anywhere in this wiki**, ahead of [[sources/geoworldad.md]]'s 89.1 and [[sources/diffusiondrive-v2.md]]'s 88.9 — and it exceeds the Human Agent's 87.4 in the same table by 2.9 points. TTC 98.6 ties GeoWorldAD for the best v2 value here. **EC 73.3 is the cost**: below every other method in its own table except Hydra-MDP++ (70.9) and DriveVLA-W0 (58.9). The profile is an aggressive planner, and the paper does not discuss the comfort regression.
+**EP 90.3 was the highest NAVSIM-v2 ego progress recorded in this wiki when ingested** *(lint 2026-09-30: [[sources/mm-future.md]] now reports 92.2)*, ahead of [[sources/geoworldad.md]]'s 89.1 and [[sources/diffusiondrive-v2.md]]'s 88.9 — and it exceeds the Human Agent's 87.4 in the same table by 2.9 points. TTC 98.6 ties GeoWorldAD for the best v2 value here. **EC 73.3 is the cost**: below every other method in its own table except Hydra-MDP++ (70.9) and DriveVLA-W0 (58.9). The profile is an aggressive planner, and the paper does not discuss the comfort regression.
 
 The 89.6 EPDMS sits **0.7 below the Human Agent's 90.3** in its own table — the second-closest approach to the human reference this wiki records on v2, after [[sources/adaptive-wam.md]]'s 0.4.
 

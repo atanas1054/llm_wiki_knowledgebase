@@ -2,9 +2,9 @@
 title: Dual-System VLA for Autonomous Driving
 type: concept
 sources: [raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
-related: [sources/drive-hwm.md, sources/lwdrive.md, sources/brainwam.md, sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md]
+related: [sources/drive-hwm.md, sources/lwdrive.md, sources/brainwam.md, sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md, research-directions.md]
 created: 2026-04-05
-updated: 2026-09-14
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -372,6 +372,8 @@ Three axes now exist on this page, and they are independent:
 **The caveat is large and belongs here rather than on the world-model page.** The temporal-role split is a claim about *deployment*, and NAVSIM cannot test it: the benchmark is single-shot, so with $N=8$ at its 8-pose convention the slow model fires exactly once per scenario and the fast model never receives a second observation. See [[concepts/navsim-benchmark.md]]. **What Table IV measures is a conditioning stream, not a schedule** — and it is worth +0.3 or +0.8 PDMS depending on which of the paper's [two result sets](../sources/drive-hwm.md#two-result-sets) is correct, against 1.3 for the conditioning mechanism alone. The rate hierarchy is the least-supported part of a paper whose other measurements are clean.
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - Can the kinematic mapping $f_K$ be learned (soft/continuous) rather than rule-based, to avoid category-boundary noise?
 - Does DriveWAM's advisory arrangement need a consistency mechanism? Senna-2's evidence suggests unaligned VLM guidance under-delivers; DriveWAM reports aggregate gains but no VLM-action agreement rate.

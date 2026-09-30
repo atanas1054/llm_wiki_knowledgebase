@@ -2,9 +2,9 @@
 title: Mixture of Experts for Autonomous Driving VLAs
 type: concept
 sources: [raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
-related: [sources/brainwam.md, sources/wam-diff.md, sources/drivefine.md, sources/drivevla-w0.md, sources/automot.md, sources/unidrivevla.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/perception-for-planning.md]
+related: [sources/brainwam.md, sources/wam-diff.md, sources/drivefine.md, sources/drivevla-w0.md, sources/automot.md, sources/unidrivevla.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/perception-for-planning.md, research-directions.md]
 created: 2026-04-21
-updated: 2026-09-04
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -137,6 +137,8 @@ The four patterns address different bottlenecks:
 | Latency from large VLA backbone at inference | Lightweight side expert with async update | DriveVLA-W0 |
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - **Expert count scaling**: WAM-Diff shows 64 > 16 > no-MoE (+1.9 total PDMS), but the curve is not shown beyond 64. At what point does expert count saturate for trajectory planning?
 - **Block-level vs. token-level**: DriveFine's explicit task routing vs. WAM-Diff's learned routing — is explicit routing more sample-efficient, or does learned routing generalize better to novel scenarios?

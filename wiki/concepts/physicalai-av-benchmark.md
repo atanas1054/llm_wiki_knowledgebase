@@ -2,7 +2,7 @@
 title: PhysicalAI-Autonomous-Vehicles Benchmark
 type: concept
 sources: [raw/papers/Qwen-Drive-1.0_ An Initial Step towards a Vision-Language Foundation Model for Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md"]
-related: [sources/redrive.md, concepts/foundation-backbones-for-ad.md, concepts/alpasim-benchmark.md, sources/qwen-drive-1.0.md, sources/drivewam.md, sources/alpamayo-r1.md, concepts/nuscenes-waymo-evals.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md]
+related: [sources/redrive.md, concepts/foundation-backbones-for-ad.md, concepts/alpasim-benchmark.md, sources/qwen-drive-1.0.md, sources/drivewam.md, sources/alpamayo-r1.md, concepts/nuscenes-waymo-evals.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, research-directions.md]
 created: 2026-08-17
 updated: 2026-09-30
 confidence: medium
@@ -121,6 +121,8 @@ This is a different use from the scaling studies above: there the dataset suppli
 This is the wiki's first large-scale *real-world data-scaling* benchmark: DriveWAM's 4k → 20k → 100k clip study (ADE@4s 1.01 → 0.94 → 0.83 with guidance) is run here, complementing NAVSIM (closed-loop non-reactive, small) and Bench2Drive (CARLA closed-loop, synthetic).
 
 ## Open Questions
+
+*Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - Will other groups adopt the official 644-example split and the leakage-free subset? Two papers, two protocols, opposite orderings is where this benchmark currently stands.
 - ~~Does performance on curated rare-event clips predict closed-loop behavior?~~ **Answered, negatively** - see [AlpaSim](#alpasim-answer) and [[concepts/alpasim-benchmark.md]]. The open version of the question is now whether the *ordering* holds when the reproduced methods are run by their own authors.

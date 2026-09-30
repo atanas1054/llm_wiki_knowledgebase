@@ -2,9 +2,9 @@
 title: General-Capability Retention After Driving Adaptation
 type: concept
 sources: [raw/papers/Qwen-Drive-1.0_ An Initial Step towards a Vision-Language Foundation Model for Autonomous Driving.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
-related: [concepts/vlm-domain-adaptation.md, concepts/foundation-backbones-for-ad.md, concepts/mixture-of-experts.md, concepts/dual-system-vla.md, sources/qwen-drive-1.0.md, sources/automot.md, sources/unidrivevla.md, sources/alpamayo-r1.md, sources/percept-wam.md, sources/onedrive.md]
+related: [concepts/vlm-domain-adaptation.md, concepts/foundation-backbones-for-ad.md, concepts/mixture-of-experts.md, concepts/dual-system-vla.md, sources/qwen-drive-1.0.md, sources/automot.md, sources/unidrivevla.md, sources/alpamayo-r1.md, sources/percept-wam.md, sources/onedrive.md, research-directions.md]
 created: 2026-09-18
-updated: 2026-09-18
+updated: 2026-09-30
 confidence: medium
 ---
 
@@ -108,8 +108,10 @@ Qwen-Drive is a Qwen3.5-4B derivative; the LLM judge is Qwen3.5-Plus; the data f
 
 ## Open Questions
 
+*Wiki-wide open questions are collected in [[research-directions.md]].*
+
 1. **What is the minimum general-data fraction?** Unmeasured. 26 % works at 4 B; 0 % clearly fails; nothing between has been run.
 2. **Does retention survive RL?** Qwen-Drive freezes the VLM during Stages 3–4, so its RL cannot forget anything — and the paper reports no post-RL VQA evaluation at all. Every wiki method that runs GRPO *through* the VLM ([[sources/autovla.md]], [[sources/recogdrive.md]], [[sources/adathinkdrive.md]], [[sources/nord.md]], and a dozen others) has an unmeasured exposure here.
 3. **Does retained general capability ever help driving?** Argument 1 predicts it should show up in long-tail or OOD scenarios. The closest available evidence is indirect and points the other way: Qwen-Drive's own Table 8 prices its entire Stage-2 knowledge adaptation at **+0.08 RFS** for planning. Retention may be worth having for the cockpit and worth nothing for the plan.
 4. **Is the base model a fair reference?** Qwen-Drive is compared against the model it was built from. UniDriveVLA was compared against Qwen3-VL-8B by its own authors and re-measured here by others; the two disagree in level but not in direction. Nobody has run this protocol on a method's *own* base outside the authoring lab.
-5. **Does anyone else report it?** Of the 74 papers in this wiki, three measure post-adaptation general capability. That is the fact this page most wants to change.
+5. **Does anyone else report it?** Of the 85 papers in this wiki (count refreshed at the 2026-09-30 lint), three measure post-adaptation general capability. That is the fact this page most wants to change.
