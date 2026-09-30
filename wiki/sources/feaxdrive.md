@@ -2,9 +2,9 @@
 title: "FeaXDrive: Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md]
-related: [concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/inference-time-safety.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/recogdrive.md, sources/had.md]
+related: [sources/drivereferee.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/inference-time-safety.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/recogdrive.md, sources/had.md]
 created: 2026-05-01
-updated: 2026-05-01
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -164,3 +164,7 @@ In this paper, `R_fea` is based on the adaptive curvature feasibility test. The 
 - Standard GRPO highlights a trade-off: it reaches higher PDMS than FA-GRPO but substantially worsens curvature violation, so benchmark score and trajectory feasibility can conflict.
 - The method is VLM-latency dominated: total median inference is 348.73 ms, with the VLM backbone alone taking 245.33 ms.
 - Evaluation is NAVSIM-only; there is no NAVSIM-v2/EPDMS, navhard, Bench2Drive, HUGSIM, nuScenes, or Waymo result.
+
+## Later Work
+
+- **[[sources/drivereferee.md]]** uses the same geometric primitive (a drivable-area distance field queried at the vehicle's footprint points) to *select* between samples of a video world-action model, on a map it predicts from the camera. FeaXDrive uses it as a gradient to *steer* a diffusion sample, on a local map it is given. DriveReferee finds the predicted-map error (0.50 m mean) larger than its 0.4 m decision threshold, which bears on this page's note that online mapping could replace the local map.

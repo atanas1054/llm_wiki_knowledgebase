@@ -1,10 +1,10 @@
 ---
 title: Counterfactual Prediction for Driving World Models
 type: concept
-sources: [raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md]
-related: [sources/da-wam.md, sources/auto-jepa.md, sources/driving-wm-counterfactuals.md, concepts/world-model-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/bench2drive.md, concepts/hugsim-benchmark.md, concepts/nuscenes-waymo-evals.md, concepts/best-of-n.md, sources/simwam.md, sources/drivelaw.md, sources/dreameraD.md, sources/vega.md, sources/policy-world-model.md]
+sources: ["raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md"]
+related: [sources/mm-future.md, sources/redrive.md, sources/ad-e2e-jepa.md, sources/da-wam.md, sources/auto-jepa.md, sources/driving-wm-counterfactuals.md, concepts/world-model-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/bench2drive.md, concepts/hugsim-benchmark.md, concepts/nuscenes-waymo-evals.md, concepts/best-of-n.md, sources/simwam.md, sources/drivelaw.md, sources/dreameraD.md, sources/vega.md, sources/policy-world-model.md]
 created: 2026-08-24
-updated: 2026-09-02
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -158,6 +158,25 @@ Performance tracks *how much of the event is inferable from the shared history* 
 **5. Some world models opt out of the ladder entirely, and say so.** [[sources/auto-jepa.md]] predicts only the latent of the future ego trajectory, and its limitations section states plainly that the learned representation "does not provide the scene-level forecasts required by applications such as interactive simulation or counterfactual environment generation." This is worth recording as the honest boundary case: it is a *world model* in the sense of predicting the future, and it is on **no rung of this ladder for the environment**, because it never represents an environment state that could be intervened on. The trade is explicit — planning-relevant selectivity (masking dynamic agents changes its intent 2.97× more than equal-area random masks) without any queryable model of what those agents will do. Papers that want both must pay for both; Auto-JEPA is the demonstration that planning alone does not require the second.
 
 **4. Retrospective analysis needs a different architecture, not a bigger one.** For incident analysis, safety auditing, and liability assessment — where the full log exists by definition — the missing component is an abduction path that ingests the observed continuation. No ingested method in this wiki has one.
+
+**6. Using the factual continuation is not the same as abducting the world.** [[sources/ad-e2e-jepa.md]] is the first driving model here that takes $F^{+}$ as an inference-time input: it uses the recorded future frame as a goal and searches for the trajectory whose rung-2 rollout lands nearest to it.
+
+$$a^{*}=\operatorname*{argmin}_{a}\ \big\|z(F^{+})-\hat z(H,a)\big\|^{2}$$
+
+This infers the **action** that was taken, not the **world** $w$ that was realized. Each candidate is still predicted from $p(w\mid H)$, and nothing learned from $F^{+}$ is carried into the prediction for a different action. It is inverse dynamics by synthesis, on rung 2, and the paper does not call it counterfactual.
+
+Its **hit-rate** metric is still useful for this page. Insert the true trajectory among $N$ candidates and count how often its rollout is the nearest to the real future:
+
+| | What it tests | Needs a simulator? | Result |
+|---|---|---|---|
+| Recovered fraction ([[sources/driving-wm-counterfactuals.md]]) | Whether a prediction under $a'$ matches the matched counterfactual replay | Yes (CARLA, three arms) | 0.31–0.38 for direct prediction |
+| **Hit rate** ([[sources/ad-e2e-jepa.md]]) | Whether the rollout under the **factual** action matches the factual future better than rollouts under other actions | **No** (real logs) | 53.8% top-1 / 82.7% top-5 among 257 |
+
+Hit rate checks only the factual arm, so it says nothing about rung 3. It is a **necessary condition for sense D**: a model whose rollouts cannot pick out the action that actually happened has no business ranking actions that did not. It is also cheap, and no other candidate-rollout planner in the wiki ([[sources/da-wam.md]], [[sources/dreameraD.md]]) reports it. Two caveats: it falls as the candidate set gets denser (15.3% among 8,193), so it compares only at a fixed $N$; and it can be passed by modelling ego-motion parallax alone.
+
+**Action sensitivity is a weaker check than either.** [[sources/redrive.md]] holds the history fixed, shifts the conditioning trajectory laterally through 15 offsets and shows that its predictor's outputs diverge smoothly (cosine similarity about 0.97 between neighbours, about 0.72 at the extremes). That proves the prediction *depends* on the action. It compares predictions with each other and never with a recorded future, so it cannot show the dependence is *right*. The three checks form a ladder: sensitivity (no reference needed), factual consistency (hit rate, needs the recorded future), counterfactual recovery (needs a simulator). Most papers that claim action-conditioned world modeling report the first at most.
+
+**A second sensitivity result, with the same limit.** [[sources/mm-future.md]] generates 64 trajectory–future pairs per scene and trains only the pair nearest the expert. For the rest it reports that futures paired with the left-most and right-most trajectories are further apart than futures paired with similar trajectories (RMS distance +17.3%, cosine distance +38.9%). That shows the future depends on its trajectory. It does not show the future is what that trajectory would cause, and the paper reports no prediction error even for the supervised pair. A scorer then reads all 64 futures.
 
 ---
 

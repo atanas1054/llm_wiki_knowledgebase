@@ -2,9 +2,9 @@
 title: "Auto-JEPA: A Latent World Model of Continuous Intent for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md]
-related: [sources/wa-jepa.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/intent-conditioned-planning.md, concepts/navsim-benchmark.md, concepts/perception-for-planning.md, concepts/counterfactual-prediction.md, concepts/foundation-backbones-for-ad.md, sources/drive-jepa.md, sources/latent-wam.md, sources/deepsight.md, sources/drivesuprim.md, sources/simwam.md, sources/drivelaw.md, sources/sgdrive.md]
+related: [sources/wa-jepa.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/intent-conditioned-planning.md, concepts/navsim-benchmark.md, concepts/perception-for-planning.md, concepts/counterfactual-prediction.md, concepts/foundation-backbones-for-ad.md, sources/drive-jepa.md, sources/latent-wam.md, sources/deepsight.md, sources/drivesuprim.md, sources/simwam.md, sources/drivelaw.md, sources/sgdrive.md, sources/ad-e2e-jepa.md]
 created: 2026-09-02
-updated: 2026-09-02
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -306,6 +306,8 @@ Figure 4 pushes further to individual vehicles: occluding a vehicle that affects
 - **CLOVER** (arXiv 2605.15120, not ingested) — Auto-JEPA's scorer is *initialized from CLOVER's public checkpoint*, and the paper reports CLOVER at 90.4 EPDMS on NAVSIM v2 with a learned generator–scorer pipeline. This is now a high-priority gap: a component this load-bearing (+3.7 PDMS) should not be an un-ingested dependency.
 
 - **[[sources/wa-jepa.md]]** — the third V-JEPA 2 paper in the wiki, and the one whose critique comes closest to landing on Auto-JEPA. WA-JEPA argues V-JEPA's deterministic regression "is insufficient for generating entirely unseen future tokens," and measures a 1.0-EPDMS penalty for using it on multi-view scene latents. Auto-JEPA's objective is also deterministic (alignment + cosine, with InfoNCE only as an anti-collapse term) — but its target is a **single ego trajectory**, far lower-entropy than a scene, so a conditional mean remains a usable retrieval key rather than a blur. Read together, the two suggest the operative variable is the entropy of the prediction target, not the objective in isolation. WA-JEPA also supplies the corrected/pre-fix EPDMS partition that reframes Auto-JEPA's two v2 numbers.
+
+- **[[sources/ad-e2e-jepa.md]]** — the complementary half. Auto-JEPA predicts what the ego will do and nothing about the scene, so it cannot be rolled out. AD-E2E-JEPA predicts what the scene will look like under a given ego action and has no notion of what the ego should do, so it cannot plan without a goal image. It cites Auto-JEPA as predicting "future representations for scoring-based planning", which undersells the retrieval design described above. Two things connect the papers beyond the name. Its zero-shot mode has the same missing continuity term (EC 35.5–43.8 against Auto-JEPA's 75.2). And the occlusion protocol on this page is the test its evaluation lacks: goal-matching can be satisfied by ego-motion parallax alone, and masking dynamic agents would show whether its rollouts model them.
 
 - **Intent terminology** — Auto-JEPA's "intent" is *not* the discrete maneuver variable of [[concepts/intent-conditioned-planning.md]] (DIAL's eight classes, PaIR-Drive's intention tokens). It is a continuous 8×1024 latent describing one specific future realization. It is closer to SGDrive's continuous goal pose, but richer: a full temporal trajectory encoding rather than a single terminal point. See that page's [Continuous Goal as Intent](../concepts/intent-conditioned-planning.md) section.
 

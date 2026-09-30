@@ -2,9 +2,9 @@
 title: "Metis: A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation"
 type: source-summary
 sources: ["raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md"]
-related: [sources/hydra-mdp-pp.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/mixture-of-experts.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/simwam.md, sources/suv.md, sources/driveva.md, sources/drivewam.md, sources/drivelaw.md, sources/epona.md, sources/drivevla-w0.md, sources/drivefine.md, sources/sgdrive.md, sources/vega.md, sources/recogdrive.md, sources/brainwam.md, sources/adaptive-wam.md, sources/wa-jepa.md]
+related: [sources/hydra-mdp-pp.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/mixture-of-experts.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/simwam.md, sources/suv.md, sources/driveva.md, sources/drivewam.md, sources/drivelaw.md, sources/epona.md, sources/drivevla-w0.md, sources/drivefine.md, sources/sgdrive.md, sources/vega.md, sources/recogdrive.md, sources/brainwam.md, sources/adaptive-wam.md, sources/wa-jepa.md, sources/redrive.md]
 created: 2026-09-27
-updated: 2026-09-27
+updated: 2026-09-30
 confidence: medium
 ---
 
@@ -405,3 +405,4 @@ The real-robot evidence is **four qualitative examples, with no success rate, no
 - [[sources/simwam.md]] — same backbone and recipe. Isolated mask; its navtest null matches Metis's ±0.5 on navtest.
 - [[sources/suv.md]] — same backbone and recipe. The action reads the future; it copies Metis's v2/navhard rows and the Drive-JEPA swap.
 - [[sources/brainwam.md]] — symmetric, unmasked coupling hurts. The same direction as Metis's joint variant.
+- [[sources/redrive.md]] — the same attention pattern in JEPA latent space. Its future predictor reads the action and its planner never reads the future, but the action it reads is the **recorded** trajectory, so no future-loss gradient reaches the planner in joint training. A later stage sends that gradient to the planner alone through a frozen predictor. Between them the two stages isolate the two mechanisms this page says its mask might work through (+0.7 and +0.3 PDMS on navtest; no navhard ablation). ReDrive's navhard table is this page's Table 1 row for row, with its own 34.4 added above the 32.2 here.

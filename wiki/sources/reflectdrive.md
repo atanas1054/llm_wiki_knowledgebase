@@ -2,9 +2,9 @@
 title: "ReflectDrive: Discrete Diffusion for Reflective VLA in Autonomous Driving"
 type: source-summary
 sources: [raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md]
-related: [concepts/inference-time-safety.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md]
+related: [sources/drivereferee.md, concepts/inference-time-safety.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/navsim-benchmark.md, concepts/vlm-domain-adaptation.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -215,3 +215,5 @@ The paper's core insight: **masked diffusion training = inpainting training**. A
 - **vs. WAM-Flow**: Both use discrete token planners. WAM-Flow uses CTMC-based DFM + GRPO; ReflectDrive uses masked diffusion + reflection. WAM-Flow optimizes during training; ReflectDrive optimizes during inference.
 - **vs. DiffusionDrive**: DiffusionDrive uses trajectory anchors from clustering as initialization; ReflectDrive seeds diversity via NMS goal generation. Both aim to handle multimodal driving behaviors.
 - **vs. AutoVLA**: AutoVLA is the prior VLA SOTA (89.1 PDMS, AR generation); ReflectDrive extends DLM planning with inference-time safety reflection and claims to exceed it.
+
+- **Later evidence on rule-based inference-time safety**: [[sources/drivereferee.md]] runs an analytic collision and drivable-area check on predicted maps to gate and re-sample a world-action model's plan. It is worth +0.30 EPDMS on an imitation-only policy and nothing once the same rule has been distilled into the policy in training. See [[concepts/inference-time-safety.md#analytic-referee]].

@@ -2,9 +2,9 @@
 title: "CLEAR: Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md]
-related: [concepts/adaptive-routing.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/drive-jepa.md, sources/drivesuprim.md, sources/recogdrive.md]
+related: [sources/walt.md, concepts/adaptive-routing.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/drive-jepa.md, sources/drivesuprim.md, sources/recogdrive.md]
 created: 2026-06-11
-updated: 2026-06-11
+updated: 2026-09-30
 confidence: medium
 ---
 
@@ -100,6 +100,7 @@ The LLM scorer contributes +0.2 PDMS, and adaptive scheduling adds another +0.4 
 - **DiffusionDrive / diffusion planners**: CLEAR targets the same multi-modal planning problem as diffusion methods but avoids iterative denoising. It is a single-step latent drift generator, so the relevant trade-off is whether one learned drift can preserve enough multi-modal coverage without diffusion refinement.
 - **DriveSuprim / selection-based planning**: CLEAR is not a fixed-vocabulary selector. It generates candidates online, then uses a learned scorer; this makes it adjacent to deployable selection and Best-of-N ideas, but the candidate source is generative rather than an 8192-entry library.
 - **ReCogDrive-style cognitive planners**: CLEAR shares the idea that LLM hidden states are useful for driving semantics, but avoids using the LLM as a direct action generator.
+- **WALT** ([[sources/walt.md]]): the other planner in the wiki that generates in a learned trajectory latent. CLEAR's trajectory VAE is pretrained with a maneuver-classification head and sampled with one drift step; WALT's autoencoder is pretrained with a contrastive loss against a frozen world model and sampled with rectified flow. WALT measures latent against raw-waypoint generation on a fixed backbone (+0.06 PDMS, a null); CLEAR has no such control.
 
 ## Limitations
 

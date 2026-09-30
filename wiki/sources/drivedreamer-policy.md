@@ -2,9 +2,9 @@
 title: "DriveDreamer-Policy: A Geometry-Grounded World–Action Model for Unified Generation and Planning"
 type: source-summary
 sources: [raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md]
+related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/physwam.md, concepts/teacher-pseudo-labels.md]
 created: 2026-04-07
-updated: 2026-04-07
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -192,3 +192,4 @@ Figure 4: Columns = Action-Only, Depth-Action, Video-Action, Depth-Video-Action.
 - **Geometry-grounded WAM pattern**: [[concepts/world-model-for-ad.md]] — Pattern 6: causal depth→video→action conditioning
 - **NAVSIM-v2**: [[concepts/navsim-benchmark.md]] — 88.7 EPDMS (surpassed Senna-2 86.6 at publication; now superseded by DriveFine/WAM-Diff 89.7)
 - **FM action generator**: [[concepts/diffusion-planner.md]] — modular flow-matching action expert with LLM cross-attention conditioning
+- **The metric-depth successor**: [[sources/physwam.md]] — depth, video and action in one denoiser instead of three generators, with depth that is metric, LiDAR-anchored and scored against LiDAR (addressing limitation 5 above). Its ablation finds a generated depth stream worth nothing for planning by itself (−0.3 PDMS), against the +0.5 reported here, and worth +1.0 to +2.1 once a geometric loss ties it to the generated ego motion. It cites this paper at 89.2 PDMS / 88.7 EPDMS and quotes its FVD of 53.6 with the note that the clip count is unstated.

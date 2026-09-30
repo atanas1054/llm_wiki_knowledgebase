@@ -2,9 +2,9 @@
 title: "Latent-WAM: Latent World Action Modeling for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/perception-for-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/foundation-backbones-for-ad.md, sources/epona.md, sources/drivevla-w0.md, sources/dreameraD.md, sources/driveva.md]
+related: [sources/mm-future.md, concepts/world-model-for-ad.md, concepts/perception-for-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/foundation-backbones-for-ad.md, sources/epona.md, sources/drivevla-w0.md, sources/dreameraD.md, sources/driveva.md, sources/ad-e2e-jepa.md, sources/momworld.md]
 created: 2026-05-01
-updated: 2026-05-01
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -198,7 +198,10 @@ The deployed model is lightweight relative to large VLM/video-backbone planners.
 - **DreamerAD**: DreamerAD uses a latent world model as an RL reward source. Latent-WAM uses latent future prediction only as representation learning; no RL stage is reported.
 - **DriveVA**: DriveVA couples future video latents and action tokens inside one DiT. Latent-WAM avoids video generation entirely and is much smaller.
 - **Percept-WAM / Perception-Enhanced Planning**: Latent-WAM does not train explicit detection/BEV heads, but geometric distillation plays a similar role: force spatially accurate representations before trajectory decoding.
+- **MomWorld** ([[sources/momworld.md]]): cites Latent-WAM as its strongest NAVSIM-v2 baseline (89.3 against its 90.1) and as the nearest compact-latent design. Latent-WAM predicts 16 scene queries per view as a training-time objective; MomWorld rolls out one pooled state vector and one momentum vector per step at inference and feeds them to a trajectory scorer. The comparison is camera-only single-trajectory against a camera + LiDAR scorer.
+- **MM-Future** ([[sources/mm-future.md]]): uses this paper as its HUGSIM comparison (28.9 HD-Score against its 32.3) and as the compact-token precedent. Its table is captioned 436 scenarios, and this paper's overall scores (45.9 RC / 28.9 HDS) equal the 80 / 157 / 96 / 103-weighted means of its four tiers. **That places this result on the 436-scenario HUGSIM set**, where the wiki had filed it under the 345-scenario release. See [[concepts/hugsim-benchmark.md#mm-future]].
 - **HAD**: both report HUGSIM, but HAD is a hierarchical diffusion/RL planner while Latent-WAM is a latent world-state representation learner.
+- **AD-E2E-JEPA** ([[sources/ad-e2e-jepa.md]]): the other compress-then-predict design. Latent-WAM compresses each view to 16 scene queries and found that compression alone slightly hurts until geometric distillation is added. AD-E2E-JEPA compresses frozen DINOv3 to 32 tokens with a conv projector held open by SIGReg, and finds the compression costs ranking reliability at matched training (top-1 hit rate 45% → 27% on 100 scenes). **Citation note**: its Table 3 lists Latent-WAM with **EC 72.4**. The value in Table 1 above is **87.3**; 72.4 is DreamerAD's EC from the adjacent row of WA-JEPA's table, from which the row was copied.
 
 ## Limitations
 

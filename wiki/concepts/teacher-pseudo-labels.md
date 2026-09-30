@@ -1,10 +1,10 @@
 ---
 title: Teacher-Derived Supervision and Pseudo-Labels
 type: concept
-sources: ["raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/Qwen-Drive-1.0_ An Initial Step towards a Vision-Language Foundation Model for Autonomous Driving.md, raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md]
-related: [sources/hydra-mdp-pp.md, sources/suv.md, sources/drivedreamer-policy.md, sources/coworld-vla.md, sources/latent-wam.md, sources/geowam.md, sources/geoworldad.md, sources/flare.md, sources/drive-hwm.md, sources/grava.md, sources/qwen-drive-1.0.md, sources/recogdrive.md, sources/hermes.md, sources/alpamayo-r1.md, sources/sgdrive.md, sources/driving-wm-counterfactuals.md, sources/da-wam.md, sources/auto-jepa.md, concepts/perception-for-planning.md, concepts/world-model-for-ad.md, concepts/reasoning-faithfulness.md, concepts/foundation-backbones-for-ad.md, concepts/vlm-domain-adaptation.md]
+sources: ["raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/Qwen-Drive-1.0_ An Initial Step towards a Vision-Language Foundation Model for Autonomous Driving.md, raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md]
+related: [sources/physwam.md, sources/hydra-mdp-pp.md, sources/suv.md, sources/drivedreamer-policy.md, sources/coworld-vla.md, sources/latent-wam.md, sources/geowam.md, sources/geoworldad.md, sources/flare.md, sources/drive-hwm.md, sources/grava.md, sources/qwen-drive-1.0.md, sources/recogdrive.md, sources/hermes.md, sources/alpamayo-r1.md, sources/sgdrive.md, sources/driving-wm-counterfactuals.md, sources/da-wam.md, sources/auto-jepa.md, concepts/perception-for-planning.md, concepts/world-model-for-ad.md, concepts/reasoning-faithfulness.md, concepts/foundation-backbones-for-ad.md, concepts/vlm-domain-adaptation.md]
 created: 2026-09-27
-updated: 2026-09-27
+updated: 2026-09-30
 confidence: medium
 ---
 
@@ -24,6 +24,7 @@ Much of the supervision in recent driving models is not human annotation or sens
 |---|---|---|---|
 | **SAM 3** | Future segmentation and instance tracks, rendered as video | [[sources/suv.md]] | **The same teacher** (mIoU, AssA@50) |
 | **Depth Anything 3** | Relative depth targets | [[sources/suv.md]], [[sources/drivedreamer-policy.md]] | **The same teacher** in both |
+| **MapAnything with a LiDAR prior, + Depth Anything 3 for sky and hole filling** | Dense **metric** depth video for three views | [[sources/physwam.md]] | **LiDAR**, for both the labels (AbsRel 0.041–0.060 on supervised cells) and the generated depth |
 | **Depth Anything V2** | Relative depth for abduction | [[sources/driving-wm-counterfactuals.md]] | Matched counterfactual GT |
 | **VGGT / StreamVGGT / WorldMirror** | Geometry features, point maps | [[sources/coworld-vla.md]], [[sources/latent-wam.md]], [[sources/geowam.md]], [[sources/geoworldad.md]] | Planning score only |
 | **V-JEPA** | Future semantic features | [[sources/coworld-vla.md]] | Planning score only |
@@ -48,10 +49,22 @@ Agreement with the teacher bounds quality from above only up to the teacher's ow
 
 A useful internal control from SUV: **generating the RGB future and running the teachers on it** beats native generation on segmentation and tracking, and loses on depth. At least one comparison is teacher-fair.
 
+**[[sources/physwam.md]] is the counterexample that shows it can be done.** Its depth stream is trained on teacher labels (the flow-matching loss needs a dense target) and **evaluated against the LiDAR sweep of the same future frame**, with no scale alignment. Its second depth loss, Coupled Point Projection, bypasses the teacher and compares against raw LiDAR. So the teacher supplies density and the sensor supplies the truth, in both training and evaluation. The reported future-depth error (AbsRel 0.175 at +2 s) is an error against a measurement.
+
 ### 2. Label noise is almost never measured
 
 - [[sources/qwen-drive-1.0.md]] is the exception. A consistency filter rejects **44%** of 24 public driving-VQA datasets against their own source annotations.
 - [[sources/grava.md]]'s printed showcase transcript has a vehicle/pedestrian type flip and a 15–20 m vs 24.0 m distance conflict.
+
+- [[sources/physwam.md]] is the second exception, and the first for a geometric teacher. It validates its finished depth labels against independently projected LiDAR on 1,000 windows covering all sixteen vehicles:
+
+| View | AbsRel on LiDAR-supported cells | AbsRel, pixels ≤ 25 m | Sky mislabelled |
+|---|---:|---:|---:|
+| Front | 0.041 | 0.073 | 0.05% |
+| Front-left | 0.051 | 0.113 | 0.22% |
+| Front-right | 0.060 | 0.118 | 0.20% |
+
+  It also reports what the raw teacher gets wrong before correction: MapAnything reads about 3% far at 10–25 m and 5% near at 60–80 m, and leaves about a fifth of non-sky pixels invalid. Both are fixed by an explicit bias fit and a hole-filling step. **The label error is the floor under the model's error**: in the front view, labels are at 0.041 (cells) and 0.073 (pixels within 25 m), and generated depth at +2 s is at 0.144 (cells) and 0.175 (pixels).
 
 If public, human-curated corpora fail at 44%, agent-generated labels should not be assumed clean.
 
@@ -61,6 +74,7 @@ If public, human-curated corpora fail at 44%, agent-generated labels should not 
 - [[sources/da-wam.md]] and [[sources/auto-jepa.md]] use simulator-derived metrics.
 - [[sources/grava.md]] uses LiDAR 3D states behind every number its front-camera model is trained to say.
 - [[sources/sgdrive.md]] is camera-only at inference but needs occupancy and boxes to train.
+- [[sources/physwam.md]] advertises "label-free" trajectory *selection* with "no learned scorer or simulator feedback", which is accurate for inference. Its training uses LiDAR, recorded poses, annotated 3D boxes and the HD map's drivable polygons, the last being "the same layers that the NAVSIM drivable-area metric treats as permissible". Its two hinge losses are differentiable stand-ins for the no-collision and drivable-area gates. The paper states the dependence plainly in its limitations.
 
 Traces written with the future in view are a special case of the same leak; see [[concepts/reasoning-faithfulness.md#hindsight]].
 
@@ -80,6 +94,6 @@ The rise of teacher supervision is not an accident:
 
 ## Open Questions
 
-- **Teacher vs. real ground truth, same planner.** Swap DA3 depth for LiDAR-projected depth on NAVSIM and compare both the future-depth metric and planning score. It is cheap and has never been done.
+- **Teacher vs. real ground truth, same planner.** Swap DA3 depth for LiDAR-projected depth on NAVSIM and compare both the future-depth metric and planning score. It is cheap and has never been done. *(2026-09-30: [[sources/physwam.md]] does half of it. Adding a raw-LiDAR point loss on top of teacher-labelled depth improves generated depth by 8–15% AbsRel and planning by +1.9 EPDMS. The loss also involves the generated motion, so the depth-only effect of LiDAR is not separated, and relative-versus-metric teachers are not compared.)*
 - **Does teacher quality propagate to planning?** For example Depth Anything V2 vs V3, or SAM 2 vs SAM 3, under a fixed recipe.
 - **Should agent-generated reasoning corpora carry a measured noise rate** in the style of Qwen-Drive's 55.9%, before any planning claim is made on them?

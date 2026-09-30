@@ -2,9 +2,9 @@
 title: "DriveSuprim: Towards Precise Trajectory Selection for End-to-End Planning"
 type: source-summary
 sources: [raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md]
-related: [concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md]
+related: [concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, sources/redrive.md, sources/physwam.md]
 created: 2026-04-23
-updated: 2026-04-23
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -283,3 +283,5 @@ On NAVSIM-v2, 87.1 EPDMS slots between DreamerAD (87.7) and HydraMDP++ (85.6). E
 The oracle study (Table 1) directly shows that the selection-based ceiling is 94.5 PDMS with only 4 oracle-chosen candidates from 8192. This is a key data point for the [[concepts/best-of-n.md]] discussion of fixed-vocabulary oracle selection vs. stochastic BoN sampling.
 
 See [[concepts/selection-based-planning.md]] for the broader paradigm context.
+
+**How this method's row is cited elsewhere.** Later tables carry DriveSuprim at three different v1 values: the correct ViT-L 93.5, the ResNet-34 89.9 (sometimes labelled, as in [[sources/physwam.md]], often not), and a hybrid. [[sources/redrive.md]] prints the **ViT-L sub-scores from the table above (98.6 / 98.6 / 91.3 / 95.5) next to the ResNet-34 PDMS of 89.9**. The mismatch is detectable from the row alone: 89.9 is below the closed form of those sub-scores (91.9), which a per-scene-averaged PDMS never is. See [[concepts/navsim-benchmark.md#redrive]].

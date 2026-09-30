@@ -1,10 +1,10 @@
 ---
 title: PhysicalAI-Autonomous-Vehicles Benchmark
 type: concept
-sources: [raw/papers/Qwen-Drive-1.0_ An Initial Step towards a Vision-Language Foundation Model for Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md]
-related: [concepts/alpasim-benchmark.md, sources/qwen-drive-1.0.md, sources/drivewam.md, sources/alpamayo-r1.md, concepts/nuscenes-waymo-evals.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md]
+sources: [raw/papers/Qwen-Drive-1.0_ An Initial Step towards a Vision-Language Foundation Model for Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md"]
+related: [sources/redrive.md, concepts/foundation-backbones-for-ad.md, concepts/alpasim-benchmark.md, sources/qwen-drive-1.0.md, sources/drivewam.md, sources/alpamayo-r1.md, concepts/nuscenes-waymo-evals.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md]
 created: 2026-08-17
-updated: 2026-09-18
+updated: 2026-09-30
 confidence: medium
 ---
 
@@ -105,6 +105,16 @@ This page's second open question was: *"Does performance on curated rare-event c
 Open-loop displacement and closed-loop score disagree on nearly every pair: DriveWAM has the *worst* ADE and the second-best at-fault score (by barely moving — 35 % progress); Alpamayo-1.5 has the best ADE and is third. Every caveat from [[concepts/nuscenes-waymo-evals.md]] about displacement metrics applies, and this is the first time this page can point at a measurement rather than an argument.
 
 **The note at the top of this page about AlpaSim being internal is now superseded**: an external group has run it, on public reconstructions, with a named version.
+
+## As Pretraining Video for a NAVSIM Model {#pretraining-use}
+
+[[sources/redrive.md]] is the first ingested paper to use this dataset as **unlabeled pretraining video** for a model evaluated elsewhere. An 80-hour subset of the front wide-angle camera joins nuScenes and navtrain in a V-JEPA-style masked-latent pretraining stage, sampled uniformly across the three sources.
+
+Two details are reusable:
+- **Camera alignment.** The front camera here is a 120° f-theta lens, far from nuPlan's pinhole front camera. ReDrive maps each target nuPlan pixel ray back through the per-clip f-theta calibration and resamples bilinearly, and drops clips whose field of view cannot cover the target. Anyone mixing this dataset with nuPlan-derived data faces the same mismatch.
+- **What it bought.** The whole driving-domain pretraining stage is worth **+0.3 PDMS** at 4-frame clips and roughly +1.2 at 16-frame clips over the stock V-JEPA 2 checkpoint. The contribution of the PAI-AV subset by itself is not ablated, so there is no evidence here that cross-dataset pretraining video helps a NAVSIM planner.
+
+This is a different use from the scaling studies above: there the dataset supplies labelled trajectories, here it supplies frames only.
 
 ## Role in the Wiki
 

@@ -2,9 +2,9 @@
 title: "DriveFuture: Future-Aware Latent World Models for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/diffusion-planner.md, concepts/intent-conditioned-planning.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/wa-jepa.md, sources/da-wam.md, sources/drivelaw.md, sources/geowam.md, sources/geoworldad.md, sources/latent-wam.md, sources/adaptive-wam.md, sources/reworld.md, sources/drivesuprim.md, sources/spanvla.md, sources/drivefine.md, sources/auto-jepa.md, sources/drivevla-w0.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/dial.md, sources/elf-vla.md, sources/lwdrive.md, sources/simwam.md]
+related: [sources/mm-future.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/diffusion-planner.md, concepts/intent-conditioned-planning.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/wa-jepa.md, sources/da-wam.md, sources/drivelaw.md, sources/geowam.md, sources/geoworldad.md, sources/latent-wam.md, sources/adaptive-wam.md, sources/reworld.md, sources/drivesuprim.md, sources/spanvla.md, sources/drivefine.md, sources/auto-jepa.md, sources/drivevla-w0.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/dial.md, sources/elf-vla.md, sources/lwdrive.md, sources/simwam.md, sources/physwam.md, sources/momworld.md]
 created: 2026-09-11
-updated: 2026-09-11
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -358,4 +358,7 @@ Neither figure carries quantitative annotation, and the failure-category claim i
 - [[sources/wa-jepa.md]] — the other controlled objective-form experiment; agrees on ordering, disagrees on the sign of the regression term.
 - [[sources/drivelaw.md]] — the t=10 collapse, corroborated here from the training side by $e_0=0.95$.
 - [[sources/da-wam.md]] — files DriveFuture under "(b) loosely coupled"; the Tweedie branch says otherwise.
+- [[sources/momworld.md]] — a later paper sharing three authors with this one (Ziying Song, Lei Yang, Lin Liu), built on the same GTRS-Dense scorer. Its navhard table reuses this page's Table 1 baseline rows digit for digit and **omits DriveFuture and the five other entries above its own 42.8**; DriveFuture is also absent from its v1 and v2 tables. It is the first attempt at the question in limitation 1 (does a predicted future still help once a strong scorer is present): +1.1 navhard over GTRS-Dense's published 41.7, with NC and TTC lower and EP higher. Its ablations cannot be used ([[sources/momworld.md#regularities]]).
+- [[sources/mm-future.md]] — names DriveFuture the strongest WAM baseline on both NAVSIM versions (90.7 / 89.9 against its 93.4–94.0 / 91.5) and carries its rows correctly. Both give each candidate its own future: DriveFuture inside the denoiser, MM-Future by generating trajectory and future together and letting a scorer read the pair. Both submit through a simulator-trained scorer.
 - [[sources/geowam.md]] — the wiki's other navhard leaderboard. The two tables share no method, so together they extend the split's coverage from 10 entries to 22.
+- [[sources/physwam.md]] — the first later paper to cite DriveFuture on navhard, and it cites **34.6, the unscored value**, with Stage-1 and Stage-2 submetrics that match the unscored row here. That independently confirms this page's reading that 55.5 is 34.6 plus a scorer. PhysWAM's table otherwise comes from the other baseline lineage (LTF 25.1 against the 23.1 printed here), so its 38.1-versus-34.6 comparison may cross an offset of about 2 points; see [[concepts/navhard-ood-evaluation.md#two-lineages]].

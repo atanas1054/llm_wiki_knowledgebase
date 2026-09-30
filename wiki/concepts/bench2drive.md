@@ -1,10 +1,10 @@
 ---
 title: Bench2Drive Benchmark
 type: concept
-sources: [raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
-related: [sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, sources/deepsight.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md, concepts/pdm-lite.md]
+sources: ["raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
+related: [sources/momworld.md, sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, sources/deepsight.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md, concepts/pdm-lite.md]
 created: 2026-04-15
-updated: 2026-07-01
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -73,13 +73,17 @@ Five standardized scenario categories; reported separately by ORION and LinkVLA:
 | DriveAdapter | 64.22 | 33.08 | 70.22 | 16.01 | — |
 | DriveTransformer | 63.46 | 35.01 | 100.64 | 20.78 | — |
 | Drive-JEPA | 64.52 | 36.82 | 157.85 | 30.24 | V-JEPA + MTD proposal planner; improves over iPad/DriveTransformer but is far below current VLA leaders |
+| Hydra-NeXt *(not ingested)* | 73.86 | 50.00 | 197.76 | 20.68 | From [[sources/momworld.md]]'s table |
+| MomWorld | 74.07 | 50.00 | 198.87 | 20.43 | Momentum latent world model; base planner unstated and the row is Hydra-NeXt's within about a point on most columns; see [below](#momworld) |
 | ORION | 77.74 | 54.62 | 151.48 | 17.38 | VLM + VAE planner; +14.28 DS vs. prior SOTA at time |
 | AutoVLA | 78.84 | 57.73 | 146.93 | 39.33 | Physical codebook; higher comfort than ORION |
 | UniDriveVLA | 78.37 | — | — | — | Best result without PDM-Lite oracle; MoT 3-expert |
 | SimLingo | 85.07 | 67.27 | 259.23 | 33.67 | Fast MLP head (34ms) |
 | AutoMoT | 87.34 | — | — | — | Frozen Qwen3-VL-4B + 1.6B AE; async MoT (7.6× speedup) |
 | DeepSight (Think2Drive) | 86.23 | 71.36 | 201.71 | 16.11 | Parallel 5-frame DINOv3 latent world model in BEV + adaptive CoT; strongest Think2Drive-protocol VLM in its own table (see expert caveat below) |
+| HiP-AD *(not ingested)* | 86.77 | 69.09 | 203.12 | 19.36 | Non-VLM; from [[sources/momworld.md]]'s table |
 | DynVLA | 88.34 | 72.73 | — | — | Dynamics CoT with ego/environment VQ dynamics tokens; below LinkVLA, above AutoMoT; table omits LinkVLA |
+| SparseDriveV2 *(not ingested)* | 89.15 | 70.00 | 199.84 | 18.32 | Non-VLM scorer ("scoring is all you need"); from [[sources/momworld.md]]'s table |
 | **LinkVLA** | **91.01** | **74.55** | **255.84** | **34.62** | **Shared codebook + C2F; current SOTA** |
 
 **PDM-Lite caveat**: PDM-Lite is a privileged oracle planner (uses ground-truth waypoints or HD map access) that some Bench2Drive methods use as a fallback or auxiliary module. UniDriveVLA (78.37) is explicitly noted as the best result *without* PDM-Lite. Methods that use PDM-Lite score higher but are not fairly comparable to methods that do not. The precise PDM-Lite usage for each method above is not always disclosed.
@@ -103,6 +107,30 @@ Braking (+11.7 vs. SimLingo) and overtaking (+11.1) drive LinkVLA's gains. ORION
 
 **DeepSight multi-ability** (Table 2, vs. ORION as its strongest baseline): Merging 60.00, Overtaking 91.11, Emergency Brake 78.33, Give Way 50.00, Traffic Sign 71.58, **Mean 70.20** (+15.48 over ORION 54.72). Its overtaking (91.11) and merging (60.00) match or exceed LinkVLA's, which the paper attributes to long-horizon BEV spatial modeling of multi-vehicle interactions; give-way (50.00) ties LinkVLA. Note DeepSight uses Think2Drive expert data whereas LinkVLA's expert protocol is undisclosed in the wiki, so the per-scenario comparison is indicative, not head-to-head.
 
+### MomWorld: a Result That Tracks Its Base Planner {#momworld}
+
+[[sources/momworld.md]] reports **74.07 DS / 50.00 SR**, with mean ability 55.07.
+
+| | DS | SR | Effi. | Comf. | Merge | Overtake | Em. Brake | Give Way | Traffic Sign |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Hydra-NeXt | 73.86 | 50.00 | 197.76 | 20.68 | 40.00 | 64.44 | 61.67 | 50.00 | 50.00 |
+| MomWorld | 74.07 | 50.00 | 198.87 | 20.43 | 45.63 | 64.21 | 61.71 | 50.00 | 54.10 |
+
+- The paper does not say which planner MomWorld is built on for Bench2Drive. Its NAVSIM model is built on GTRS-Dense and its nuScenes model on MomAD.
+- Success rate is identical to Hydra-NeXt. DS differs by 0.21. Only Merging (+5.6) and Traffic Sign (+4.1) move by more than a point.
+- The same group's other momentum methods run on a SparseDrive base and score 47.91 (MomAD), 49.21 (DIVER) and 51.55 (GraphWorld). **The 22–26 DS between those rows and MomWorld is the base planner, not the method.**
+- The printed mean ability (55.07) is not the mean of the five printed abilities (55.13).
+
+**Three rows in this wiki disagree with MomWorld's table.**
+
+| Method | Earlier wiki value | MomWorld's table | Note |
+|---|---|---|---|
+| MomAD | 44.54 DS / 16.71 SR ([[sources/orion.md]], [[sources/deepsight.md]]) | 47.91 / 18.11 | The earlier value is the row MomWorld assigns to **SparseDrive**. MomWorld shares MomAD's first author, so its attribution is the better-sourced one |
+| SimLingo | 85.07 DS (this page), 85.94 ([[sources/deepsight.md]]) | 86.02 | Three values for one method; SR 67.27 agrees everywhere |
+| SparseDrive | — | 44.54 / 16.71 | See the MomAD row |
+
+Two non-VLM entries in that table are near the top of this page. **SparseDriveV2 (89.15 DS)** is above every ingested method except LinkVLA; **HiP-AD (86.77)** is above all but LinkVLA, DynVLA and AutoMoT. Neither is ingested.
+
 ---
 
 ## Relationship to NAVSIM
@@ -125,3 +153,5 @@ Drive-JEPA ([[sources/drive-jepa.md]]) also reports both NAVSIM and Bench2Drive,
 - Does LinkVLA's 91.01 DS (on a 1B backbone) scale further with a 7B backbone, and would DynVLA's dynamics-token CoT close the remaining gap if combined with LinkVLA-style action tokenization?
 - Are the GRPO-optimized NAVSIM methods (FLARE, DriveFine) competitive on Bench2Drive's interactive scenarios, or does their non-reactive training regime limit reactive behavior?
 - Can PDM-Lite usage be standardized across papers, or should the benchmark track PDM-Lite and non-PDM-Lite leaderboards separately?
+- **What do SparseDriveV2 (89.15 DS) and HiP-AD (86.77) do?** Both are non-VLM planners that match the VLA leaders here, and both are known to this wiki only through [[sources/momworld.md]]'s table.
+- **Which Bench2Drive row is MomAD's?** Two ingested tables give it SparseDrive's numbers.

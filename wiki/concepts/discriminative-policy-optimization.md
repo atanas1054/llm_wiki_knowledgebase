@@ -1,10 +1,10 @@
 ---
 title: Discriminative Policy Optimization
 type: concept
-sources: [raw/papers/DisCO_ Reinforcing Large Reasoning Models with Discriminative Constrained Optimization.md, raw/papers/DAPO_ An Open-Source LLM Reinforcement Learning System at Scale.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md]
-related: [sources/disco.md, sources/dapo.md, sources/understanding-r1-zero-like-training.md, sources/plan-r1.md, concepts/gspo-vs-grpo.md, concepts/r1-zero-like-training.md, concepts/rl-for-ad.md]
+sources: ["raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", raw/papers/DisCO_ Reinforcing Large Reasoning Models with Discriminative Constrained Optimization.md, raw/papers/DAPO_ An Open-Source LLM Reinforcement Learning System at Scale.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md]
+related: [sources/drivereferee.md, sources/disco.md, sources/dapo.md, sources/understanding-r1-zero-like-training.md, sources/plan-r1.md, concepts/gspo-vs-grpo.md, concepts/r1-zero-like-training.md, concepts/rl-for-ad.md]
 created: 2026-06-23
-updated: 2026-06-23
+updated: 2026-09-30
 confidence: medium
 ---
 
@@ -75,8 +75,9 @@ The design aims to preserve exploration without permanently pulling the policy t
 | PlannerRFT | Poor/all-failed diffusion groups | Adaptive exploration + survival reward |
 | DIAL | Same-mode groups lack preference contrast | Intent-balanced sampling |
 | DisCO | Binary GRPO difficulty weighting, clipping instability, negative imbalance | Direct discrimination + hard negatives + KL constraint |
+| DriveReferee ([[sources/drivereferee.md]]) | Imitation gives no verdict on the policy's own samples | One winner/loser pair per scene from an analytic pass/fail rule; pairwise logistic loss on the flow-matching loss difference; the loser is the failing sample nearest the expert |
 
-DisCO changes the optimization objective most fundamentally. The other methods largely preserve policy-gradient/group-relative structure and repair normalization, reward, or sampling.
+DisCO changes the optimization objective most fundamentally. [[sources/drivereferee.md]] is the first driving entry that is discriminative from the start: no reward scale, no group normalization, binary labels, one hard negative per scene. It gains +0.92 EPDMS from 462 pairs, and its own ablation attributes +0.56 of that to training on the positives alone. The other methods largely preserve policy-gradient/group-relative structure and repair normalization, reward, or sampling.
 
 ## DAPO Contrast
 

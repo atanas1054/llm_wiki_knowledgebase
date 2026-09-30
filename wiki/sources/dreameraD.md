@@ -2,9 +2,9 @@
 title: "DreamerAD: Efficient Reinforcement Learning via Latent World Model for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md]
-related: [sources/epona.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md]
+related: [sources/epona.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/ad-e2e-jepa.md, concepts/selection-based-planning.md]
 created: 2026-04-08
-updated: 2026-04-08
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -181,6 +181,10 @@ RL training primarily improves **collision avoidance behavior** — the model le
 6. **Non-interactive NAVSIM**: Like all NAVSIM-based methods; scores may not reflect interactive driving performance.
 
 7. **Epona dependency**: Framework inherits Epona's assumptions (NuPlan + NuScenes pretraining, 2Hz at NavSim). Requires re-tuning shortcut distillation for different base world models.
+
+## Related: the Same Loop With an Oracle Goal
+
+[[sources/ad-e2e-jepa.md]] runs the loop this paper introduced (roll a latent world model out over 256 vocabulary trajectories, then pick one) with two substitutions: a JEPA predictor on compressed DINOv3 tokens in place of the shortcut-forced Epona latent model, and **latent distance to the ground-truth future frame** in place of the learned reward model. It therefore needs no simulator labels and cannot plan without the future. DreamerAD's AD-RM is the component it is missing. Attaching a reward head to that 3 ms-per-candidate rollout model is the natural combination of the two papers, and neither has run it. See [[concepts/world-model-for-ad.md#world-model-as-planner]].
 
 ## Comparison with Other RL Approaches in the Wiki
 

@@ -2887,3 +2887,311 @@ Two consequences, neither addressed by the paper: **the v1 rank is undecidable**
 **Also found**: ReCogDrive's v1 row labelled "Hydra-MDP++ 86.5" is the original Hydra-MDP-𝒱8192-W-EP. The downstream TransFuser 77.8 copies substitute v1 EP/TTC values.
 
 **Figure note**: 3 figures embedded (teaser, architecture, candidate-score visualization); all 5 tables reproduced. The assets `visualization_0314.png` and `visualization_two_scenarios_wide.png` are not referenced by this clipping and were not used.
+
+
+## 2026-09-30 - Ingest: AD-E2E-JEPA: A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving
+
+**Source**: `raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md` (arXiv 2609.34085v1)
+**Orgs**: not captured in the clipping. Code: `HaoranZhuExplorer/AD-E2E-JEPA`; the AD-L-JEPA naming lineage and self-citations suggest Zhu and Choromanska's group (inferred).
+**Pages created**: `wiki/sources/ad-e2e-jepa.md`
+**Pages updated**: `concepts/world-model-for-ad.md` (new Pattern 38 `#world-model-as-planner`; a fourth position in the test-time-imagination section; per-candidate table row; three open questions annotated, two added), `concepts/selection-based-planning.md` (`#no-scorer`, methods-table row), `concepts/navsim-benchmark.md` (`#ad-e2e-jepa`; v2 table row for the 85.4 transfer model; corrected-cohort entry), `concepts/foundation-backbones-for-ad.md` (`#encoder-by-job`, role row), `concepts/inference-latency.md` (lesson 6 `#per-candidate`, table row), `concepts/evaluation-variance.md` (`#subset-reordering`, rule 5), `concepts/counterfactual-prediction.md` (consequence 6), `sources/wa-jepa.md`, `sources/drive-jepa.md`, `sources/da-wam.md`, `sources/auto-jepa.md`, `sources/dreameraD.md`, `sources/latent-wam.md` (relationship notes), `index.md`, `README.md`
+**Confidence**: **medium**. All five tables and four figures are present and the tables pass two internal-consistency checks. However, the named contribution has no ablation, the comparison with dense-token world models exists only on 100 scenes, and the author list is missing from the clipping.
+
+**What it is**: the wiki's 79th paper and the first whose headline result trains no driving policy. An action-conditioned JEPA world model on frozen DINOv3 ViT-L with a two-layer stride-2 conv projector (16×32×1024 → 4×8×256), kept from collapsing by a stop-gradient plus per-patch SIGReg. Zero-shot "planning" rolls each trajectory of the 8192 vocabulary (subsampled to 256) out 4 s and selects the one whose final latent is nearest the **ground-truth future frame**. A second experiment transfers the pretrained projector into a small imitation planner.
+
+**Finding 1 - the zero-shot scores are an oracle-goal diagnostic.** Full navtest: 67.3 EPDMS / FDE 4.0 m at 256 candidates (0.8 s, A100), 72.9 / 2.8 m at 8,192 (18.2 s). The paper's own goal-free imitation model scores 85.4 and the human trajectory about 94.5. The losses are DAC (86.0) and EC (43.8, the lowest extended comfort in the wiki). The rows are excluded from the NAVSIM-v2 table.
+
+**Finding 2 - "100×" and "72.9" are different configurations.** 115–126× over DINO-WM / JEPA-WM at 256 candidates; 5× at 8,192. Cost is linear in candidates at about 2.2 ms each.
+
+**Finding 3 - compression is not free at matched training.** On the 100 scenes where JEPA-WM could be run, EPDMS and FDE are comparable but top-1 hit rate falls 45% → 27%. The variant that matches JEPA-WM uses 7× the data plus a rollout loss the baselines did not get.
+
+**Finding 4 - the 100-scene subset reorders the paper's own variants.** Its best on the subset (76.6) is third of four on the full set (63.5). Figure 1 plots the subset numbers. About half the subset-to-full gap is the dropped EC term.
+
+**Finding 5 - rollout training is the largest effect, and data helps only with it.** Top-1 hit rate 31.0 → 53.8 on trainval; 7× data without rollout changes EPDMS by −0.3 (that cell also changes λ and batch size).
+
+**Finding 6 - projector transfer +5.2 EPDMS** (80.2 → 85.4, corrected evaluator, 1 camera). The control is a random projector, not the absence of one, and the transferred checkpoint is unspecified. Filed as a hypothesis on `foundation-backbones-for-ad.md`: temporal-predictive training in a small adapter may account for a gain of the size attributed to V-JEPA 2 over DINOv3 (+5.7 in WA-JEPA).
+
+**New syntheses surfaced while writing**:
+- **Hit rate is a factual-consistency check for per-candidate futures.** It is the instrument DA-WAM's open question (are the unsupervised futures really futures?) needed, it requires no simulator, and no other candidate-rollout planner reports it.
+- **Encoder ranking depends on the job.** JEPA-WM (cited second-hand) prefers DINOv3 over V-JEPA 2 as a frozen rollout state space; WA-JEPA and Drive-JEPA prefer V-JEPA 2 as a planner initialization. Neither cross-cell has been run on NAVSIM.
+- **A near-matched pair for the evaluator correction.** The random-projector model has TransFuser's submetrics within 0.5 on seven of nine, closed forms 78.0 vs 78.2, and reported scores 80.2 (corrected) vs 76.7 (pre-fix). The residual sign matches the stated column on all six rows of the paper's Table 3.
+- **Three selection designs have now hit the missing-continuity problem** (Drive-JEPA EC 47.9 before its momentum selector, Auto-JEPA 75.2, AD-E2E-JEPA 35.5–43.8). Only Drive-JEPA fixed it.
+- **Residual size grows as the score falls** (−4.3 to −6.4 on the zero-shot rows, −10.8 for LeWM), so only the residual's sign is informative.
+
+**Errors found in the source**: Table 3 gives Latent-WAM EC 72.4; the correct value is 87.3 (72.4 is DreamerAD's, the adjacent row in WA-JEPA's Table 1).
+
+**Internal-consistency checks passed**: EPDMS† on the 100-scene table equals the closed form of the printed means on all seven rows (within 0.06). On the full set, the printed EPDMS† implies that 82–83% of scenes have a valid EC neighbor, the same on every row.
+
+**New gaps**: JEPA-WM, DINO-WM, LeWorldModel, LeJEPA (SIGReg), Temporal Straightening for Latent Planning.
+
+**Figure note**: 4 figures embedded (`overview.png`, `architecture 1.png`, `visualization 1.png`, `imitation_learning_architecture.png`); all 5 tables reproduced.
+
+
+## 2026-09-30 - Ingest: PhysWAM: Physically Consistent World Action Model for Autonomous Driving
+
+**Source**: `raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md` (arXiv 2609.37970v1)
+**Orgs**: University of Southern California, Woven by Toyota, Toyota Research Institute, DEVCOM Army Research Office. Code release promised, no link.
+**Pages created**: `wiki/sources/physwam.md`
+**Pages updated**: `concepts/world-model-for-ad.md` (new Pattern 39 `#coupled-point-projection`; target table row; imagine-then-act note; NAVSIM FVD table with a recorded floor; three open questions), `concepts/navsim-benchmark.md` (`#physwam`; v2 row; v1 row flagged as not a v1 measurement; corrected-cohort entry), `concepts/navhard-ood-evaluation.md` (cohort rows; `#two-lineages`; bridge note), `concepts/hugsim-benchmark.md` (`#physwam`; comfort question answered; two open questions), `concepts/evaluation-variance.md` (sampler sd range; `#fvd-floor`), `concepts/inference-latency.md` (table row; step/cost table), `concepts/best-of-n.md` (`#consensus-vs-oracle`), `concepts/selection-based-planning.md` (`#consensus`), `concepts/teacher-pseudo-labels.md` (teacher row; LiDAR-validated labels; privileged-supervision note), `concepts/foundation-backbones-for-ad.md` (`#cosmos3`, role row), `concepts/wam-attention-masks.md`, `sources/geowam.md`, `sources/drivedreamer-policy.md`, `sources/suv.md`, `sources/drivefuture.md`, `sources/wa-jepa.md`, `sources/coworld-vla.md`, `index.md`, `README.md`
+**Confidence**: **medium**. All 17 tables are present and the ablations are clean. However, the v1 PDMS column is inferred to be built from v2 sub-scores, each configuration was trained once against a sampler sd of 0.24–0.30, and the named mechanism is not isolated from a decoupled control.
+
+**What it is**: the wiki's 80th paper. Three-camera video, per-view metric depth and SE(3) ego motion co-denoised in one Cosmos 3 Nano flow-matching transformer (15.2B, 7.0B trained), with bidirectional attention. Coupled Point Projection (CPP) unprojects generated depth, moves it with the generated motion and penalizes the distance to LiDAR moved by the recorded motion. Two annealed hinge losses (obstacle clearance, drivable area) and per-update output-gradient balancing. Inference: one sample, or the medoid of eight. 90.3 EPDMS navtest, 38.1 / 39.8 navhard, 48.9 RC / 35.5 HD-Score zero-shot HUGSIM.
+
+**Finding 1 - CPP is worth about +1.9 on three benchmarks, equally on navtest and navhard.** 88.4 → 90.3 EPDMS, 36.2 → 38.1 navhard, 33.4 → 35.5 HD-Score. It is the first mechanism in the wiki's navtest/navhard comparisons that is not several times larger on navhard. Video quality is unchanged, a second intra-paper instance of generation and planning moving separately.
+
+**Finding 2 - the coupling is not isolated.** The residual splits exactly into depth-only, motion-only and cross terms; the paper states twice that a decoupled control is missing. The wiki's reading (an inference): the early-training signature (heading error 8.9° → 2.7° at 4k updates) points at the motion-only term, a metric pose loss with a lever arm.
+
+**Finding 3 - a generated depth stream alone is a null.** Multi-view with no depth 87.5 PDMS; with depth under flow matching 87.2. Against DriveDreamer-Policy +0.5, SUV +1.0, ExploreVLA +1.6.
+
+**Finding 4 - the "PDMS" column is not a v1 measurement.** On all four PhysWAM rows the v1 and v2 NC / DAC / TTC / EP are identical (ten dual-protocol baselines differ by +2.2 to +3.4 TTC), and the PDMS equals the closed form of those means within 0.1 (16 other methods sit +1.2 to +3.9 above it). 91.4 / 91.7 are kept off the v1 ladder; the oracle-of-8 95.3 is not comparable with the human's 94.8. Recorded as an eighth provenance failure mode and a new within-table check.
+
+**Finding 5 - sampler sd 0.24 PDMS / 0.30 EPDMS**, 5–20× WA-JEPA's and CoWorld-VLA's. Sampler noise is architecture-specific. The step sweep (−0.6 / +0.7 / −0.4 at 4 / 8 / 15 steps) is inside it.
+
+**Finding 6 - consensus selection against its oracle.** Medoid-of-8 +0.1 EPDMS on navtest and +1.7 on navhard; oracle-of-8 +3.8 EPDMS. A label-free rule recovers 3% of the headroom.
+
+**Finding 7 - generation measured against real references.** Depth against LiDAR with no scale alignment (teacher labels separately validated at 0.041–0.060 AbsRel); an FVD floor of 91.5 for recorded-vs-recorded clips at 600 per side, with the model at 111.3 (600) and 42.2 (1,200); generated video follows generated motion to 0.80° median over 4 s.
+
+**Finding 8 - cost.** 9.4 GPU-seconds per plan at 30 steps, about 75 for the medoid. HUGSIM is run in simulation time.
+
+**New syntheses surfaced while writing**:
+- **LTF 25.1 on navhard traces to the benchmark paper** (via EponaV2), not to GeoWAM. The same Stage-1 submetrics carry 23.1 in DriveFuture / SpanVLA. Two lineages about 2 points apart on the one shared row; PhysWAM's table cites DriveFuture's 34.6 across that line.
+- **DriveFuture's unscored 34.6 is independently confirmed**: PhysWAM cites it with matching stage submetrics.
+- **navhard split size**: PhysWAM says 450 / 5,462, agreeing with SUV against Metis's 244 / 4,164.
+- **HUGSIM comfort deficit is not inherent to sampled planners**: PhysWAM 96.3 against WA-JEPA 66.2.
+- **NAVSIM-only models are Easy-heavy on HUGSIM**: PhysWAM 86.9 → 30.1 and Latent-WAM 72.5 → 24.0 from Easy to Medium; WA-JEPA 79.8 → 55.6. Confounded with pretraining data and camera count.
+- **The quoted-versus-rescored gap on HUGSIM baselines is 1.6–2.3 points** (UniAD, LTF, VAD), which bounds the protocol uncertainty between PhysWAM's and WA-JEPA's tables.
+- **"DVGT-2 89.6" in earlier pages is DVGT-2-NAVSIM**; the generic DVGT-2 is 88.9.
+- **LTF 83.6 beside TransFuser 76.7** in one column is a second near-pair for the evaluator correction.
+- **A bidirectional WAM can lead the unscored navhard cohort** (outside RL), which constrains the mask-family reading without overturning it.
+
+**Omissions in the paper's comparisons**: WA-JEPA (91.7 EPDMS, 44.6 HUGSIM), SUV (91.0, 36.9 navhard), SpanVLA (40.1 navhard), GeoWorldAD (90.4, cited but not tabled), CoWorld-VLA's 90.0 (cited for FVD only).
+
+**New gaps**: BeyondDrive, 4D-WAM, Cosmos 3, MapAnything.
+
+**Figure note**: 4 figures embedded (`tile_a.png`, `physwam-method-v1-9-23.png`, `sec43_qualitative.png`, `sec43_qualitative_appendix.png`); all 17 tables reproduced. `tile_a.png` contains two of the four rows Figure 1's caption describes. One sentence of Appendix C.3 is scrambled in the clipping.
+
+
+## 2026-09-30 - Ingest: ReDrive: Shaping Representations with World Modeling for End-to-End Driving
+
+**Source**: `raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md` (arXiv 2609.33854v1)
+**Orgs**: Huazhong University of Science & Technology, Horizon Robotics. No code stated.
+**Pages created**: `wiki/sources/redrive.md`
+**Pages updated**: `concepts/world-model-for-ad.md` (new Pattern 40 `#predictor-as-critic`; a third entry in the objective-form thread; training-time-only camp; two open questions), `concepts/navsim-benchmark.md` (`#redrive`; v1 and v2 rows; corrected cohort; WAM-Diff rank refreshed to tied ninth), `concepts/navhard-ood-evaluation.md` (cohort row; access-hypothesis table), `concepts/foundation-backbones-for-ad.md` (`#redrive-sweep`; role row; counter-evidence note on `#encoder-by-job`; section retitled to "Three Independent Encoder Ablations"), `concepts/wam-attention-masks.md` (two design-space rows; the stop-gradient question from a third direction), `concepts/inference-latency.md`, `concepts/physicalai-av-benchmark.md` (`#pretraining-use`), `concepts/counterfactual-prediction.md` (sensitivity vs. factual consistency vs. counterfactual recovery), `sources/wa-jepa.md`, `sources/drive-jepa.md`, `sources/metis.md`, `sources/reworld.md`, `sources/drivesuprim.md`, `sources/ad-e2e-jepa.md`, `index.md`, `README.md`
+**Confidence**: **medium**. All ten tables are present and internally consistent (Tables 4–7 cross-check). However, every ablation is a single navtest PDMS run with increments of 0.3–0.9, the headline configuration (16-frame pretraining) is not the ablated one (4-frame), and Figure 1 is present only as panel (a).
+
+**What it is**: the wiki's 81st paper. A V-JEPA 2 ViT-L encoder (304M) and a flow-matching Action DiT (103M), one front camera, nothing else at inference. Three training stages: driving-domain masked-latent pretraining (nuScenes, navtrain, 80 h PhysicalAI-AV with camera alignment); joint training with a 153M future predictor conditioned on the ground-truth trajectory, L1-regressing EMA-target future latents (λ = 0.1), its gradient reaching the encoder and not the planner; planner adaptation with encoder and predictor frozen, the feature loss backpropagated through the planner's five-step rollout. 91.0 PDMS / 90.8 corrected EPDMS / 34.4 navhard.
+
+**Finding 1 - the title mechanism is +0.7 PDMS.** V-JEPA 2 over DINOv2 +5.5, unfreezing the encoder +3.5, 16- vs 4-frame pretraining +0.9, future prediction +0.7, Stage 1 +0.3, Stage 3 +0.3. The "3.5-point representation improvement" (frozen probes, 86.7 → 90.2) changes planning-loss fine-tuning and future prediction together; Table 5 splits them +3.5 / +0.7. The streak of papers whose named mechanism is the smaller term of their own ablation continues.
+
+**Finding 2 - a third sign for regression on future latents.** ReDrive +0.7 (L1, conditioned on the recorded trajectory, never read by the planner) against WA-JEPA −0.4 and DriveFuture +1.2. The entropy-of-the-target rule is qualified: regression is safe when action-conditioned or never consumed.
+
+**Finding 3 - Stage 3 is the gradient form of AD-E2E-JEPA's oracle-goal search** (ingested the same day): minimize the distance between the frozen predictor's output under the planner's rollout and the real future representation. Worth 0.2–0.3 PDMS and bundled with two other rollout losses.
+
+**Finding 4 - third encoder sweep**, the first with image encoders given the same driving pretraining and the same predictive loss: DINOv2 84.4, MAE 83.9, V-JEPA 2 89.9. This is counter-evidence to the projector hypothesis filed earlier today from AD-E2E-JEPA; that note is annotated. Driving-domain pretraining is priced at +0.3 to about +1.2 PDMS here against +2.9 (Drive-JEPA) and +1.5 to +2.2 (WA-JEPA).
+
+**Finding 5 - 90.8 is third in the corrected v2 cohort and the best training-time-only world-model result**, 0.9 behind WA-JEPA on the same encoder family.
+
+**Finding 6 - navhard 34.4 is the best no-access result** (Stage 1 82.3 ties SUV; Stage 2 42.3). With SUV's access and no-access variants it forms a three-point cross-paper pattern consistent with the access hypothesis.
+
+**Table problems found**:
+- The v2 table is digit-identical to WA-JEPA's corrected column minus WA-JEPA 91.7, Discrete-WAM 90.4 and DriveWorld-VLA 86.8; WA-JEPA is uncited; the paper claims the best result.
+- The v1 DriveSuprim row pairs the ViT-L sub-scores (93.5) with the ResNet-34 PDMS (89.9). **The closed-form check introduced with PhysWAM catches it** (reported 2.0 below closed form; all other rows 1.3–6.0 above).
+- VADv2 and UniAD have EP and TTC swapped; Hydra-MDP++ is labelled C + L.
+- The navhard table is Metis's Table 1 row for row.
+- Caption slips in the text (Tab. 5 for Table 4, Tab. 7 for Table 6, "Tab. 10 and Tab. 10").
+
+**New syntheses surfaced while writing**:
+- A ladder of checks for action-conditioned predictors: sensitivity (ReDrive's Figure 4), factual consistency (AD-E2E-JEPA's hit rate), counterfactual recovery (needs a simulator).
+- ReDrive's two stages are clean instances of the two mechanisms Metis's future-reads-action mask mixes: the future loss shaping the representation, and the future loss shaping the policy.
+- First use of PhysicalAI-AV as unlabeled pretraining video for a NAVSIM model, with an f-theta to pinhole camera alignment.
+
+**Not reported**: latency, the future predictor's accuracy, any ablation on v2 or navhard, the loss weights of Stage 3, the pretraining corpus size.
+
+**New gaps**: DAWN, DriveDPO, GuideFlow, GTRS-DP.
+
+**Figure note**: 7 figures embedded (`intro1 1.png`, `overview 1.png`, `vis 2.png`, `analysis.png`, `camera_alignment.png`, `sup2_vis.png`, `action_sweep_grid.png`); all 10 tables reproduced. `intro1 1.png` is only panel (a) of Figure 1.
+
+
+## 2026-09-30 - Ingest: MomWorld: Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving
+
+**Source**: `raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md` (arXiv 2609.33737v1)
+**Orgs**: Nanyang Technological University, Beijing Jiaotong University, North University of China, Dalian University of Technology, Tsinghua University. Code link given (`github.com/modaxiansheng/MomWorld`).
+**Pages created**: `wiki/sources/momworld.md`
+**Pages updated**: `concepts/world-model-for-ad.md` (new Pattern 41 `#state-momentum-rollout`; note in the shared-future section and in DA-WAM's design table; one open question), `concepts/navsim-benchmark.md` (`#momworld`; v1 and v2 rows; corrected cohort; WAM-Diff now tied tenth), `concepts/navhard-ood-evaluation.md` (cohort rows for MomWorld 42.8 and GTRS-Dense 41.7; sub-score comparison; LK table; open question; lint rule), `concepts/selection-based-planning.md` (`#future-memory-scorer`; methods row), `concepts/diffusion-planner.md` (`#plan-to-expert`), `concepts/nuscenes-waymo-evals.md` (`#six-second`), `concepts/bench2drive.md` (`#momworld`; four table rows; two open questions), `concepts/evaluation-variance.md` (`#column-regularity`; rule 6), `concepts/inference-latency.md` (row and note), `sources/drivefuture.md`, `sources/da-wam.md`, `sources/had.md`, `sources/latent-wam.md`, `index.md`, `README.md` (82 papers)
+**Confidence**: **low**. All twelve tables and six figures are present and were checked row by row against the source. The confidence is about the paper's evidence, not the conversion: the three ablation tables contain exact relationships between separately measured columns (below), both no-component baseline rows are other papers' published numbers, and the comparison tables omit the frontier including the authors' own DriveFuture.
+
+**What it is**: the wiki's 82nd paper and the sequel to MomAD. A pooled scene state $z$ and a momentum $p$ are rolled out together ($p_k$ by retain / reset / update gates, $z_k=z_{k-1}+\Delta t\,\pi_p(p_k)$), supervised by detached image-encoder features of future frames and their first difference. The rollout is action-free. Its $H$ steps form a Future World Memory that every candidate of a Hydra-style scorer attends to. MoFlow then corrects the selected plan: flow matching from the plan to the expert (no noise), four Euler steps, clipped at ±2.0 and scaled by a ramp from 0.05 to 1.0 and a learned gate initialized at $\sigma(-4)$.
+
+**Three base planners under one name**: GTRS-Dense on NAVSIM (V2-99, 2 camera frames + 4 LiDAR sweeps, 16,384 vocabulary), MomAD on nuScenes (inferred from the ablation baseline), unstated on Bench2Drive (the row is within about a point of Hydra-NeXt on most columns, SR identical).
+
+**Reported results**: nuScenes 6 s avg L2 1.17 / collision 0.79 (MomAD 1.42 / 0.90), TPC avg 1.19; NAVSIM v1 90.2; v2 navtest 90.1 (self-described as non-official); navhard 42.8; Bench2Drive 74.07 DS / 50.00 SR; 138.9 ms (nuScenes model, hardware unstated).
+
+**Finding 1 - navhard is +1.1 over the base, and it is a trade.** GTRS-Dense's published row (from HAD's Table 11) is 41.7. Against it MomWorld's Stage-2 EP is +12.2, EC +5.0, HC +2.9, and NC −5.0, DAC −1.0, TTC −5.7; Stage-1 NC, DAC and TTC are also lower. The product of closed-form stage scores is 43.8 for GTRS-Dense and 43.2 for MomWorld, so the gain is inside the ±2 conversion error and is not visible in mean sub-scores. The component ablation prints only LK, EP and EC.
+
+**Finding 2 - the comparison tables.** The navhard baseline rows are digit-identical to DriveFuture's Table 1 and every entry above 42.8 is absent (DriveFuture 55.5, DrivoR 54.6, SimScale 53.2, GTRS-E 49.4, ZTRS 48.1, DiffVLA 45.0); the paper claims the best result. DriveFuture shares three authors with MomWorld (its corresponding author is MomWorld's first author), uses the same scorer, is cited in related work and is in none of the three NAVSIM tables. The v1 "best among world-model methods" claim holds in a block that stops at DriveLaW 89.1; the v2 claim in a table that stops at Latent-WAM 89.3.
+
+**Finding 3 - ablation-table regularities** (recorded without an explanation):
+- Table 6: all 45 increments (9 metrics × 5 steps, two benchmarks) improve, each column by a near-constant step.
+- Tables 6–8: L2@6 − TPC@6 is 0.84–0.88 m over 27 rows (sd 0.008); across published methods the same difference is 0.66–0.96.
+- Table 7: L2@6 = 2.31 + 3.0·(L2@3 − 0.86) exactly for seven of eight ablated variants and within 0.01 for the eighth.
+- Table 7: NAVSIM PDMS ≈ 90.2 − 20·(L2@3 − 0.86) within 0.2 for seven of eight variants, across a GTRS-Dense LiDAR model and a MomAD camera model.
+- All eight single-design removals score below the no-component navhard baseline.
+- Both no-component rows equal published numbers (MomAD's on nuScenes, GTRS-Dense's on navhard).
+The wiki cites no component effect size from this paper on any concept page.
+
+**Finding 4 - the long-horizon gain is front-loaded.** Against MomAD, L2 falls 34% / 39% / 24% / 23% / 11% / 6% at 1–6 s; collision is unchanged at 4 s. 63% of the summed collision reduction is at 1–3 s, where MoFlow's horizon ramp makes its contribution smallest.
+
+**Finding 5 - six-second rows are not comparable with three-second rows at the same horizon.** MomAD, SparseDrive and UniAD are 0.20–0.23 m worse in L2 and about four times worse in collision rate at 1–3 s in the six-second table than in ForeSight's three-second table. Longer-horizon training or a different metric convention; the paper does not say.
+
+**Table problems found**:
+- v2 navtest: every baseline except Latent-WAM has a pre-fix-like residual (+1.3 to +2.6); MomWorld (−0.2) and Latent-WAM (−0.9) are corrected-like. Ninth user of the shared baseline block. DiffusionDriveV2 at its pre-fix 85.5. ReCogDrive's DDC and HC swapped.
+- v1: DriveSuprim at the ResNet-34 89.9, unlabelled (sub-scores consistent); DriveWorld-VLA 91.3 (overlapping authors, a latent world model) filed under VLA; the "PWM" row cites a robotics paper with the same acronym.
+- Bench2Drive: mean ability printed 55.07, mean of the five printed abilities 55.13. MomAD is 47.91 DS here and 44.54 in ORION's and DeepSight's tables, which is the row MomWorld gives SparseDrive. SimLingo now has three DS values in the wiki (85.07, 85.94, 86.02).
+- Robustness tables: best or tied in all 22 cells by 0.001–0.04 points against "literature references rather than matched reruns"; Turning-nuScenes has 680 samples.
+- The text refers to "Table 5" for three different NAVSIM tables.
+
+**New syntheses surfaced while writing**:
+- A "too little variance" check for ablation tables (difference adjacent rows, regress one column on another), filed on the variance page as the complement of the under-reported-noise entries.
+- First future-conditioned *scorer* on navhard, addressing DriveFuture's open limitation. The sub-score direction (progress up, safety down) is the reverse of DA-WAM's shared-future row and closer to GeoWorldAD's.
+- MoFlow is the fourth flow source type on the diffusion page (noise, noised anchors, ego history, the planner's own selected output) and the only refine-after-select design whose final output is not re-scored.
+
+**Not reported**: any prediction-quality metric for the rollout, the learned value of the MoFlow gate, latency and hardware for the NAVSIM model, seeds or variance, the Bench2Drive base planner, how 10 Hz future image targets are obtained on NAVSIM, the three-second nuScenes model's main results, which six-second baseline rows were re-run.
+
+**New gaps**: MomAD, DIVER, GraphWorld, GuideFlow (same group); Hydra-NeXt, HiP-AD, RAP-DINO; GTRS-Dense and SparseDriveV2 gain a second reason to ingest.
+
+**Figure note**: 6 figures embedded (`motivationv9.png`, `MomWorldv5.png`, `zituv1.drawio.png`, `vis_nus3.png`, `nus_vis_fl.png`, `Navsim_vis_fl_v2.png`); all 12 tables reproduced and compared numerically with the source (126 rows). The clipping's front-matter author field is empty; authors are taken from the body.
+
+
+## 2026-09-30 - Ingest: WALT: Learning World-Model-Aligned Latent Trajectories for Autonomous Driving
+
+**Source**: `raw/papers/WALT_ Learning World-Model-Aligned Latent Trajectories for Autonomous Driving.md` (arXiv 2609.30436v1)
+**Orgs**: HKUST, Horizon Robotics, CUHK, Nanjing University of Posts and Telecommunications, Nankai University. No code stated. Four authors in common with EponaV2.
+**Pages created**: `wiki/sources/walt.md`
+**Pages updated**: `concepts/action-tokenization.md` (`#walt`; pattern row; takeaway), `concepts/diffusion-planner.md` (`#trajectory-latent`), `concepts/world-model-for-ad.md` (new Pattern 42 `#action-space-alignment`; coupling bullet), `concepts/navsim-benchmark.md` (`#walt`; v1 and v2 rows; corrected cohort), `concepts/foundation-backbones-for-ad.md` (third aligned model under `#target-role`), `concepts/evaluation-variance.md` (rule 2 example), `concepts/inference-latency.md` (FLOPs-only note), `sources/reworld.md`, `sources/clear.md`, `sources/epona.md`, `sources/geowam.md`, `index.md`, `README.md` (83 papers)
+**Confidence**: **medium**. The four tables are complete and internally consistent (Table I's EponaV2 and WALT rows are Table III's rounded; the FLOPs percentage checks). The claims are small and single-run, the ablation is v1-only, and one figure is missing from `raw/assets/`.
+
+**What it is**: the wiki's 83rd paper. The world model (EponaV2) is frozen. Stage 1 trains a dual-branch trajectory autoencoder: 8 waypoints $(x,y,\text{yaw})$ → 2 tokens × 32 channels (24 semantic + 8 reconstruction), L1 reconstruction plus a CLIP-style contrastive loss between the semantic tokens and the frozen world model's hidden states for the same scene ($\lambda_{align}=0.1$, semantic part masked with probability 0.5; 100 epochs on 32 H20). Stage 2 freezes the tokenizer and trains the rectified-flow trajectory head to generate the latent, which a decoder maps back to waypoints. Two controls: JEPA-Traj (predict a later sub-trajectory's latent, SIGReg) and REPA-Traj (align the planner's trajectory stream to the JEPA-Traj encoder, raw-waypoint target).
+
+**Reported results**: NAVSIM v1 89.8 PDMS (NC 99.1, DAC 97.0, EP 83.6, TTC 96.3, C 100); NAVSIM v2 87.9 EPDMS (corrected; EC 73.4); trajectory-head cost 297.47 → 206.88 GFLOPs per denoising step. Baseline on the same backbone: 89.4 / 87.3.
+
+**Finding 1 - a four-way null, then +0.35.** Raw waypoints 89.42, plain latent 89.48, JEPA-Traj 89.46, REPA-Traj 89.49, WALT 89.83. The output space and trajectory-only self-supervision do nothing; alignment to scene features moves the score by a few tenths in one run.
+
+**Finding 2 - the two evaluators attribute the gain differently.** v1: NC +0.49, TTC +1.08, DAC −0.33. v2, same comparison: NC +0.1, TTC +0.1, DAC +0.1, EC +5.1. The closed-form EPDMS moves 86.23 → 87.00, and 86.39 if WALT is given the baseline's EC, so about four fifths of the v2 gain is extended comfort. Table III has no v2 column, so the EC gain cannot be assigned to alignment rather than to latent decoding.
+
+**Finding 3 - the contrastive score is a pooled alignment.** The mean of all $KM$ token-pair cosines equals the dot product of the mean unit trajectory token and the mean unit scene token. No token-to-location correspondence is supervised; the "world–trajectory correspondence maps" (Figs. 1 and 3) visualize an unsupervised quantity, which the paper half-concedes.
+
+**Finding 4 - "compact" is sequence length.** 24 input scalars become 64 latent scalars. A 75% cut in trajectory tokens gives a 30.5% cut in head FLOPs, so most of the head's cost is the conditioning tokens. No reconstruction error, step count, latency or parameter count is given.
+
+**Finding 5 - behaviour separability does not track planning.** Transcribed from Figure 4: mean within-class minus between-class cosine similarity is 0.53 for raw waypoints, 0.39 for JEPA-Traj and 0.33 for WALT; WALT's between-class similarity exceeds JEPA-Traj's on all 15 pairs.
+
+**Finding 6 - EponaV2 without RL, and what RL is worth on it.** 89.4 PDMS / 87.3 EPDMS (EC 68.3) without RL against the 90.4 / 88.9 (EC 77.4) headline carried by four other ingested tables. WALT recovers about 40% of that gap. The headline row is outside WALT's no-RL scope and absent from its tables.
+
+**Table problems found**:
+- v2 PRIX row: DAC printed 85.6. The residual is −6.7 as printed and +2.4 with 95.6, which is what LWDrive's copy has. First single-digit misprint caught by the residual check.
+- v2 DriveVLA-W0 is 86.9 (EC 82.7), not the shared-block 86.1 (EC 58.9). The row appears elsewhere only in GeoWAM's table; both tables carry EponaV2.
+- v2 DriveWorld-VLA 86.8 is unstarred with a +2.6 residual (standing exception).
+- v1 DriveVLA-W0 at 87.2, the PDMS of its flow-matching ablation variant, unlabelled.
+- "Best" claims hold in tables of 14 (v1) and 6 (v2) learned methods that exclude RL and omit ReDrive, WA-JEPA, SUV, ReWorld and CoWorld-VLA.
+
+**New syntheses surfaced while writing**:
+- Three post-hoc couplings of a planner to a fixed predictive model cluster at a few tenths of PDMS: ReDrive Stage 3 +0.3, ReWorld's alignment loss +0.4, WALT +0.35.
+- Action-representation effects scale with how poor the starting representation is: text waypoints → parametric vocabulary +3.25 (GRAVA); continuous waypoints → learned latent +0.06.
+- WALT is a third case for the alignment-target rule on the backbones page (aligned model produces a plan, target pooled, sign positive), with a trajectory-only control at +0.07 and no added inference-path encoder.
+
+**Not reported**: seeds, any v2 or navhard ablation, tokenizer reconstruction error, the flow step count, latency, the design ablations (channel split, masking rate, loss weight, token count, contrastive form, teacher layer), code.
+
+**New gaps**: Mimir, TISA; EponaV2 gains a third reason to ingest (backbone, baseline and likely source of a circulating DriveVLA-W0 row); WorldDrive, LeWorldModel and REPA as method antecedents.
+
+**Figure note**: 3 figures embedded from `raw/assets/` (`letraj_pipe.png`, `letraj_qual.png`, `letraj_wera.png`). **Figure 1 (`teaser.png`) was not saved by the clipping** and is linked from its arXiv URL; `raw/` was left untouched. All 4 tables reproduced and checked; Figure 4's three 6×6 similarity matrices are transcribed into a table.
+
+
+## 2026-09-30 - Ingest: DriveReferee: Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models
+
+**Source**: `raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md` (arXiv 2609.22762v1)
+**Orgs**: University of Southern California, Woven by Toyota, Toyota Research Institute. No code stated. All eight authors are PhysWAM authors.
+**Pages created**: `wiki/sources/drivereferee.md`
+**Pages updated**: `concepts/inference-time-safety.md` (`#analytic-referee`; taxonomy row; an open question annotated), `concepts/selection-based-planning.md` (`#computed-verdict`; methods row; two selector rows), `concepts/best-of-n.md` (`#geometric-selector`), `concepts/rl-for-ad.md` (`#referee-preference`), `concepts/discriminative-policy-optimization.md` (table row and note), `concepts/evaluation-variance.md` (`#paired-ci`; two annotations), `concepts/navsim-benchmark.md` (`#drivereferee`; v1 and v2 rows; unclassified list), `concepts/perception-for-planning.md` (`#perception-for-referee`), `concepts/foundation-backbones-for-ad.md` (Cosmos 3 size pair), `concepts/world-model-for-ad.md` (NAVSIM FVD row; third generation–planning decoupling case), `concepts/inference-latency.md` (note), `sources/physwam.md` (`#drivereferee`), `sources/feaxdrive.md`, `sources/reflectdrive.md`, `index.md`, `README.md` (84 papers)
+**Confidence**: **high** for what the paper reports. All three tables are reproduced and the values printed inside Figures 3 and 4 are transcribed; every internal comparison carries a paired bootstrap interval; the arithmetic is consistent (base + deltas reproduce the headline rows; 1 + alarm rate = 1.34 samples; 53 − 9 net scenes ≈ +0.3 EPDMS). Open items are listed under limitations.
+
+**What it is**: the wiki's 84th paper. A one-camera Cosmos3-Nano (16B, 8B trainable) video world-action model, plus a zero-parameter "analytic referee" that re-simulates a trajectory with the evaluator's LQR tracker and bicycle model and checks five footprint points against a drivable-area raster and time-indexed vehicle-occupancy rasters (0.4 m cells), returning violation counts and clearance margins. Used twice: on ground-truth maps to build winner/loser pairs from the policy's own five samples per scene (winner = passing sample with the largest clearance; loser = violating sample nearest the expert) for a DPO-style pairwise loss on the action flow-matching loss; and on maps predicted by a 21.23M Lift-Splat readout over frozen WAM features to gate a second sample at inference (alarm if any violation or clearance ≤ 0.4 m).
+
+**Reported results**: full navtest 92.02 PDMS / 91.56 EPDMS; distilled single pass 91.96 / 91.61; imitation base 91.08 / 90.69; 4B (Cosmos3-Edge) 90.47 → 91.50 PDMS. FVD 23.90 → 24.25.
+
+**Finding 1 - the gain is the training-time use.** Distillation +0.92 EPDMS (95% CI +0.71 to +1.13) from 462 pairs and 850 steps. Gated selection: +0.30 (+0.18 to +0.42) on the base, net 44 scenes (53 hard-gate failures fixed, 9 introduced); on the distilled policy +0.06 PDMS (−0.01 to +0.14) and −0.04 EPDMS; with ground-truth maps +0.08. The headline "full" system spends 1.34× policy samples for nothing measurable.
+
+**Finding 2 - "need not be learned" is non-inferiority at K = 2.** Same-map learned verifier (4.15M, 66,385 labels) against the rule: −0.01 EPDMS (CI ±0.15), same plan in 83.4% of scenes, 1.57 against 1.35 samples. Image-feature verifiers: +0.23, +0.26, +0.06, −0.04, 0.00 against the rule's +0.30; map-blind controls +0.02, −0.01, −0.02. Ungated argmax is negative, so the decision protocol matters more than the verdict source. Label scaling 5–100%: +0.00, +0.07, +0.17, +0.33, +0.27 against +0.35 at a 2.0× budget.
+
+**Finding 3 - the rule is a lossy copy of the evaluator.** On ground-truth maps: drivable-area precision 0.995 / recall 0.631, collision 0.931 / 0.792, measured on 1,060 scenes × 5 samples. On predicted maps the drivable-area clearance correlates 0.895 with a mean absolute difference of 0.502 m, larger than the 0.4 m threshold. Collision-map accuracy is not reported.
+
+**Finding 4 - what the distillation consists of.** β = 0 (fine-tune on winners only) +0.56; winner nearest the expert +0.63; winner by clearance, full objective +0.92 (paired difference +0.29, CI +0.14 to +0.45). Gains are mainly DAC (+0.85 / +0.88 on 16B / 4B). No control continues plain imitation for the same steps.
+
+**Finding 5 - paired confidence intervals.** First in the wiki. Half-widths: 0.21 EPDMS for two checkpoints, 0.12–0.15 for selection variants on fixed candidates, 0.08 on a strong base. Pairing about halves the unpaired SE of a difference (0.23 → 0.11). Scene sampling only; no training seeds.
+
+**Finding 6 - against PhysWAM (same group, same backbone).** The one-camera imitation-only base (90.69 EPDMS) is above PhysWAM's three-camera depth-generating system (90.3). The v1 column passes the closed-form check (+0.9 to +1.5) with v1-scale EP, unlike PhysWAM's. The FVD is given without a clip count or a recorded-against-recorded floor. PhysWAM is not cited.
+
+**Table and text problems found**:
+- EPDMS evaluator not stated; no v2 sub-scores, so no residual check. Listed as unclassified on the NAVSIM page.
+- The fidelity audit is run on "the 1,060 navtest scenes where the base policy scores zero"; the base's DAC 97.79 and NC 99.31 imply roughly 270 + 85 such scenes.
+- Table I's EPDMS column mixes conventions; DriveVLA-W0 is at its anchor-based 90.2 unmarked; TTC is 96.86 for both 4B rows.
+- Its comparison omits WA-JEPA, SimWAM, SUV, DA-WAM and PhysWAM; the claim is worded as "the listed generative world-action models".
+- Figure 1 has only panel (a) in `raw/assets/`.
+
+**New syntheses surfaced while writing**:
+- Training on a rule removes the value of enforcing it at inference: the first inference-against-training comparison of one safety rule on one policy, filed on the inference-time-safety page. It also answers, approximately, that page's open question about chaining inference-time repair on an RL-trained base.
+- A selector that can be folded into the generator: the scorer-price thread run in reverse.
+- A third intra-paper case of planning moving with video quality unchanged (after ReWorld and PhysWAM).
+- A third way to spend map and box labels: outside the policy, to judge its outputs.
+- The 0.2 EPDMS paired threshold as a yardstick for the sub-0.3 margins recorded across the NAVSIM page.
+
+**Not reported**: policy latency, oracle best-of-K for its own samples, any K other than 2, navhard or HUGSIM (both run for PhysWAM), collision-map fidelity, the number of scenes sampled to find 462 pairs, training seeds, code.
+
+**New gaps**: CoPhy, UNIVERSE, DriveVer, ForgeDrive, PerceptDrive; DriveDPO and BeyondDrive gain another citation as the preference-optimization and hard-negative precedents.
+
+**Figure note**: 5 figure files embedded (`fig1_a_sep01.png`, `fig2_sep03_1527.png`, `fig_forest_v3.png`, `fig_scale.png`, `fig4_qual_v3.png`); all 3 tables reproduced. The clipping's front-matter author field is empty; authors are taken from the body.
+
+
+## 2026-09-30 - Ingest: MM-Future: Multi-Mode Joint World–Action Modeling for Autonomous Driving
+
+**Source**: `raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md` (arXiv 2609.20377v1)
+**Orgs**: NIO; AGI Institute, University of Science and Technology of China; Sun Yat-sen University; Beihang University. No code stated.
+**Pages created**: `wiki/sources/mm-future.md`
+**Pages updated**: `concepts/world-model-for-ad.md` (new Pattern 43 `#multi-mode-joint`; second per-candidate measurement; DA-WAM taxonomy row; an open question annotated), `concepts/selection-based-planning.md` (`#mm-future`; methods row; above-92 table extended with MM-Future and DriveReferee), `concepts/navsim-benchmark.md` (`#mm-future`; v1 and v2 rows; corrected cohort; rank statements shifted by one), `concepts/hugsim-benchmark.md` (`#mm-future`; era table corrected for Latent-WAM; open question annotated), `concepts/wam-attention-masks.md` (2×2 of mask × block design), `concepts/inference-latency.md` (row; per-candidate lesson), `concepts/diffusion-planner.md` (flow-source row), `concepts/foundation-backbones-for-ad.md` (LoRA note), `concepts/counterfactual-prediction.md` (second sensitivity result), `sources/da-wam.md`, `sources/latent-wam.md`, `sources/drivefuture.md`, `index.md`, `README.md` (85 papers)
+**Confidence**: **medium**. The four tables and four figures are complete and were checked against the source; both of its own rows pass the v1 closed-form and v2 residual checks; HUGSIM averages reproduce from the tiers. The supplement (diversity, capacity and efficiency analyses) is not in the clipping, ablations are single runs on v1 only, and the headline uses trainval.
+
+**What it is**: the wiki's 85th paper. Four cameras at 336×560 are compressed by a rank-32 LoRA DINOv2-S with register tokens and a 4-layer query module into 64 tokens × 256-d per two-frame chunk ("MM-Tokens"), with future targets from an EMA copy and no reconstruction loss. $M$ hypotheses start from paired sources (Gaussian-mixture noise over K-means trajectory clusters for actions, Gaussian noise for future tokens) and are flow-matched in two Euler steps by a 16-layer, width-1024 transformer with shared attention and modality-specific AdaLN / FFN branches; action and future tokens of one hypothesis attend to each other, hypotheses never do. Best-of-Many supervision trains only the pair whose trajectory is nearest the expert. A scorer with BCE heads on simulator sub-scores reads the history and, block-diagonally, each trajectory's own future.
+
+**Reported results**: NAVSIM v1 93.4 (navtrain) / 94.0 (trainval); NAVSIM v2 91.5 corrected EPDMS (trainval model); HUGSIM 436 scenarios zero-shot 44.5 RC / 32.3 HD-Score; 233 ms at 64 hypotheses on an H800.
+
+**Finding 1 - the decomposition.** One trajectory 84.1 → 32 trajectories, history-only scorer, no future tokens 92.3 (+8.2) → paired future generation 92.9 (+0.6) → scorer reads each own future 93.3 (+0.4) → 64 hypotheses 93.4 (+0.1) → trainval 94.0 (+0.6). World modeling is +1.0 of 9.3. No many-mode row without a scorer and no oracle over hypotheses. DrivoR, whose encoder design it uses, is 93.1 / 93.7: +0.3 either way.
+
+**Finding 2 - the interaction 2×2.** No future 92.3; single DiT one-way 92.4, bidirectional 92.3; modality-specific branches one-way 92.5, bidirectional 92.9. The pairing gain exists in one cell. First controlled comparison in the wiki where bidirectional is best; navtest only.
+
+**Finding 3 - a second per-candidate-future scorer.** +0.4 PDMS (TTC +0.5) against DA-WAM's +0.15; 4 s against 0.5 s futures; no shared-future control; 63 of 64 futures per scene unsupervised; evidence of action sensitivity only (RMS +17.3%, cosine +38.9% between futures of extreme trajectories).
+
+**Finding 4 - v2 profile.** EP 92.2 (human agent 87.4; highest of any ingested method), with DDC 98.8, LK 95.4, HC 96.3 the lowest in its table and TL 99.4 second lowest. The scorer's targets are v1 components. 91.5 is second in the corrected cohort behind WA-JEPA 91.7.
+
+**Finding 5 - HUGSIM.** 32.3 is below WA-JEPA 44.6, PhysWAM 35.5 and BeyondDrive 34.8 on the same scenario count (none cited) and level with rescored DrivoR 32.5. Unusual profile: Easy 53.8 (lowest of recent methods), Medium 40.0 (second), Extreme 8.6 (lowest).
+
+**Finding 6 - a correction to the wiki.** Latent-WAM's overall HUGSIM scores (45.9 / 28.9) equal the 80 / 157 / 96 / 103-weighted means of its tiers (45.88 / 28.91), as do the benchmark paper's baselines and MM-Future's own. HAD-L's do not (51.27 / 33.97 against 47.5 / 30.8). Latent-WAM was therefore scored on 436 scenarios; the HUGSIM page had filed it under the 345-scenario release. Era table, the earlier-release section and the Latent-WAM source page are updated. Controller version remains unknown for the unpinned 436 group.
+
+**Finding 7 - cost.** 79 / 132 / 233 ms at 16 / 32 / 64 paired hypotheses, about 3.2 ms per hypothesis; action-only 51 / 65 ms. Single-mode rows (52 and 81 ms) are not faster than 16-mode rows, unexplained. No parameter count.
+
+**Table problems found**:
+- v2 table captioned "official corrected EPDMS" carries DiffusionDriveV2 at 85.5 (pre-fix; residual +2.1) and DriveWorld-VLA 86.8 (+2.6).
+- GraphWorld's v2 row has a residual of −2.6, about twice the previous largest negative residual.
+- The navtrain model (93.4) is below DriveSuprim (93.5) in the same table, unremarked.
+- UniAD's HUGSIM average is printed 28.6; its tiers give 28.9.
+- v1 and v2 tables omit DA-WAM, CLEAR, WA-JEPA, SUV, ReDrive; DriveVLA-W0 at its anchor-based 90.2.
+
+**New syntheses surfaced while writing**:
+- Two per-candidate-future scorers now agree in sign and size class (+0.15, +0.4); the negative shared-future half still rests on DA-WAM alone.
+- The attention mask interacts with the block design (+0.4 with modality-specific branches, −0.1 in a single DiT), an axis the Wan2.2 mask family never varied.
+- A v1-trained scorer carried onto v2 shows up as high EPDMS with the v2-only terms at the bottom of the table.
+- Per-candidate futures are affordable once the state is a few hundred learned tokens: 3.2 ms per hypothesis here, 2.2 ms per candidate in AD-E2E-JEPA.
+- Housekeeping from the two previous ingests folded in: DriveReferee and MM-Future added to the above-92 table on the selection page.
+
+**Not reported**: prediction error of the future tokens, oracle over hypotheses, a many-mode / no-scorer row, navhard, v2 or HUGSIM ablations, a navtrain-only EPDMS, HUGSIM sub-metrics and commit, parameter count, seeds, code; the supplement is absent from the clipping.
+
+**New gaps**: UniTeD, MeanFuser, IRR-Drive, GaussianFusion, MAP-World, IDOL, SeerDrive, SparseWorld; DrivoR gains its strongest reason yet to be ingested (encoder source, +0.3 baseline, trainval protocol).
+
+**Figure note**: 4 figures embedded (`teaser 3.png`, `mmfuture_framework.png`, `futurex_xtoken_attention_panorama.png`, `futurex_multimode_convergence.png`); all 4 tables reproduced (the two HUGSIM sub-tables merged into one). Author-to-affiliation mapping is not recoverable from the clipping.

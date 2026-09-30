@@ -1,10 +1,10 @@
 ---
 title: NAVSIM Benchmark
 type: concept
-sources: ["raw/papers/Hydra-MDP++_ Advancing End-to-End Driving via Expert-Guided Hydra-Distillation.md", "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md]
-related: [sources/hydra-mdp-pp.md, concepts/evaluation-variance.md, sources/metis.md, sources/suv.md, sources/grava.md, concepts/alpasim-benchmark.md, sources/qwen-drive-1.0.md, sources/drive-hwm.md, sources/drivefuture.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/wcog-vla.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/da-wam.md, sources/geowam.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/percept-wam.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/adathinkdrive.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/nord.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/epona.md, sources/hybriddriveVLA.md, sources/wam-diff.md, sources/drivesuprim.md, sources/driveva.md, sources/explorevla.md, sources/elf-vla.md, sources/dynvla.md, sources/spanvla.md, sources/onedrive.md, sources/onevl.md, sources/had.md, sources/latent-wam.md, sources/drive-jepa.md, sources/feaxdrive.md, sources/policy-world-model.md, sources/clear.md, sources/pair-drive.md, sources/drivewam.md, sources/simwam.md, sources/sgdrive.md, sources/drivelaw.md, concepts/rl-for-ad.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/selection-based-planning.md, concepts/world-model-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md, concepts/physicalai-av-benchmark.md]
+sources: ["raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/WALT_ Learning World-Model-Aligned Latent Trajectories for Autonomous Driving.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", "raw/papers/Hydra-MDP++_ Advancing End-to-End Driving via Expert-Guided Hydra-Distillation.md", "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/OneVL_ One-Step Latent Reasoning and Planning with Vision-Language Explanation.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md]
+related: [sources/mm-future.md, sources/drivereferee.md, sources/walt.md, sources/momworld.md, sources/redrive.md, sources/physwam.md, sources/ad-e2e-jepa.md, sources/hydra-mdp-pp.md, concepts/evaluation-variance.md, sources/metis.md, sources/suv.md, sources/grava.md, concepts/alpasim-benchmark.md, sources/qwen-drive-1.0.md, sources/drive-hwm.md, sources/drivefuture.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/wcog-vla.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/da-wam.md, sources/geowam.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reflectdrive.md, sources/reasoning-vla.md, sources/percept-wam.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/adathinkdrive.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/drivevla-w0.md, sources/flare.md, sources/dreameraD.md, sources/vega.md, sources/nord.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/epona.md, sources/hybriddriveVLA.md, sources/wam-diff.md, sources/drivesuprim.md, sources/driveva.md, sources/explorevla.md, sources/elf-vla.md, sources/dynvla.md, sources/spanvla.md, sources/onedrive.md, sources/onevl.md, sources/had.md, sources/latent-wam.md, sources/drive-jepa.md, sources/feaxdrive.md, sources/policy-world-model.md, sources/clear.md, sources/pair-drive.md, sources/drivewam.md, sources/simwam.md, sources/sgdrive.md, sources/drivelaw.md, concepts/rl-for-ad.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/inference-time-safety.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/selection-based-planning.md, concepts/world-model-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md, concepts/physicalai-av-benchmark.md]
 created: 2026-04-05
-updated: 2026-09-27
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -138,6 +138,12 @@ For leaderboard use, separate PaIR-Drive's single-plan 91.2 PDMS / 87.9 EPDMS fr
 | SUV                       | 1 Cam / Wan2.2-5B + 1B action expert | 90.8        | Four future streams (RGB, segmentation, relative depth, instance tracks) generated by one video expert and read by a MoT action expert; no RL, no scorer. **Below its uncited same-backbone predecessors SimWAM 91.5 and DriveVA 90.9.** Its v1 table cites DriveVLA-W0 88.4, Drive-JEPA 89.0 (with a column swap) and SGDrive-IL 87.4. The v2 result (91.0) is the stronger claim. See [[sources/suv.md]] |     |
 | Metis                     | 1 Cam / Wan2.2-5B + 1B action expert | 89.1        | Asymmetric MoT mask (the future video reads the action; the action never reads the future), so video is dropped at inference; 147 ms at 2 steps. **"SOTA" relies on the best-of-6 89.7**; single-sample 89.1 ties DriveLaW and trails UniWorldVLA 89.4 in its own table. Source of the Drive-JEPA TTC/Comf column swap later copied by SUV. See [[sources/metis.md]] |     |
 | Hydra-MDP++ (V2-99)       | 3 Cam stitched, no LiDAR      | 91.0               | Fixed 8192-trajectory vocabulary scored by heads distilled from offline PDM-simulator sub-scores (ground-truth perception); weighted-cost selection with grid-searched weights. **Ancestor of the selection-based cohort.** 86.6 with ResNet-34 at 206 ms (V100). The 91.0 model is not the one behind its 84.1 own-formula EPDMS. See [[sources/hydra-mdp-pp.md]] |     |
+| ReDrive                   | 1 Cam / V-JEPA 2 ViT-L + 103M Action DiT | 91.0        | Encoder + flow-matching planner only at inference (407M, 5 steps); a trajectory-conditioned JEPA future predictor is used in training and discarded. No perception labels, no scorer, no RL. NC 99.1 / TTC 97.2. **Future prediction is worth +0.7 in its own ablation** against +5.5 for V-JEPA 2 over DINOv2 and +3.5 for unfreezing the encoder. "Best perception-free" omits WA-JEPA 91.8 and Drive-HWM; its DriveSuprim row pairs the ViT-L sub-scores (93.5) with the ResNet-34 score (89.9). No latency. See [below](#redrive) and [[sources/redrive.md]] |     |
+| PhysWAM ⚠                 | 3 Cam / Cosmos 3 Nano (15.2B) | 91.4 ⚠ (91.7 medoid-of-8) | **Not a NAVSIM-v1 measurement; listed for reference only.** Its v1 sub-scores (NC, DAC, TTC, EP) are identical to its v2 sub-scores on all four of its rows, and its PDMS equals the closed form of those means to within 0.1, where 16 other methods in the same table sit 1.2–3.9 above their closed form. The column appears to be the v1 formula applied to v2 mean sub-scores. Video + metric depth + ego motion co-denoised, tied by a LiDAR point loss; no RL, no scorer. See [below](#physwam) and [[sources/physwam.md]] |     |
+| MomWorld                  | 2 Cam frames + 4 LiDAR sweeps / V2-99 (GTRS-Dense base) | 90.2 | **Scorer-cohort entry**: 16,384-trajectory vocabulary, heads distilled from PDM sub-scores, plus a shared latent future memory and a residual flow on the selected plan. NC 98.6 / DAC 98.2 / TTC 93.9 / EP 85.7; TTC is the weak term. Passes the v1 closed-form check (+1.6). Claims the best world-model result in a table whose world-model block stops at DriveLaW 89.1; seven world-model entries on this page are higher. **Low-confidence source**: see [below](#momworld) and [[sources/momworld.md]] |     |
+| WALT                      | 1 Cam / frozen EponaV2 + latent flow-matching head | 89.8 | **An action-side change only.** A trajectory autoencoder's latent is aligned to the frozen world model and generated in place of waypoints; no RL, no scorer. **+0.41 over raw waypoints on the same backbone (89.42)**, with NC +0.49, TTC +1.08 and DAC −0.33; three other action representations are within 0.07 of the baseline. EponaV2's RL-trained headline (90.4) is not in its table. See [below](#walt) and [[sources/walt.md]] |     |
+| **DriveReferee**          | 1 Cam / Cosmos3-Nano (16B) video world-action model | **92.02** (91.96 single pass) | Imitation base 91.08; **+0.9 from preference distillation on 462 pairs** built with the evaluator's collision and drivable-area rules on ground-truth maps; the headline adds a rule-gated second sample in 34% of scenes, worth +0.06 (CI −0.01 to +0.14). NC 99.49 / DAC 98.64. Highest video-generating WAM here. Trained against the benchmark's own gate logic, like the RL and scorer entries around it. First entry with paired bootstrap CIs. See [below](#drivereferee) and [[sources/drivereferee.md]] |     |
+| **MM-Future**             | 4 Cam / DINOv2-S (LoRA) + 16-layer joint scene–action transformer | **93.4** (navtrain) / **94.0** (trainval) | 64 jointly generated trajectory–future pairs, selected by a scorer trained on simulator sub-scores that reads each trajectory's own future; 233 ms. **94.0 is the highest non-BoN number in the wiki, with the val split added to training**; on navtrain it is below DriveSuprim, CLEAR and DA-WAM and +0.3 over DrivoR. Its ablation: many modes + scorer +8.2, paired future +0.6, future-aware scoring +0.4. See [below](#mm-future) and [[sources/mm-future.md]] |     |
 
 **Caveat on Reasoning-VLA (91.7)**: Table 6 in the paper compares only against TransFuser/UniAD/Para-Drive (~84 PDMS). No head-to-head with WAM-Flow (90.3) or Percept-WAM (90.2). Unverified. See [[sources/reasoning-vla.md]].
 
@@ -361,10 +367,17 @@ And unusually, the same paper supplies evidence rather than leaving that as a wo
 | **CoWorld-VLA** | **90.0** | 86.2 | **Corrected protocol, verified at the primary source** (86.2* / 90.0). NC 99.1 and TTC 98.5 are near the top of this table and EC 86.2 is strong for a 90+ entry. Third paper to tabulate both columns — but the **same lab as [[sources/wa-jepa.md]]**, and the two disagree with each other on DriveVLA-W0's column; see [Two Papers, Both Columns](#both-columns) |
 | **DriveFuture** | **89.9** | 74.8 | **Corrected protocol, verified at the primary source** — the paper prints both columns (86.4* / 89.9) exactly as [[sources/wa-jepa.md]] reported them second-hand. DAC 99.1 and TTC 98.4 are near the top of this table; EC 74.8 is low. Its table contradicts WA-JEPA's cohort assignment for ReCogDrive and DriveVLA-W0 — see [Two Papers, Both Columns](#both-columns) |
 | Drive-HWM | 86.4 ⚠ / 86.2 | 87.5 / 86.4 | **Two result sets again** (86.4 tables / 86.2 prose). **Seventh user of the shared baseline block, carried complete in one unlabelled column**, so it belongs to the block's mixed convention rather than either cohort. Its own row also **cannot be reconciled with its own submetrics**: it dominates DriveVLA-W0 on all nine, including EC by 28.6, yet gains 0.3 — see [The Submetric–Aggregate Residual](#submetric-residual). Strongest baseline in its table is DriveVLA-W0 86.1; seven wiki entries exceed 86.4 |
+| **ReDrive** | **90.8** | 86.4 | **Corrected protocol, self-stated; third in the corrected cohort at ingest, behind WA-JEPA 91.7 and SUV 91.0, both absent from its table (fourth once MM-Future's 91.5 is counted).** One front camera, V-JEPA 2 ViT-L + Action DiT, no future prediction at inference, no scorer, no RL: the best training-time-only world-model result here. TTC 98.7 and LK 98.2 are near the top of this table. Its comparison rows are digit-identical to WA-JEPA's corrected column with WA-JEPA, Discrete-WAM and DriveWorld-VLA removed. No v2 ablations. See [below](#redrive) and [[sources/redrive.md]] |
+| **PhysWAM** | **90.3** (90.4 medoid-of-8) | 90.5 | **Corrected-like by residual sign (−0.2); evaluator not stated.** Three cameras, Cosmos 3 Nano, no RL, no learned scorer. **EC 90.5 is the highest of any 90+ entry here.** NC 99.0 / TTC 98.5 are near the top of this table; LK 96.5 is the weak term. Without its depth–motion loss: 88.4. Sample-to-sample sd 0.30. Its table is the eighth to use the shared baseline block in one unlabelled column (TransFuser 76.7 beside LTF 83.6) and omits WA-JEPA 91.7, SUV 91.0 and GeoWorldAD 90.4. 9.4 GPU-seconds per plan. See [below](#physwam) and [[sources/physwam.md]] |
+| AD-E2E-JEPA (imitation transfer) | 85.4 | 88.7 | **Corrected protocol, self-stated** (it prints EPDMS\* and EPDMS as separate columns). One front camera, 4 frames, no perception labels, no RL, no scorer: frozen-init DINOv3 + a world-model-pretrained conv projector + one cross-attention layer. **+5.2 over the same model with a random projector (80.2).** EC 88.7 is among the highest in this table. Presented by the paper as a transfer study, with WA-JEPA and others as "reference methods rather than direct baselines". **Its zero-shot rows (67.3 / 72.9) use the ground-truth future frame as a goal and do not belong in this table**; see [below](#ad-e2e-jepa) and [[sources/ad-e2e-jepa.md]] |
+| MomWorld | 90.1 | 90.6 | **Corrected-like by residual sign (−0.2); evaluator not stated.** Camera + LiDAR, GTRS-Dense scorer with a latent future memory. The paper calls this a diagnostic ("not an official NAVSIM v2 leaderboard protocol"). EC 90.6 would be the highest of any 90+ entry here. Its table is the **ninth user of the shared baseline block** in one unlabelled column; the only other corrected-like row in it is Latent-WAM 89.3. **Low-confidence source**; see [below](#momworld) and [[sources/momworld.md]] |
+| WALT | 87.9 | 73.4 | **Corrected protocol, self-stated** (its table stars the original-evaluator rows; residual −0.9). Frozen EponaV2 with a world-model-aligned trajectory latent, no RL. **+0.6 over EponaV2 without RL (87.3), about four fifths of it from EC (68.3 → 73.4).** Below EponaV2's headline 88.9, which is absent from the table. No v2 ablation. See [below](#walt) and [[sources/walt.md]] |
+| **DriveReferee** | **91.56** (91.61 single pass) | – | **Evaluator not stated and no v2 sub-scores printed, so the residual check cannot be run.** If it is the corrected evaluator this is second only to WA-JEPA 91.7. Imitation base 90.69; preference distillation +0.92 (95% CI +0.71 to +1.13); test-time selection −0.04 on top. One camera, Cosmos3-Nano; 4B variant 91.08. See [below](#drivereferee) and [[sources/drivereferee.md]] |
+| **MM-Future** | **91.5** | 89.2 | **Corrected protocol, stated in the caption; residual −0.5 agrees.** Second in the corrected cohort behind WA-JEPA 91.7. From the trainval model with 64 scored proposals. **EP 92.2 is the highest v2 ego progress of any ingested method (human agent: 87.4)**; DDC 98.8, LK 95.4 and HC 96.3 are the lowest in its own table. Its "corrected" table carries DiffusionDriveV2 at the pre-fix 85.5 and omits WA-JEPA, SUV and ReDrive. See [below](#mm-future) and [[sources/mm-future.md]] |
 
 DreamerAD ([[sources/dreameraD.md]]) achieves 87.7 EPDMS — surpasses Senna-2 (86.6), WorldRFT (86.7), and FLARE (86.3). Unlike DDP, DreamerAD compares directly against WorldRFT and Epona in its own table, strengthening its position.
 
-**WAM-Diff (89.7)** ([[sources/wam-diff.md]]) was the wiki's NAVSIM-v2 leader at single-sample until WA-JEPA; under the corrected protocol it is now tied seventh, behind WA-JEPA, SUV, Discrete-WAM, SparseDriveV2, CoWorld-VLA and DriveFuture (see [Evaluator Drift](#evaluator-drift-this-table-mixes-two-protocols)). It remains a strong result — but **no direct head-to-head** with DriveDreamer-Policy (88.7), DreamerAD (87.7), or Senna-2 (86.6); those methods are absent from WAM-Diff's comparison table. The v2.2 codebase version may or may not be directly comparable to DriveFine's bug-fixed scorer. If the 89.7 number is consistent with the standard scorer, WAM-Diff sets a new single-sample NAVSIM-v2 SOTA. EC = 78.5 (below DDP 79.4 and much below FLARE 87.5).
+**WAM-Diff (89.7)** ([[sources/wam-diff.md]]) was the wiki's NAVSIM-v2 leader at single-sample until WA-JEPA; under the corrected protocol it is now tied eleventh, behind WA-JEPA, MM-Future, SUV, ReDrive, Discrete-WAM, PhysWAM, SparseDriveV2, MomWorld, CoWorld-VLA and DriveFuture (see [Evaluator Drift](#evaluator-drift-this-table-mixes-two-protocols)). It remains a strong result — but **no direct head-to-head** with DriveDreamer-Policy (88.7), DreamerAD (87.7), or Senna-2 (86.6); those methods are absent from WAM-Diff's comparison table. The v2.2 codebase version may or may not be directly comparable to DriveFine's bug-fixed scorer. If the 89.7 number is consistent with the standard scorer, WAM-Diff sets a new single-sample NAVSIM-v2 SOTA. EC = 78.5 (below DDP 79.4 and much below FLARE 87.5).
 
 **Vega BoN-6 (89.4)** ([[sources/vega.md]]) holds the best-of-N wiki NAVSIM-v2 result — no direct head-to-head with DriveDreamer-Policy (88.7), DreamerAD (87.7), or Senna-2 (86.6). Vega uses BoN-6 (best of 6 samples), a different inference regime from single-sample results.
 
@@ -434,16 +447,16 @@ NAVSIM-v2's EPDMS aggregation was corrected at devkit commit [`359c7f7`](https:/
 
 | Protocol | Wiki entries |
 |---|---|
-| **Corrected** | WA-JEPA 91.7, **SUV 91.0 (self-stated)**, Metis 89.5 (inferred from residual sign), Discrete-WAM 90.4*, SparseDriveV2 90.1*, **CoWorld-VLA 90.0 (confirmed)**, **DriveFuture 89.9 (confirmed)**, WAM-Diff 89.7, DriveFine 89.7, Latent-WAM 89.3, Auto-JEPA 89.1, DreamerAD 87.7, DiffusionDriveV2 87.5, DriveWorld-VLA 86.8, DiffusionDrive 84.5 |
+| **Corrected** | WA-JEPA 91.7, **MM-Future 91.5 (stated; trainval model, scored proposals)**, **SUV 91.0 (self-stated)**, **ReDrive 90.8 (self-stated)**, PhysWAM 90.3 (inferred from residual sign), MomWorld 90.1 (inferred from residual sign; camera + LiDAR scorer), Metis 89.5 (inferred from residual sign), Discrete-WAM 90.4*, SparseDriveV2 90.1*, **CoWorld-VLA 90.0 (confirmed)**, **DriveFuture 89.9 (confirmed)**, WAM-Diff 89.7, DriveFine 89.7, Latent-WAM 89.3, Auto-JEPA 89.1, **WALT 87.9 (self-stated)**, DreamerAD 87.7, DiffusionDriveV2 87.5, DriveWorld-VLA 86.8, **AD-E2E-JEPA imitation transfer 85.4 (self-stated)**, DiffusionDrive 84.5 |
 | **Pre-fix** | WA-JEPA 88.0, Drive-JEPA 87.8, DriveSuprim 87.1, Auto-JEPA 85.6, DriveVLA-W0 86.1, ReCogDrive 83.6, WAM-Flow 84.7, ARTEMIS 83.1, TransFuser 76.7 |
 | **Hydra-MDP++ formula** *(not a v2 protocol; see [above](#hydra-formula))* | HydraMDP++ 84.1 (V2-99) / 80.6 (R34), Hydra-MDP 79.8, TransFuser 77.8, VADv2 76.6 |
-| **Unclassified** | Vega 86.9 / 89.4 BoN-6, ExploreVLA 88.8, ELF-VLA 87.1, SpanVLA 86.4, HAD 88.6, HAD-L 88.5, CLEAR 88.6, SGDrive 86.2, Senna-2 86.6, Curious-VLA 85.3, HybridDriveVLA 85.5, DriveDreamer-Policy 88.7, FLARE-4B 86.3 |
+| **Unclassified** | **DriveReferee 91.56 / 91.61 single pass (evaluator unstated, no sub-scores)**, Vega 86.9 / 89.4 BoN-6, ExploreVLA 88.8, ELF-VLA 87.1, SpanVLA 86.4, HAD 88.6, HAD-L 88.5, CLEAR 88.6, SGDrive 86.2, Senna-2 86.6, Curious-VLA 85.3, HybridDriveVLA 85.5, DriveDreamer-Policy 88.7, FLARE-4B 86.3 |
 
 *(entries marked \* are not yet ingested)*
 
 Two corrections to earlier wiki claims follow from this partition — though see [the next section](#three-protocols), which shows the partition itself is unreliable:
 
-1. **"WAM-Diff 89.7 is the NAVSIM-v2 SOTA" no longer holds.** Under the corrected protocol it is now tied seventh with DriveFine, behind WA-JEPA 91.7, SUV 91.0, Discrete-WAM 90.4, SparseDriveV2 90.1, CoWorld-VLA 90.0, and DriveFuture 89.9 *(list corrected at the 2026-09-27 lint: it previously named CoWorld-VLA twice and predates SUV)* — **two** of which are still not ingested (Discrete-WAM, SparseDriveV2); [[sources/drivefuture.md]] and [[sources/coworld-vla.md]] now are, and both rows check out at the primary source.
+1. **"WAM-Diff 89.7 is the NAVSIM-v2 SOTA" no longer holds.** Under the corrected protocol it is now tied eleventh with DriveFine, behind WA-JEPA 91.7, MM-Future 91.5, SUV 91.0, ReDrive 90.8, Discrete-WAM 90.4, PhysWAM 90.3 (corrected by inference), SparseDriveV2 90.1, MomWorld 90.1 (corrected by inference), CoWorld-VLA 90.0, and DriveFuture 89.9 *(list corrected at the 2026-09-27 lint and extended on 2026-09-30 with ReDrive, PhysWAM, MomWorld and MM-Future)* — **two** of which are still not ingested (Discrete-WAM, SparseDriveV2); [[sources/drivefuture.md]] and [[sources/coworld-vla.md]] now are, and both rows check out at the primary source.
 2. **The Auto-JEPA caveat was too strong.** It previously said "do not compare 89.1 against any other NAVSIM-v2 number in this wiki." The correct statement is narrower: compare it only within the corrected cohort, where 89.1 sits *ninth*, below WAM-Diff and Latent-WAM. Its 85.6 belongs in the pre-fix cohort.
 
 ### GeoWAM Breaks the Two-Protocol Model {#three-protocols}
@@ -628,6 +641,243 @@ The [residual check](#submetric-residual) was introduced to find rows whose aggr
 The Jensen gap from averaging per-scene products differs by method, so rows near zero are uninformative.
 
 **What it resolves.** Metis's table uses pre-fix anchors throughout, but its own row falls on the corrected side. Its claimed "+2.4 over prior VLA methods" is therefore very likely a cross-protocol comparison.
+
+### AD-E2E-JEPA: a Fourth Both-Columns Table, and Rows That Stay Off This Page {#ad-e2e-jepa}
+
+[[sources/ad-e2e-jepa.md]] touches this page in four ways.
+
+**1. It is the fourth paper to print EPDMS\* and EPDMS as separate columns** (after WA-JEPA, DriveFuture and CoWorld-VLA), and it names the commit (`359c7f7`). Its four reference rows are copied from [[sources/wa-jepa.md]]'s Table 1 with the column assignment intact. Its own two rows are in the corrected column.
+
+**2. The residual sign agrees with the stated column on every row.** Residual = closed form of the printed submetrics − reported:
+
+| Row | Column (stated) | Reported | Residual |
+|---|---|---:|---:|
+| TransFuser | pre-fix | 76.7 | **+1.3** |
+| Drive-JEPA (ViT-L) | pre-fix | 87.8 | **+1.7** |
+| WA-JEPA | corrected | 91.7 | **−0.4** |
+| Latent-WAM | corrected | 89.3 | **−0.9** (with its true EC of 87.3) |
+| DINOv3 + random projector | corrected | 80.2 | **−2.0** |
+| DINOv3 + AD-E2E-JEPA projector | corrected | 85.4 | **−1.1** |
+
+Six for six, which adds to the evidence for the [heuristic](#residual-sign) without removing its four known exceptions. The TransFuser and random-projector rows are the cleanest pair so far: nearly the same submetrics, closed forms of 78.0 and 78.2, and residuals of opposite sign.
+
+**3. A near-matched pair shows the correction on almost identical submetrics.** The random-projector model and TransFuser agree within 0.5 on seven of nine submetrics:
+
+| | NC | DAC | DDC | TLC | EP | TTC | LK | HC | EC | Reported |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| TransFuser (pre-fix) | 96.9 | 89.9 | 97.8 | 99.7 | 87.1 | 95.4 | 92.7 | 98.3 | 87.2 | 76.7 |
+| DINOv3 + random projector (corrected) | 96.8 | 89.8 | 98.3 | 99.7 | 87.1 | 95.7 | 94.8 | 98.3 | 84.1 | 80.2 |
+
+The closed forms are 78.0 and 78.2. The reported scores are 3.5 apart. This is not a recomputation of TransFuser, but it is the closest thing in the wiki to **the missing corrected TransFuser number**: a model with TransFuser's submetrics scores about 80 under the corrected evaluator. It sits between the 76.7 that six tables print in the pre-fix column and the 84.0 [[sources/geowam.md]] reports from identical submetrics, so it does not support reading GeoWAM's 84.0 as the corrected value.
+
+**4. One more copied-row error.** The table gives Latent-WAM an EC of **72.4**. Latent-WAM's own paper reports 87.3. The value 72.4 is DreamerAD's EC, which is the row directly above Latent-WAM in WA-JEPA's Table 1. This is the row-slip form of the copying documented [above](#block-copying).
+
+**The zero-shot rows are excluded on purpose.** The paper's headline 67.3 / 72.9 EPDMS comes from selecting a vocabulary trajectory by latent distance to the **ground-truth future image**. That is an oracle-goal diagnostic of the world model. Three of its properties are still worth recording here:
+
+- **EC of 19.5–43.8 is the lowest extended comfort in the wiki**, produced by independent per-frame selection from a coarse vocabulary.
+- **EPDMS† is a new reporting variant**: the weighted-average term alone, with the four multiplicative safety terms dropped, justified by "zero-shot planning does not explicitly optimize for safety". It reads 84.1 where EPDMS reads 67.3. It should not be confused with EPDMS\* (the pre-fix evaluator) or with the † some tables use for simulator-derived supervision.
+- **The residuals of its zero-shot rows are −4.3 to −6.4**, several times larger in magnitude than any corrected planner row above, and LeWM's is −10.8. Two explanations cannot be separated from printed means. (a) A planner aimed at the human's own endpoint shares the human's violations more often, so the human-reference filter forgives more of them. (b) A low-scoring planner concentrates its failures in the same scenes, which widens the gap between a mean of per-scene products and a product of means; about one further point comes from extended comfort being averaged only over scenes with a valid neighbor. **LeWM tracks the log worst and has the largest residual, which favors (b).** The practical note for the [heuristic](#residual-sign): the residual's *size* grows as the score falls, so only its sign is informative, and only for rows in the normal score range.
+
+The rows also come with a useful internal-consistency property: on the full set, the printed EPDMS† values imply that about 83% of navtest scenes have a valid neighbor for extended comfort, the same fraction on every row.
+
+### PhysWAM: a "v1" Column Built From v2 Sub-Scores {#physwam}
+
+[[sources/physwam.md]] prints NAVSIM v1 and v2 side by side for every method that reports both. Its own rows differ from every other method's row in two ways.
+
+**1. The shared sub-scores do not change between protocols.** The v2 evaluator computes time-to-collision and ego progress differently, so a method evaluated under both shows different values:
+
+| | TTC v1 → v2 | EP v1 → v2 |
+|---|---|---|
+| Ten dual-protocol baselines in the same table | +2.2 to +3.4 | +0.1 to +7.9 |
+| PhysWAM, all four rows | **0.0** | **0.0** |
+
+**2. The PDMS equals the closed form of the printed means.** PDMS is a mean of per-scene products, so it normally sits above $\mathrm{NC}\cdot\mathrm{DAC}\cdot(5\,\mathrm{EP}+5\,\mathrm{TTC}+2\,\mathrm C)/12$ computed from mean sub-scores:
+
+| Rows | Reported − closed form |
+|---|---:|
+| 16 other methods (TransFuser … DVGT-2-NAVSIM) | **+1.2 to +3.9** |
+| PhysWAM: single / medoid / oracle / no-CPP | **+0.06 / +0.03 / −0.01 / +0.09** |
+
+**Reading**: the column appears to be the v1 *formula* applied to v2 *mean sub-scores*. The paper says only that both scores come "from the official devkit", so this is an inference from the table. The two departures push in opposite directions, so the true v1 score cannot be recovered. **91.4 / 91.7 are kept off the v1 ladder.**
+
+**This is an eighth provenance failure mode, and the mirror image of the fifth.** [[sources/wcog-vla.md]]'s v2 TransFuser row was built from v1 sub-scores with v2 columns appended. Here a v1 score is built from v2 sub-scores. Both arise from assembling a table for a protocol that was not actually run.
+
+**It also gives a second within-table check**, alongside the [EPDMS residual](#submetric-residual): **a v1 row whose PDMS equals the closed form of its own sub-scores was not averaged per scene.** On this table the gap shrinks as the score rises (TransFuser +3.9, DiffusionDrive +2.7, BeyondDrive +1.9, DriveVLA-W0 anchors +1.2), so it will be less decisive for rows above about 92.
+
+**What the v1 claims become.** "Ego progress (88.7) exceeds the compared methods by 1.4 under v1" compares a v2 EP with v1 EPs; under v2 the margin over DVGT-2 and DriveSuprim (both 88.4) is 0.3, and GeoWorldAD (89.1) and LWDrive (90.3) are higher. "Oracle-of-8 95.3" against the human's 94.8 crosses the same gap. Comparisons *within* the paper are unaffected.
+
+**The v2 column.** PhysWAM's 90.3 has a residual of −0.2 (corrected-like). Its table is the **eighth user of the shared baseline block** and mixes both conventions in one unlabelled column; the [residual sign](#residual-sign) splits its eleven rows into a pre-fix-like group (TransFuser, Hydra-MDP++, DriveSuprim, DiffusionDrive; +1.3 to +2.5) and a corrected-like group (everything else; −0.2 to −1.3). That agrees with the block's known labels except for the two standing exceptions, DiffusionDrive and DriveVLA-W0.
+
+| New or notable row | Value | Note |
+|---|---:|---|
+| LTF | 83.6 | New to the wiki. Corrected-like (−1.1). It sits 6.9 above **TransFuser 76.7** in the same column, which is the camera+LiDAR model LTF is derived from. About 4.5 of that is sub-scores and the rest is the evaluator. A second near-pair for the correction, after [AD-E2E-JEPA's](#ad-e2e-jepa) |
+| BeyondDrive *(not ingested)* | 90.1 | Corrected-like (−0.6). The strongest end-to-end planner in the table; "learning from hard negatives" |
+| DVGT-2 | 88.9 | **Not the row this wiki has carried as "DVGT-2 89.6".** That one is labelled **DVGT-2-NAVSIM** here. The generic DVGT-2 has EC 83.2 and EP 88.4. Its 88.9 coincides with EponaV2's 88.9 in GeoWAM's table but is a different row |
+| Hydra-MDP++, DriveSuprim | 81.4, 83.1 | Both labelled **(R34)**, the first user of the block to say so |
+| ARTEMIS | 83.1 | Printed with **HC blank and EC 98.3**. Earlier tables print HC 98.3 *and* EC 98.3. This supports reading 98.3 as one value that belongs in one of the two columns |
+
+**Sampler noise.** One sample per scene with a **sample-to-sample sd of 0.24 PDMS / 0.30 EPDMS**, the third and by far the largest such measurement on this page. See [[concepts/evaluation-variance.md]].
+
+### ReDrive: a Clean Column With the Top Removed, and a Row the Closed-Form Check Catches {#redrive}
+
+[[sources/redrive.md]] is careful about the evaluator and careless about who is in the table.
+
+**The v2 table is labelled and consistent.** Its caption states that all sub-scores are corrected-evaluator values. ReDrive's own residual is −0.55. Every comparison row is digit-identical across nine sub-scores to the corrected column of [[sources/wa-jepa.md]]'s Table 1.
+
+| Corrected-column entry in WA-JEPA's table | In ReDrive's table? |
+|---|:-:|
+| DiffusionDrive 84.5, DiffusionDriveV2 87.5, DreamerAD 87.7, Latent-WAM 89.3, WAM-Diff 89.7, DriveFuture 89.9, CoWorld-VLA 90.0, SparseDriveV2 90.1 | ✓ (all eight) |
+| DriveWorld-VLA 86.8 | ✗ |
+| **Discrete-WAM 90.4** | ✗ |
+| **WA-JEPA 91.7** | ✗ |
+
+The two highest entries of that column are the two that are missing, and WA-JEPA is not in ReDrive's references. The paper's claim to "the best overall performance" with SparseDriveV2 as runner-up holds only inside the table. In this wiki's corrected cohort ReDrive is third. This is a comparison-scope problem of the usual kind, but it is the first time the omitted rows can be identified by subtraction from an identical source column.
+
+**The v1 table has one row that cannot be a real measurement.** DriveSuprim is printed with NC 98.6, DAC 98.6, EP 91.3, TTC 95.5 and PDMS 89.9. Those are the sub-scores of the ViT-L model (93.5) with the score of the ResNet-34 model. The [closed-form check](#physwam) flags it without any outside knowledge:
+
+| Row in ReDrive's Table 1 | Reported − closed form |
+|---|---:|
+| Sixteen rows, TransFuser to ReDrive | **+1.3 to +6.0** |
+| DriveSuprim | **−2.0** |
+
+A per-scene-averaged PDMS sits above the closed form of its own mean sub-scores. A row below it has sub-scores and an aggregate from different models. **This is the check's first catch on a table it was not derived from**, one ingest after it was introduced. The check cannot see the table's other error, because it is symmetric in EP and TTC: the VADv2 and UniAD rows have those two columns swapped (EP 91.6 and 92.9, above the human's 87.5).
+
+**ReDrive's own rows pass both checks**: v1 +1.5, v2 −0.55.
+
+### MomWorld: Three Tables With the Top Removed, One of Them Missing the Authors' Own Paper {#momworld}
+
+[[sources/momworld.md]] reports 90.2 PDMS, 90.1 EPDMS (navtest) and 42.8 (navhard) from a GTRS-Dense-based camera + LiDAR scorer. Its own rows pass both arithmetic checks: v1 **+1.6** above the closed form, v2 residual **−0.2**.
+
+**The three comparison tables, against this page.**
+
+| Table | Stops at | Claim | Entries on this page above MomWorld |
+|---|---|---|---|
+| v1 (27 rows) | DriveWorld-VLA 91.3 (filed as VLA); world-model block stops at DriveLaW 89.1 | "best PDMS among world-model methods" | DA-WAM 93.7, WA-JEPA 91.8, SimWAM 91.5, ReDrive 91.0, GeoWorldAD 91.0, DriveFuture 90.7, ReWorld 90.4 |
+| v2 navtest (9 rows) | Latent-WAM 89.3 | "best EPDMS of 90.1" | WA-JEPA 91.7, SUV 91.0, ReDrive 90.8, Discrete-WAM 90.4, PhysWAM 90.3 |
+| navhard (10 rows) | DriveSuprim 42.1 | "best EPDMS of 42.8" | DriveFuture 55.5, DrivoR 54.6, SimScale 53.2, GTRS-E 49.4, ZTRS 48.1, DiffVLA 45.0 |
+
+**What is specific to this paper.** Omitting the frontier is the most common problem on this page. Here the omitted method with the largest margin, [[sources/drivefuture.md]], has MomWorld's first author as its corresponding author and two more authors in common, uses the same GTRS-Dense scorer, and is cited in MomWorld's related work. It is absent from all three tables (90.7 / 89.9 / 55.5 against 90.2 / 90.1 / 42.8). The navhard rows that *are* present are digit-identical to DriveFuture's table.
+
+**Row-level notes.**
+
+| Row | Note |
+|---|---|
+| v2: all baselines except Latent-WAM | Pre-fix-like residuals (+1.3 to +2.6). MomWorld (−0.2) and Latent-WAM (−0.9) are the only corrected-like rows, so every margin except "+0.8 over Latent-WAM" crosses the evaluator correction |
+| v2: DiffusionDriveV2 85.5 | The pre-fix value; its corrected value is 87.5 |
+| v2: ReCogDrive | DDC and HC are swapped (printed 98.3 / 99.5; every other table has 99.5 / 98.3) |
+| v1: DriveSuprim 89.9 | The ResNet-34 row, unlabelled, with matching sub-scores (passes the closed-form check at +2.6). The ViT-L result is 93.5 |
+| v1: "PWM" 88.1 | The numbers are [[sources/policy-world-model.md]]'s. The citation is to a different paper with the same acronym (a multi-task robotics world model) |
+| v1: DriveWorld-VLA 91.3 | A latent-world-model method from overlapping authors, placed in the VLA block. It is above MomWorld and outside the "world-model" claim |
+
+**The ablation tables also report NAVSIM numbers** (v1 PDMS and navhard EPDMS for about twenty variants). This page does not use them; they show exact linear relationships with nuScenes columns from a different base model ([[sources/momworld.md#regularities]]).
+
+### WALT: a Labelled v2 Table, a Misprint the Residual Catches, and EponaV2 Without RL {#walt}
+
+[[sources/walt.md]] reports 89.8 PDMS and 87.9 EPDMS from a frozen EponaV2 with a changed trajectory head. Both rows pass the arithmetic checks (v1 +1.7 above the closed form; v2 residual −0.9).
+
+**The v2 table marks its evaluator.** Rows from the original evaluator are starred. The [residual sign](#residual-sign) agrees with the label on four rows, disagrees on one, and exposes a misprint in a sixth:
+
+| Row | Label | Residual (computed − reported) | Agrees? |
+|---|---|---:|:-:|
+| Human 94.5 | corrected | −0.1 | ✓ |
+| DriveVLA-W0 **86.9** | corrected | −0.9 | ✓ |
+| EponaV2 (w/o RL) 87.3 | corrected | −1.1 | ✓ |
+| WALT 87.9 | corrected | −0.9 | ✓ |
+| DriveWorld-VLA 86.8 | corrected | **+2.6** | ✗ (already a standing exception above) |
+| PRIX \* 84.2 | original | **−6.7** as printed | see below |
+| ARTEMIS \* 83.1 | original | not computable (EC blank) | – |
+
+**A misprint, found by arithmetic and confirmed by another table.** PRIX is printed with DAC 85.6. No evaluator convention produces an aggregate 6.7 *above* the closed form of its own sub-scores. [[sources/lwdrive.md]]'s copy of the row has DAC **95.6**, which gives +2.4, the ordinary pre-fix gap. This is the residual check's first catch of a single-digit error, as opposed to a protocol mismatch or a transplanted aggregate.
+
+**DriveVLA-W0 now has two v2 rows in circulation.**
+
+| Row | NC | DAC | LK | EC | EPDMS | Residual | Carried by |
+|---|---:|---:|---:|---:|---:|---:|---|
+| The shared-block row | 98.5 | 99.1 | 93.2 | 58.9 | 86.1 | −1.3 | Most ingested tables |
+| The other row | 98.4 | 95.2 | 97.8 | 82.7 | 86.9 | −0.9 | [[sources/geowam.md]], [[sources/walt.md]] |
+
+The two tables that carry the second row both also carry EponaV2, so EponaV2's paper is the likely common source. Both residuals are corrected-like, which fits the first row's standing as an exception to its "pre-fix" classification.
+
+**EponaV2 without RL enters the wiki through this paper.**
+
+| | PDMS | EPDMS | EC |
+|---|---:|---:|---:|
+| EponaV2, no RL | 89.4 | 87.3 | 68.3 |
+| WALT (EponaV2 + aligned latent head), no RL | 89.8 | 87.9 | 73.4 |
+| EponaV2 headline, as carried by GeoWAM, GeoWorldAD, SUV and Qwen-Drive | 90.4 | 88.9 | 77.4 |
+
+The headline v1 row is marked RL-trained in [[sources/qwen-drive-1.0.md]]'s table. On that reading RL is worth about +1.0 PDMS / +1.6 EPDMS on this base, most visibly in extended comfort (+9.1). WALT's tables are scoped to methods without RL, which is a fair scope and also leaves its own group's stronger row out.
+
+**One gain, two attributions.** On v1 the improvement over the baseline is NC +0.49 and TTC +1.08 with DAC −0.33. On v2, for the same comparison, NC and TTC move +0.1 each, DAC +0.1, and the gain is EC +5.1. At +0.4 and +0.6 with single runs, neither decomposition should be read as a finding about safety.
+
+**Other rows.** ARTEMIS is printed with HC 98.3 and EC blank, one more table that does not print the disputed EC. DriveVLA-W0's v1 row is 87.2, the PDMS of its flow-matching-head ablation variant. TISA (86.8 without its refinement stage) and Mimir (89.3) are new to the wiki.
+
+### DriveReferee: a Real v1 Column From the PhysWAM Group, and a v2 Number That Cannot Be Checked {#drivereferee}
+
+[[sources/drivereferee.md]] reports **92.02 PDMS / 91.56 EPDMS** on full navtest from a one-camera Cosmos 3 video world-action model.
+
+**The headline is three systems.**
+
+| System | Policy samples | PDMS | EPDMS |
+|---|---:|---:|---:|
+| Imitation base | 1 | 91.08 | 90.69 |
+| + preference distillation (462 pairs, rules on ground-truth maps) | 1 | 91.96 | **91.61** |
+| + rule-gated second sample on a predicted map ("full") | 1.34 | **92.02** | 91.56 |
+
+The last step is inside its own confidence interval on both metrics. The number to carry is the single-pass 91.96 / 91.61.
+
+**v1 passes the closed-form check.** All four of its rows (4B and 16B, base and full) sit 0.9–1.5 above the closed form of their sub-scores, with ego progress at v1 scale (84–85). This is the group whose previous paper printed a "v1" column assembled from v2 sub-scores ([above](#physwam)); that does not recur.
+
+**v2 cannot be placed.** The table prints v1 sub-scores and a bare EPDMS. No evaluator version is given, so neither the label nor the [residual sign](#residual-sign) is available. Its baselines mix conventions (DriveVLA-W0 86.1 from the shared block, Metis 89.5). It is listed as unclassified. If it is a corrected-evaluator number, the single-pass 91.61 is 0.1 below WA-JEPA and above SUV.
+
+**Where 92.0 sits on v1.** Level with LWDrive (92.0), below HybridDriveVLA (92.1), and above every other video-generating WAM here (SimWAM 91.5, DriveVA 90.9, SUV 90.8). Its table lists none of those three, nor WA-JEPA, DA-WAM or PhysWAM; its claim is worded as "the listed generative world-action models". DriveVLA-W0 appears at its anchor-based 90.2 without a mark.
+
+**It belongs with the entries trained against the metric.** The preference labels are NAVSIM's collision and drivable-area gates, re-implemented on annotated maps with the evaluator's tracker and dynamics. Nothing privileged is used at inference.
+
+**It brings error bars.** Every internal comparison is paired by scene with a bootstrap 95% interval. A difference between two of its checkpoints has a half-width of about 0.21 EPDMS; see [[concepts/evaluation-variance.md#paired-ci]]. By that yardstick a good share of the sub-0.3 margins recorded on this page are within scene-sampling noise.
+
+New rows from its table: **CoPhy** (91.4 PDMS / 86.1 EPDMS, camera + LiDAR, external VQA data, multi-candidate inference) and **UNIVERSE** (91.0 PDMS).
+
+### MM-Future: a Trainval Headline, a Progress-Heavy v2 Profile, and a Pre-Fix Row Under a "Corrected" Caption {#mm-future}
+
+[[sources/mm-future.md]] reports 94.0 PDMS and 91.5 corrected EPDMS. Both of its own rows pass the arithmetic checks (v1 +1.3 and +1.4 above the closed form; v2 residual −0.5).
+
+**Two v1 numbers, and which one to compare.**
+
+| Training set | MM-Future | DrivoR (its encoder's source) | Others in its table |
+|---|---:|---:|---|
+| navtrain | 93.4 | 93.1 | DriveSuprim 93.5 |
+| trainval | **94.0** | 93.7 | – |
+
+- 94.0 is above every non-BoN entry on this page, and it is trained on more data than they are. The navtrain number is fourth, behind CLEAR and DA-WAM (93.7) and DriveSuprim (93.5).
+- The paper states that its navtrain model beats DrivoR's. It does not remark that DriveSuprim, two rows above in the same table, is higher.
+- It is a scorer-cohort result: 64 proposals ranked by heads trained on simulator sub-scores. Its own ablation puts one trajectory at 84.1 and 32 scored trajectories with no world model at 92.3.
+
+**v2: 91.5, second in the corrected cohort, from the trainval model.**
+
+| | EP | TTC | DDC | TL | LK | HC | EC |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| MM-Future | **92.2** | 98.6 | 98.8 | 99.4 | 95.4 | 96.3 | 89.2 |
+| Human agent | 87.4 | 100 | 99.8 | 100 | 100 | 98.1 | 90.1 |
+| WA-JEPA 91.7, for reference | 87.8 | 98.9 | 99.7 | 99.9 | 98.3 | 98.3 | 88.1 |
+
+- Progress 4.8 above the human's, with driving direction, lane keeping and history comfort the lowest in its table. The scorer's targets are the v1 components, which contain none of those three.
+- This is the clearest case on this page of a v1-trained scorer carried onto v2: the aggregate is high and the terms the scorer never saw are the weak ones.
+
+**The v2 table is captioned "official corrected EPDMS" and is not uniformly that.**
+
+| Row | Residual (computed − reported) | Reading |
+|---|---:|---|
+| DiffusionDriveV2 **85.5** | +2.1 | The original-evaluator value. Its corrected value is 87.5 |
+| DriveWorld-VLA 86.8 | +2.6 | Pre-fix signature; the standing exception |
+| **GraphWorld 89.5** | **−2.6** | About twice the largest negative residual seen so far (−1.3). New to the wiki; TL and DDC are both 99.1 |
+| MeanFuser 89.5, UniTeD 90.1, IRR-Drive 89.0, DriveFine 89.7, Latent-WAM 89.3, DriveFuture 89.9 | −0.4 to −1.2 | Corrected-like |
+
+So "outperforming the strongest overall baseline, UniTeD, by 1.4" is a same-protocol comparison, and the DiffusionDriveV2 margin is not. WA-JEPA (91.7), SUV (91.0), ReDrive (90.8) and PhysWAM (90.3) are absent.
+
+**New rows.** UniTeD 90.1 EPDMS; MeanFuser 89.5 EPDMS / 89.0 PDMS; IRR-Drive-4B 89.0 / 91.3; GraphWorld 89.5 / 90.1; GaussianFusion 92.0 PDMS; DrivoR trained on trainval 93.7.
+
+**No navhard**, from a scorer-based method built on DrivoR, the second-highest navhard entry here.
 
 ## Navhard Benchmark
 

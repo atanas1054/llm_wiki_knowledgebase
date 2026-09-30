@@ -1,10 +1,10 @@
 ---
 title: Best-of-N Sampling
 type: concept
-sources: [raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
-related: [sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, sources/drivesuprim.md, sources/explorevla.md, sources/clear.md, sources/all-roads-lead-to-rome.md, sources/pair-drive.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/divergent-thinking-in-vlms.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md]
+sources: ["raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
+related: [sources/drivereferee.md, sources/physwam.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, sources/drivesuprim.md, sources/explorevla.md, sources/clear.md, sources/all-roads-lead-to-rome.md, sources/pair-drive.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/divergent-thinking-in-vlms.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md]
 created: 2026-04-15
-updated: 2026-09-18
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -52,6 +52,42 @@ N is typically 4 or 6 in current AD papers. Comparing BoN scores across differen
 | Method | Single-sample EPDMS | BoN EPDMS | N |
 |--------|---------------------|-----------|---|
 | Vega | 86.9 | **89.4** | 6 |
+| [[sources/physwam.md]] | 90.3 | **94.1** | 8 |
+
+[[sources/physwam.md]] also prints an oracle-of-8 "PDMS" of 95.3 against 91.4 single-sample. That column is built from v2 sub-scores and is not a NAVSIM-v1 number (see [[concepts/navsim-benchmark.md#physwam]]), so it is left out of the v1 table above and must not be read against the human's 94.8.
+
+### A label-free selector next to its own oracle {#consensus-vs-oracle}
+
+PhysWAM is the first paper here to report, on one set of samples, no selection, a selector that needs nothing, and the oracle:
+
+| Selection among 8 joint samples | Needs at inference | EPDMS navtest | "PDMS" | navhard |
+|---|---|---:|---:|---:|
+| First sample | – | 90.3 | 91.4 | 38.1 |
+| **Medoid** (the trajectory nearest the other seven) | Nothing | 90.4 | 91.7 | 39.8 |
+| Oracle | The PDM simulator | 94.1 | 95.3 | – |
+
+- **Consensus recovers 3% of the EPDMS headroom and 8% of the "PDMS" headroom.** Agreement among samples says very little about which sample is good.
+- **The oracle gain (+3.8 at N = 8) is large for a 90+ model**, against observation 2's trend (Qwen-Drive-RL gains +0.7 at N = 6 from a 90.7 base). The plausible difference is diversity: PhysWAM samples a whole multi-view future from noise and its sampler sd is 0.30, where RL-tuned policies tend to collapse onto one mode. High oracle headroom at a high base score means the samples are *wrong in different ways*, which is what a selector needs.
+- **The medoid is worth +1.7 on navhard**, against +0.1 on navtest. It is the cheapest entry in the deployable-selector family (DreamerAD's learned reward +2.6, HybridDriveVLA's scorer +1.3, DriveFuture's GTRS-Dense +20.9 on navhard) and the only one that uses no labels.
+- **It multiplies cost by N.** At 9.4 GPU-seconds per sample, eight samples are about 75 seconds per scene.
+
+### A geometric selector on the same backbone {#geometric-selector}
+
+[[sources/drivereferee.md]] comes from the same group and the same Cosmos 3 backbone (one camera, no depth stream) and replaces consensus with a rule: the evaluator's collision and drivable-area checks, run on a BEV map predicted from the camera.
+
+| Selector | Samples per scene | Gain on navtest EPDMS |
+|---|---:|---:|
+| Medoid ([[sources/physwam.md]]) | 8 | +0.1 |
+| Analytic rule, gated ([[sources/drivereferee.md]]) | 1.35 | **+0.30** (CI +0.18 to +0.42) |
+| Analytic rule, always two samples | 2.0 | +0.35 |
+| The same rule on a policy already trained with it | 1.34 | −0.04 (CI −0.12 to +0.04) |
+| Oracle ([[sources/physwam.md]]) | 8 | +3.8 |
+
+- **Knowing where the road and the cars are beats agreement among samples**, with a sixth of the samples.
+- **It is still under a tenth of the oracle headroom** PhysWAM measured, and DriveReferee reports no oracle for its own two samples.
+- **Gating costs little**: 0.65 fewer samples per scene for 0.05 EPDMS.
+- **The gain disappears once the rule is used as a training signal** (+0.92 EPDMS from 462 preference pairs). Oracle headroom on the distilled policy is not reported.
+- The two papers' base models differ (three cameras with depth against one camera), so the rows are not one controlled ladder.
 
 ---
 

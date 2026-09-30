@@ -2,9 +2,9 @@
 title: "HAD: Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving"
 type: source-summary
 sources: [raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md]
-related: [concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md]
+related: [concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md, sources/momworld.md]
 created: 2026-05-01
-updated: 2026-05-01
+updated: 2026-09-30
 confidence: high
 ---
 
@@ -249,6 +249,7 @@ HAD-L improves over DiffusionDrive and LTF under similar Transfuser-style backbo
 - **vs. DiffusionDrive**: both use truncated/anchored diffusion over trajectories; HAD adds hierarchical coarse-to-fine filtering and local expansion.
 - **vs. DiffusionDriveV2**: both use RL for diffusion planners, but HAD decouples rewards by metric and avoids online simulator reward calls through cache retrieval.
 - **vs. DriveSuprim**: both exploit selection/coarse-to-fine ideas and 8192-trajectory vocabularies; HAD generates/refines local candidates, while DriveSuprim scores a fixed vocabulary with stronger ViT-L results.
+- **GTRS-Dense row reused by [[sources/momworld.md]]**: Table 11's GTRS-Dense navhard row (41.7; Stage-2 LK 54.6, EP 69.5, EC 49.7) is the only place this wiki records that method's sub-scores. MomWorld is built on GTRS-Dense and its no-component ablation row is this row to the digit, which is how its +1.1 can be decomposed into higher progress and lower NC/TTC.
 - **vs. DreamerAD**: both use cached/learned alternatives to online simulator calls during training; DreamerAD learns a latent reward model from world-model features, while HAD retrieves precomputed metric scores from a trajectory vocabulary.
 
 ## Limitations
