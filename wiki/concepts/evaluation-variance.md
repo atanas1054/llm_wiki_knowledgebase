@@ -1,10 +1,10 @@
 ---
 title: Evaluation Variance and Single-Run Reporting
 type: concept
-sources: ["raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/WALT_ Learning World-Model-Aligned Latent Trajectories for Autonomous Driving.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
-related: [sources/drivereferee.md, sources/walt.md, sources/momworld.md, sources/physwam.md, sources/ad-e2e-jepa.md, sources/wa-jepa.md, sources/coworld-vla.md, sources/suv.md, sources/adaptive-wam.md, sources/driving-wm-counterfactuals.md, sources/grava.md, sources/metis.md, sources/simwam.md, sources/drive-hwm.md, sources/da-wam.md, sources/brainwam.md, sources/auto-jepa.md, sources/foresight.md, sources/drivefuture.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, research-directions.md]
+sources: ["raw/papers/ResWorld_ Temporal Residual World Model for End-to-End Autonomous Driving.md", "raw/papers/Learning to Drive from a World Model.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/WALT_ Learning World-Model-Aligned Latent Trajectories for Autonomous Driving.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
+related: [sources/resworld.md, sources/learning-to-drive-from-a-world-model.md, sources/drivereferee.md, sources/walt.md, sources/momworld.md, sources/physwam.md, sources/ad-e2e-jepa.md, sources/wa-jepa.md, sources/coworld-vla.md, sources/suv.md, sources/adaptive-wam.md, sources/driving-wm-counterfactuals.md, sources/grava.md, sources/metis.md, sources/simwam.md, sources/drive-hwm.md, sources/da-wam.md, sources/brainwam.md, sources/auto-jepa.md, sources/foresight.md, sources/drivefuture.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, research-directions.md]
 created: 2026-09-27
-updated: 2026-09-30
+updated: 2026-10-02
 confidence: medium
 ---
 
@@ -102,6 +102,12 @@ Scene sampling affects generation metrics far more than planning scores, and unt
 
 See the NAVSIM generation table on [[concepts/world-model-for-ad.md]].
 
+**Two more floors, from the tokenizer** *(2026-10-02)*. [[sources/learning-to-drive-from-a-world-model.md]] measures what the image VAE alone costs before any generation:
+- **LPIPS 0.148** for VAE-reconstructed test frames against the originals. No generated frame can score below it.
+- **A pose estimator's error** on real video, before and after VAE compression: forward-speed MAE 0.464 → 0.594 m/s (+28%), yaw-rate MAE 0.00211 → 0.00254 rad/s (+20%), lane-line position 0.159 → 0.160 m (+1%). Pose errors measured on generated video should be read against the compressed column.
+
+Together with PhysWAM's 0.29° yaw floor, these are the wiki's three measured floors for checks on generated video.
+
 ### Selection effects that inflate single numbers
 
 - [[sources/adaptive-wam.md]] reports the **validation-best checkpoint per seed, aggregated over ten seeds**. That is a selection procedure, not a variance estimate, and it is optimistic relative to a single run.
@@ -127,6 +133,20 @@ The wiki draws no conclusion about cause. It treats the affected effect sizes as
 ### Outside NAVSIM
 
 [[sources/driving-wm-counterfactuals.md]] reports means over five seeds with a **±maximum deviation** (not a standard deviation). This is the only multi-seed generative evaluation in the wiki.
+
+**Field metrics from unmatched cohorts** *(2026-10-02)*. [[sources/learning-to-drive-from-a-world-model.md]] compares two deployed openpilot steering policies by the share of driving that was engaged:
+
+| Policy | Trips | Engaged time | Engaged distance |
+|---|---:|---:|---:|
+| Trained in a reprojective simulator | 47,047 | 27.63% | 48.10% |
+| Trained in a world-model simulator | 40,026 | 29.92% | 52.49% |
+
+- The paper gives "approximately two months of driving from a cohort of 500 users" and nothing on how users, periods, vehicles or routes were assigned to the two policies. Engagement in a Level 2 system depends on all of them, and on driver trust.
+- No interval is given. The trip counts are large, but trips are clustered within about 500 users, so the effective sample is closer to the user count. The larger uncertainty is the comparison design.
+- The same paper's closed-loop tests are pass counts over 24 and 20 scenarios, where the two policies differ by one scenario.
+- **Rule**: a real-world usage metric without a matched design supports "deployable", not "better".
+
+**nuScenes ablations below sample granularity** *(2026-10-02)*. [[sources/resworld.md]]'s ablation tables separate variants by 0.02–0.11 percentage points of average collision rate. On a validation split of roughly 6,000 samples, 0.04 points is two or three samples; the paper's headline ablation conclusion (future supervision hurts: 0.17% → 0.21%) rests on a difference of that size, from single runs. The same arithmetic applies to MomWorld's Turning-nuScenes margins ([[concepts/nuscenes-waymo-evals.md#the-robustness-subsets]]).
 
 ---
 

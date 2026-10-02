@@ -1,10 +1,10 @@
 ---
 title: Counterfactual Prediction for Driving World Models
 type: concept
-sources: ["raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md"]
-related: [sources/mm-future.md, sources/redrive.md, sources/ad-e2e-jepa.md, sources/da-wam.md, sources/auto-jepa.md, sources/driving-wm-counterfactuals.md, concepts/world-model-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/bench2drive.md, concepts/hugsim-benchmark.md, concepts/nuscenes-waymo-evals.md, concepts/best-of-n.md, sources/simwam.md, sources/drivelaw.md, sources/dreameraD.md, sources/vega.md, sources/policy-world-model.md, research-directions.md]
+sources: ["raw/papers/Learning to Drive from a World Model.md", "raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md"]
+related: [sources/learning-to-drive-from-a-world-model.md, concepts/data-driven-simulators.md, sources/mm-future.md, sources/redrive.md, sources/ad-e2e-jepa.md, sources/da-wam.md, sources/auto-jepa.md, sources/driving-wm-counterfactuals.md, concepts/world-model-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/bench2drive.md, concepts/hugsim-benchmark.md, concepts/nuscenes-waymo-evals.md, concepts/best-of-n.md, sources/simwam.md, sources/drivelaw.md, sources/dreameraD.md, sources/vega.md, sources/policy-world-model.md, research-directions.md]
 created: 2026-08-24
-updated: 2026-09-30
+updated: 2026-10-02
 confidence: high
 ---
 
@@ -43,7 +43,7 @@ Keeping these apart resolves most apparent disagreements between papers:
 | Sense | Example | Actual rung | Is the label right? |
 |---|---|---|---|
 | **A. Action-conditioned generation** — feed an alternative/abnormal trajectory, generate video | Vista, Drive-WM, Genie 3 promptable events | Rung 2 at best | **No.** This is intervention, not counterfactual |
-| **B. Retrospective log replay** — re-simulate a recorded drive under a different route | Waymo World Model blog | Rung 3 *if* the recorded episode's state is preserved; rung 2 if only the history is | Depends on whether the realized state is carried over |
+| **B. Retrospective log replay** — re-simulate a recorded drive under a different route | Waymo World Model blog; [[sources/learning-to-drive-from-a-world-model.md]]'s future-anchored rollouts, which keep the recorded continuation only as an endpoint ([7](#future-anchoring)) | Rung 3 *if* the recorded episode's state is preserved; rung 2 if only the history is | Depends on whether the realized state is carried over |
 | **C. Counterfactual VQA** — ask a VLM, in language, what would happen under a hypothetical | OmniDrive counterfactual planning (see [[concepts/vlm-domain-adaptation.md]]: frozen VLM 18.20 → fine-tuned 67.80) | Language-space reasoning, not a prediction task | Different object entirely; don't compare scores across senses |
 | **D. Candidate-manoeuvre rollout for planning** — imagine futures for several proposals and score them | [[sources/dreameraD.md]] latent rollouts + reward model, [[sources/da-wam.md]] per-candidate future latents, world-model-as-scorer designs | **Rung 2, correctly** | The label is often loose but the *computation* is the right one for planning |
 
@@ -157,7 +157,7 @@ Performance tracks *how much of the event is inferable from the shared history* 
 
 **5. Some world models opt out of the ladder entirely, and say so.** [[sources/auto-jepa.md]] predicts only the latent of the future ego trajectory, and its limitations section states plainly that the learned representation "does not provide the scene-level forecasts required by applications such as interactive simulation or counterfactual environment generation." This is worth recording as the honest boundary case: it is a *world model* in the sense of predicting the future, and it is on **no rung of this ladder for the environment**, because it never represents an environment state that could be intervened on. The trade is explicit — planning-relevant selectivity (masking dynamic agents changes its intent 2.97× more than equal-area random masks) without any queryable model of what those agents will do. Papers that want both must pay for both; Auto-JEPA is the demonstration that planning alone does not require the second.
 
-**4. Retrospective analysis needs a different architecture, not a bigger one.** For incident analysis, safety auditing, and liability assessment — where the full log exists by definition — the missing component is an abduction path that ingests the observed continuation. No ingested method in this wiki has one.
+**4. Retrospective analysis needs a different architecture, not a bigger one.** For incident analysis, safety auditing, and liability assessment — where the full log exists by definition — the missing component is an abduction path that ingests the observed continuation. No ingested method in this wiki has one. *(2026-10-02: [[sources/learning-to-drive-from-a-world-model.md]] ingests the observed continuation, but as a hard endpoint for generating training rollouts; see [7](#future-anchoring).)*
 
 **6. Using the factual continuation is not the same as abducting the world.** [[sources/ad-e2e-jepa.md]] is the first driving model here that takes $F^{+}$ as an inference-time input: it uses the recorded future frame as a goal and searches for the trajectory whose rung-2 rollout lands nearest to it.
 
@@ -178,13 +178,26 @@ Hit rate checks only the factual arm, so it says nothing about rung 3. It is a *
 
 **A second sensitivity result, with the same limit.** [[sources/mm-future.md]] generates 64 trajectory–future pairs per scene and trains only the pair nearest the expert. For the rest it reports that futures paired with the left-most and right-most trajectories are further apart than futures paired with similar trajectories (RMS distance +17.3%, cosine distance +38.9%). That shows the future depends on its trajectory. It does not show the future is what that trajectory would cause, and the paper reports no prediction error even for the supervised pair. A scorer then reads all 64 futures.
 
+### 7. A world model conditioned on the factual continuation, used as an endpoint {#future-anchoring}
+
+*(2026-10-02)* [[sources/learning-to-drive-from-a-world-model.md]] trains the first world model in the wiki that takes **both $H$ and $F^{+}$** and then generates under a different ego motion. Its Future Anchored World Model prepends to the context 1 s of recorded frames and poses that starts up to 7 s after the 2 s history, and fills the gap under the motion a policy commands. That is sense B in the table above, run with the recorded continuation carried over.
+
+It is not abduction, for three reasons:
+- **$F^{+}$ is a hard constraint, not evidence.** Whatever the ego does in the gap, the rollout must arrive at the recorded anchor. The paper's own example is a traffic light "turning ... to green" so that the rollout agrees with the anchor. A counterfactual in which the alternative action changes the outcome at the anchor cannot be expressed.
+- **Its purpose is the opposite of divergence.** The anchor exists to create "recovery pressure": the rollout, and the trajectory head reading it, are pulled back toward what the human did.
+- **Counterfactual fidelity is not evaluated.** The only fidelity check is pose-following: a commanded ±0.5 m lateral deviation is rendered "not to its full extent". Whether the anchor causes that shortfall is not tested.
+
+**It does illustrate the abduction design principle above.** The same paper's other simulator reprojects the recorded image through a depth map and inpaints the holes: geometry for observed surfaces, a generative prior for the rest. It lists the reprojective simulator's inability to make other drivers react as "the counterfactual problem". Future anchoring moves that problem from every frame to the anchor frames.
+
+So consequence 4 needs a qualifier: a model that ingests the observed continuation now exists, but as a goal for training-data generation, not as an abduction path for retrospective analysis.
+
 ---
 
 ## Open Questions
 
 *Wiki-wide open questions are collected in [[research-directions.md]].*
 
-- **Can abduction be learned rather than hand-built?** The paper's transport stage is monocular depth + splatting. A world model conditioned on both $H$ and $F^{+}$ (i.e. trained for the retrospective task) has never been tried in this wiki. Would it beat geometry, or only match it?
+- **Can abduction be learned rather than hand-built?** The paper's transport stage is monocular depth + splatting. A world model conditioned on both $H$ and $F^{+}$ (i.e. trained for the retrospective task) has never been tried in this wiki. Would it beat geometry, or only match it? *(2026-10-02: a model conditioned on $H$ and $F^{+}$ now exists ([[sources/learning-to-drive-from-a-world-model.md]]'s future-anchored world model), but it treats $F^{+}$ as an endpoint the rollout must reach and is not evaluated on counterfactuals. Running it on the three-arm CARLA benchmark, with the anchor placed after the event, would be a first test.)*
 - **What happens under reactive agents?** Transported evidence *preserves* behaviour the counterfactual action would have changed — a pedestrian who would have stopped keeps walking. Beyond ~1 s the method's central assumption breaks, and it fails confidently rather than by omission. Detecting these cases (the paper suggests posterior predictive checks on the abduced world) is unsolved.
 - **Is the failure causal or domain shift?** Both backbones are real-world-trained and evaluated on CARLA renders. The scenario-type gradient argues against pure domain shift, but a world model trained in the benchmark's render domain would settle it.
 - **Do the industrial claims hold?** Waymo's world model and Genie 3 make the strongest counterfactual claims and are the least testable. Drive-WM, whose claim is quoted directly, is not evaluated.

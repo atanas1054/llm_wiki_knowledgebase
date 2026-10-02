@@ -3261,3 +3261,97 @@ The wiki cites no component effect size from this paper on any concept page.
 - Which protocol and commit did PhysWAM, MM-Future and BeyondDrive use on HUGSIM?
 - Does any paper report per-scene navhard scores, so that navhard effects can be given error bars?
 - Is there a video-pretrained, non-JEPA encoder in any planner sweep?
+
+## 2026-10-02 - Ingest: Learning to Drive from a World Model
+
+**Source**: `raw/papers/Learning to Drive from a World Model.md` (arXiv 2504.19077v1, April 2025)
+**Orgs**: not captured by the clipping (empty affiliation line). The authors deploy to openpilot and cite their own comma2k19 dataset. No code stated for the method.
+**Pages created**: `wiki/sources/learning-to-drive-from-a-world-model.md`, `wiki/concepts/data-driven-simulators.md` (new concept page: reprojection, reconstruction and learned world models as training and evaluation environments; state generator vs supervision source; failure modes)
+**Pages updated**: `concepts/world-model-for-ad.md` (new Pattern 44 `#world-model-as-environment`; a "why world models" bullet; a pose-following row in the metrics table; four open questions annotated, one added), `concepts/rl-for-ad.md` (`#on-policy-imitation`; note under the reactive-simulator tension), `concepts/counterfactual-prediction.md` (`#future-anchoring`; sense-B table row; consequence 4 and the abduction open question annotated), `concepts/teacher-pseudo-labels.md` (teacher row; `#privileged-teachers` anchor; future-conditioned teacher paragraph), `concepts/evaluation-variance.md` (two tokenizer floors; field metrics from unmatched cohorts), `concepts/wam-attention-masks.md` (block-causal mask with the future prepended), `concepts/navhard-ood-evaluation.md` (Stage-2 rendering question annotated), `concepts/inference-latency.md`, `concepts/perception-for-planning.md` (`#perception-bottleneck`), `concepts/foundation-backbones-for-ad.md` (SD VAE + from-scratch DiT row), `research-directions.md`, `index.md`, `README.md` (86 papers, 39 concept pages)
+**Confidence**: **medium**. All three tables are reproduced and the text-only numbers are collected. But Figures 5, 6, 7, 9 and 11, which hold the world-model scaling, image and video quality, pose errors, the deviation-following curve and the per-scenario test results, are not in the clipping, and the paper ablates nothing.
+
+**What it is**: the wiki's 86th paper and the first in which a world model is the **training environment** rather than part of the policy. A FastViT feature extractor (supervised on lane lines, road edges, lead car and ego trajectory, then frozen, output capped at about 700 bits by Gaussian noise) feeds a small temporal Transformer that outputs curvature and acceleration. The temporal model is trained on its own rollouts (IMPALA-style actors and learner) in one of two data-driven simulators: depth-based reprojection of logged frames with inpainting, or a future-anchored world model (Stable Diffusion VAE, 128×256 at 5 Hz; DiT with per-frame AdaLN pose conditioning, frame-wise block-causal mask with recorded future frames prepended; rectified flow; 15 Euler steps per frame; noise-level augmentation on 30% of samples). Labels come from a Plan Model, the world model's MHP trajectory head conditioned on 1 s of recorded future starting up to 7 s after the 2 s context, which always plans back toward the log. No reward. Deployed in openpilot for steering; longitudinal control is classical ACC.
+
+**Reported results**: MetaDrive lane-centre 5/24 (off-policy), 24/24 (reprojective), 24/24 (world model); lane-change 8/20, 20/20, 19/20; held-out trajectory MAE 0.361, 0.369, 0.394. Field (about two months, 500 users): reprojective 47,047 trips, 27.63% time / 48.10% distance engaged; world model 40,026 trips, 29.92% / 52.49%.
+
+**Finding 1 - the open-loop metric inverts the closed-loop ranking.** Best held-out error, worst closed-loop tests. The frozen extractor is shared, so the difference is the temporal model's training regime. The wiki's cleanest single-paper covariate-shift result. The baseline is pure behaviour cloning, with no perturbation-augmented alternative.
+
+**Finding 2 - the two simulators are not separated.** One lane-change scenario differs; the field gap (+2.29 points of time, +4.39 of distance) comes from cohorts whose assignment, period and routes are not described, with no intervals. Tests are lateral only, while reprojection's stated weakness is longitudinal range (under 4 m).
+
+**Finding 3 - a future-conditioned teacher.** The Plan Model sees where the human went; the student does not. That is what lets logged human driving label states the human never visited. Lane changes, decided by the anchor, reach the student through an explicit impulse at training and inference. The same structure is an oracle in AD-E2E-JEPA's goal search and a legitimate teacher here.
+
+**Finding 4 - future anchoring is conditioning on F+, used as an endpoint.** First model in the wiki conditioned on both the history and the recorded continuation, the structure the counterfactual paper says abduction needs. But the anchor is a hard constraint (Figure 4's traffic light turns green to agree with it), counterfactual fidelity is not evaluated, and the static-scene problem the paper names for reprojection moves to the anchor frames.
+
+**Finding 5 - pose-following with a floor.** A Pose Net on generated video finds a commanded ±0.5 m lateral deviation rendered "not to its full extent" (curve in a missing figure). Its floor: VAE compression alone adds 28% to forward-speed MAE and 20% to yaw-rate MAE (Table 1). LPIPS floor from the VAE: 0.148.
+
+**Finding 6 - the reprojection failure list.** Static scene ("the counterfactual problem"), depth errors, occlusion inpainting, night lighting, range under 4 m, and artifacts correlated with the pose offset that a policy learns to read. The bottleneck remedy is not measured, and the world-model simulator is not checked for the same shortcut.
+
+**Table and text problems found**:
+- The loss weight α is missing from the clipping; symbols in the Figure 2 and 3 captions were lost (offsets recovered from the figure labels).
+- The Figure 6 caption and the text assign image and video quality to opposite panels.
+- The MAE's unit and horizon in Table 2 are not stated; MetaDrive pass criteria are not quantified.
+- Notation: the learner's target is written $\hat a^{w}$ and the rollout's label $\hat a^{wp}$.
+- Whether the reprojective policy is also labelled by the Plan Model is implied, not stated; whether both cameras are generated is not stated.
+
+**New syntheses surfaced while writing**:
+- A new concept page collecting data-driven simulators across training (openpilot, Senna-2, DreamerAD) and evaluation (navhard, HUGSIM, AlpaSim), organised around the paper's failure list.
+- The oracle goal is a valid teacher: AD-E2E-JEPA's disqualifying use of the recorded future is the openpilot Plan Model's legitimate one.
+- The two simulators are the two halves of the counterfactual page's abduction principle (geometry for observed surfaces, a generative prior for the rest).
+- Three measured floors now exist for checks on generated video (PhysWAM's yaw floor, this paper's Pose Net and LPIPS floors).
+- The limiting case of training-time-only world modeling: the world model shares no parameters with the deployed policy.
+
+**Research directions** (`wiki/research-directions.md`): now 41 open questions and 2 answered.
+- *Evidence added*: Do NAVSIM rankings survive a reactive closed loop? (the same inversion outside NAVSIM); Is the navhard Stage-2 collapse a rendering artifact? (the mechanism exists in a reprojective renderer); Does world modeling buy open-loop accuracy or closed-loop robustness? (by analogy); Does the generated video follow the generated action? (partly, for an action-conditioned model, with a floor); Can a world model replace the simulator? (yes for supervised labels, not for reward); Can a driving world model predict counterfactuals? (a model conditioned on F+ exists, unevaluated); Does generation quality matter for planning? (training-environment version).
+- *Added*: Which data-driven simulator trains the best policy? Is a reward needed for closed-loop training, or are future-anchored action labels enough? Do policies trained in rendered simulators learn the renderer's artifacts?
+- *Answered*: none.
+
+**Not reported**: any ablation; longitudinal policy; NAVSIM, navhard, HUGSIM or Bench2Drive; reactive agents; field safety metrics (disengagement reasons, interventions); policy latency; world-model sampling cost, actor count or training compute; the value of α; the size of the deviation shortfall.
+
+**New gaps**: MetaDrive (the paper's closed-loop test; no wiki page), GameNGen (noise-augmentation precedent), Navigation World Models (conditioning design), VPT (future-conditioned model precedent). RAD (RL in 3DGS) gains a reason to be ingested as the reconstruction-based training counterpart.
+
+**Figure note**: 5 figure files embedded (`reprojective_simulation_depth_.png`, `night.png`, `0cf857_narrow_imgs_9.png`, `deviation_RIGHT.png`, `hugging.png`); Figures 4, 8 and 10 have one panel or example each; Figures 1, 5, 6, 7, 9 and 11 are missing and described from their captions. All 3 tables reproduced. The clipping's front-matter author field is empty and the affiliation line is blank; authors are taken from the body.
+
+## 2026-10-02 - Ingest: ResWorld: Temporal Residual World Model for End-to-End Autonomous Driving
+
+**Source**: `raw/papers/ResWorld_ Temporal Residual World Model for End-to-End Autonomous Driving.md` (arXiv 2602.10884v1)
+**Orgs**: State Key Laboratory of Virtual Reality Technology and Systems and Hangzhou Innovation Institute, Beihang University; Beijing Jingwei Hirain Technologies; Zhongguancun Laboratory. Code released (github.com/mengtan00/ResWorld).
+**Pages created**: `wiki/sources/resworld.md`
+**Pages updated**: `concepts/world-model-for-ad.md` (new Pattern 45 `#residual-world-model`; a row in DriveFuture's where-the-future-enters table; two open questions annotated), `concepts/navsim-benchmark.md` (v1 ladder row; `#resworld` audit section), `concepts/nuscenes-waymo-evals.md` (`#resworld`), `concepts/evaluation-variance.md` (nuScenes ablations below sample granularity), `concepts/perception-for-planning.md` (item 6 annotated), `concepts/inference-latency.md`, `research-directions.md`, `index.md`, `README.md` (87 papers)
+**Confidence**: **medium**. All five tables are reproduced and every ResWorld average reproduces from its per-horizon values. But the main effects are a few nuScenes samples from single runs, the NAVSIM headline does not use the named mechanism, and the world model is never evaluated as a predictor.
+
+**What it is**: the wiki's 87th paper. A perception-free BEV planner (GeoBEV with ResNet-50, 256×704, current frame plus two past; SSR's TokenLearner scene queries and waypoint-query planning module). Past BEV maps are warped into the current ego frame; scene queries pooled with one shared spatial mask are differenced frame to frame ("temporal residuals"). TR-World runs self-attention on each residual, sums them, and adds the result back onto the current fused map through a TokenFuser, so the "future" map is the current map plus a dynamic term in the current frame. FGTR lets waypoint queries deformably sample that map at the first-pass ("prior") waypoints and decodes the final trajectory. Loss: L1 on the prior and final trajectories only.
+
+**Reported results**: nuScenes UniAD-style 0.65 m / 0.23% (no ego status), 0.59 / 0.17 (ego status); VAD-style 0.35 / 0.07 and 0.30 / 0.06. NAVSIM-v1 navtest (TransFuser-style camera + LiDAR): 87.3 without perception supervision, 88.3 with detection and map (agent queries replace residuals), 89.0 with history frames and residuals.
+
+**Finding 1 - a future target hurts.** With TR-World and FGTR fixed, supervising the predicted map toward the real $t+1$ map raises collision 0.17% → 0.21% and L2 0.59 → 0.61 m; on a conventional world-model branch it changes nothing (0.21% → 0.23%, L2 equal). Second design after DriveFuture with no future-prediction loss, and a third vote with WA-JEPA that regression-type future supervision can be worse than none (ReDrive remains the counterexample). The loss form is unstated.
+
+**Finding 2 - most of the gain is training-time shaping.** The prior trajectory has exactly the baseline's architecture and scores 0.61 m / 0.18% against the baseline's 0.65 / 0.28 and the full model's 0.59 / 0.17; at 3 s the prior is better than the final trajectory (0.41% against 0.43%). The paper suggests deploying the prior. Same shape as SimWAM's training-time-only result, with no world-model objective at all.
+
+**Finding 3 - motion-only input, matched.** Residual input beats full-scene input by 0.02 m and 0.04 collision points with FGTR and no future supervision. The residual is a first feature difference, the quantity MomWorld uses to initialize momentum. The paper's own limitation: parked cars and standing pedestrians give no residual. Its Figure 5 showcase avoids what appears to be a parked car.
+
+**Finding 4 - NAVSIM.** The 88.3 headline is the variant without residuals. Its TTC 98.9 is four points above every other row; its PDMS is +1.0 above the closed form of its sub-scores against +2.0 to +6.0 for every other row (+2.7 for DiffusionDrive at a similar score), so the TTC is probably a misprint (94.9 would give +2.6). 89.0 sits beside DriveLaW and DriveDreamer-Policy on the ladder; the table stops at DiffusionDrive 88.1 with canonical baseline values.
+
+**Finding 5 - nuScenes granularity.** All ablation collision deltas are 0.02–0.11 points averaged over three horizons; on a validation split of roughly 6,000 samples 0.04 points is two or three samples. On L2, ego status alone is worth as much as the whole method (0.71 → 0.65 either way); on collision the method is larger. Without ego status the 3 s collision rate is unchanged (0.64%); the average moves through 2 s.
+
+**Table and text problems found**:
+- NAVSIM 88.3 row: TTC 98.9 probably misprinted (closed-form check).
+- Figure 4's caption says the top row is "supervised using real future data"; the figure labels and the text say "w/o FGTR".
+- The perception-free NAVSIM variant's world-model input is not stated; the normal world model's input and the future-supervision loss form are not stated.
+- Table 1's Drive-OccWorld row cites reference 19 (SSR) instead of 39; references 12/13 and 21/22 are duplicates.
+- NAVSIM is called "closed-loop".
+
+**New syntheses surfaced while writing**:
+- A where-the-future-enters row for future-named features trained only by the planner, with a measured negative for adding the obvious target.
+- Three papers now put an explicit motion quantity into a world model (residual input, flow target, momentum state); filed as a new research direction.
+- A second nuScenes "smaller than a sample" case after MomWorld's Turning-nuScenes margins.
+
+**Research directions** (`wiki/research-directions.md`): now 42 open questions and 2 answered.
+- *Evidence added*: Do the two world-model supervision rules compose? (a third harmful-side data point); How much of a "world-model-shaped" representation is world modeling? (the limiting case); Is explicit perception supervision necessary? (both routes in one codebase, confounded).
+- *Added*: Should a world model be given only what moves?
+- *Answered*: none.
+
+**Not reported**: any evaluation of the predicted map against the real future; a quantitative collapse measure; latency; parameter count; seeds; NAVSIM-v2, navhard or closed-loop results; the prior trajectory of the FGTR-only variant.
+
+**New gaps**: SSR (ResWorld's base and strongest perception-free nuScenes baseline), LAW (latent world model; cited 21+ times), GeoBEV (the authors' BEV encoder), BEV-Planner / "Is ego status all you need", Drive-OccWorld, World4Drive.
+
+**Figure note**: 5 figure files embedded (`world_model_small.png`, `resworld.png`, `tr_world.png`, `collapse.png`, `vis2.png`); Figure 1 has only panel (a). All 5 tables reproduced, with a computed closed-form residual column added to Table 2. The clipping's front-matter author field is empty; authors and affiliations are taken from the body.

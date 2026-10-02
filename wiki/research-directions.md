@@ -2,9 +2,9 @@
 title: Research Directions
 type: directions
 sources: []
-related: [concepts/evaluation-variance.md, concepts/navsim-benchmark.md, concepts/alpasim-benchmark.md, concepts/hugsim-benchmark.md, concepts/bench2drive.md, concepts/navhard-ood-evaluation.md, concepts/physicalai-av-benchmark.md, concepts/world-model-for-ad.md, concepts/wam-attention-masks.md, concepts/counterfactual-prediction.md, concepts/perception-for-planning.md, concepts/teacher-pseudo-labels.md, concepts/visual-tokenization.md, concepts/chain-of-thought-for-ad.md, concepts/reasoning-faithfulness.md, concepts/general-capability-retention.md, concepts/dual-system-vla.md, concepts/adaptive-routing.md, concepts/selection-based-planning.md, concepts/inference-time-safety.md, concepts/divergent-thinking-in-vlms.md, concepts/r1-zero-like-training.md, concepts/mixture-of-experts.md, concepts/inference-latency.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md]
+related: [sources/resworld.md, concepts/data-driven-simulators.md, sources/learning-to-drive-from-a-world-model.md, concepts/evaluation-variance.md, concepts/navsim-benchmark.md, concepts/alpasim-benchmark.md, concepts/hugsim-benchmark.md, concepts/bench2drive.md, concepts/navhard-ood-evaluation.md, concepts/physicalai-av-benchmark.md, concepts/world-model-for-ad.md, concepts/wam-attention-masks.md, concepts/counterfactual-prediction.md, concepts/perception-for-planning.md, concepts/teacher-pseudo-labels.md, concepts/visual-tokenization.md, concepts/chain-of-thought-for-ad.md, concepts/reasoning-faithfulness.md, concepts/general-capability-retention.md, concepts/dual-system-vla.md, concepts/adaptive-routing.md, concepts/selection-based-planning.md, concepts/inference-time-safety.md, concepts/divergent-thinking-in-vlms.md, concepts/r1-zero-like-training.md, concepts/mixture-of-experts.md, concepts/inference-latency.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md]
 created: 2026-09-30
-updated: 2026-09-30
+updated: 2026-10-02
 confidence: medium
 ---
 
@@ -48,9 +48,9 @@ Entry format:
 
 ### Do NAVSIM rankings survive a reactive closed loop?
 - **Status**: partially answered
-- **Known so far**: The only closed-loop reproduction of NAVSIM leaders inverts the order: in AlpaSim, SimWAM (91.5 PDMS) is last on at-fault score (0.30) and Alpamayo-R1, which reports no NAVSIM number, is first (0.58) ([[sources/qwen-drive-1.0.md]]). That is one group's reproduction of two methods not designed for the simulator. Of the entries above 92 PDMS, only [[sources/mm-future.md]] (93.4) has a closed-loop number: 32.3 HD-Score on HUGSIM, below WA-JEPA's 44.6 (91.8 PDMS). None has been run in AlpaSim or Bench2Drive, and no paper has run AlpaSim and HUGSIM side by side, so it is unknown whether the two closed-loop benchmarks agree with each other.
-- **See**: [[concepts/alpasim-benchmark.md]], [[concepts/hugsim-benchmark.md]], [[concepts/bench2drive.md]]
-- **Updated**: 2026-09-30
+- **Known so far**: The only closed-loop reproduction of NAVSIM leaders inverts the order: in AlpaSim, SimWAM (91.5 PDMS) is last on at-fault score (0.30) and Alpamayo-R1, which reports no NAVSIM number, is first (0.58) ([[sources/qwen-drive-1.0.md]]). That is one group's reproduction of two methods not designed for the simulator. Of the entries above 92 PDMS, only [[sources/mm-future.md]] (93.4) has a closed-loop number: 32.3 HD-Score on HUGSIM, below WA-JEPA's 44.6 (91.8 PDMS). None has been run in AlpaSim or Bench2Drive, and no paper has run AlpaSim and HUGSIM side by side, so it is unknown whether the two closed-loop benchmarks agree with each other. Outside NAVSIM, [[sources/learning-to-drive-from-a-world-model.md]] shows the same inversion inside one paper: the policy with the best held-out trajectory error (0.361, behaviour cloning) passes 5/24 closed-loop lane-centre tests, while two on-policy policies with worse error (0.369, 0.394) pass 24/24.
+- **See**: [[concepts/alpasim-benchmark.md]], [[concepts/hugsim-benchmark.md]], [[concepts/bench2drive.md]], [[concepts/data-driven-simulators.md]]
+- **Updated**: 2026-10-02
 
 ### How much of a navhard score is the generator and how much is the selector?
 - **Status**: partially answered
@@ -60,9 +60,9 @@ Entry format:
 
 ### Is the navhard Stage-2 lane-keeping collapse a planner failure or a rendering artifact?
 - **Status**: open
-- **Known so far**: Every method, including constant velocity, loses 35–45 points of lane keeping in Stage 2. If 3DGS renderings degrade as the ego pose leaves the recorded trajectory, part of the drop measures the benchmark. A candidate scorer recovers 10 points of Stage-2 LK on a fixed checkpoint, which fits either explanation. No paper has separated them.
-- **See**: [[concepts/navhard-ood-evaluation.md]]
-- **Updated**: 2026-09-30
+- **Known so far**: Every method, including constant velocity, loses 35–45 points of lane keeping in Stage 2. If 3DGS renderings degrade as the ego pose leaves the recorded trajectory, part of the drop measures the benchmark. A candidate scorer recovers 10 points of Stage-2 LK on a fixed checkpoint, which fits either explanation. No paper has separated them. The rendering explanation is plausible: in a reprojective simulator, [[sources/learning-to-drive-from-a-world-model.md]] reports artifacts that grow with the ego's offset from the log (range kept under 4 m) and correlate with it strongly enough for a policy to exploit. That is reprojection, not 3DGS.
+- **See**: [[concepts/navhard-ood-evaluation.md]], [[concepts/data-driven-simulators.md]]
+- **Updated**: 2026-10-02
 
 ### Can HUGSIM results be put on one table, and does anything move its Extreme tier?
 - **Status**: open
@@ -82,9 +82,9 @@ Entry format:
 
 ### Does world modeling buy open-loop accuracy or closed-loop robustness?
 - **Status**: partially answered
-- **Known so far**: Four effects on navtest / navhard point the same way: [[sources/geowam.md]] future geometry +0.6 / +4.9, [[sources/suv.md]] future access +0.3 / +4.1, [[sources/metis.md]] asymmetric mask +0.5 / +2.2 and video-prior scale ≈0 / +2.4. One mechanism breaks the pattern: [[sources/physwam.md]]'s geometric loss is worth +1.9 on both. Most world-model papers optimize and report navtest only, which may be the wrong benchmark for the question.
+- **Known so far**: Four effects on navtest / navhard point the same way: [[sources/geowam.md]] future geometry +0.6 / +4.9, [[sources/suv.md]] future access +0.3 / +4.1, [[sources/metis.md]] asymmetric mask +0.5 / +2.2 and video-prior scale ≈0 / +2.4. One mechanism breaks the pattern: [[sources/physwam.md]]'s geometric loss is worth +1.9 on both. Most world-model papers optimize and report navtest only, which may be the wrong benchmark for the question. By analogy only: when a world model is used as the training environment instead ([[sources/learning-to-drive-from-a-world-model.md]]), held-out trajectory error gets worse (0.361 → 0.394) and closed-loop lane-centre tests go from 5/24 to 24/24.
 - **See**: [[concepts/world-model-for-ad.md]], [[concepts/navhard-ood-evaluation.md]]
-- **Updated**: 2026-09-30
+- **Updated**: 2026-10-02
 
 ### Does generating the future at test time ever pay off?
 - **Status**: partially answered
@@ -106,9 +106,9 @@ Entry format:
 
 ### Do the two world-model supervision rules compose?
 - **Status**: open
-- **Known so far**: Objective form follows target entropy: regression on multi-view scene latents is worse than no future prediction (90.7 vs 91.1 EPDMS, [[sources/wa-jepa.md]]). Target content follows horizon: optical flow is best far out and RGB one step ahead ([[sources/drive-hwm.md]]). Nobody has crossed them. Two results complicate the first rule: L1 regression on future latents helps in [[sources/redrive.md]] (+0.7), and [[sources/geowam.md]] pairs cosine alignment with dense point-map regression without collapsing. It is also unknown which other deterministic predictors (DeepSight, FLARE, Latent-WAM, AD-E2E-JEPA) are losing performance to the same effect.
-- **See**: [[concepts/world-model-for-ad.md]]
-- **Updated**: 2026-09-30
+- **Known so far**: Objective form follows target entropy: regression on multi-view scene latents is worse than no future prediction (90.7 vs 91.1 EPDMS, [[sources/wa-jepa.md]]). Target content follows horizon: optical flow is best far out and RGB one step ahead ([[sources/drive-hwm.md]]). Nobody has crossed them. Two results complicate the first rule: L1 regression on future latents helps in [[sources/redrive.md]] (+0.7), and [[sources/geowam.md]] pairs cosine alignment with dense point-map regression without collapsing. It is also unknown which other deterministic predictors (DeepSight, FLARE, Latent-WAM, AD-E2E-JEPA) are losing performance to the same effect. A third data point on the harmful side: [[sources/resworld.md]]'s residual-input world model, trained only by the planning loss, gets worse when its predicted map is supervised toward the real next-frame map (nuScenes collision 0.17% → 0.21%, L2 0.59 → 0.61 m). The loss form is unstated and the difference is a few samples.
+- **See**: [[concepts/world-model-for-ad.md]], [[sources/resworld.md]]
+- **Updated**: 2026-10-02
 
 ### Geometry, pixels or flow: which future representation helps a planner most?
 - **Status**: open
@@ -118,27 +118,27 @@ Entry format:
 
 ### How much of a "world-model-shaped" representation is world modeling?
 - **Status**: open
-- **Known so far**: [[sources/redrive.md]]'s encoder keeps its gain under a frozen probe (86.7 → 90.2), but it was fine-tuned by both the planning loss and the future loss, and the paper's own split is +3.5 for unfreezing against +0.7 for future prediction. The same question applies to every training-time-only world model that reports a with/without-future-loss delta only end to end. Related: [[sources/physwam.md]] does not isolate whether its +1.9 EPDMS needs the depth–motion cross term or only a pose loss.
-- **See**: [[concepts/world-model-for-ad.md]]
-- **Updated**: 2026-09-30
+- **Known so far**: [[sources/redrive.md]]'s encoder keeps its gain under a frozen probe (86.7 → 90.2), but it was fine-tuned by both the planning loss and the future loss, and the paper's own split is +3.5 for unfreezing against +0.7 for future prediction. The same question applies to every training-time-only world model that reports a with/without-future-loss delta only end to end. Related: [[sources/physwam.md]] does not isolate whether its +1.9 EPDMS needs the depth–motion cross term or only a pose loss. [[sources/resworld.md]] is the limiting case: its "world model" has no future loss at all, adding one hurts, and its first-pass trajectory, which has the baseline's architecture, keeps most of the gain (nuScenes 0.65 → 0.61 m, 0.28 → 0.18% collision, against 0.59 / 0.17 for the full model). The shaping is done by the planning loss routed through a future-named branch.
+- **See**: [[concepts/world-model-for-ad.md]], [[sources/resworld.md]]
+- **Updated**: 2026-10-02
 
 ### Does the generated video follow the generated action?
 - **Status**: open
-- **Known so far**: [[sources/physwam.md]] is the only joint model that checks: a 0.80° median yaw disagreement over 4 s (floor 0.29°) and 67% agreement where the plan departs from the log. DriveVA, DriveWAM, SUV and WA-JEPA make the same joint-generation claim without reporting it.
-- **See**: [[concepts/world-model-for-ad.md]]
-- **Updated**: 2026-09-30
+- **Known so far**: [[sources/physwam.md]] is the only joint model that checks: a 0.80° median yaw disagreement over 4 s (floor 0.29°) and 67% agreement where the plan departs from the log. DriveVA, DriveWAM, SUV and WA-JEPA make the same joint-generation claim without reporting it. For an action-*conditioned* model the answer is "partly": [[sources/learning-to-drive-from-a-world-model.md]] runs a pose estimator on generated video and finds a commanded ±0.5 m lateral deviation rendered "not to its full extent", against a floor measured on real and VAE-compressed video (VAE compression alone adds 28% to forward-speed error). The size of the shortfall is in a figure the clipping lacks.
+- **See**: [[concepts/world-model-for-ad.md]], [[concepts/data-driven-simulators.md]]
+- **Updated**: 2026-10-02
 
 ### Can a world model replace the simulator as the source of reward or cost?
 - **Status**: partially answered
-- **Known so far**: [[sources/dreameraD.md]] shows a latent reward model can replace simulator calls during RL rollout (87.7 EPDMS) but still needs the simulator to annotate its vocabulary. [[sources/ad-e2e-jepa.md]] has cheap 4 s rollouts over 256–8,192 candidates but selects with the ground-truth future frame; that oracle-goal search reaches only 67.3–72.9 EPDMS against 85.4 for the same paper's imitation model. Nobody has attached a learned reward or goal predictor to a compressed rollout model and reported a real planning score.
-- **See**: [[concepts/world-model-for-ad.md]]
-- **Updated**: 2026-09-30
+- **Known so far**: [[sources/dreameraD.md]] shows a latent reward model can replace simulator calls during RL rollout (87.7 EPDMS) but still needs the simulator to annotate its vocabulary. [[sources/ad-e2e-jepa.md]] has cheap 4 s rollouts over 256–8,192 candidates but selects with the ground-truth future frame; that oracle-goal search reaches only 67.3–72.9 EPDMS against 85.4 for the same paper's imitation model. Nobody has attached a learned reward or goal predictor to a compressed rollout model and reported a real planning score. For supervision other than reward, the answer is yes: [[sources/learning-to-drive-from-a-world-model.md]] replaces the simulator entirely, as frame generator and as source of action labels (a future-anchored plan head), and the resulting steering policy is deployed in openpilot. Lateral control only.
+- **See**: [[concepts/world-model-for-ad.md]], [[concepts/data-driven-simulators.md]]
+- **Updated**: 2026-10-02
 
 ### Can a driving world model predict counterfactuals?
 - **Status**: partially answered
-- **Known so far**: For retrospective counterfactuals over recorded episodes, no: action-conditioned generation recovers 0.38 (Vista) and 0.31 (DrivingWorld), below the 0.5 no-preference point ([[sources/driving-wm-counterfactuals.md]]). Open parts: whether a model trained to condition on the factual continuation (abduction) would beat the paper's depth-plus-splatting transport, whether the failure is causal or a domain shift to CARLA renders, whether anything carries over to decision time, and whether any counterfactual metric predicts planning quality.
+- **Known so far**: For retrospective counterfactuals over recorded episodes, no: action-conditioned generation recovers 0.38 (Vista) and 0.31 (DrivingWorld), below the 0.5 no-preference point ([[sources/driving-wm-counterfactuals.md]]). Open parts: whether a model trained to condition on the factual continuation (abduction) would beat the paper's depth-plus-splatting transport, whether the failure is causal or a domain shift to CARLA renders, whether anything carries over to decision time, and whether any counterfactual metric predicts planning quality. A model conditioned on the history and the recorded continuation now exists ([[sources/learning-to-drive-from-a-world-model.md]]'s future-anchored world model), but it uses the continuation as an endpoint the rollout must reach and has not been evaluated on counterfactuals.
 - **See**: [[concepts/counterfactual-prediction.md]], [[concepts/world-model-for-ad.md]]
-- **Updated**: 2026-09-30
+- **Updated**: 2026-10-02
 
 ### Where and how should a planner read a video prior?
 - **Status**: open
@@ -154,9 +154,21 @@ Entry format:
 
 ### Does generation quality matter for planning?
 - **Status**: open
-- **Known so far**: [[sources/reworld.md]] improves nuScenes FVD 81.3 → 61.9 and NAVSIM PDMS 89.1 → 90.4 in one paper through disjoint mechanisms, and never measures whether the video-side objective helps planning. FVD itself is hard to rank on: [[sources/physwam.md]] measures a recorded-versus-recorded FVD floor of 91.5 at 600 clips.
-- **See**: [[concepts/world-model-for-ad.md]], [[concepts/navsim-benchmark.md]]
-- **Updated**: 2026-09-30
+- **Known so far**: [[sources/reworld.md]] improves nuScenes FVD 81.3 → 61.9 and NAVSIM PDMS 89.1 → 90.4 in one paper through disjoint mechanisms, and never measures whether the video-side objective helps planning. FVD itself is hard to rank on: [[sources/physwam.md]] measures a recorded-versus-recorded FVD floor of 91.5 at 600 clips. The question has a training-environment version: [[sources/learning-to-drive-from-a-world-model.md]] reports LPIPS improving with world-model size and data (in a figure the clipping lacks; VAE floor 0.148) but trains policies in one world model only, so simulator quality is never linked to policy quality.
+- **See**: [[concepts/world-model-for-ad.md]], [[concepts/navsim-benchmark.md]], [[concepts/data-driven-simulators.md]]
+- **Updated**: 2026-10-02
+
+### Should a world model be given only what moves?
+- **Status**: open
+- **Known so far**: Three papers put an explicit motion quantity into a driving world model. As input, [[sources/resworld.md]] feeds only frame-to-frame differences of ego-aligned scene queries and beats a full-scene input by 0.02 m L2 and 0.04 collision points on nuScenes (single runs, a few samples apart); static structure is copied from the current map instead of predicted. As a target, [[sources/drive-hwm.md]] finds optical flow best at long horizons and RGB best one step ahead. As a state, [[sources/momworld.md]] initializes momentum from the same kind of feature difference but reports no prediction error with or without it. The known cost: stationary agents (parked cars, waiting pedestrians) give no residual and reach the planner only through the static branch, as ResWorld states. No paper has tested a motion-only design on a closed-loop or navhard split.
+- **See**: [[concepts/world-model-for-ad.md]]
+- **Updated**: 2026-10-02
+
+### Which data-driven simulator trains the best policy: reprojection, reconstruction or a learned world model?
+- **Status**: open
+- **Known so far**: One paper compares two families under one supervision source. [[sources/learning-to-drive-from-a-world-model.md]] trains the same steering policy in a reprojective simulator and in a 500M world model: 24/24 against 24/24 on lane-centre tests, 20/20 against 19/20 on lane changes, 0.369 against 0.394 held-out error. The world-model policy is engaged more in the field (29.92% against 27.63% of time), but the two cohorts are not matched. The test is lateral only, while reprojection's stated weakness is longitudinal range (under 4 m). Reconstruction-based training ([[sources/senna2.md]], 3DGS) and latent world-model RL ([[sources/dreameraD.md]]) are each evaluated on different benchmarks with different supervision.
+- **See**: [[concepts/data-driven-simulators.md]], [[concepts/world-model-for-ad.md]]
+- **Updated**: 2026-10-02
 
 ### Does a clean VLM stream suppress an iteratively refined stream in shared attention?
 - **Status**: open
@@ -170,9 +182,9 @@ Entry format:
 
 ### Is explicit perception supervision necessary for planning?
 - **Status**: open
-- **Known so far**: Both routes work. [[sources/auto-jepa.md]] reaches 91.3 PDMS with a frozen encoder and no perception labels; [[sources/wcog-vla.md]] reaches 92.9 with 3D boxes and per-agent futures. Removing WCog-VLA's 3D perception costs 3.3 PDMS (89.3 → 86.0), yet its 3D pretraining is worth only +1.1 while the planner still emits text, which suggests explicit structure needs a continuous action head to be used. [[sources/foresight.md]] loses 1.1 PDMS (89.3 → 88.2) when its whole perception branch is deleted. No paper compares the supervised and unsupervised routes at matched capacity and data.
+- **Known so far**: Both routes work. [[sources/auto-jepa.md]] reaches 91.3 PDMS with a frozen encoder and no perception labels; [[sources/wcog-vla.md]] reaches 92.9 with 3D boxes and per-agent futures. Removing WCog-VLA's 3D perception costs 3.3 PDMS (89.3 → 86.0), yet its 3D pretraining is worth only +1.1 while the planner still emits text, which suggests explicit structure needs a continuous action head to be used. [[sources/foresight.md]] loses 1.1 PDMS (89.3 → 88.2) when its whole perception branch is deleted. No paper compares the supervised and unsupervised routes at matched capacity and data. [[sources/resworld.md]] runs both routes in one NAVSIM codebase: 87.3 PDMS without perception labels, 88.3 with detection and map supervision. The supervised variant also feeds its world model detection agent queries instead of temporal residuals, so the +1.0 is not a clean price.
 - **See**: [[concepts/perception-for-planning.md]]
-- **Updated**: 2026-09-30
+- **Updated**: 2026-10-02
 
 ### Does agent selectivity predict driving quality?
 - **Status**: open
@@ -259,6 +271,18 @@ Entry format:
 - **Known so far**: Best-of-6 on NAVSIM-v1 matches the human trajectory's score (Curious-VLA, 94.8 PDMS). Untested: MUPO-style multi-group advantages with groups clustered by trajectory geometry, separate diversity rewards for reasoning and action, and whether learned scorers benefit from diversity-trained candidates.
 - **See**: [[concepts/divergent-thinking-in-vlms.md]], [[concepts/best-of-n.md]]
 - **Updated**: 2026-09-30
+
+### Is a reward needed for closed-loop training, or are future-anchored action labels enough?
+- **Status**: open
+- **Known so far**: [[sources/learning-to-drive-from-a-world-model.md]] trains a deployed policy on its own rollouts with no reward: a plan head conditioned on the recorded future labels every state the policy reaches. Lane keeping and lane changes emerge (24/24, 19–20/20 against 5/24, 8/20 off-policy). The policy can at best match its teacher, and the teacher is never evaluated on its own. Reward-based closed-loop training exists in other simulators ([[sources/senna2.md]]: penalties in 3DGS; [[sources/dreameraD.md]]: a learned latent reward), but no paper compares labels against reward in one simulator.
+- **See**: [[concepts/rl-for-ad.md]], [[concepts/data-driven-simulators.md]], [[concepts/teacher-pseudo-labels.md]]
+- **Updated**: 2026-10-02
+
+### Do policies trained in rendered simulators learn the renderer's artifacts?
+- **Status**: open
+- **Known so far**: [[sources/learning-to-drive-from-a-world-model.md]] states that reprojection artifacts correlate with the ego's offset from the log, which is what the corrective label encodes, and that the policy exploits them ("cheating or shortcut learning"). Its remedy is a roughly 700-bit Gaussian-noise bottleneck on the feature extractor. Neither the exploitation nor the remedy is measured, and whether the world-model simulator has the same problem is not discussed. No other training paper in the wiki (3DGS-based or world-model-based) reports a test for it.
+- **See**: [[concepts/data-driven-simulators.md]], [[concepts/perception-for-planning.md]]
+- **Updated**: 2026-10-02
 
 ### Which RL recipe suits dense, safety-gated driving rewards?
 - **Status**: open
