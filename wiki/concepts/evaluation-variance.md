@@ -1,10 +1,10 @@
 ---
 title: Evaluation Variance and Single-Run Reporting
 type: concept
-sources: ["raw/papers/ResWorld_ Temporal Residual World Model for End-to-End Autonomous Driving.md", "raw/papers/Learning to Drive from a World Model.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/WALT_ Learning World-Model-Aligned Latent Trajectories for Autonomous Driving.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
-related: [sources/resworld.md, sources/learning-to-drive-from-a-world-model.md, sources/drivereferee.md, sources/walt.md, sources/momworld.md, sources/physwam.md, sources/ad-e2e-jepa.md, sources/wa-jepa.md, sources/coworld-vla.md, sources/suv.md, sources/adaptive-wam.md, sources/driving-wm-counterfactuals.md, sources/grava.md, sources/metis.md, sources/simwam.md, sources/drive-hwm.md, sources/da-wam.md, sources/brainwam.md, sources/auto-jepa.md, sources/foresight.md, sources/drivefuture.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, research-directions.md]
+sources: ["raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/RAD_ Training an End-to-End Driving Policy via Large-Scale 3DGS-based Reinforcement Learning.md", "raw/papers/ForeDrive_ Foresight-Guided End-to-End Autonomous Driving with a Planning-Relevant Latent World Model.md", "raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/Think2Drive_ Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2).md", "raw/papers/SimScale_ Learning to Drive via Real-World Simulation at Scale.md", "raw/papers/ResWorld_ Temporal Residual World Model for End-to-End Autonomous Driving.md", "raw/papers/Learning to Drive from a World Model.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/WALT_ Learning World-Model-Aligned Latent Trajectories for Autonomous Driving.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md, raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
+related: [sources/world4scorer.md, sources/rad.md, sources/foredrive.md, sources/raw2drive.md, sources/think2drive.md, sources/simscale.md, sources/resworld.md, sources/learning-to-drive-from-a-world-model.md, sources/drivereferee.md, sources/walt.md, sources/momworld.md, sources/physwam.md, sources/ad-e2e-jepa.md, sources/wa-jepa.md, sources/coworld-vla.md, sources/suv.md, sources/adaptive-wam.md, sources/driving-wm-counterfactuals.md, sources/grava.md, sources/metis.md, sources/simwam.md, sources/drive-hwm.md, sources/da-wam.md, sources/brainwam.md, sources/auto-jepa.md, sources/foresight.md, sources/drivefuture.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, research-directions.md]
 created: 2026-09-27
-updated: 2026-10-02
+updated: 2026-10-06
 confidence: medium
 ---
 
@@ -23,9 +23,9 @@ How much of a reported difference could be noise, and which kind of noise. Twent
 | **1. Evaluator determinism** | Nothing. The same checkpoint is re-scored | [[sources/suv.md]]: 6 repeats, identical to 2 decimals | 0 |
 | **2. Sampler seed** | Diffusion/flow noise with fixed weights | [[sources/wa-jepa.md]], [[sources/coworld-vla.md]], [[sources/physwam.md]] | **0.013–0.30** EPDMS std, depending on the architecture |
 | **3. Scene sampling** | Which scenes are in the test split | Computable from [[sources/suv.md]]; **observed directly in [[sources/ad-e2e-jepa.md]]** (100 scenes vs. all 12,146) | SE of the mean ≈ **0.16** on navtest; several points on a 100-scene subset |
-| **4. Training seed** | Initialization, data order, the whole run | **Never, on any driving benchmark** | Unknown |
+| **4. Training seed** | Initialization, data order, the whole run | **Once**: [[sources/foredrive.md]], 3 seeds of one recipe (2026-10-06) | **0.1** PDMS sd (89.7–89.9) for a 118M single-camera DiffusionDrive-style planner |
 
-**The number that licenses ablation claims is #4, and nobody has measured it.** [[sources/coworld-vla.md]] is the first paper to say so: variance over independently trained models "was not conducted because of the high training cost". [[sources/physwam.md]] is the second: "each training configuration was run once. We report sample-to-sample variation (Table 1) but not run-to-run variation".
+**The number that licenses ablation claims is #4, and until ForeDrive nobody had measured it.** [[sources/coworld-vla.md]] is the first paper to say so: variance over independently trained models "was not conducted because of the high training cost". [[sources/physwam.md]] is the second: "each training configuration was run once. We report sample-to-sample variation (Table 1) but not run-to-run variation".
 
 ---
 
@@ -42,6 +42,15 @@ How much of a reported difference could be noise, and which kind of noise. Twent
 **The range is now a factor of twenty.** PhysWAM's sample-to-sample sd is 5 to 20 times the two earlier figures. The likely reason is what is being sampled: WA-JEPA and CoWorld-VLA draw a trajectory (and compact latents) under strong conditioning, while PhysWAM draws an entire multi-view future from noise with no anchors, and its eight samples are diverse enough that an oracle over them gains +3.9 PDMS. **Sampler noise is a property of the architecture and has to be measured per model.** For PhysWAM it is the same size as its label-free selection gain (+0.3 PDMS) and as its smaller ablation deltas (0.3–0.4).
 
 Its step sweep shows what this does to a single-sample table: 4 steps −0.6 (one sample), 8 steps +0.7 (three samples), 15 steps −0.4 (one sample), all against the 30-step mean. The sweep is not monotone, and two of its three points are single draws within about two standard deviations of zero.
+
+### Training seed, measured once {#training-seed}
+
+*(2026-10-06)* [[sources/foredrive.md]] retrains its default recipe (DINOv3 ViT-B/16 front camera, JEPA-style latent predictor, DiffusionDrive-style planner, 118.4M parameters, 100 epochs) from three seeds: **89.7–89.9 PDMS on navtest, sd 0.1**. Its tables report the primary run (89.9), the top of that range.
+
+- **It is the first number of its kind here**, and it is small: about twice the largest sampler-seed sd for a trajectory-sampling model (WA-JEPA 0.053) and a third of PhysWAM's sampler sd.
+- **Three seeds give a rough sd.** With n = 3 the true sd could plausibly be two or three times larger.
+- **It covers one recipe.** The paper's ablations are single runs; its Base was not re-seeded. A model that fine-tunes a large pretrained network for a few epochs, or samples whole futures, may spread more.
+- **What it changes.** Rule 2 below assumed training-seed variance "plausibly several times larger" than sampler noise. For this recipe it is about 0.1, so ablation deltas of 0.3–0.5 between separately trained runs are a few sd and not obviously noise. Whether that transfers to other architectures is the open part.
 
 ### Scene-level dispersion
 
@@ -67,6 +76,8 @@ Its step sweep shows what this does to a single-sample table: 4 steps −0.6 (on
 - **The interval shrinks as two systems agree on more scenes.** Selection variants that change a few hundred plans have half the SE of two separately trained models.
 - These intervals do not include training seeds. Each model here is one run.
 
+**Clustering by log** *(2026-10-06)*. [[sources/world4scorer.md]] bootstraps over the **136 navtest logs** rather than the 12,146 scenes, because consecutive scenes of one log are correlated. Its intervals on fixed-pool interventions: matched-state regret 5.14 [4.66, 5.62]; a scorer shuffle +14.72 [+13.72, +15.75]; inertial re-ranking with the correct previous plan against a two-step-old one +1.01 [0.86, 1.16]. Scene-level bootstraps such as DriveReferee's will be somewhat narrower than log-clustered ones on the same comparison. The same paper's training ablations are single-seed and use the last epoch while its headline uses a validation-selected epoch (93.96 vs 94.0 for the same configuration), so its +0.95 for the future target has no interval.
+
 ### A subset that reorders the full set {#subset-reordering}
 
 [[sources/ad-e2e-jepa.md]] is the first paper here to report the **same checkpoints on a 100-scene subsample and on all 12,146 navtest scenes**. It does so because its dense-token baselines need 92–101 s per scene and cannot be run on the full set. That makes scene-sampling variance visible instead of computed:
@@ -84,7 +95,24 @@ Its step sweep shows what this does to a single-sample table: 4 steps −0.6 (on
 - **The subset and the full set also differ systematically.** Extended comfort is dropped on the subset (no adjacent scenes), which accounts for roughly half of the 12-point EPDMS† gap for the navtrain variant.
 - The paper says so in one sentence ("may partly reflect variance from evaluating only 100 scenes") and still draws its headline figure from the subset.
 
+**A 10-clip ablation set in closed loop** *(2026-10-06)*. [[sources/raw2drive.md]] runs every ablation on Dev10, ten Bench2Drive clips "carefully selected ... challenging and representative, with low variance", three repeats each. Success rates are reported in tenths of a route (7.5/10), and the full model scores 83.5 DS there against 71.36 on all 220 routes, so the subset is easier than the benchmark. Its ablations behave as cliffs (83.5 with every component, 0–65.6 without any one), which a 10-clip set can show but cannot rank.
+
 **Rule**: a comparison that exists only on a subsample of about 100 scenes can support "comparable" or a difference of tens of points (LeWM 48.3 against 68–77). It cannot order methods that are within several points of each other.
+
+### Run-to-run scatter along a scaling axis on navhard {#scaling-scatter}
+
+*(2026-10-06)* [[sources/simscale.md]] trains a separate model at each of five data sizes, for ten planner–label combinations, and plots navhard EPDMS for each. Each step adds 7–33% more training data, so the curves should be smooth if run-to-run noise were small. Read from the enlarged figure:
+
+| Curve | Five consecutive points (navhard EPDMS) | Largest reversal |
+|---|---|---:|
+| DiffusionDrive, recovery labels | 29.0, 30.5, 27.8, 28.6, 30.0 | −2.7 |
+| LTF, planner labels | 29.7, 30.1, 30.2, 29.3, 30.2 | −0.9 |
+| GTRS-Dense ResNet-34, recovery labels | 41.7, 41.3, 42.5, 41.7, 40.8 | −0.9 |
+| GTRS-Dense V2-99, planner labels | 43.4, 44.9, 44.6, 46.5, 45.6 | −0.9 |
+
+- **Independently trained neighbours reverse by up to 2.7 EPDMS.** This is not a training-seed measurement (the data changes too), but it is the wiki's first look at how much separately trained navhard models scatter around a smooth trend. It is consistent with the scene-sampling SE of about 1 point estimated above for 244 Stage-1 scenes.
+- **The same paper argues from differences of that size**: reward-only against expert labels (+0.3 / +0.8), reactive against non-reactive (+0.7 / +1.1), a ResNet-34 ensemble (+0.8).
+- **Its tables also carry a selection effect.** Tables 1 and 2 report, for each planner, the best of two or three label variants, chosen on the test benchmark.
 
 ### A generation metric with a measured floor {#fvd-floor}
 
@@ -114,6 +142,7 @@ Together with PhysWAM's 0.29° yaw floor, these are the wiki's three measured fl
 - [[sources/suv.md]] selects checkpoints on the NAVSIM validation PDM score.
 - [[sources/dial.md]] compares methods at their best held-out checkpoint, even though several later collapse.
 - Best-of-N oracle rows ([[concepts/best-of-n.md]]) are the extreme case.
+- [[sources/simscale.md]] reports the best of two or three training-label variants per planner on the test split, and its tables are 0.5–1.9 EPDMS above every point its own scaling figure plots for the same GTRS-Dense configurations ([[sources/simscale.md#figure-table]]).
 
 ### Too little variance: ablation columns that are functions of each other {#column-regularity}
 
@@ -134,6 +163,28 @@ The wiki draws no conclusion about cause. It treats the affected effect sizes as
 
 [[sources/driving-wm-counterfactuals.md]] reports means over five seeds with a **±maximum deviation** (not a standard deviation). This is the only multi-seed generative evaluation in the wiki.
 
+**Closed-loop CARLA spread over three runs** *(2026-10-06)*. [[sources/think2drive.md]] reports mean ± sd over three runs on 390 single-scenario CARLA routes (whether training or evaluation runs is not stated):
+
+| Policy | DS | Weighted DS | Route completion |
+|---|---:|---:|---:|
+| Think2Drive (model-based RL) | 83.8 ± 1 | 89.0 ± 0.2 | 99.6 ± 0.1 |
+| PPO reimplementation | 57.5 ± 9 | 54.8 ± 0.5 | 96.4 ± 1.1 |
+| TCP camera student | 36.4 ± 12.2 | 29.6 ± 0.2 | 85.9 ± 8.3 |
+
+- **Closed-loop driving scores can move by ten points between runs** for weaker policies, against 1 point for the strong one. One run of a weak CARLA policy says little.
+- **Two metrics computed from the same runs disagree about the spread by a factor of 18–60.** The paper's Weighted DS has sds of 0.2–0.5 beside DS sds of 9–12. Its definition (route completion times penalties raised to infraction counts over scenario density) does not obviously damp variance that much, and the paper does not explain it. Treat its spread as unverified.
+
+**Private 3DGS benchmarks: clip counts, and two that disagree** *(2026-10-06)*. [[sources/rad.md]] reports collision and deviation as fractions of 337 reconstructed clips. Near a collision ratio of 0.15 the binomial SE is about 0.019 (six clips), so its headline (77 → 30 clips) is robust and several of its ablation differences (49–56 clips) are not. The same methods on [[sources/senna2.md]]'s 256-clip 3DGS benchmark, built by the same institutions:
+
+| Method | CR, RAD's benchmark | CR, Senna-2's benchmark |
+|---|---:|---:|
+| TransFuser | 0.320 | 0.435 |
+| VADv2 | 0.270 | 0.422 |
+| RAD | 0.089 | 0.281 |
+
+- **The ordering holds; the effect size does not.** RAD's advantage over VADv2 is 3.0× on one benchmark and 1.5× on the other, and its own collision ratio triples. The benchmarks differ in clips, agent behaviour (replay vs. reactive, by each paper's description) and perhaps checkpoint.
+- **Rule**: a ratio on a private closed-loop benchmark supports "better on that benchmark", with a binomial interval from the clip count; its size does not transfer.
+
 **Field metrics from unmatched cohorts** *(2026-10-02)*. [[sources/learning-to-drive-from-a-world-model.md]] compares two deployed openpilot steering policies by the share of driving that was engaged:
 
 | Policy | Trips | Engaged time | Engaged distance |
@@ -153,7 +204,7 @@ The wiki draws no conclusion about cause. It treats the affected effect sizes as
 ## What This Means for Reading the Wiki
 
 1. **Sampler noise is usually not the binding constraint, but it is model-specific.** *(2026-09-30: [[sources/physwam.md]] measures 0.24–0.30 for a model that samples a full multi-view future. Check the paper's own figure before applying the 0.01–0.05 range below.)* At 0.01–0.05 it is 2–3 orders of magnitude below the **+2.0 to +3.8** EPDMS shift from the [evaluator correction](navsim-benchmark.md#evaluator-drift-this-table-mixes-two-protocols). Protocol drift matters far more than seeds for cross-paper comparison.
-2. **Ablation deltas under ~0.5 should be read as "no detectable effect".** Examples: SimWAM's mask ablation (0.2 spread), SUV's per-stream access on navtest (≤0.2), Qwen-Drive's reasoning effect (+0.4), GRAVA's +0.18 margin for the best purely autoregressive model, [[sources/walt.md]]'s +0.41 PDMS headline (its v1 and v2 sub-scores attribute the gain to different terms: NC and TTC on v1, extended comfort on v2). This is not because sampler noise is that large, but because training-seed variance is unmeasured and plausibly several times larger.
+2. **Ablation deltas under ~0.5 should be read as "no detectable effect".** Examples: SimWAM's mask ablation (0.2 spread), SUV's per-stream access on navtest (≤0.2), Qwen-Drive's reasoning effect (+0.4), GRAVA's +0.18 margin for the best purely autoregressive model, [[sources/walt.md]]'s +0.41 PDMS headline (its v1 and v2 sub-scores attribute the gain to different terms: NC and TTC on v1, extended comfort on v2). This is not because sampler noise is that large, but because training-seed variance was unmeasured and plausibly several times larger. *(2026-10-06: measured once, at sd 0.1 PDMS over three seeds for [[sources/foredrive.md]]'s recipe; see [above](#training-seed). The rule stays as a default for papers that report no seeds.)*
 3. **navhard effects need to be several points to be interpretable.** The recent pattern of "invisible on navtest, large on navhard" ([[concepts/wam-attention-masks.md]]) is the most important open finding that currently rests on single runs over a few hundred scenes.
 4. **Headline margins of 0.1–0.7 between top methods are within unmeasured training noise.** Examples: SUV vs Metis top-6, GRAVA vs Curious-VLA, SUV vs Poutine on WOD-E2E (+0.03 RFS).
 5. **Subsampled evaluations need their own error bar.** A 100-scene NAVSIM subset has an SE of roughly 2–4 points and reordered one paper's own variants ([above](#subset-reordering)).
@@ -165,6 +216,6 @@ The wiki draws no conclusion about cause. It treats the affected effect sizes as
 
 *Wiki-wide open questions are collected in [[research-directions.md]].*
 
-- **What is training-seed variance for a NAVSIM planner?** Three seeds of one cheap model (a DiffusionDrive-class planner trains in hours) would bound it and settle rule 2 above.
+- **What is training-seed variance for a NAVSIM planner?** Three seeds of one cheap model (a DiffusionDrive-class planner trains in hours) would bound it and settle rule 2 above. *(2026-10-06: done once, by [[sources/foredrive.md]], for exactly such a planner: sd 0.1 PDMS over three seeds. Still unmeasured for large pretrained models, for navhard, and for v2 EPDMS.)*
 - **What is paired per-scene variance between two published checkpoints?** It needs only released checkpoints and the evaluator, no training. *(2026-09-30: measured within one paper by [[sources/drivereferee.md]]: a 95% half-width of about 0.21 EPDMS for two checkpoints of one model family; see [above](#paired-ci). Across two different published methods it is still unmeasured.)*
-- **What is navhard's per-scene SD?** Any paper that reports per-scene navhard scores would let every navhard effect in the wiki be given an error bar.
+- **What is navhard's per-scene SD?** Any paper that reports per-scene navhard scores would let every navhard effect in the wiki be given an error bar. *(2026-10-06: still unreported. [[sources/simscale.md]]'s scaling curves give an indirect bound: separately trained models one data step apart reverse by up to 2.7 EPDMS; see [above](#scaling-scatter).)*

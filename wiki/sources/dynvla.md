@@ -2,9 +2,9 @@
 title: "DynVLA: Learning World Dynamics for Action Reasoning in Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md]
-related: [sources/brainwam.md, concepts/world-model-for-ad.md, concepts/chain-of-thought-for-ad.md, concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, sources/drivevla-w0.md, sources/futuresightdrive.md, sources/explorevla.md]
+related: [sources/raw2drive.md, sources/brainwam.md, concepts/world-model-for-ad.md, concepts/chain-of-thought-for-ad.md, concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, sources/drivevla-w0.md, sources/futuresightdrive.md, sources/explorevla.md]
 created: 2026-04-28
-updated: 2026-09-04
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -192,7 +192,7 @@ DynVLA's strongest sub-metric gain is ego progress (EP=86.8), consistent with it
 | ThinkTwice | 62.44 | 31.23 | 37.17 |
 | DriveAdapter | 64.22 | 33.08 | 42.08 |
 | Drivetransformer | 63.46 | 35.01 | 38.60 |
-| Raw2Drive | 71.36 | 50.24 | 53.34 |
+| [[sources/raw2drive.md]] | 71.36 | 50.24 | 53.34 |
 | ORION | 77.74 | 54.62 | 54.72 |
 | MindDrive | 78.04 | 55.09 | 56.94 |
 | AutoVLA | 78.84 | 57.73 | - |

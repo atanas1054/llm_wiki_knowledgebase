@@ -2,9 +2,9 @@
 title: "Drive-JEPA: Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving"
 type: source-summary
 sources: [raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md]
-related: [sources/wa-jepa.md, sources/auto-jepa.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/foundation-backbones-for-ad.md, sources/latent-wam.md, sources/epona.md, sources/drivesuprim.md, sources/diffusiondrive.md, sources/ad-e2e-jepa.md, sources/redrive.md]
+related: [sources/world4scorer.md, sources/wa-jepa.md, sources/auto-jepa.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/foundation-backbones-for-ad.md, sources/latent-wam.md, sources/epona.md, sources/drivesuprim.md, sources/diffusiondrive.md, sources/ad-e2e-jepa.md, sources/redrive.md]
 created: 2026-05-01
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -200,6 +200,7 @@ This mechanism is important: in Table 5, adding MTD without momentum-aware selec
 - **AD-E2E-JEPA** ([[sources/ad-e2e-jepa.md]]) reuses this paper's perception-free baseline architecture for its transfer experiment, with DINOv3 in place of the V-JEPA encoder and a 16× compressing conv projector added. It extends the claim made here, that self-supervised predictive pretraining helps imitation planning, from the encoder to a small projector: 80.2 → 85.4 EPDMS (corrected evaluator) when the projector is pretrained inside an action-conditioned world model. Its zero-shot mode also reproduces the comfort failure this paper fixed with momentum-aware selection: per-frame vocabulary selection with no continuity term gives EC 35.5–43.8.
 
 - **ReDrive** ([[sources/redrive.md]]) is the direct successor to this paper's perception-free baseline, and uses Drive-JEPA as the comparison method in both of its qualitative figures. It keeps the recipe (V-JEPA 2 initialization, driving-video JEPA pretraining, a planner on the encoder with no perception labels) and changes three things: the encoder stays trainable, the decoder becomes a flow-matching Action DiT, and a trajectory-conditioned future predictor adds a JEPA loss during planner training. 91.0 PDMS against the 89.0 here. It cites the 89.0 row in its perception-free block, which is the correct row for that comparison. Its ablation puts a smaller price on driving-domain pretraining than this paper does: +0.3 to about +1.2 PDMS over stock V-JEPA 2, against the +2.9 in Table 7 here. Its encoder sweep agrees with Table 7 (V-JEPA 2 89.9, DINOv2 84.4, MAE 83.9) and, unlike this paper's, gives the image encoders the same driving pretraining.
+- *(2026-10-06)* [[sources/world4scorer.md]] carries a Drive-JEPA row not seen elsewhere in the wiki: **93.7 PDMS / 90.8 EPDMS**, with identical v1 and v2 ego progress (91.4) and EC 76.9, source unstated. It also builds the second continuity selector after this paper's momentum-aware one: the benchmark's own EC check against the previous selected plan (EC 77.0 → 92.8, +1.6 EPDMS). See [[concepts/selection-based-planning.md#world4scorer]].
 
 ## Limitations
 

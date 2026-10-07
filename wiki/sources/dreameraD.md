@@ -2,9 +2,9 @@
 title: "DreamerAD: Efficient Reinforcement Learning via Latent World Model for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md]
-related: [sources/epona.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/ad-e2e-jepa.md, concepts/selection-based-planning.md]
+related: [sources/raw2drive.md, sources/think2drive.md, sources/epona.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/ad-e2e-jepa.md, concepts/selection-based-planning.md]
 created: 2026-04-08
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -196,5 +196,7 @@ RL training primarily improves **collision avoidance behavior** — the model le
 | DriveFine | Masked diffusion GRPO | NAVSIM PDM | 90.7 | 87.1 (bugged) / 89.7 (fixed) |
 | FLARE | BC-GRPO | NAVSIM PDM | 91.4 | 86.3 |
 | **DreamerAD** | **Latent imagination GRPO** | **Latent AD-RM** | **88.7** | **87.7** |
+
+*(2026-10-06)* **An earlier latent-RL planner, in a different setting.** [[sources/think2drive.md]] (2024) trains a privileged BEV planner in CARLA v2 with DreamerV3: an RSSM world model with reward and termination heads, an actor-critic on 15-step imagined rollouts, and CARLA supplying new on-policy experience throughout. DreamerAD's world model is learned from fixed real logs and never sees the policy's own states, which is the main structural difference. See [[concepts/world-model-for-ad.md#latent-rl-carla]]. Its camera sequel, [[sources/raw2drive.md]], reports that a reward head trained on camera latents breaks training (Dev10 DS 83.5 → 46.6) and takes rewards from a privileged model instead; DreamerAD's learned reward on video latents is the counterexample, with denser multi-horizon targets.
 
 DreamerAD's PDMS of 88.7 is below FLARE (91.4), ReCogDrive (89.6), and WAM-Flow (90.3) on NAVSIM-v1. However, its EPDMS of 87.7 exceeds WorldRFT (86.7), DriveVLA-W0 (86.1), Senna-2 (86.6), and FLARE (86.3) on NAVSIM-v2 — strongest among world-model-based RL methods on the extended metric.

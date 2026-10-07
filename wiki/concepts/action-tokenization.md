@@ -1,10 +1,10 @@
 ---
 title: Action Tokenization and Codebooks
 type: concept
-sources: ["raw/papers/WALT_ Learning World-Model-Aligned Latent Trajectories for Autonomous Driving.md", "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md]
-related: [sources/walt.md, sources/grava.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, concepts/diffusion-planner.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, sources/autovla.md, sources/drivevla-w0.md, sources/linkvla.md, sources/nord.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md, sources/spanvla.md, sources/onedrive.md, sources/plan-r1.md]
+sources: ["raw/papers/RAD_ Training an End-to-End Driving Policy via Large-Scale 3DGS-based Reinforcement Learning.md", "raw/papers/WALT_ Learning World-Model-Aligned Latent Trajectories for Autonomous Driving.md", "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md]
+related: [sources/rad.md, sources/walt.md, sources/grava.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, concepts/diffusion-planner.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, sources/autovla.md, sources/drivevla-w0.md, sources/linkvla.md, sources/nord.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md, sources/spanvla.md, sources/onedrive.md, sources/plan-r1.md]
 created: 2026-05-01
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -54,6 +54,13 @@ OneDrive allocates one planning query per future timestep and initializes each w
 - The paper's analysis finds that high- and low-reward samples from the same scene **usually share a primitive**, so RL mostly tunes continuous parameters within a mode.
 - The design is closest to intent-plus-parameters schemes (see [[concepts/intent-conditioned-planning.md]]). Unlike a learned K-disk codebook (AutoVLA), its coverage is set by hand-chosen shape families. CRAWL keeps full waypoints because low-speed stop-and-go does not fit a smooth curve.
 
+
+## RAD Position: Two Independent Displacement Vocabularies for RL {#rad}
+
+[[sources/rad.md]] replaces a trajectory with one 0.5 s step and factorizes it: 61 lateral displacements (±0.75 m) and 61 longitudinal displacements (0–15 m), two independent softmaxes with separate value heads. Control comes from the step directly, assuming constant linear and angular velocity. Imitation targets are the nearest bins to the logged 0.5 s position (focal loss per axis).
+
+- **The factorization is what lets RL assign credit by event type**: longitudinal advantages from dynamic collisions, lateral ones from static collisions and deviation from the expert, clipped separately (ε = 0.2 and 0.1).
+- **Cost**: 3,721 joint actions as 122 logits, and no multi-second plan; the horizon lives in the value function (γ = 0.9). Compare the 30–39 discrete control actions of [[sources/think2drive.md]] and [[sources/raw2drive.md]], and the 2,048-entry trajectory codebooks above.
 
 ## WALT Position: a Continuous Trajectory Tokenizer, and Four Nulls {#walt}
 

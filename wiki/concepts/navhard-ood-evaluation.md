@@ -1,10 +1,10 @@
 ---
 title: Navhard and OOD Evaluation
 type: concept
-sources: ["raw/papers/Learning to Drive from a World Model.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md]
-related: [sources/learning-to-drive-from-a-world-model.md, concepts/data-driven-simulators.md, sources/momworld.md, sources/redrive.md, sources/physwam.md, sources/metis.md, sources/suv.md, sources/drivefuture.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, sources/drivefine.md, sources/spanvla.md, sources/had.md, sources/geowam.md, sources/drivelaw.md, sources/drivevla-w0.md, research-directions.md]
+sources: ["raw/papers/SimScale_ Learning to Drive via Real-World Simulation at Scale.md", "raw/papers/Learning to Drive from a World Model.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md]
+related: [sources/simscale.md, sources/learning-to-drive-from-a-world-model.md, concepts/data-driven-simulators.md, sources/momworld.md, sources/redrive.md, sources/physwam.md, sources/metis.md, sources/suv.md, sources/drivefuture.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, sources/drivefine.md, sources/spanvla.md, sources/had.md, sources/geowam.md, sources/drivelaw.md, sources/drivevla-w0.md, research-directions.md]
 created: 2026-05-01
-updated: 2026-10-02
+updated: 2026-10-06
 confidence: medium
 ---
 
@@ -16,7 +16,7 @@ Stage 1 evaluates the original scenes; Stage 2 evaluates synthetic reactive scen
 
 ## Why It Matters
 
-NAVSIM-v1 PDMS is saturated (Best-of-6 already matches human ground truth — see [[concepts/best-of-n.md]]) and navtest EPDMS is compressed into a few points at the top. Navhard is not close to saturated. The best combined score in the wiki is **55.5** ([[sources/drivefuture.md]]), the floor is 11.4, and the gap between methods is large enough to rank them.
+NAVSIM-v1 PDMS is saturated (Best-of-6 already matches human ground truth — see [[concepts/best-of-n.md]]) and navtest EPDMS is compressed into a few points at the top. Navhard is not close to saturated. The best combined score in the wiki is **55.5** ([[sources/drivefuture.md]]), the floor is 11.4, and the gap between methods is large enough to rank them. *(2026-10-06: a privileged reference now exists. PDM-Closed, run on ground-truth state with no images, scores **51.3** ([[sources/simscale.md]]). Three sensor-based entries are above it.)*
 
 **The ceiling moved a long way with one ingest.** Before [[sources/drivefuture.md]], this page's leaderboard came entirely from [[sources/geowam.md]] and topped out at 36.6. DriveFuture's Table 1 contains fourteen entries, five of them above 42, and **not one method in common with GeoWAM's table.** The reason is visible at a glance: every entry above 42 scores its own candidates. See [The Scorer-Equipped Cohort](#scorer-cohort).
 
@@ -43,7 +43,7 @@ From [[sources/drivefuture.md]] Table 1. All values are the **combined** two-sta
 |---|---|---:|:-:|---|
 | **DriveFuture + GTRS-Dense** | V2-99 | **55.5** | Yes | Latent world model + diffusion |
 | DrivoR *(not ingested)* | ViT-S | 54.6 | Yes | E2E |
-| SimScale *(not ingested)* | V2-99 | 53.2 | Yes | E2E |
+| [[sources/simscale.md]] | V2-99 | 53.2 | Yes | GTRS-Dense trained with 3DGS simulation data. **53.2 is not in the paper (v3)**: its best is a three-model ensemble at 50.9 and its best single model 48.0. The row's sub-scores are internally consistent; its source is unknown ([[sources/simscale.md#provenance]]) |
 | GTRS-E *(not ingested)* | V2-99+EVA-ViT-L+ViT-L | 49.4 | Yes | Selection-based |
 | ZTRS *(not ingested)* | V2-99 | 48.1 | Yes | Selection-based |
 | DiffVLA *(not ingested)* | V2-99 + ViT-L/14 | 45.0 | Yes | VLA |
@@ -58,11 +58,15 @@ From [[sources/drivefuture.md]] Table 1. All values are the **combined** two-sta
 | **DriveFuture, no scorer** | V2-99 | **34.6** | **No** | Latent world model + diffusion |
 | [[sources/redrive.md]] | V-JEPA 2 ViT-L + 103M action DiT | 34.4 | No | JEPA world model in training only; nothing predicted at inference |
 | World4Drive *(not ingested)* | ResNet-34 | 34.9 | No | Latent world model |
+| DiffusionDrive + SimScale data ([[sources/simscale.md]]) | ResNet-34, cameras only | 32.6 | No | Diffusion; PDM-Closed labels on 237K simulated off-log scenes. Real-only 27.5 |
+| LTF + SimScale data ([[sources/simscale.md]]) | ResNet-34, cameras only | 30.2 | No | Regression; same data. Real-only 24.4 in the table, about 27.5 in the paper's own figure |
 | MindDrive *(not ingested)* | ResNet-34 | 30.9 | No | World model + VLM |
 | Senna-E2E | ResNet-50 | 27.2 | No | E2E |
 | GuideFlow *(not ingested)* | ResNet-34 | 27.1 | No | Flow matching |
 | [[sources/diffusiondrive.md]] | ResNet-34 | 24.2 | No | Diffusion |
 | TransFuser | ResNet-34 | 23.1 | No | E2E |
+
+*Reference, not a sensor-based entry: PDM-Closed on ground-truth state scores **51.3** ([[sources/simscale.md]]).*
 
 **The split is almost perfectly clean.** Every method above 42 scores its candidates; every method below 35 does not. SpanVLA at 40.1 is the only unscored entry in the gap, and DriveFuture's unscored 34.6 sits with the world models it is competing against rather than with the leaderboard it tops. *(2026-09-30: [[sources/physwam.md]] adds two more entries to the gap, 38.1 and 39.8, and SUV's 36.9 was already there. The statement that survives is "every method above 42 scores its candidates with a learned scorer".)*
 
@@ -131,11 +135,11 @@ From [[sources/geowam.md]] Table 3. Methods marked † are trained with reinforc
 - *Mask*: at 320×384, letting future video read the action beats full isolation by +2.2 navhard, against +0.5 on navtest.
 - *Video prior*: Wan2.1-1.3B matches Wan2.2-5B on navtest but loses 2.4 on navhard.
 - Together with SUV's +4.1 access effect, **three same-backbone mechanisms are now invisible on navtest and visible on navhard**. That is the strongest case yet that navhard measures something navtest does not.
-- *Split size*: Metis describes navhard as **244 Stage-1 / 4,164 Stage-2** scenarios. SUV describes it as **450 / 5,462**, yet copies Metis's rows. Its DiffusionDrive (27.5) and LTF (24.4) baselines also differ from other papers' copies (24.2; 25.1). Treat cross-paper navhard comparisons as provisional until the split is pinned down.
+- *Split size*: Metis describes navhard as **244 Stage-1 / 4,164 Stage-2** scenarios. SUV describes it as **450 / 5,462**, yet copies Metis's rows. *(2026-10-06: [[sources/simscale.md]], whose authors include two names on the navhard benchmark paper, also gives 244 / 4,164.)* Its DiffusionDrive (27.5) and LTF (24.4) baselines also differ from other papers' copies (24.2; 25.1). Treat cross-paper navhard comparisons as provisional until the split is pinned down.
 
 **PhysWAM: the best unscored result outside RL, and three pieces of bookkeeping** ([[sources/physwam.md]]).
 - *Result*: 38.1 with one sample, 39.8 with the medoid of eight. Stage 1 is mid-table (77.0); Stage 2 is where it leads its table, with the best NC (83.9), DAC (80.2) and TTC (81.6). Stage-2 lane keeping is 48.9, in the usual band.
-- *Mechanism effect*: its depth–motion loss is worth +1.9 on navhard **and** +1.9 on navtest. This is the first mechanism on this page that is not larger on navhard, so the navtest-small / navhard-large pattern is a property of inference-path mechanisms (access, masks, prior scale), not of every world-model addition.
+- *Mechanism effect*: its depth–motion loss is worth +1.9 on navhard **and** +1.9 on navtest. This is the first mechanism on this page that is not larger on navhard, so the navtest-small / navhard-large pattern is a property of inference-path mechanisms (access, masks, prior scale), not of every world-model addition. *(lint 2026-10-06: nor is it specific to world models: [[sources/simscale.md]]'s training data, with no change to the model, gives the same shape, +0.8 to +2.9 on navtest against +5.1 to +8.6 on navhard. See [below](#simscale).)*
 - *A label-free selector*: choosing the sample nearest the other seven adds **+1.7** on navhard against +0.1 EPDMS on navtest. It needs no labels and no simulator. It is an order of magnitude below a learned scorer (+20.9) and it multiplies inference cost by eight.
 - *Comfort*: EC is 90.5 on navtest, 67.6 on Stage 1 and 54.4 on Stage 2 for the same model.
 - *Split size*: **450 Stage-1 / 5,462 Stage-2**. Two papers (SUV, PhysWAM) now say 450 / 5,462 against Metis's 244 / 4,164.
@@ -191,7 +195,7 @@ DiffusionDrive also appears with two values, 27.5 (Metis, copied from GTRS; Phys
 **Consequences, all conditional on the offset being real.**
 - [[sources/physwam.md]] compares its 38.1 against DriveFuture's unscored 34.6, which is a lineage-B number placed in a lineage-A table.
 - SpanVLA's 40.1 is also lineage B. Its lead over PhysWAM (38.1) and SUV (36.9) would then be understated by this page, not overstated.
-- A third LTF row exists: Metis copies an LTF from GTRS with different submetrics and 24.4. That is a different checkpoint, not a third aggregation.
+- A third LTF row exists: Metis copies an LTF from GTRS with different submetrics and 24.4. That is a different checkpoint, not a third aggregation. *(2026-10-06: this LTF row and Metis's DiffusionDrive 27.5 are digit-identical, on all 18 sub-scores and both stage scores, to the real-only baselines in [[sources/simscale.md]], which presents them as its own camera-only retrains at 2048×512. SimScale's own scaling figure starts LTF at about 27.5, not 24.4. So the 24.4 / 27.5 pair is a third lineage, SimScale/GTRS, and its LTF value is itself uncertain; see [[sources/simscale.md#baseline-provenance]].)*
 - 4D-WAM (35.9, not ingested) enters the wiki through PhysWAM's table. Its Stage-1 EP of 98.6 and Stage-2 EP of 97.6 are outliers by ten points and are worth checking at the source.
 
 ## Stage 2 Is Where Everything Collapses
@@ -233,6 +237,11 @@ The paragraph above generalized from GeoWAM's ten baselines, none of which score
 | SimScale | 95.8 | 60.1 | Yes |
 | ZTRS | 96.2 | 60.4 | Yes |
 | [[sources/spanvla.md]] | 94.2 | **62.3** | No |
+| LTF, real only ([[sources/simscale.md]]) | 92.9 | 47.9 | No |
+| **LTF + simulated off-log data** ([[sources/simscale.md]]) | 93.6 | **58.3** | **No** |
+| DiffusionDrive, real only ([[sources/simscale.md]]) | 96.7 | 46.4 | No |
+| **DiffusionDrive + simulated off-log data** ([[sources/simscale.md]]) | 98.0 | **60.8** | **No** |
+| *PDM-Closed, ground-truth state, no images* ([[sources/simscale.md]]) | *99.3* | ***73.7*** | *Rule-based* |
 
 **The 45-50 band was a property of the sample, not of the benchmark.** Stage-2 lane keeping ranges from 45.4 to 62.3 here — a 17-point spread against the "under 5 points" this page previously recorded — and the ordering tracks candidate scoring almost perfectly. DriveFuture supplies the controlled version: **the same checkpoint moves 47.6 to 58.3 by adding a scorer and changing nothing else.**
 
@@ -241,6 +250,26 @@ Two things survive the correction, and one does not:
 - **Survives**: every method still loses roughly 35-45 points of lane keeping between stages. Stage 2 is genuinely much harder, and nothing here approaches its own Stage-1 number.
 - **Survives**: the open question below about whether part of the drop is a 3DGS rendering artifact. A scorer that evaluates candidates against map geometry would partly compensate for a degraded *observation*, which is consistent with both explanations rather than deciding between them.
 - **Does not survive**: "methods that look clearly separated collapse toward a common failure mode." They separate by 17 points on the metric that was supposed to show the collapse, and the separating variable is selection.
+- *(2026-10-06)* **Selection is not the only variable that separates them.** [[sources/simscale.md]] moves two *unscored* planners out of the band with training data alone: LTF 47.9 → 58.3 and DiffusionDrive 46.4 → 60.8, by co-training on 3DGS-rendered off-log states with corrective labels. SpanVLA (62.3, unscored) trains with negative-recovery samples. The better summary is that **Stage-2 lane keeping rises with anything that exposes the planner to off-log states or ranks candidates against the map**.
+- *(2026-10-06)* **A planner that never sees a rendered image still loses 25.6 points of Stage-2 LK.** PDM-Closed on ground-truth state goes 99.3 → 73.7, with NC, DAC and TTC also down 6–10 points. A sizeable part of the drop is therefore in the Stage-2 scenarios, not in the rendering. See [below](#simscale).
+
+## SimScale: Training Data Moves navhard, and a Privileged Planner Prices the Stage-2 Drop {#simscale}
+
+[[sources/simscale.md]] adds no architecture. It co-trains existing planners on 147K–237K 3DGS-rendered scenes in which the ego has been pushed off the log and a pseudo-expert says how to continue. Cameras only, 2048×512, single runs.
+
+| Planner | Scores? | Real only | + simulated data | Stage-1 / Stage-2 per-stage gain | navtest gain (pre-fix) |
+|---|:-:|---:|---:|---|---:|
+| LTF | No | 24.4 | 30.2 | +5.0 / +5.6 | +2.9 |
+| DiffusionDrive | No | 27.5 | 32.6 | +0.8 / +6.3 | +1.7 |
+| GTRS-Dense (ResNet-34) | Yes | 38.3 | 46.9 | +5.3 / +7.6 | +2.3 |
+| GTRS-Dense (V2-99) | Yes | 41.9 | 48.0 (ensemble of three: 50.9) | +2.1 / +6.9 | +0.8 |
+
+**What it adds to this page.**
+- **A training-data effect several times larger on navhard than on navtest**, like the inference-path mechanisms above (SUV's access, Metis's mask), and for all three planner families. It is the first such effect that needs no change to the model.
+- **Stage 2 gains most in every planner.** Stage 2 is rendered by 3DGS at displaced poses, and SimScale trains on 3DGS renders at displaced poses. Recovery and renderer familiarity are not separated, and the training engine (MTGS) and the benchmark paper share two author names with SimScale. See [[concepts/data-driven-simulators.md#shortcut]].
+- **PDM-Closed is the first pixel-free reference on this page**: 51.3 combined, with Stage-2 LK 73.7 against 99.3 in Stage 1. Learned planners trained on real data lose 37–50 points of LK in the same table; the privileged planner loses 25.6.
+- **Its numbers need care.** Every GTRS-Dense value in its tables is 0.5–1.9 above the highest point plotted for the same configuration in its own scaling figure; the abstract's +8.6 becomes about +6.7 on the plotted runs. See [[sources/simscale.md#figure-table]].
+- **Scorer and data compound.** The scorer (GTRS-Dense) gains the most in absolute terms (+6.1 to +8.6), so simulation data does not substitute for selection here; it adds to it.
 
 ## Per-Stage Reports
 
@@ -259,12 +288,12 @@ SpanVLA's 40.1 combined EPDMS on navhard against 86.4 on navtest remains the wik
 *Wiki-wide open questions are collected in [[research-directions.md]].*
 
 - **Does the combined/per-stage split hide a real ranking?** DriveFine's 74.4/41.0 converts to roughly 30.5, which would place it below DVGT-2 and DriveLaW — but the conversion is an approximation. The [product check](#does-the-combined-score-really-multiply-the-stages) now bounds the error at roughly 0.5-3 points, so the conversion is usable as a sanity check and still not as a leaderboard entry. Someone reporting both conventions for one checkpoint would settle it in one run.
-- **How much of any navhard result is the generator and how much is the selector?** [[sources/drivefuture.md]] is the only paper that answers this for its own model: +20.9 of its 55.5 is a GTRS-Dense scorer, against +3.7 for the world model it is named after. Every other entry above 42 also scores, and none reports an unscored ablation. **Until a second paper reports both, navhard rankings should be read as rankings of selection pipelines.**
+- **How much of any navhard result is the generator and how much is the selector?** *(2026-10-06: a third ingredient is now priced. Training data alone, with no scorer, is worth +5.1 to +5.8 for two planners in [[sources/simscale.md]], and +6.1 to +8.6 on top of an existing scorer.)* [[sources/drivefuture.md]] is the only paper that answers this for its own model: +20.9 of its 55.5 is a GTRS-Dense scorer, against +3.7 for the world model it is named after. Every other entry above 42 also scores, and none reports an unscored ablation. **Until a second paper reports both, navhard rankings should be read as rankings of selection pipelines.**
 - **Does future-conditioning survive a strong scorer?** DriveFuture's ablations are all run without one, and its scored Stage-1 safety metrics are near-saturated (NC 99.8, DAC 99.8, DDC 100.0). A +3.7 proposal-quality gain has very little room left to express itself there. The experiment is one run of an existing configuration. *(2026-09-30: [[sources/momworld.md]] is the first entry that puts a predicted future inside a strong scorer. It is +1.1 over GTRS-Dense's published score, with NC and TTC lower and EP higher. The base is a published number and not a matched rerun, and the paper's ablations cannot be used, so the question stays open. The sign of the sub-score change is worth noting: future conditioning bought progress, not safety.)*
 - **Why does world modeling help eight times more on navhard than navtest?** GeoWAM's +0.6 / +4.9 split over DVGT-2 is the only measurement of this in the wiki, from a single paper with no ablations. *(Lint 2026-09-30: no longer the only one. SUV (+0.3 / +4.1 for future access) and Metis (+0.5 / +2.2 for the mask, ≈0 / +2.4 for prior scale) show the same asymmetry on one backbone, and [[sources/physwam.md]]'s geometric loss is the first exception at +1.9 / +1.9.)* If it replicates, it reframes what world-model pretraining is *for* — robustness under compounding error rather than open-loop accuracy — and implies navtest is the wrong benchmark for evaluating it.
-- **Is Stage 2 lane-keeping collapse a planner failure or a rendering artifact?** Every method including constant velocity loses 35-45 points of LK, which is suspicious. If 3DGS renderings degrade as the ego pose leaves the recorded trajectory, part of the drop measures the benchmark rather than the planner. No paper has separated these. The [scoring correction](#lk-correction) narrows the question rather than answering it: a candidate scorer recovers 10 points of Stage-2 LK on a fixed checkpoint, which is compatible with either explanation. *(2026-10-02: the mechanism exists in a related renderer. [[sources/learning-to-drive-from-a-world-model.md]] reports that reprojected views degrade with the ego's offset from the log (its simulator is kept under 4 m), that the artifacts correlate with the offset strongly enough for a policy to read them, and that night lighting fails first. That is reprojection, not 3DGS, and a training-time observation, so it shows the explanation is plausible, not that it applies here. See [[concepts/data-driven-simulators.md#failure-modes]].)*
+- **Is Stage 2 lane-keeping collapse a planner failure or a rendering artifact?** Every method including constant velocity loses 35-45 points of LK, which is suspicious. *(2026-10-06: partly answered. PDM-Closed, which plans on ground-truth state and sees no rendering, loses 25.6 points (99.3 → 73.7; [[sources/simscale.md]]). So at least that much of the drop is in the Stage-2 scenarios. The remaining 10–25 points for learned planners are unexplained, and co-training on 3DGS renders of off-log states recovers about 10–14 of them for unscored planners, which again fits both explanations.)* If 3DGS renderings degrade as the ego pose leaves the recorded trajectory, part of the drop measures the benchmark rather than the planner. No paper has separated these. The [scoring correction](#lk-correction) narrows the question rather than answering it: a candidate scorer recovers 10 points of Stage-2 LK on a fixed checkpoint, which is compatible with either explanation. *(2026-10-02: the mechanism exists in a related renderer. [[sources/learning-to-drive-from-a-world-model.md]] reports that reprojected views degrade with the ego's offset from the log (its simulator is kept under 4 m), that the artifacts correlate with the offset strongly enough for a policy to read them, and that night lighting fails first. That is reprojection, not 3DGS, and a training-time observation, so it shows the explanation is plausible, not that it applies here. See [[concepts/data-driven-simulators.md#failure-modes]].)*
 - **Does RL help here?** Three of the four methods above 31 use RL or PDMS-score supervision, but GeoWAM tops them without it. *(Lint 2026-09-30: this counts [[sources/geowam.md]]'s table only, which contains no candidate-scoring method; see the scope note on that table.)* With margins of 0.5–2.5 points and single runs, the wiki cannot say whether RL buys OOD robustness.
 
 ## Lint Rule
 
-When a paper claims NAVSIM progress, check whether it reports navhard or another OOD split. If not, mark the claim as standard-split only. If it does, **check which reporting convention it uses** before placing the number — and **check whether the number includes a trajectory scorer**, which on this split is worth several times what any published architectural mechanism is worth. Then **check the table's top row against the [cohort table](#scorer-cohort)**: two ingested navhard tables omit the whole cohort above them ([[sources/redrive.md]]'s stops at 32.2 and [[sources/momworld.md]]'s at 42.1).
+When a paper claims NAVSIM progress, check whether it reports navhard or another OOD split. If not, mark the claim as standard-split only. If it does, **check which reporting convention it uses** before placing the number — and **check whether the number includes a trajectory scorer**, which on this split is worth several times what any published architectural mechanism is worth. Then **check whether the training data includes rendered off-log states** (as in [[sources/simscale.md]]), which moves navhard several points with no change to the model. Then **check the table's top row against the [cohort table](#scorer-cohort)**: two ingested navhard tables omit the whole cohort above them ([[sources/redrive.md]]'s stops at 32.2 and [[sources/momworld.md]]'s at 42.1).

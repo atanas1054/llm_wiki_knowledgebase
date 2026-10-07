@@ -2,9 +2,9 @@
 title: "MM-Future: Multi-Mode Joint World–Action Modeling for Autonomous Driving"
 type: source-summary
 sources: ["raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md"]
-related: [concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, concepts/diffusion-planner.md, concepts/foundation-backbones-for-ad.md, concepts/counterfactual-prediction.md, concepts/evaluation-variance.md, sources/da-wam.md, sources/drivefuture.md, sources/latent-wam.md, sources/wa-jepa.md, sources/physwam.md, sources/drivesuprim.md, sources/metis.md, sources/suv.md, sources/simwam.md, sources/ad-e2e-jepa.md, sources/redrive.md, sources/momworld.md, sources/lwdrive.md, sources/hydra-mdp-pp.md, sources/drivereferee.md]
+related: [sources/world4scorer.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, concepts/diffusion-planner.md, concepts/foundation-backbones-for-ad.md, concepts/counterfactual-prediction.md, concepts/evaluation-variance.md, sources/da-wam.md, sources/drivefuture.md, sources/latent-wam.md, sources/wa-jepa.md, sources/physwam.md, sources/drivesuprim.md, sources/metis.md, sources/suv.md, sources/simwam.md, sources/ad-e2e-jepa.md, sources/redrive.md, sources/momworld.md, sources/lwdrive.md, sources/hydra-mdp-pp.md, sources/drivereferee.md]
 created: 2026-09-30
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: medium
 ---
 
@@ -358,6 +358,7 @@ Chained from Table 3 and Table 2 (navtrain, v1 PDMS):
 - **[[sources/momworld.md]]**: the opposite choice, one action-free future shared by 16,384 candidates.
 - **[[sources/hydra-mdp-pp.md]]**: the origin of scorer heads trained on simulator sub-scores.
 - **Not ingested**: MeanFuser (the Gaussian-mixture noise prior), UniTeD, IRR-Drive, GraphWorld, MAP-World, IDOL, SeerDrive, DAWN, Discrete-WAM, ForgeDrive, SparseWorld.
+- *(2026-10-06)* [[sources/world4scorer.md]] is built on the same DrivoR stack (DINOv2-S, LoRA, register tokens), trains on navtrain, and reaches **94.0 PDMS**, matching this paper's trainval number. Its table prints DrivoR at 93.7, the value this paper gives for DrivoR trained on trainval. It supervises every candidate's state with simulator outcomes where this paper supervises only the winning pair's future. See [[concepts/world-model-for-ad.md#outcome-grounded-scorer]].
 
 ---
 

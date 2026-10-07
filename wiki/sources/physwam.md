@@ -4,7 +4,7 @@ type: source-summary
 sources: ["raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md"]
 related: [sources/drivereferee.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/best-of-n.md, concepts/selection-based-planning.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/teacher-pseudo-labels.md, concepts/foundation-backbones-for-ad.md, concepts/wam-attention-masks.md, sources/geowam.md, sources/geoworldad.md, sources/drivedreamer-policy.md, sources/suv.md, sources/wa-jepa.md, sources/simwam.md, sources/metis.md, sources/drivefuture.md, sources/coworld-vla.md, sources/reworld.md, sources/ad-e2e-jepa.md, sources/adaptive-wam.md, sources/spanvla.md, sources/latent-wam.md, sources/hydra-mdp-pp.md]
 created: 2026-09-30
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: medium
 ---
 
@@ -557,7 +557,7 @@ The two evaluators define time-to-collision and ego progress differently, which 
 | TransFuser | 76.7 | +1.3 | pre-fix |
 | Hydra-MDP++ (R34) | 81.4 | +2.2 | pre-fix |
 | DriveSuprim (R34) | 83.1 | +2.3 | pre-fix |
-| DiffusionDrive | 84.5 | +2.5 | pre-fix-like (a known exception) |
+| DiffusionDrive | 84.5 | +2.5 | pre-fix-like (filed as an exception until 2026-10-06; now read as the pre-fix value, see [[concepts/navsim-benchmark.md#world4scorer]]) |
 | LTF | 83.6 | −1.1 | corrected-like |
 | DriveVLA-W0 (anchors) | 86.1 | −1.3 | corrected-like (a known exception) |
 | DriveDreamer-Policy | 88.7 | −0.9 | corrected-like |

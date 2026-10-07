@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md]
 related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/selection-based-planning.md, concepts/dual-system-vla.md, concepts/nuscenes-waymo-evals.md, concepts/rl-for-ad.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/simwam.md, sources/drivelaw.md, sources/da-wam.md, sources/wcog-vla.md, sources/onevl.md, sources/flare.md, sources/drivevla-w0.md, sources/drivesuprim.md, sources/hybriddriveVLA.md, sources/clear.md, sources/drive-jepa.md, sources/sgdrive.md, sources/recogdrive.md, sources/epona.md, sources/diffusiondrive.md, sources/autovla.md, sources/wa-jepa.md, sources/geowam.md, sources/wam-diff.md, sources/dynvla.md, sources/diffusiondrive-v2.md, sources/senna2.md, sources/drivewam.md]
 created: 2026-09-04
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -191,7 +191,7 @@ $\beta$, $\lambda_{\mathrm{ref}}$, and $\lambda_{\mathrm{score}}$ are unreported
 
 The 89.6 EPDMS sits **0.7 below the Human Agent's 90.3** in its own table — the second-closest approach to the human reference this wiki records on v2, after [[sources/adaptive-wam.md]]'s 0.4.
 
-**This table is the sixth ingested table shown to mix evaluator conventions**, and it mixes them the same way [[sources/geoworldad.md]]'s does: TransFuser 76.7, ARTEMIS 83.1, and DriveVLA-W0 86.1 are pre-fix values, while DiffusionDrive 84.5 and DriveWorld-VLA 86.8 are corrected ones, and DriveSuprim 83.1 / Hydra-MDP++ 81.4 match neither cohort (this wiki carries 87.1 and 84.1). See [Evaluator Drift](../concepts/navsim-benchmark.md#evaluator-drift-this-table-mixes-two-protocols).
+**This table is the sixth ingested table shown to mix evaluator conventions**, and it mixes them the same way [[sources/geoworldad.md]]'s does: TransFuser 76.7, ARTEMIS 83.1, and DriveVLA-W0 86.1 are pre-fix values, while DiffusionDrive 84.5 and DriveWorld-VLA 86.8 are corrected ones, and DriveSuprim 83.1 / Hydra-MDP++ 81.4 match neither cohort (this wiki carries 87.1 and 84.1). *(lint 2026-10-06: both "corrected" rows named here carry pre-fix-like residuals (+2.5, +2.6), and DiffusionDrive 84.5 is now read as the pre-fix value ([[concepts/navsim-benchmark.md#world4scorer]]). If DriveWorld-VLA's label is wrong for the same reason, this table does not mix.)* See [Evaluator Drift](../concepts/navsim-benchmark.md#evaluator-drift-this-table-mixes-two-protocols).
 
 **Every overlapping row is digit-identical to GeoWorldAD's table** — TransFuser, DriveSuprim, DiffusionDrive, and DriveVLA-W0 all match across nine submetrics. The two papers evidently drew from the same source. That does not validate either, but it does mean **LWDrive's 89.6 and GeoWorldAD's 90.4 sit in the same reference frame** and can be compared with each other: GeoWorldAD is 0.8 ahead.
 

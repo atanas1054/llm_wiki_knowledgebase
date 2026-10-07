@@ -2,9 +2,9 @@
 title: "Plan-R1: Safe and Feasible Trajectory Planning as Language Modeling"
 type: source-summary
 sources: [raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md]
-related: [concepts/rl-for-ad.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/inference-time-safety.md, concepts/r1-zero-like-training.md]
+related: [concepts/nuplan-benchmark.md, concepts/rl-for-ad.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md, concepts/inference-time-safety.md, concepts/r1-zero-like-training.md]
 created: 2026-06-18
-updated: 2026-06-18
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -12,7 +12,7 @@ confidence: high
 
 Plan-R1 frames trajectory planning like language modeling: pretrain an autoregressive motion-token predictor on expert driving, then fine-tune the ego policy with rule-based rewards for safety, comfort, speed compliance, and progress. The paper's main technical contribution is **Variance-Decoupled GRPO (VD-GRPO)**, a GRPO variant that removes per-group reward standard-deviation normalization so rare unsafe groups are not downweighted.
 
-The system is not a VLM. It is a compact tokenized trajectory planner evaluated on nuPlan, but it is highly relevant to the wiki's GRPO/R1 thread because it gives a concrete autonomous-driving failure mode for standard group-normalized advantages.
+The system is not a VLM. It is a compact tokenized trajectory planner evaluated on nuPlan ([[concepts/nuplan-benchmark.md]]), but it is highly relevant to the wiki's GRPO/R1 thread because it gives a concrete autonomous-driving failure mode for standard group-normalized advantages.
 
 ## Key Takeaways
 

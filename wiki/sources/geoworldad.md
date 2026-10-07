@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md]
 related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/perception-for-planning.md, concepts/selection-based-planning.md, sources/geowam.md, sources/adaptive-wam.md, sources/drivelaw.md, sources/da-wam.md, sources/simwam.md, sources/foresight.md, sources/brainwam.md, sources/latent-wam.md, sources/epona.md, sources/drivevla-w0.md, sources/wa-jepa.md, sources/drive-jepa.md, sources/drivesuprim.md, sources/diffusiondrive.md, sources/sgdrive.md, sources/deepsight.md]
 created: 2026-09-04
-updated: 2026-09-04
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -250,7 +250,7 @@ GeoWorldAD's v2 table **shares GeoWAM's two headline anchors exactly** — DVGT-
 
 This narrows the wiki's [GeoWAM protocol warning](../concepts/navsim-benchmark.md#three-protocols) considerably. The economical explanation is no longer "GeoWAM is on a third protocol" but "**GeoWAM's Transfuser and DiffusionDrive rows are anomalous while its DVGT-2 and EponaV2 rows are sound**" — because a second, independent paper reproduces the latter pair digit-for-digit and the standard pair alongside them. Tally on Transfuser is now **four papers to one** (WA-JEPA, Drive-JEPA, DA-WAM, GeoWorldAD vs. GeoWAM).
 
-Practically: **GeoWAM's 90.2 and GeoWorldAD's 90.4 are comparable to each other**, both anchored on DVGT-2 89.6. This does not rescue the wiki's global corrected/pre-fix partition — GeoWorldAD's own table still pairs a pre-fix Transfuser (76.7) with a corrected DiffusionDrive (84.5) — but it removes GeoWAM from "cannot be placed at all."
+Practically: **GeoWAM's 90.2 and GeoWorldAD's 90.4 are comparable to each other**, both anchored on DVGT-2 89.6. This does not rescue the wiki's global corrected/pre-fix partition — GeoWorldAD's own table still pairs a pre-fix Transfuser (76.7) with a corrected DiffusionDrive (84.5) — but it removes GeoWAM from "cannot be placed at all." *(lint 2026-10-06: reversed in part. [[sources/world4scorer.md]] prints DiffusionDrive at 88.2 on near-identical sub-scores, as GeoWAM did, so 84.5 now reads as pre-fix and GeoWAM's two rows as the corrected ones. Whether this table mixes then depends on its DVGT-2 and EponaV2 rows. See [[concepts/navsim-benchmark.md#world4scorer]].)*
 
 ---
 
@@ -297,7 +297,7 @@ Practically: **GeoWAM's 90.2 and GeoWorldAD's 90.4 are comparable to each other*
 
 11. **Does not cite [[sources/geowam.md]]** — a contemporaneous paper with the same name-space, the same thesis, the same ancestor, and a score 0.2 lower.
 
-12. **The v2 table mixes evaluator conventions** by this wiki's partition (Transfuser 76.7 pre-fix, DiffusionDrive 84.5 corrected) — the fifth ingested table shown to do so.
+12. **The v2 table mixes evaluator conventions** by this wiki's partition (Transfuser 76.7 pre-fix, DiffusionDrive 84.5 corrected) — the fifth ingested table shown to do so. *(lint 2026-10-06: under the current reading DiffusionDrive 84.5 is pre-fix too, so this item rests on the DVGT-2 and EponaV2 rows, not on the pair named here.)*
 
 ---
 

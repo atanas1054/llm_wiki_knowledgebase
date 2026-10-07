@@ -2,9 +2,9 @@
 title: "GeoWAM: Visual Geometry World Action Models for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md]
-related: [sources/walt.md, sources/geoworldad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/perception-for-planning.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/drive-jepa.md, sources/latent-wam.md, sources/sgdrive.md, sources/drivelaw.md, sources/simwam.md, sources/policy-world-model.md, sources/epona.md, sources/drivevla-w0.md, sources/deepsight.md, sources/physwam.md]
+related: [sources/world4scorer.md, sources/walt.md, sources/geoworldad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/perception-for-planning.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/drive-jepa.md, sources/latent-wam.md, sources/sgdrive.md, sources/drivelaw.md, sources/simwam.md, sources/policy-world-model.md, sources/epona.md, sources/drivevla-w0.md, sources/deepsight.md, sources/physwam.md]
 created: 2026-09-02
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -248,6 +248,7 @@ Three things this table shows better than anything else in the wiki:
 - **[[sources/physwam.md]]** — the first paper to take GeoWAM as its main baseline, and the opposite choice on the design this page flags as unablated. GeoWAM blocks the trajectory loss from reaching the predicted geometry. PhysWAM adds a loss whose gradient reaches both: generated metric depth, moved by the generated ego motion, is compared with LiDAR moved by the recorded motion. With an ablation GeoWAM lacks, that loss is worth +1.9 EPDMS on navtest and +1.9 on navhard. PhysWAM reports 38.1 navhard against the 36.6 here and 90.3 against 90.2 on navtest, at 9.4 GPU-seconds per plan on a 15.2B model. Three notes for this page: (1) its future-depth comparison quotes this paper's nuScenes numbers (0.245 / 0.297 AbsRel at +2 s / +4 s) against its own NAVSIM numbers (0.175 / 0.232), and labels the datasets as different; (2) it names the row this page calls "DVGT-2 89.6" as **DVGT-2-NAVSIM**, with a separate generic DVGT-2 at 88.9; (3) it traces the **LTF 25.1** navhard value in this paper's table to the benchmark paper via EponaV2, so it is not GeoWAM's own aggregation. See [[concepts/navhard-ood-evaluation.md#two-lineages]].
 - **[[sources/walt.md]]** — the second table to carry this page's DriveVLA-W0 v2 row (86.9, EC 82.7) in place of the usual 86.1 / EC 58.9 row, which suggests a shared source in EponaV2's paper. WALT also gives EponaV2 *without* RL: 87.3 EPDMS with EC 68.3, against the 88.9 / EC 77.4 row here.
 - **Six un-ingested methods** appear here at or near the top: **DVGT-2** (89.6 navtest / 31.7 navhard) is now the most consequential gap in the wiki, followed by **EponaV2** (88.9 / 36.1), **NavFormer** (34.1), **LTFv6/LEAD** (31.9), **VGGT-World**, and **DVGT**. Uber AV Labs' own **VLGA** and **UniDrive-WM** are cited but not evaluated against.
+- *(2026-10-06)* **[[sources/world4scorer.md]] prints the same DiffusionDrive 88.2 row** (identical to this page's on six sub-scores and within 0.3 on LK, HC and EC; residual −0.9) and the same WoTE row, without citing GeoWAM, and a TransFuser 83.9 on different sub-scores. The likelier reading is now that 88.2 is DiffusionDrive's corrected score, and that this table's TransFuser 84.0 is a corrected aggregate printed beside the pre-fix sub-scores. The rest of the warning above stands. See [[concepts/navsim-benchmark.md#world4scorer]].
 
 ## Limitations
 

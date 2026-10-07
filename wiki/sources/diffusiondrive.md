@@ -2,9 +2,9 @@
 title: "DiffusionDrive: Truncated Diffusion Model for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DiffusionDrive_ Truncated Diffusion Model for End-to-End Autonomous Driving.md]
-related: [concepts/diffusion-planner.md, concepts/navsim-benchmark.md, sources/recogdrive.md, sources/wam-flow.md, sources/drivefine.md]
+related: [sources/simscale.md, concepts/diffusion-planner.md, concepts/navsim-benchmark.md, sources/recogdrive.md, sources/wam-flow.md, sources/drivefine.md]
 created: 2026-04-15
-updated: 2026-04-15
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -194,6 +194,10 @@ Saturates at 2 stages (chosen for efficiency). 4 stages: marginal +0.1 PDMS at h
 More samples = better coverage of action space. 20 is the standard choice; 40 gives marginal gain.
 
 ---
+
+## Later Results With This Planner
+
+*(2026-10-06)* [[sources/simscale.md]] retrains DiffusionDrive camera-only at 2048×512 (LiDAR removed) and co-trains it on 3DGS-simulated off-log scenes labelled by PDM-Closed: navhard 27.5 → 32.6 combined EPDMS, navtest 84.2 → 85.9 (pre-fix evaluator). Its scaling curve keeps rising where a regression planner of similar size (LTF) flattens, which the paper attributes to the multimodal head; see [[concepts/diffusion-planner.md#multimodal-scaling]].
 
 ## Limitations
 

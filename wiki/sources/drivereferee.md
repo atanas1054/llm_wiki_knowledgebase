@@ -4,7 +4,7 @@ type: source-summary
 sources: ["raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md"]
 related: [concepts/inference-time-safety.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, concepts/discriminative-policy-optimization.md, concepts/evaluation-variance.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/perception-for-planning.md, concepts/inference-latency.md, concepts/foundation-backbones-for-ad.md, sources/physwam.md, sources/drivefuture.md, sources/feaxdrive.md, sources/reflectdrive.md, sources/hydra-mdp-pp.md, sources/plan-r1.md, sources/adaptive-wam.md, sources/reworld.md, sources/metis.md, sources/suv.md, sources/wa-jepa.md, sources/da-wam.md]
 created: 2026-09-30
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -281,7 +281,7 @@ The two "ours" rows share navtest scenes, protocol and seeds. Prior-work values 
 | Selection on the distilled policy | 0.08 | 0.04 |
 
 - An unpaired difference of two navtest means has an SE of about 0.23 (from the per-scene SD of about 18 in [[sources/suv.md]]). Pairing on scenes roughly halves it for two different checkpoints.
-- These intervals cover scene sampling. They do not cover training-seed variance, which no paper has measured.
+- These intervals cover scene sampling. They do not cover training-seed variance, which no paper has measured. *(lint 2026-10-06: [[sources/foredrive.md]] has since measured it once: sd 0.1 PDMS over three retrainings of a 118M planner.)*
 - See [[concepts/evaluation-variance.md#paired-ci]].
 
 ### 6. Against PhysWAM, the same group's previous paper {#vs-physwam}

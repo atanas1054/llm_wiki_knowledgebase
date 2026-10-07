@@ -1,10 +1,10 @@
 ---
 title: Selection-Based Trajectory Planning
 type: concept
-sources: ["raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", "raw/papers/Hydra-MDP++_ Advancing End-to-End Driving via Expert-Guided Hydra-Distillation.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
-related: [sources/mm-future.md, sources/drivereferee.md, sources/momworld.md, sources/physwam.md, sources/ad-e2e-jepa.md, concepts/world-model-for-ad.md, concepts/inference-latency.md, sources/hydra-mdp-pp.md, sources/drivefuture.md, concepts/navhard-ood-evaluation.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/lwdrive.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/da-wam.md, sources/auto-jepa.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, sources/pair-drive.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md]
+sources: ["raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/SimScale_ Learning to Drive via Real-World Simulation at Scale.md", "raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", "raw/papers/Hydra-MDP++_ Advancing End-to-End Driving via Expert-Guided Hydra-Distillation.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
+related: [sources/world4scorer.md, sources/simscale.md, sources/mm-future.md, sources/drivereferee.md, sources/momworld.md, sources/physwam.md, sources/ad-e2e-jepa.md, concepts/world-model-for-ad.md, concepts/inference-latency.md, sources/hydra-mdp-pp.md, sources/drivefuture.md, concepts/navhard-ood-evaluation.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/lwdrive.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/da-wam.md, sources/auto-jepa.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, sources/pair-drive.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md]
 created: 2026-04-23
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -73,6 +73,7 @@ The vocabulary contains thousands of obviously bad trajectories ("easy negatives
 | [[sources/drivesuprim.md]] | Coarse pass discards easy negatives from an 8192 vocabulary | Stage 2 scores the surviving 256 at higher precision | part of 93.5 |
 | [[sources/da-wam.md]] | Retrieved safety-critical trajectories | Extra training rows for the candidate scorer | **+0.22** |
 | [[sources/reworld.md]] | 64 generated candidates per scene scored by the **NAVSIM PDM simulator**; take the *nearest* one below 0.6 | **Repulsive loss on a flow-matching planner's own output** — no candidate set, no scorer | **+0.7** |
+| [[sources/world4scorer.md]] | A scene-matched bank of perturbed trajectories with precomputed simulator labels (CLOVER's); 16 of about 54 per scene sampled per step | Extra outcome-labelled rows for the scorer at half weight; the bank is 35% low-scoring where generated candidates are 12% | **Not measured at full scale**; permuting the bank's labels on 512 scenes drops ordering accuracy 64.2% → 55.6% |
 
 ReWorld's variant is the odd one out and the most transferable. It converts hard negatives from *scorer training data* into a **regularizer on a generative policy**: recover $\hat a_0$ from the same forward pass and the same $t_a$ already used by the flow-matching loss, map both trajectories to a delta representation $[\widetilde{\Delta x},\widetilde{\Delta y},\sin\psi,\cos\psi]$, and maximize L1 distance while $\mathcal{L}_{\mathrm{FM}}$ anchors to the expert. Cost is zero extra forward passes, and nothing about a candidate pool survives to inference.
 
@@ -112,6 +113,8 @@ Safety scores are {0,1} per metric. BCE against binary labels creates sharp trai
 | **MomWorld** ([[sources/momworld.md]]) | 16,384 (GTRS-Dense base; half dropped per training step) | Hydra-style multi-head scorer (imitation, NC, DAC, TTC, EP, DDC, LK, TLC) whose candidate queries also attend to a **40-token latent future memory shared by all candidates** | The selected plan is then moved by a residual flow and **not re-scored**; 90.2 PDMS, 42.8 navhard (+1.1 over GTRS-Dense); see [below](#future-memory-scorer) |
 | **DriveReferee** ([[sources/drivereferee.md]]) | 1 default sample, plus 1 more on an alarm (34% of scenes) | **No learned scorer.** The evaluator's collision and drivable-area geometry, executed on a predicted BEV map; ranks by violation count, then clearance | Selection is worth +0.30 EPDMS on the base policy and nothing after the same rule is distilled into the policy; 92.02 PDMS; see [below](#computed-verdict) |
 | **MM-Future** ([[sources/mm-future.md]]) | 64 jointly generated trajectory–future pairs (32 in its ablation) | Heads for the PDMS components trained on simulator scores of the sampled trajectories; each proposal reads the history and **its own generated future** (block-diagonal attention) | Many modes plus a history-only scorer: +8.2 over one trajectory; reading the paired future: +0.4; 93.4 PDMS on navtrain, 94.0 on trainval; see [below](#mm-future) |
+| **World4Scorer** ([[sources/world4scorer.md]]) | DrivoR's 64 generated candidates, plus 16 bank trajectories per step at training | A 4-block **trajectory-conditioned predictor** gives each candidate a state; heads for NC, DAC, DDC, TTC, EP, C read it. Simulator outcomes supervise every candidate's state; one observed +2 s front-view feature supervises the logged trajectory's state; then the evaluator's EC check against the previous plan re-ranks | **94.0 PDMS** (navtrain), 91.4 → **93.0 EPDMS** with re-ranking; scorer alone +0.50 PDMS on DrivoR's fixed pool; see [below](#world4scorer) |
+| **GTRS-Dense + SimScale data** ([[sources/simscale.md]]) | 16,384 at training; 8,192 (navhard) / 16,384 (navtest) at inference | GTRS-Dense heads, trained on real data plus sub-score labels for every vocabulary trajectory in 237K simulated off-log scenes | Data, not architecture: navhard 41.9 → 48.0 (V2-99), 38.3 → 46.9 (ResNet-34); a three-scorer ensemble 50.9; see [below](#simscale) |
 
 | **AD-E2E-JEPA** (zero-shot mode) | 8192, angularly subsampled to 256 (also 512 … 8192) | **No scorer.** Squared latent distance between each candidate's 4 s world-model rollout and the **ground-truth future frame** | Oracle-goal diagnostic, not a deployable selector; 67.3 EPDMS at 256 / 72.9 at 8192; see [below](#no-scorer) |
 
@@ -198,7 +201,7 @@ It is still informative for this page, because it is the only entry that scales 
 
 1. **Coverage matters here in a way DriveSuprim's oracle says it should not.** The [oracle study](#theoretical-ceiling-oracle-study) puts 98.7 PDMS within reach of 256 candidates, so the vocabulary is not the bottleneck for a *score* oracle. For an *endpoint-matching* criterion it is: 32× more candidates still buys +5.6 EPDMS and 1.2 m of FDE. The two criteria want different things from a vocabulary. A score oracle needs one good trajectory per scene. Endpoint matching needs a candidate near one specific trajectory.
 2. **The subsample is even in angle, not in length.** Final-pose error at 256 is 3.6 m longitudinal against 1.1 m lateral. How much of that is the vocabulary and how much the world model is unknown, because the paper reports no nearest-endpoint oracle.
-3. **Per-frame selection without a continuity term destroys extended comfort.** EC is 35.5–43.8, the lowest in the wiki, even though every frame is aimed at the human's own endpoint. [[sources/drive-jepa.md]] needed a momentum-aware selector for the same reason (EC 47.9 → 84.8), and [[sources/auto-jepa.md]] sits at 75.2. **Three selection designs have now hit this, and only one fixed it.**
+3. **Per-frame selection without a continuity term destroys extended comfort.** EC is 35.5–43.8, the lowest in the wiki, even though every frame is aimed at the human's own endpoint. [[sources/drive-jepa.md]] needed a momentum-aware selector for the same reason (EC 47.9 → 84.8), and [[sources/auto-jepa.md]] sits at 75.2. **Three selection designs have now hit this, and only one fixed it.** *(2026-10-06: a second fix. [[sources/world4scorer.md]] re-ranks with the benchmark's own EC criterion against the previous selected plan, EC 77.0 → 92.8; see [below](#world4scorer).)*
 
 **Relation to the rest of the page.** Every other scorer here is distilled from the benchmark's simulator and carries the [scorer-cohort caveat](#top-of-leaderboard). This one is the opposite extreme: no privileged *labels*, a privileged *input*. Neither is a deployable, label-free selector. The combination nobody has built is this rollout model with a learned reward head in place of the goal, which is [[sources/dreameraD.md]]'s recipe on a 3 ms-per-candidate latent model. See [[concepts/world-model-for-ad.md#world-model-as-planner]].
 
@@ -290,6 +293,57 @@ The privileged-supervision caveat still applies. The rule is the benchmark's own
 
 Its encoder design comes from DrivoR (register tokens; not ingested), which scores 93.1 on navtrain with no world model. MM-Future is +0.3 above it.
 
+### World4Scorer: the Scorer as a Trajectory-Conditioned Predictor, Priced on a Fixed Pool {#world4scorer}
+
+[[sources/world4scorer.md]] keeps DrivoR's encoder and generator and replaces its scorer. Each of the 64 candidates becomes a query to a 4-block predictor (self-attention among candidates, cross-attention to scene tokens), and heads read NC, DAC, DDC, TTC, EP and comfort from the resulting state. Simulator outcomes supervise every candidate's state, plus 16 CLOVER bank trajectories per step. One extra loss asks the logged trajectory's state to predict a pooled front-view DINOv2 feature 2 s ahead.
+
+**1. The first fixed-pool comparison of two learned scorers.** The paper's state-intervention table runs on the 64 candidates of DrivoR's released model, all 12,146 navtest scenes:
+
+| Selector on the same pools | PDMS | Regret to the pool oracle (99.33) |
+|---|---:|---:|
+| World4Scorer's scorer | 94.19 | 5.14 [4.66, 5.62] |
+| DrivoR's own scorer | 93.69 | 5.64 |
+| World4Scorer, states shuffled among candidates (100 draws) | 79.73 | 19.86 |
+| No ranking signal (every candidate gets the scene-mean state; a fixed index wins) | 71.10 | 28.23 |
+
+- **A scorer swap at fixed candidates is worth +0.50 PDMS.** World4Scorer's full system with its own generator scores 94.0, less than its scorer on DrivoR's pool, so its whole margin over DrivoR is the scorer.
+- **About 5 points of headroom remain** against an oracle over just 64 candidates, the same order as [DriveSuprim's top-K oracle](#theoretical-ceiling-oracle-study) gap.
+- **The ranking signal is worth about 23 PDMS on navtest** (71.10 → 94.19), a navtest companion to the [+20.9 on navhard](#scorer-price).
+
+**2. State shuffling shows that a scorer reads each candidate, for any scorer.** Reassigning states among candidates costs World4Scorer +14.72 regret and DrivoR's scorer-attention outputs +14.11, with ordering accuracy falling to chance in both (49.9%, 50.2%). The trajectory reaches the heads only through its state, so this test cannot tell a predictive state from an ordinary per-candidate feature. The paper's evidence that the predictive part matters is one single-seed row: the future target is worth +0.95 PDMS and a current-frame target −0.31 ([[sources/world4scorer.md#future-anchor]]).
+
+**3. A fourth answer to the hard-negative problem**, after filtering (DriveSuprim), retrieval (DA-WAM) and repulsion (ReWorld): a pre-labelled bank of perturbed trajectories. Generated candidates are 64% high-scoring and the bank 35% low-scoring. Its effect at full scale is not reported.
+
+**4. The second continuity fix, and the larger one.** After framewise selection, an inertial re-ranking penalizes every candidate that fails NAVSIM-v2's extended-comfort criterion against the previous selected plan (LQR + bicycle rollouts, the benchmark's thresholds, $-\log 100$ penalty):
+
+| Continuity selector | EC before → after | EPDMS gain | What it compares |
+|---|---|---:|---|
+| [[sources/drive-jepa.md]] momentum-aware selection | 47.9 → 84.8 | (part of 87.8) | A learned comfort score against the previous selected trajectory |
+| [[sources/world4scorer.md]] inertial re-ranking | 77.0 → 92.8 | +1.6 | **The benchmark's own EC check** against the previous selected plan |
+| Same re-ranking on DrivoR | – | +1.61 (90.66 → 92.27) | Same |
+
+The wrong log's previous plan is worse than none (−0.4), a two-step-old one gives about two thirds of the gain, and resubmitting the previous plan scores 82.0. 27.9% of framewise failures have no compatible candidate in the pool. The rule needs no labels at deployment, but it does need a stateful agent that sees navtest frames in log order, and its thresholds are the metric's. It moves any planner's EPDMS by about 1.6, so a v2 comparison between a planner with it and one without it compares selection rules.
+
+**5. v1 and v2 want different candidates.** With simulator sub-scores on frozen pools, the two utilities pick different candidates in 43% of scenes, 98% of the gap is extended comfort, and the v2-optimal choice costs 1.3 v1 PDMS. A scorer cannot be optimal for both ladders; World4Scorer uses weights (1, 1, 0, 5, 5, 2) for v1 and (10, 13, 6, 14, 15, 2.1) for v2, with no account of how the second set was chosen.
+
+### SimScale: More States for the Scorer, Labelled by the Metric {#simscale}
+
+[[sources/simscale.md]] keeps GTRS-Dense unchanged and gives it more scenes: 3DGS renders of navtrain in which the ego has been pushed off the log. Every vocabulary trajectory in every simulated scene gets EPDMS sub-score labels, the [Hydra-MDP++ recipe](#origin) applied to states the human never visited.
+
+| GTRS-Dense, navhard | ResNet-34 | V2-99 |
+|---|---:|---:|
+| Real data only | 38.3 | 41.9 |
+| Real, sub-score labels only (no imitation) | 37.6 | 38.8 |
+| + simulated data, PDM-Closed trajectories as experts | 46.1 | 47.7 |
+| + simulated data, sub-score labels only on simulated scenes | 46.9 (45.9 in another table) | 48.0 |
+| Ensemble of three scorers (recovery, planner, reward-only), sub-scores averaged | 47.7 | **50.9** |
+
+1. **The scorer gains more from simulation data than the unscored planners do** in absolute terms (+6.1 to +8.6 against +5.1 to +5.8). On navtest the gain is +0.8 to +2.3 (pre-fix evaluator).
+2. **On simulated scenes the scorer does not need an expert trajectory**, but the margin is +0.3 to +0.8, within single-run noise on navhard. On real scenes it does need one: dropping imitation there costs −0.7 and −3.1.
+3. **Averaging the sub-scores of scorers trained on different labels is worth +0.8 / +2.9** at three times the inference cost; averaging six models adds nothing.
+4. **The labels are the benchmark's metric throughout**, including the filters that decide which simulated states and expert trajectories are kept. This is the [top-of-leaderboard](#top-of-leaderboard) pattern extended to new states, and it is evaluated only on NAVSIM.
+5. **Caution on the numbers**: the paper's scaling figure never plots a GTRS-Dense run as high as its tables report (by 0.5–1.9 EPDMS). See [[sources/simscale.md#figure-table]].
+
 ### PaIR-Drive: Residual Tree plus Reward World Model
 
 [[sources/pair-drive.md]] turns an IL trajectory into the root of a recurrent proposal tree. Intention tokens generate residual branches; a learned reward world model scores their predicted reward and confidence and chooses the final plan. This is a hybrid of generative refinement and selection rather than fixed-vocabulary classification.
@@ -376,20 +430,21 @@ With [[sources/lwdrive.md]] ingested, this is now a complete statement about the
 
 | Rank | Method | PDMS | What the scorer is trained on |
 |---:|---|---:|---|
-| 1= | [[sources/clear.md]] | 93.7 | Pairwise hinge + MSE against per-candidate PDMS |
-| 1= | [[sources/da-wam.md]] | 93.7 | Factorized NC/DAC/EP/TTC/Comfort heads → utility, from simulator labels |
-| 3 | [[sources/drivesuprim.md]] | 93.5 | Hydra-MDP multi-teacher distillation of simulator metrics |
-| 4 | [[sources/mm-future.md]] (navtrain; 94.0 when trained on trainval) | 93.4 | BCE heads on simulator sub-scores of its own sampled trajectories, each read with its own generated future |
-| 5 | [[sources/drive-jepa.md]] | 93.3 | 8192-entry pseudo-teacher vocabulary scored by the simulator |
-| 6 | [[sources/wcog-vla.md]] | 92.9 | DiffGRPO whose reward *is* PDMS |
-| 7 | [[sources/adaptive-wam.md]] (aux) | 92.6 | Six NAVSIM components predicted with soft-label BCE |
-| 8 | [[sources/hybriddriveVLA.md]] | 92.1 | Component-wise BCE/regression on PDMS sub-scores |
-| 9= | [[sources/lwdrive.md]] | 92.0 | BCE against per-candidate PDMS from log simulation |
-| 9= | [[sources/drivereferee.md]] | 92.0 | No scorer needed at inference; the generator is trained on winner/loser pairs labelled by the evaluator's collision and drivable-area gates |
+| 1 | [[sources/world4scorer.md]] | 94.0 | BCE heads on simulator sub-scores of all 64 generated candidates and 16 bank trajectories per scene, read from per-candidate predictor states |
+| 2= | [[sources/clear.md]] | 93.7 | Pairwise hinge + MSE against per-candidate PDMS |
+| 2= | [[sources/da-wam.md]] | 93.7 | Factorized NC/DAC/EP/TTC/Comfort heads → utility, from simulator labels |
+| 4 | [[sources/drivesuprim.md]] | 93.5 | Hydra-MDP multi-teacher distillation of simulator metrics |
+| 5 | [[sources/mm-future.md]] (navtrain; 94.0 when trained on trainval) | 93.4 | BCE heads on simulator sub-scores of its own sampled trajectories, each read with its own generated future |
+| 6 | [[sources/drive-jepa.md]] | 93.3 | 8192-entry pseudo-teacher vocabulary scored by the simulator |
+| 7 | [[sources/wcog-vla.md]] | 92.9 | DiffGRPO whose reward *is* PDMS |
+| 8 | [[sources/adaptive-wam.md]] (aux) | 92.6 | Six NAVSIM components predicted with soft-label BCE |
+| 9 | [[sources/hybriddriveVLA.md]] | 92.1 | Component-wise BCE/regression on PDMS sub-scores |
+| 10= | [[sources/lwdrive.md]] | 92.0 | BCE against per-candidate PDMS from log simulation |
+| 10= | [[sources/drivereferee.md]] | 92.0 | No scorer needed at inference; the generator is trained on winner/loser pairs labelled by the evaluator's collision and drivable-area gates |
 
-**Every entry above 92.0 in this wiki trains against the benchmark's own scoring function**, whether as a ranking head, as an RL reward (WCog-VLA) or as preference labels for the generator (DriveReferee). *(Table extended on 2026-09-30 with MM-Future and DriveReferee.)* The highest-scoring method that does *not* is [[sources/wa-jepa.md]] at 91.8.
+**Every entry above 92.0 in this wiki trains against the benchmark's own scoring function**, whether as a ranking head, as an RL reward (WCog-VLA) or as preference labels for the generator (DriveReferee). *(Table extended on 2026-09-30 with MM-Future and DriveReferee. 2026-10-06: World4Scorer enters first at 94.0, trained on navtrain, and on v2 it also runs the metric's extended-comfort check at inference. The ranks below it shift by one.)* The highest-scoring method that does *not* is [[sources/wa-jepa.md]] at 91.8.
 
-This is not an accusation of cheating — simulator-distilled scoring is a legitimate and widely-declared design — but it does bound what the leaderboard measures. It says the last ~2 PDMS on NAVSIM-v1 has been bought by learning the evaluator rather than by improving the policy, and it predicts that the ordering among these ten would not survive a benchmark whose scoring function was withheld. The [oracle ceiling analysis](#theoretical-ceiling-oracle-study) and [the tie problem](#tie-problem) below both bear on how much headroom is actually left in that mechanism.
+This is not an accusation of cheating — simulator-distilled scoring is a legitimate and widely-declared design — but it does bound what the leaderboard measures. It says the last ~2 PDMS on NAVSIM-v1 has been bought by learning the evaluator rather than by improving the policy, and it predicts that the ordering among these eleven would not survive a benchmark whose scoring function was withheld. The [oracle ceiling analysis](#theoretical-ceiling-oracle-study) and [the tie problem](#tie-problem) below both bear on how much headroom is actually left in that mechanism.
 
 ### What a Scorer Is Actually Worth: +20.9 EPDMS on navhard {#scorer-price}
 

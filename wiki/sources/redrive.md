@@ -4,7 +4,7 @@ type: source-summary
 sources: ["raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md"]
 related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/foundation-backbones-for-ad.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, concepts/evaluation-variance.md, concepts/physicalai-av-benchmark.md, concepts/counterfactual-prediction.md, concepts/diffusion-planner.md, sources/wa-jepa.md, sources/drive-jepa.md, sources/da-wam.md, sources/auto-jepa.md, sources/ad-e2e-jepa.md, sources/metis.md, sources/simwam.md, sources/suv.md, sources/reworld.md, sources/drivelaw.md, sources/drivefuture.md, sources/latent-wam.md, sources/drivesuprim.md, sources/physwam.md, sources/diffusiondrive.md]
 created: 2026-09-30
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: medium
 ---
 
@@ -352,7 +352,7 @@ The frame sweep is the most useful new evidence on this question. Within one obj
 ### 6. The v2 table {#v2-table}
 
 - **90.8 is self-declared corrected**, and its residual agrees (closed form 90.25, −0.55).
-- **Every comparison row is digit-identical, across all nine sub-scores, to the corrected column of [[sources/wa-jepa.md]]'s Table 1**: DiffusionDrive 84.5, DiffusionDriveV2 87.5, WAM-Diff 89.7, DreamerAD 87.7, Latent-WAM 89.3, DriveFuture 89.9, CoWorld-VLA 90.0, SparseDriveV2 90.1.
+- **Every comparison row is digit-identical, across all nine sub-scores, to the corrected column of [[sources/wa-jepa.md]]'s Table 1**: DiffusionDrive 84.5, DiffusionDriveV2 87.5, WAM-Diff 89.7, DreamerAD 87.7, Latent-WAM 89.3, DriveFuture 89.9, CoWorld-VLA 90.0, SparseDriveV2 90.1. *(lint 2026-10-06: two independent tables now print DiffusionDrive at 88.2 on near-identical sub-scores with a corrected-like residual, so 84.5 is most simply the pre-fix value and WA-JEPA's column label the error. If so, this table carries one pre-fix row under a "corrected" caption. See [[concepts/navsim-benchmark.md#world4scorer]].)*
 - **Three entries of that column are absent: WA-JEPA 91.7, Discrete-WAM 90.4 and DriveWorld-VLA 86.8.** The first is above ReDrive and the second would be the runner-up. WA-JEPA is not in ReDrive's reference list.
 - The text says ReDrive "achieves the best overall performance and outperforms the second-best SparseDriveV2 by 0.7 points". Against the wiki's corrected cohort it is **third**, behind WA-JEPA 91.7 and SUV 91.0.
 

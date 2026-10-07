@@ -2,9 +2,9 @@
 title: Activity Log
 type: comparison
 sources: []
-related: [wiki/index.md]
+related: [index.md]
 created: 2026-04-05
-updated: 2026-09-11
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -3355,3 +3355,321 @@ The wiki cites no component effect size from this paper on any concept page.
 **New gaps**: SSR (ResWorld's base and strongest perception-free nuScenes baseline), LAW (latent world model; cited 21+ times), GeoBEV (the authors' BEV encoder), BEV-Planner / "Is ego status all you need", Drive-OccWorld, World4Drive.
 
 **Figure note**: 5 figure files embedded (`world_model_small.png`, `resworld.png`, `tr_world.png`, `collapse.png`, `vis2.png`); Figure 1 has only panel (a). All 5 tables reproduced, with a computed closed-form residual column added to Table 2. The clipping's front-matter author field is empty; authors and affiliations are taken from the body.
+
+## 2026-10-06 - Ingest: SimScale: Learning to Drive via Real-World Simulation at Scale
+
+**Source**: `raw/papers/SimScale_ Learning to Drive via Real-World Simulation at Scale.md` (arXiv 2511.23369v3)
+**Orgs**: MAIS, Institute of Automation, Chinese Academy of Sciences; OpenDriveLab at The University of Hong Kong; Xiaomi EV. Code and simulation data released (github.com/OpenDriveLab/SimScale).
+**Pages created**: `wiki/sources/simscale.md`
+**Pages updated**: `concepts/data-driven-simulators.md` (new `#fixed-perturbations` section; three supervision sources; reconstruction row; static-world, shortcut and visual-fidelity failure-mode rows; evidence row; three open questions annotated, two added), `concepts/navhard-ood-evaluation.md` (new `#simscale` section; SimScale cohort row with the 53.2 provenance note; two unscored SimScale rows; PDM-Closed 51.3 reference; five rows added to the Stage-2 LK table and two new bullets under the correction; split-size and LTF-lineage notes; two open questions annotated; lint rule extended), `concepts/navsim-benchmark.md` (v2 table row; pre-fix cohort; `#simscale` audit section), `concepts/selection-based-planning.md` (methods row; `#simscale` section), `concepts/diffusion-planner.md` (`#multimodal-scaling`), `concepts/teacher-pseudo-labels.md` (two teacher rows; problem 4 `#inherited-style`), `concepts/rl-for-ad.md` (RAD note; `#simscale-offline`), `concepts/evaluation-variance.md` (`#scaling-scatter`; selection-effects bullet; open question annotated), `concepts/pdm-lite.md` (`#pdm-closed`), `concepts/world-model-for-ad.md` (Pattern 44 note), `sources/drivefuture.md`, `sources/metis.md`, `sources/diffusiondrive.md`, `sources/learning-to-drive-from-a-world-model.md`, `research-directions.md`, `index.md`, `README.md` (88 papers)
+**Confidence**: **medium**. The direction of the main effect is consistent across all ten simulation-trained configurations, but the magnitudes depend on which of the paper's own numbers is used (tables or figures), and every result is a single run on NAVSIM.
+
+**What it is**: the wiki's 88th paper and its first data paper. navtrain is reconstructed in 3DGS (MTGS codebase; blocks with novel-view PSNR < 27 dropped). The ego follows a perturbed trajectory from a 16,384-trajectory vocabulary (±20 m, ±2 m, ±20°, EPDMS ≥ 0.8) for 4 s while IDM agents react; a pseudo-expert then labels the next 4 s: **recovery** (L1 retrieval of the logged human trajectory that joins the perturbed state to the recorded state, from 103,288) or **planner** (PDM-Closed on ground-truth state). Labels are kept only if every EPDMS sub-metric is 1 (EP > 0.5). Up to five rounds give 147K recovery and 237K planner scenes against about 100K real ones. Real and simulated samples are mixed at random; GTRS-Dense can also be trained on sub-score labels only for the simulated scenes ("reward only").
+
+**Reported results**: navhard combined EPDMS, real-only → with simulation: LTF 24.4 → 30.2, DiffusionDrive 27.5 → 32.6, GTRS-Dense ResNet-34 38.3 → 46.9, V2-99 41.9 → 48.0; a three-scorer ensemble 50.9. navtest: +2.9, +1.7, +2.3, +0.8. PDM-Closed (privileged) 51.3 navhard.
+
+**Finding 1 - data alone moves navhard, most in Stage 2.** All ten simulation-trained rows beat their baselines. Per-stage gains: Stage 2 +5.6 to +7.6, Stage 1 +0.8 to +5.3, navtest +0.8 to +2.9. Same navtest-small / navhard-large shape as the inference-path world-model mechanisms, with no world model. Recovery and familiarity with 3DGS images are not separated; the training engine (MTGS) and the navhard benchmark paper share two author names with SimScale (initials only in the reference list).
+
+**Finding 2 - Stage-2 lane keeping.** Unscored planners leave the 45-50 band with data alone (LTF 47.9 → 58.3, DiffusionDrive 46.4 → 60.8). PDM-Closed, which sees no images, loses 25.6 points (99.3 → 73.7). So at least that much of the Stage-2 drop is in the scenarios; 10-25 points remain for learned planners.
+
+**Finding 3 - teachers and scaling.** Recovery labels peak early; PDM-Closed labels scale longer but pass on poor comfort (Stage-2 EC LTF 70.6 → 42.9, DiffusionDrive 72.8 → 31.9). DiffusionDrive keeps rising where LTF flattens near 1:1. Reward-only labels beat PDM-Closed trajectories for the scorer by +0.3 / +0.8; dropping imitation on real data costs −0.7 / −3.1. Reactive data +0.7 / +1.1 with fewer samples; high-PSNR data wins 8 of 8 cells by +0.1 to +1.6. Gains do not shrink from 10K to 100K real scenes.
+
+**Finding 4 - the tables and the figures disagree.** Values read from an enlarged Figure 4: every GTRS-Dense table value is 0.5–1.9 above the highest point plotted for the same configuration; Figures 4, 7 and 9 agree with each other (the five-round reward-only endpoints are about 44.7 and 46.7 in both Figure 4 and Figure 9, against 46.9 and 48.0 in Table 1). The abstract's +8.6 is about +6.7 on the plotted runs. Figure 4 starts LTF at about 27.5, not Table 1's 24.4.
+
+**Finding 5 - provenance.** The LTF (24.4) and DiffusionDrive (27.5) real-only navhard rows are digit-identical, on 18 sub-scores and both stage scores, to the rows Metis labels "copied from GTRS" (ReDrive copies them from Metis). The "SimScale 53.2" row in DriveFuture's navhard table, already on the cohort table, is not in this paper (best 50.9); its sub-scores are internally consistent (closed-form product 52.0). The navtest table is pre-fix throughout by residual sign (+1.4 to +2.9; Human Agent 90.3).
+
+**Table and text problems found**:
+- Table 7's DiffusionDrive planner NC (97.2 / 82.4) duplicates the recovery row; Table 1 prints 97.4 / 86.4, which fits the closed-form pattern.
+- Table 3 prints ResNet-34 reward-only as 45.9 with the same stage scores as the 46.9 in Tables 1, 7 and 9.
+- "LTF and DiffusionDrive ... gains exceeding 20%": DiffusionDrive is 19%, and GTRS-Dense ResNet-34 (+22%, +8.6) gains more than DiffusionDrive.
+- Figure 9's axis reads 1×10⁵ to 10×10⁵ for 10K–100K real scenes.
+- Figure 4's printed fit coefficients cannot be reproduced from the plotted axes under any obvious log base or unit.
+- Figure 5's panel (c) is "leaving the drivable area"; the text calls it "departure".
+
+**New syntheses surfaced while writing**:
+- The navhard asymmetry is not specific to world models: training data produces it too.
+- Training data is a third navhard ingredient beside generator and selector, and it compounds with a scorer.
+- A pixel-free reference for the Stage-2 collapse.
+- First run-to-run scatter on navhard (reversals of up to 2.7 EPDMS between adjacent data sizes).
+- A third navhard baseline lineage (SimScale/GTRS 24.4 / 27.5).
+
+**Research directions** (`wiki/research-directions.md`): now 45 open questions (11 partially answered) and 2 answered.
+- *Status changed*: Is the navhard Stage-2 lane-keeping collapse a planner failure or a rendering artifact? → partially answered (PDM-Closed's pixel-free −25.6).
+- *Evidence added*: error bars (navhard run-to-run scatter); cross-paper EPDMS comparability (navhard provenance, pre-fix table); generator vs selector (data as a third ingredient); open-loop vs closed-loop world modeling (the asymmetry without a world model); which simulator family trains best; generation quality (PSNR result); reward vs labels; renderer artifacts; scorers overfitting the metric; RL and OOD robustness; teacher caps.
+- *Added*: Does a navhard gain from 3DGS training data measure recovery or renderer familiarity? Does simulated off-log data keep paying as it grows, and which planners can use it? Should a pseudo-expert be conservative or exploratory?
+- *Answered*: none.
+
+**Not reported**: training seeds; data-generation cost (reconstruction, rendering, reactive simulation, 16,384-trajectory labels per simulated state); per-scene scores; any non-NAVSIM evaluation; a zero-perturbation rendering control; the ensemble's sub-scores; which split or checkpoint the tables and figures use.
+
+**New gaps**: GTRS / GTRS-Dense (the planner that gains most; also DriveFuture's and MomWorld's base), RAD (3DGS online RL, the paradigm SimScale positions against), MTGS (the data engine), Pseudo-Simulation for Autonomous Driving (the navhard benchmark paper), PDM-Closed / "Parting with misconceptions", ReSim, DrivoR (54.6 navhard).
+
+**Figure note**: 13 figure files embedded (Figures 2–14: `pipeline 2.png`, `data.png`, `curve_scaling.png`, `vis_scene.png`, `position.png`, `curve_scaling_react.png`, `data_statistic.png`, `curve_scaling_real.png`, `vis_expert_recovery_1.png`, `vis_expert_planner_1/2/3.png`, `vis_scene_add.png`). Figure 1 (teaser) is linked to arXiv in the clipping and not saved locally. Figure 4 and Figure 9 values were read from enlarged copies. All 10 tables reproduced (Tables 1 and 2 as marked rows of Tables 7 and 8, with the differing cell noted), plus computed stage-product and residual columns. The clipping's front-matter author field is empty; authors and affiliations are taken from the body.
+
+## 2026-10-06 - Ingest: Think2Drive: Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2)
+
+**Source**: `raw/papers/Think2Drive_ Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2).md` (arXiv 2402.16720v2; first version February 2024)
+**Orgs**: Shanghai Jiao Tong University. No code stated; a demo page.
+**Pages created**: `wiki/sources/think2drive.md`
+**Pages updated**: `concepts/bench2drive.md` (two privileged reference rows; new `#expert` section; open question), `concepts/pdm-lite.md` (`#think2drive`), `concepts/world-model-for-ad.md` (new Pattern 46 `#latent-rl-carla`; a row in Pattern 44's table), `concepts/rl-for-ad.md` (approaches list; Key Tension note; `#think2drive` section), `concepts/data-driven-simulators.md` (game-engine contrast; supervision row), `concepts/teacher-pseudo-labels.md` (teacher row; privileged-teacher bullet), `concepts/evaluation-variance.md` (closed-loop CARLA spread), `sources/dreameraD.md`, `sources/deepsight.md`, `research-directions.md`, `index.md`, `README.md` (89 papers)
+**Confidence**: **medium**. The headline comparison is internally consistent and the method was later adopted as Bench2Drive's expert, but the ablation figure is missing, the baseline and main benchmark are the authors' own, and the world model is assessed only qualitatively.
+
+**What it is**: the wiki's 89th paper. A privileged planner for CARLA Leaderboard v2: ground-truth BEV rasterization (128×128, 34 channels: 6 static, 7 dynamic × 4 history steps) plus an ego vector in, 30 discrete throttle/steer/brake actions out. DreamerV3: a 104M recurrent state-space model with reward, termination and decoder heads learns from the policy's CARLA experience; an actor-critic learns from 15-step imagined latent rollouts with critic bootstrapping. Seven bricks: mid-training planner re-initialization (world model kept), a scenario generator and the CornerCaseRepo benchmark (1,600 / 390 single-scenario routes under 300 m), termination-priority replay, a steering cost, a warm-up curriculum, a planner update ratio rising to 4×, and an asynchronous parallel CARLA wrapper. 3 days on one A6000.
+
+**Reported results**: CornerCaseRepo 83.8 ± 1 DS / 99.6 RC against 57.5 ± 9 / 96.4 for PPO with the same bricks; TCP camera student on 200K Think2Drive frames 36.4 ± 12.2. CARLA v2 routes (7–10 km) 56.8 DS / 98.6 RC / 91.7 WDS against PPO 0.7 / 1.0; CARLA v1 90.2 DS against Roach 84.0. Per-scenario success rates 0.61–1.0 over 39 scenarios.
+
+**Finding 1 - the expert behind Bench2Drive.** Bench2Drive's official base set was generated with Think2Drive ([[sources/unidrivevla.md]]'s wording). DynVLA's table scores it at 91.85 DS / 85.41 SR, PDM-Lite at 97.02 / 92.27. The best Think2Drive-protocol student in the wiki (DeepSight 86.23) is 5.6 below the teacher; LinkVLA (91.01, protocol undisclosed) 0.84 below. New research direction on whether the expert bounds the leaderboard.
+
+**Finding 2 - model-based vs model-free under matched engineering.** 83.8 vs 57.5 DS on short routes; 98.6% vs 1% route completion on long ones. The paper attributes PPO's failure to the mid-training reset, which is cheap only when a world model supplies dense rewards. The bricks were designed for the model-based learner.
+
+**Finding 3 - the earliest world-model-as-environment in the wiki, and the only one refit on the policy's own experience.** DreamerAD and openpilot learn from fixed logs. Think2Drive's world model learns game-engine BEV, an easy target, and is shown working only through decoded 50-step predictions.
+
+**Finding 4 - Driving Score and route length.** CARLA DS multiplies infraction penalties, so it falls with route length; 98.6% completion becomes 56.8 DS on the long v2 routes, while Bench2Drive's short routes give the same planner 91.85. The paper's Weighted DS divides infraction counts by an undefined scenario density.
+
+**Finding 5 - students.** A camera student keeps 36.4 of 83.8 DS on the teacher's own benchmark, with infraction rates up 8× (vehicle collisions) to 170× (stop signs). Merging and give-way are the lowest multi-ability scores of every Bench2Drive method tabulated in the wiki, and merges are among Think2Drive's weakest scenarios (consistent with inherited weakness; untested).
+
+**Table and text problems found**:
+- Table 1's WDS standard deviations (0.2–0.5) are 18–60× smaller than the DS ones (1–12.2) for the same runs; the definition does not explain it.
+- Whether the "3 runs" are trainings or evaluations is not stated.
+- Table 2's success rates (e.g. 0.61, 0.89) are not multiples of 1/10 or 1/30, so the trial count behind them is not CornerCaseRepo's 10 routes × 3 runs alone; it is not stated.
+- The v2 "official test routes" are not identified (the online leaderboard's routes are hidden, and a privileged planner cannot be submitted).
+- "First model-based RL method for AD" while citing two earlier ones; "no reported success (100% route completion)" while its own v2 completion is 98.6%.
+- Reward weights, the deviation threshold and the termination conditions are not given.
+
+**New syntheses surfaced while writing**:
+- A world-model-as-environment comparison across three papers (data source, reactivity, signal, rollout length).
+- The teacher-student gap on Bench2Drive is now measurable (91.85 teacher vs 86.23 best same-protocol student).
+- A second closed-loop variance measurement outside NAVSIM, with an unexplained metric-level discrepancy.
+
+**Research directions** (`wiki/research-directions.md`): now 46 open questions (11 partially answered) and 2 answered.
+- *Evidence added*: How large are the error bars? (closed-loop CARLA sd 1–12 DS); Can a world model replace the simulator as the source of reward? (the CARLA instance); Is a reward needed, or are labels enough? (the reward-only end of the comparison); Which RL recipe suits dense, safety-gated rewards? (model-based vs PPO, matched engineering); Do teacher pseudo-labels cap the student? (the Bench2Drive teacher-student gap).
+- *Added*: Does the expert that generated Bench2Drive's data bound its leaderboard?
+- *Answered*: none.
+
+**Not reported**: ablation numbers (Figure 3 missing); world-model prediction, reward or termination error; reward weights; planner inference cost; any sensor-based Think2Drive; Bench2Drive scores (supplied by DynVLA's table).
+
+**New gaps**: Raw2Drive (sits in `raw/papers/` but is not yet ingested; per DynVLA's table 71.36 DS on Bench2Drive), Bench2Drive (the benchmark paper itself), DreamerV3, Roach, TCP, DriveAdapter, PDM-Lite (the technical report), CARLA Leaderboard v2 as a concept page.
+
+**Figure note**: 2 figure files embedded (`bev.png` for Figure 2, `resetting.png` for Figure 4). Figure 1 (CornerCaseRepo bar charts) and Figure 3 (ablation curves) are absent from the clipping; the 37 scenario illustrations in Appendix A are linked to arXiv and not saved locally. All 7 tables reproduced (Table 6 regrouped by throttle level), with computed RC × penalty and per-scenario statistics. The clipping's front-matter author field is empty; authors are taken from the body.
+
+## 2026-10-06 - Ingest: Raw2Drive: Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving (in CARLA v2)
+
+**Source**: `raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md` (arXiv 2505.16394v2)
+**Orgs**: Shanghai Jiao Tong University; Institute of Trustworthy Embodied AI, Fudan University; AgiBot. Same group as Think2Drive. No code stated.
+**Pages created**: `wiki/sources/raw2drive.md`
+**Pages updated**: `concepts/bench2drive.md` (Raw2Drive row; Think2Drive reference row gains efficiency and comfort; `#expert` bullet on inherited weaknesses corrected and a coupling bullet added; Raw2Drive multi-ability), `concepts/world-model-for-ad.md` (new Pattern 47 `#aligned-dual-world-model`), `concepts/rl-for-ad.md` (approaches list; `#raw2drive`), `concepts/teacher-pseudo-labels.md` (teacher row; bullet), `concepts/inference-latency.md` (row), `concepts/evaluation-variance.md` (Dev10 note), `concepts/pdm-lite.md`, `concepts/perception-for-planning.md` (`#privileged-alignment`), `sources/think2drive.md` (devtest identification; Bench2Drive source; relationship), `sources/dreameraD.md`, `sources/dynvla.md` (link), `research-directions.md`, `index.md`, `README.md` (90 papers)
+**Confidence**: **medium**. The Bench2Drive headline matches the row other papers carry (DynVLA's table), but every ablation runs on a 10-clip subset and behaves as a cliff, there is no matched imitation student, and the comparison set omits contemporaries.
+
+**What it is**: the wiki's 90th paper and the camera-input sequel to Think2Drive. Stage I: Think2Drive's DreamerV3 world model and actor-critic policy on 43-channel ground-truth BEV (reusable). Stage II: a BEVFormer encoder over six cameras and an IMU is aligned cell by cell to the privileged encoder state; deterministic and stochastic states are aligned by MSE and KL at every rollout step; the stochastic state is sampled once, from the camera stream, and fed to both models; the RSSM is shared with the privileged model (drawn frozen); only a BEV-mask decoder head is trained. Rewards and continuation flags come from the privileged heads; the privileged policy is distilled and fine-tuned by actor-critic RL in the camera stream's imagination. 39 discrete actions including reverse. 64 H800 GPU-days (40 reusing Think2Drive).
+
+**Reported results**: Bench2Drive 71.36 DS / 50.24 SR / 214.17 efficiency / 22.42 comfort; multi-ability 53.34 (Merging 43.35, Overtaking 51.11, Emergency brake 60.00, Give way 50.00, Traffic sign 62.26). CARLA v2 Town13 validation / devtest: 4.12 / 3.56 DS. Think2Drive in the same tables: 91.85 / 85.41 Bench2Drive, multi-ability 86.26, and 43.8 / 56.8 DS on validation / devtest.
+
+**Finding 1 - the only camera RL entry, about 20 DS behind imitation.** +7.1 over DriveAdapter (64.22), the best baseline in its tables; ORION (77.74, two months earlier) and SimLingo are absent; LinkVLA (91.01) and DynVLA (88.34) came later.
+
+**Finding 2 - what is learned from cameras is an encoder into a privileged latent space.** The dynamics, reward, termination and initial policy all come from the ground-truth model. RL fine-tuning on camera latents is worth +25 DS on Dev10 over transplanting the privileged policy (58.4 → 83.5): adaptation to imperfect perception.
+
+**Finding 3 - reward cannot be learned from the cameras here.** A reward head on camera latents drops Dev10 DS 83.5 → 46.6 (with a continuation head, 34.5); near-identical frames carry −100 and +10. DreamerAD's dense reward on video latents is the contrasting result.
+
+**Finding 4 - the expert gap.** Coupled to Think2Drive at every level, Raw2Drive is 20.5 DS below it, further than imitation students of its data (DeepSight 5.6). The teacher's give-way is 90.00 against 0–50 for every student, so this page corrects the previous ingest's reading that the students' weakest abilities match the teacher's: merging does, give-way does not.
+
+**Finding 5 - Think2Drive's routes identified.** The 56.8 DS / 98.6 RC in Think2Drive's paper is the Town13 devtest route; its validation route gives 43.8 / 78.2.
+
+**Table and text problems found**:
+- Table 1 lists Think2Drive's input as "Raw".
+- Table 12 as printed has no braking action and lists (0, 0, 1) twice; the first entry is probably Think2Drive's full brake (0, 1, 0).
+- Figure 9's continuation flags are the inverse of DreamerV3's convention (0 while driving, 1 at completion).
+- The ablation text cites "Table 7" and "Table 11" for Tables 6 and 10.
+- Stage II's replay buffer is filled by the privileged policy (text) or the raw-sensor policy (Algorithm 1); the RSSM is "initialized from" the privileged one (text) or frozen and shared (figures).
+- Dev10, selected for low variance, scores 83.5 against 71.36 on all 220 routes.
+
+**New syntheses surfaced while writing**:
+- Two consecutive patterns (46, 47) show a privileged world model working where a camera one cannot learn reward.
+- Coupling a student more tightly to a privileged teacher produced a larger gap than imitation.
+- The Bench2Drive give-way weakness is a student property, not an expert one.
+
+**Research directions** (`wiki/research-directions.md`): now 47 open questions (11 partially answered) and 2 answered.
+- *Evidence added*: Does the expert bound Bench2Drive? (coupling does not help; give-way not inherited); Do teacher pseudo-labels cap the student? (71.36 vs 91.85); Can a world model replace the simulator as reward source? (camera reward head fails); Which RL recipe suits driving rewards? (+25 from RL fine-tuning, 0 without alignment); Is explicit perception supervision necessary? (BEV decoder 17.4 → 83.5); What does each method cost at inference? (600 ms encoder).
+- *Added*: Does reinforcement learning from camera input beat imitation at matched data and backbone?
+- *Answered*: none.
+
+**Not reported**: Bench2Drive seeds or variance; an imitation-only student with the same encoder and privileged latents; reward-head ablations with denser targets; latency hardware; code.
+
+**New gaps**: Bench2Drive (benchmark paper), DriveAdapter and ThinkTwice (the group's earlier students), BEVFormer, LAW, AdaWM, MaRLn, DreamerV3, SimLingo. RAD and ForeDrive sit in `raw/papers/` and are not yet ingested.
+
+**Figure note**: all 9 figure files embedded (`paradigm.png`, `method.png`, `p_wm_learning_4.png`, `r_wm_learning_4.png`, `r_bp_learning_3.png`, `rg_sample.png`, `loss_guidance.png`, `gaussion_vis.png`, `reward_cont_2.png`). All 13 tables reproduced (Table 12 regrouped). The clipping's front-matter author field is empty; authors and affiliations are taken from the body.
+
+## 2026-10-06 - Ingest: ForeDrive: Foresight-Guided End-to-End Autonomous Driving with a Planning-Relevant Latent World Model
+
+**Source**: `raw/papers/ForeDrive_ Foresight-Guided End-to-End Autonomous Driving with a Planning-Relevant Latent World Model.md` (arXiv 2609.26299v1)
+**Orgs**: Huazhong University of Science and Technology; Shanghai Zaofu Intelligent Technology (affiliation markers only partly preserved). Senior author Xinggang Wang (DiffusionDrive). No code stated.
+**Pages created**: `wiki/sources/foredrive.md`
+**Pages updated**: `concepts/evaluation-variance.md` (variance table row 4; new `#training-seed` section; rule 2 and open question annotated), `concepts/navsim-benchmark.md` (v1 and v2 rows; corrected cohort; seed note; `#foredrive` audit section), `concepts/world-model-for-ad.md` (new Pattern 48 `#consumed-latent-context`), `concepts/wam-attention-masks.md` (design-space row), `concepts/diffusion-planner.md` (`#tab`), `concepts/foundation-backbones-for-ad.md` (`#dinov3-scale`), `concepts/inference-latency.md` (row), `concepts/nuscenes-waymo-evals.md` (`#foredrive`), `sources/suv.md` (stale seed claim annotated), `research-directions.md`, `index.md`, `README.md` (91 papers; two stale "training seed never measured" statements updated)
+**Confidence**: **medium**. Both own rows pass the arithmetic checks and the headline has a three-seed spread, but every ablation is a single run on navtest only, and the comparison tables omit same-protocol methods above it.
+
+**What it is**: the wiki's 91st paper. One front camera (256×512), DINOv3 ViT-B/16 (512 tokens). A 4-layer predictor with a frame-level block-causal mask forecasts DINOv3 latents and ego status (velocity, acceleration, command) at 1–4 s in one pass, against EMA-encoder targets of the real future frames (L1; CE + MSE for status). A DiffusionDrive-style truncated-diffusion DiT (20 anchors, 2 × 5 layers, 2 DDIM steps, argmax mode selection) consumes the predictions through gated cross-attention (current tokens as queries and residual), a future-status memory, and a Trajectory-Adaptive Bias that projects each candidate into the image and biases its attention toward its path. Planning gradients update the encoder but not the predictor. One stage, 100 epochs, 32 H20 GPUs.
+
+**Reported results**: NAVSIM v1 89.9 PDMS (ViT-L 90.4); v2 one-stage EPDMS 90.0 (90.6); three training seeds 89.7–89.9, sd 0.1; nuScenes zero-shot 0.48 m / 0.11% (re-evaluated, VAD/ST-P3 convention); 58.2 ms on H20, 118.4M parameters.
+
+**Finding 1 - the first training-seed variance on NAVSIM.** sd 0.1 PDMS over three retrainings. Every earlier figure in the wiki was sampler-seed noise. The headline is the primary run (top of the range); the ablations are single runs.
+
+**Finding 2 - the predicted future works as context, not as a forecast.** Auxiliary forecasting +0.1 (ViT-B); consuming the prediction +0.4 to +0.6 more; horizon shuffle at test 0.0; real future latents +0.2; zeroed futures −1.4; a wrong future −2.4 (TTC −2). Across four training paradigms, forecast alignment and PDMS are inversely ordered (cosine 0.843 → 87.9; 0.759 → 89.9). A frozen probe reads the expert trajectory better from predicted latents (ADE 1.55) than from real future latents (2.10).
+
+**Finding 3 - regression on latents, consumed, and helpful.** L1 on single-camera DINOv3 latents; consumption helps. Consistent with the entropy reading of WA-JEPA's negative regression result (four cameras there).
+
+**Finding 4 - stop-gradient into the predictor +0.4**, at matched final forecast quality; a second stop-gradient result after WA-JEPA.
+
+**Finding 5 - Trajectory-Adaptive Bias +0.6 / +0.7 at every encoder size**, additive with foresight; the single-camera counterpart of DiffusionDrive's deformable spatial attention. Dropping DiffusionDrive's camera + LiDAR BEV for one front camera (ViT-S) costs 1.7 before anything is added.
+
+**Finding 6 - scale.** DINOv3 ViT-S/B/L: Base 87.4 / 88.9 / 89.3, Full 89.0 / 89.9 / 90.4. The foresight + TAB gain shrinks as the encoder improves (+1.6 → +1.0 / +1.1).
+
+**Table and text problems found**:
+- The v2 table mixes evaluators: TransFuser, PRIX, DiffusionDrive, DiffRefiner and Drive-JEPA pre-fix-like by residual; the "+2.2 over Drive-JEPA" claim crosses them. Same-protocol margins: +0.5 (MeanFuser), +0.7 (Latent-WAM).
+- "State of the art among imitation-learning methods" omits ReDrive (91.0 / 90.8, one front camera, no RL, no scorer), SUV, DriveVA and ReWorld.
+- nuScenes rows are re-evaluated: PWM's collision becomes 0.16 against 0.07 in its own paper at the same L2.
+- DriveVLA-W0 carried at its 87.2 flow-matching-head variant on v1.
+
+**New syntheses surfaced while writing**:
+- Training-seed sd (0.1) is about twice the smallest sampler sd and a third of PhysWAM's; deltas of 0.3–0.5 between separately trained runs are a few sd for this recipe.
+- A consumed future can help without being accurate; with DA-WAM (shared future −0.5) and GeoWorldAD (+1.7 / +2.8), three shared-future measurements now disagree in size.
+- A wrong future is worse than no future, the inference-side mirror of DriveLaW's and DriveFuture's oracle-conditioning collapses.
+- A ReCogDrive-IL v2 row at 86.6 (corrected-like) appears for the first time.
+
+**Research directions** (`wiki/research-directions.md`): now 48 open questions (11 partially answered) and 2 answered.
+- *Evidence added*: error bars (training seed measured); EPDMS comparability (another mixed table); test-time future (+0.4 to +0.6 for a latent future); who attends to whom (stop-gradient +0.4); the supervision rules (regression consumed and helpful); world-model-shaped representations (forecast accuracy against usefulness); generation quality (inverse relation); video pretraining vs JEPA (DINOv3 ViT-L at 90.4); inference cost (58 ms).
+- *Added*: What happens when a planner that consumes a predicted future is given a wrong one?
+- *Answered*: none.
+
+**Not reported**: navhard or any reactive benchmark; seeds for ablations or for v2; Base re-seeding; code.
+
+**New gaps**: MeanFuser, DiffRefiner, PRIX (now carried by three or more tables), DINOv3, V-JEPA 2, World4Drive, WoTE, LAW. RAD remains in `raw/papers/`, not yet ingested.
+
+**Figure note**: 6 figure files embedded (`Fig1.png`, `Fig3.png`, `Fig4.png`, `SupFig1.png`, `SupFig2.png`, `SupFig3.png`). Main Figure 2 (accuracy–size plot; its data are Supplementary Table 10) and supplementary Figure 3 (training-dynamics probes) are absent from the clipping. All main and supplementary tables reproduced, with computed v1 and v2 residual columns; Supplementary Tables 4–7 merged. The clipping's front-matter author field is empty; authors are taken from the body.
+
+## 2026-10-06 - Ingest: RAD: Training an End-to-End Driving Policy via Large-Scale 3DGS-based Reinforcement Learning
+
+**Source**: `raw/papers/RAD_ Training an End-to-End Driving Policy via Large-Scale 3DGS-based Reinforcement Learning.md` (arXiv 2502.13144v2)
+**Orgs**: Huazhong University of Science and Technology; Horizon Robotics. Code released (github.com/hustvl/RAD); data and 3DGS environments internal.
+**Pages created**: `wiki/sources/rad.md`
+**Pages updated**: `concepts/rl-for-ad.md` (RAD stub replaced; `#rad` section; SimScale paragraph corrected on agent reactivity), `concepts/data-driven-simulators.md` (training row, reconstruction row, supervision row, static-world and render-after-event failure rows, evidence row, open question annotated), `concepts/evaluation-variance.md` (private 3DGS benchmarks: clip counts and disagreement), `concepts/action-tokenization.md` (`#rad`), `concepts/dual-system-vla.md`, `concepts/inference-latency.md`, `sources/senna2.md`, `sources/simscale.md`, `research-directions.md`, `index.md`, `README.md` (92 papers)
+**Confidence**: **medium**. The headline gain is many binomial standard errors and its decomposition is internally consistent, but the benchmark is private, the renderer is shared between training and evaluation, agents are log-replayed, and a second benchmark from the same institutions gives a much smaller effect.
+
+**What it is**: the wiki's 92nd paper, cited on three pages before it had one. A multi-camera BEV policy (map and agent tokens from a frozen perception stage, plus image tokens) with a factorized action: two 61-way softmaxes over lateral (±0.75 m) and longitudinal (0–15 m) displacement per 0.5 s, each with a value head. Stage 1 perception pre-training; Stage 2 imitation on 2,000 hours; Stage 3 PPO in 3,968 3DGS reconstructions (extended StreetGaussian) of 8 s clips, 32 workers, log-replayed agents, kinematic bicycle ego, alternating 4:1 with imitation steps. Rewards: dynamic collision (longitudinal), static collision and position / heading deviation from the expert (lateral), each ending the episode. Four rule-directed auxiliary losses weighted by per-event advantages.
+
+**Reported results**: collision ratio over 337 held-out reconstructed clips: RAD 0.089; its own imitation-only post-training 0.229; TransFuser 0.320, VAD 0.335, GenAD 0.341, VADv2 0.270.
+
+**Finding 1 - the auxiliary losses carry the gain.** PPO with imitation but no auxiliary losses: 0.249 (worse than imitation, 0.229). Auxiliary losses without PPO: 0.187. RL without imitation: 0.143, at 0.345 m from the expert. All together: 0.089. Every reward term is needed (without the dynamic-collision term: 0.238).
+
+**Finding 2 - non-reactive agents.** The environment supports IDM and learned agents; experiments use log replay. The dynamic-collision auxiliary loss pushes toward acceleration when a collision comes from behind, the training-side trace of traffic that cannot brake.
+
+**Finding 3 - a second benchmark disagrees.** Senna-2's 256-clip 3DGS benchmark (same institutions) scores RAD 0.281, VADv2 0.422, TransFuser 0.435. The order holds; RAD's advantage over VADv2 is 1.5× there against 3.0× here.
+
+**Finding 4 - evaluation inside the training renderer**, with imitation baselines that never trained on renders, and a reward that equals the metric (collisions and deviation thresholds from the expert). Episodes end at every event because renders degrade afterwards. Sim-to-real evidence is one scenario's position curve.
+
+**Table and text problems found**:
+- The text attributes the auxiliary-only result (0.187) to Table 3's ID 1; it is ID 7. ID 1 is PPO without auxiliary losses (0.249).
+- "Both qualitative and quantitative" sim-to-real consistency rests on one scenario.
+- Reward magnitudes, auxiliary loss weights and the episode count are not given.
+
+**New syntheses surfaced while writing**:
+- The rl-for-ad page had described RAD and Senna-2 together as 3DGS RL with reacting agents; RAD's agents are log-replayed (corrected).
+- A reward-vs-imitation comparison in one simulator now exists, with off-policy labels.
+- Two private 3DGS benchmarks from one group disagree on effect size; filed as a new research direction.
+
+**Research directions** (`wiki/research-directions.md`): now 49 open questions (11 partially answered) and 2 answered.
+- *Evidence added*: error bars (clip-count SE, cross-benchmark disagreement); reward vs labels (IL / RL / both in one simulator); RL recipe (PPO needs auxiliary losses, factorized advantages and imitation); which simulator trains best (reconstruction, online RL); renderer artifacts (training-renderer evaluation, episode cut at render failure); RL and OOD robustness.
+- *Added*: Do private 3DGS closed-loop benchmarks agree with each other?
+- *Answered*: none.
+
+**Not reported**: public-benchmark results (NAVSIM, navhard, Bench2Drive, HUGSIM, nuScenes); seeds; reactive-agent results; real-world closed-loop statistics; latency; reward magnitudes.
+
+**New gaps**: StreetGaussian, VADv2, GenAD, PPO / GAE (as concepts), CADRE and CIRL (IL + RL in CARLA), Senna (the first version).
+
+**Figure note**: all 7 figure files embedded (`teaserv3-nips.png`, `framework-2.png`, `post-training-nipsv2.png`, `reward-nipsv2.png`, `Consistencyv4.png`, `vis-nips-v2.png`, `vs2-2.png`); Figure 7 described from its caption. All 6 tables reproduced, with clip counts computed from the ratios. The clipping's front-matter author field is empty; authors and affiliations are taken from the body.
+
+## 2026-10-06 - Ingest: Outcome-Grounded World Modeling for Autonomous Driving (World4Scorer)
+
+**Source**: `raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md` (arXiv 2609.36438v1)
+**Orgs**: AIR Tsinghua (corresponding author Yan Wang), HiThink Research, HKUST-GZ, Zhejiang University and seven others including Changan Automobile. The CLOVER group (Sining Ang and Yan Wang also wrote CLOVER and Adaptive-WAM). Code links given; release promised on publication.
+**Pages created**: `wiki/sources/world4scorer.md`
+**Pages updated**: `concepts/selection-based-planning.md` (methods row, fourth hard-negative mechanism, new `#world4scorer` section, top-of-leaderboard table re-ranked with World4Scorer first, AD-E2E-JEPA EC note), `concepts/navsim-benchmark.md` (v1 and v2 ladder rows, new `#world4scorer` audit section, residual-sign exception note on DiffusionDrive, GeoWAM-narrowed note partly reversed), `concepts/world-model-for-ad.md` (Pattern 49, per-candidate comparison row, two open questions), `concepts/bench2drive.md`, `concepts/inference-latency.md`, `concepts/evaluation-variance.md` (log-clustered bootstrap), `concepts/best-of-n.md` (generated-pool oracle 99.33), `concepts/counterfactual-prediction.md`, `concepts/teacher-pseudo-labels.md`, `concepts/foundation-backbones-for-ad.md`, `sources/geowam.md`, `sources/drive-jepa.md`, `sources/da-wam.md`, `sources/mm-future.md`, `sources/adaptive-wam.md`, `sources/auto-jepa.md`, `research-directions.md`, `index.md`, `README.md` (93 papers)
+**Confidence**: **medium**. The fixed-pool and re-ranking controls are careful (bootstrap over logs, 100 shuffles, history-corruption arms), but the world-model claim rests on one single-seed row, the bank is not ablated at full scale, the v2 lead is a portable use of the metric's own comfort check, and Bench2Drive is an unablated adapted system.
+
+**What it is**: DrivoR's encoder (DINOv2-S, rank-32 LoRA, four cameras) and 64-candidate generator, with the scorer replaced by a 4-block trajectory-conditioned predictor. Each candidate's state feeds six heads (NC, DAC, DDC, TTC, EP, C). Simulator outcomes supervise every candidate's state (64 generated, labelled online, plus 16 CLOVER bank trajectories); the logged trajectory, queried alone, predicts the pooled front-view DINOv2 feature 2 s ahead (cosine loss). Inertial re-ranking penalizes candidates that fail NAVSIM-v2's extended-comfort check against the previous frame's plan.
+
+**Reported results**: 94.0 PDMS (navtrain); 91.4 EPDMS framewise, 93.0 re-ranked; 73.27 DS / 46.36% SR on Bench2Drive (adapted); OGBench-Cube 68.91% → 73.64% with a separate outcome scorer on frozen LeWM; 106.5 ms fp32 on an A100 plus 125.4 ms of CPU re-ranking; 35.52M parameters.
+
+**Finding 1 - the scorer, isolated.** On DrivoR's released 64-candidate pools (oracle 99.33): World4Scorer's scorer 94.19, DrivoR's 93.69 (+0.50); its full system with its own generator scores 94.0, so the margin is all scorer. No ranking signal (scene-mean state) gives 71.10.
+
+**Finding 2 - the world-model part is one row.** Future target 93.96, no target 93.01, current-frame target 92.70; single seed, last epoch; current and +2 s targets have mean cosine 0.94. Proposition 1 applies to any extra readout, including the one that hurt. State shuffling (−14.47) is matched on DrivoR's non-predictive scorer (+14.11 regret), so RQ3 shows candidate-specificity, not prediction.
+
+**Finding 3 - the v2 lead is the metric's comfort check.** Re-ranking at fixed weights: EC 77.0 → 92.8, EP −0.2, EPDMS +1.6; on DrivoR 90.66 → 92.27. Needs ordered, stateful evaluation. The correct previous plan beats a wrong-log one by 2.96 and a two-step-old one by 1.01; copying the previous plan scores 82.0.
+
+**Finding 4 - v1 and v2 disagree.** On frozen pools with simulator sub-scores: different argmax in 43% of scenes; EC is 98% of the gap; v1-optimal fails EC in 99.7% of disagreements; v2-optimal costs 1.3 v1 PDMS. Separate v2 selection weights (10, 13, 6, 14, 15, 2.1), provenance unstated.
+
+**Table and text problems found**:
+- The text cites "Table 4" for the main NAVSIM results (it is Table 1); Table 4's caption refers to "the Table 4 pool".
+- Table 13's "ReCogDrive 71.36" equals Raw2Drive's Bench2Drive DS; the wiki's ReCogDrive page has no Bench2Drive result. Unverified.
+- SafeDrive's v2 row: closed form 91.5 against reported 87.5 (residual +4.0).
+- DAWN's v1 row sits 6.9 above the closed form computed with its v2 NC/DAC (v1 NC/DAC are not printed for any row).
+- DrivoR is printed at 93.7, the trainval value in MM-Future's table; World4Scorer trains on navtrain's 103,288 samples.
+
+**New syntheses surfaced while writing**:
+- DiffusionDrive at 88.2 now appears in two independent v2 tables (GeoWAM, World4Scorer) on sub-scores within 0.3 of the 84.5 row's, with a corrected-like residual. The wiki had filed GeoWAM's row as the anomaly; the simpler reading is now that 84.5 is pre-fix. This removes one of the residual-sign heuristic's four exceptions. TransFuser appears at 83.9 on its own corrected-like sub-scores.
+- First navtest price for a scorer at fixed candidates (+0.50) and for having any ranking signal (about 23 PDMS).
+- A generated 64-candidate pool reaches a 99.33 oracle, about DriveSuprim's top-256 of a fixed vocabulary.
+- First log-clustered bootstrap intervals in the wiki.
+- CLOVER is now load-bearing in three ingested papers (Auto-JEPA, Adaptive-WAM, World4Scorer) and still not ingested.
+
+**Research directions** (`wiki/research-directions.md`): now 51 questions (40 open, 11 partially answered) and 2 answered.
+- *Evidence added*: error bars (log-clustered CIs); EPDMS comparability (DiffusionDrive 88.2, TransFuser 83.9, SafeDrive +4.0, new rows); v1 saturation (94.0 navtrain; pool oracle 99.33); reactive closed loop (73.27 DS for a 94.0 PDMS method); generator vs selector (fixed-pool scorer swap); world-model-shaped representations (current-frame-target control); supervision rules (low-entropy pooled target helps); per-candidate futures (outcome-supervised states; shuffle test not diagnostic); scorers overfitting the metric (EC check at inference); inference cost.
+- *Added*: How much of NAVSIM-v2 EPDMS measures frame-to-frame consistency rather than planning? When outcome labels supervise every candidate, does an observed future still add anything?
+- *Answered*: none.
+
+**Not reported**: navhard, HUGSIM or any reactive NAVSIM result; seeds for any ablation; a full-scale bank ablation; a no-future run on v2; Bench2Drive ablations of the route input, ego state or route re-ranking; how the v2 weights were chosen; which baselines were re-evaluated.
+
+**New gaps**: DrivoR (now the base of two ingested papers and second on navhard), CLOVER, LeWM / LeWorldModel, SafeDrive, DAWN, GraphWorld, UniTeD, Discrete-WAM, WoTE.
+
+**Figure note**: the clipping ends at the Table 1 caption and links only three images (one of them, `b2d_main.png`, is Figure 6, not Table 1). Sections 4.1–5, Tables 1–13 and Appendices A–E were recovered from the arXiv HTML. Eleven missing figure files were downloaded to `raw/assets/` (`fig4_query_scan.png`, `cube_pair_bar.png`, `decode_pipeline.png`, `appendix_query_examples.png`, `appendix_condgrid_full.png`, `b2d_showcase_5s.png`, and SVGs `fig_identifiability.svg`, `fig_bank.svg`, `fig_bev.svg`, `fig_selection_story.svg`, `fig_scene_states.svg`); all 14 figures are embedded and all 13 tables reproduced (Tables 3 and 13 merged, Table 6 abridged), with computed v1 and v2 residual columns. `raw/papers/` was not modified.
+
+## 2026-10-06 - Lint
+
+**Structural checks**: 135 pages (93 sources, 39 concepts, index, log, research directions). No broken wiki links or anchors (the three hits are template placeholders in `research-directions.md` and the log); all frontmatter complete; every page in `index.md`; all 93 raw papers have a source page; all 591 embedded images resolve. One remote image remains by design (`sources/walt.md` Figure 1). `log.md`'s frontmatter pointed `related` at `wiki/index.md`; now `index.md`. Weakly linked but not orphaned (one inbound body link each): `divergent-thinking-in-vlms`, `nuplan-benchmark`, `parallel-il-rl`. Each now has a second, from `sources/all-roads-lead-to-rome.md`, `sources/plan-r1.md` (which reports nuPlan and did not link the page) and `concepts/rl-for-ad.md`'s PaIR-Drive section.
+
+**Stale claims fixed** (annotated in place, dated):
+- *Highest non-BoN v1*: World4Scorer's 94.0 on navtrain passes the "CLEAR / DA-WAM 93.7, among navtrain-trained models" scoping added at the last lint. Annotated in `navsim-benchmark.md` (CLEAR and DA-WAM table rows, the CLEAR and DA-WAM caveats), `best-of-n.md`, `sources/da-wam.md`, `sources/drive-hwm.md` ("93.8 would be the highest" is now third), and README's DriveSuprim and CLEAR rows.
+- *WCog-VLA*: "fourth-highest" now has six undisputed entries above it plus Drive-HWM; "best PDMS per parameter" holds among VLM entries only (World4Scorer: 94.0 at 35.5M).
+- *Highest corrected v2*: WA-JEPA's 91.7 is highest framewise; World4Scorer reaches 93.0 with re-ranking (`navsim-benchmark.md`, `wam-attention-masks.md`).
+- *SimWAM as highest WAM / world-model-class entry*: passed by DA-WAM, MM-Future and DriveReferee (`navsim-benchmark.md` ordering paragraph, README row). GeoWAM's README row still said "navhard SOTA".
+- *Fastest / slowest*: Adaptive-WAM's "fastest WAM in the wiki" scoped to video-backbone models (ForeDrive's latent world model runs in 58 ms) in `navsim-benchmark.md` twice and `index.md`; ForeSight's "slowest planner recorded on this page" in `navsim-benchmark.md` missed by the last lint's fix (PhysWAM 9.4 GPU-s).
+- *Training-seed variance "never measured"*: `sources/drivereferee.md`, `sources/coworld-vla.md`, `sources/walt.md` (ForeDrive, sd 0.1).
+- *World model as the training environment*: `sources/learning-to-drive-from-a-world-model.md` called itself the wiki's first; DreamerAD (ingested earlier) and Think2Drive (2024) precede it. Scoped to pixel-space rollouts with supervised labels.
+- *navhard*: the "inference-path mechanisms" reading of the navtest-small / navhard-large asymmetry (`navhard-ood-evaluation.md`, README thread 5) predates SimScale, which produces it with training data alone; "only two world-model papers report navhard" (README) is now seven; "Stage 2 stalls near 40 EPDMS" (`hugsim-benchmark.md`, README thread 4) holds for unscored planners trained on real data only.
+- *RAD*: `rl-for-ad.md` still said "Not ingested" in its approaches list.
+- *Counts*: `general-capability-retention.md` 85 → 93 papers (still three that measure retention); README "Papers Ingested (92)" → 93, with the missing World4Scorer row added; "45 world-model patterns" → 49; Known Gaps mention counts refreshed (DrivoR 64 → 130, GTRS 96 → 179, CLOVER 28 → 48, and smaller changes); the SimScale row removed from Known Gaps (ingested, and its 53.2 is not in the paper).
+- README's concept rows for RL, Bench2Drive, Selection, Navhard and Data-Driven Simulators, and its Open Threads 1, 2 and 4, gained the evidence of the last eight ingests.
+
+**Contradictions recorded, not resolved**:
+- *DiffusionDrive 84.5 and the mixing-table count.* The World4Scorer ingest re-read 84.5 as the pre-fix value (two independent tables print a corrected-like 88.2 on near-identical sub-scores) but did not propagate it. Adaptive-WAM's and GeoWorldAD's tables were counted as mixing because 84.5 was taken as corrected; under the new reading Adaptive-WAM's named baselines are all pre-fix (and its human agent is the pre-fix 90.3), GeoWorldAD's mix rests on its DVGT-2 / EponaV2 rows, both "corrected" rows in LWDrive's table carry pre-fix-like residuals, and ReDrive's corrected-captioned table carries one pre-fix row. WA-JEPA's column label for 84.5 is the other side of the dispute. Annotated in `navsim-benchmark.md` (five places), `sources/adaptive-wam.md`, `sources/geoworldad.md` (twice), `sources/lwdrive.md`, `sources/redrive.md`, `sources/physwam.md`, README. The "at least eleven mixing tables" count is not changed until the row's origin is found.
+- *Shared feature-space futures.* `world-model-for-ad.md`'s box ("shared photometric and feature-space future conditioning is useless to harmful") is contradicted by ForeDrive (+0.4 to +0.6 PDMS from one shared DINOv3-latent future, consumed). With DA-WAM's shared JEPA-latent future at −0.5, feature-space results disagree in sign. The box is annotated as holding for photometric targets only.
+- *71.36*: World4Scorer's "ReCogDrive 71.36" on Bench2Drive equals Raw2Drive's DS and DeepSight's SR. Noted on `sources/world4scorer.md`.
+- Carried over and still open: Drive-HWM's 93.8 / 93.3; the navhard split size (244 vs 450 Stage-1 scenes); regression on future latents (WA-JEPA vs ReDrive, ForeDrive, World4Scorer); bidirectional attention (MM-Future vs Metis); the encoder default (DINOv3 vs V-JEPA 2); DriveVLA-W0's 86.1 column; HUGSIM commits; MomWorld's ablation regularities.
+
+**Research directions** (`wiki/research-directions.md`): still 51 questions (40 open, 11 partially answered) and 2 answered; no status changes.
+- *Corrected*: "What does each method cost at inference?" gave the latency range as 22 ms – 1.36 s while citing PhysWAM's 9.4 s in the same entry (fixed to 22 ms – 9.4 s; the index row was fixed at the last lint). "Does discrete visual tokenization survive at the frontier?" compared against 93.7 (now 94.0). "Do NAVSIM rankings survive a reactive closed loop?" said only MM-Future among entries above 92 had a closed-loop number and that none had been run on Bench2Drive, three sentences before adding World4Scorer's Bench2Drive result.
+- *Evidence added*: "Can NAVSIM-v2 EPDMS be compared across papers?" (the DiffusionDrive knock-on above; exceptions to the residual-sign heuristic are now three); "Does generating the future at test time ever pay off?" (GeoWorldAD's +1.7 / +2.8 for a shared geometric future had never been entered; shared feature-space futures disagree in sign); "Is NAVSIM-v1 saturated?" (reworded around World4Scorer's 94.0).
+- *Page-level Open Questions checked*: all questions added to concept pages by the last eight ingests are represented. Still left on its page only: velocity versus x-prediction for flow-matching planners (`diffusion-planner.md`).
+- *Answered*: none.
+
+**Concept pages suggested** (none has its own page):
+- Extended comfort and frame-to-frame consistency (47 source pages): World4Scorer's re-ranking (+1.6 EPDMS from the metric's own EC check), Drive-JEPA's momentum-aware selection and a new research direction now depend on it.
+- JEPA for driving (37 source pages): ForeDrive and World4Scorer add two more JEPA-style predictors to WA-JEPA, Drive-JEPA, Auto-JEPA, AD-E2E-JEPA, ReDrive and DA-WAM.
+- Model-based RL and world models as training environments: Think2Drive, Raw2Drive, DreamerAD and openpilot are spread over `world-model-for-ad` (Patterns 46–47), `rl-for-ad` and `data-driven-simulators`.
+- CARLA Driving Score and route length (Think2Drive: the same planner scores 56.8 on long routes and 91.85 on Bench2Drive's short ones).
+- Sensor configuration (LiDAR on 42 source pages) and knowledge distillation (35), carried over.
+- Entity pages: `wiki/entities/` is still empty. DrivoR (130 mentions, now the base of World4Scorer and the encoder of MM-Future), GTRS (179) and CLOVER (48, load-bearing in three papers) are the strongest candidates.
+
+**Questions to investigate next**:
+- Which paper first printed DiffusionDrive at 84.5, and under which evaluator? It decides the mixing-table count and the shared baseline block's protocol.
+- Does any shared-future ablation use a feature-space target with a matched no-future control other than DA-WAM and ForeDrive? The two disagree in sign.
+- Ingest DrivoR, GTRS / GTRS-Dense and CLOVER: each is now a base or supervision source for two or more ingested papers.
+- Does World4Scorer's re-ranking gain survive in a closed loop, or is it specific to NAVSIM-v2's EC metric?
+- Does any NAVSIM leader report CARLA or Bench2Drive results without adaptation, so the 94.0 / 73.27 DS gap can be read?

@@ -2,9 +2,9 @@
 title: "Adaptive-WAM: Quality-Guided Early-Exit Planning from Intermediate Video-Diffusion Features"
 type: source-summary
 sources: [raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md]
-related: [sources/geoworldad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/nuscenes-waymo-evals.md, concepts/rl-for-ad.md, sources/drivelaw.md, sources/brainwam.md, sources/foresight.md, sources/simwam.md, sources/driveva.md, sources/drivewam.md, sources/recogdrive.md, sources/auto-jepa.md, sources/da-wam.md, sources/wa-jepa.md, sources/clear.md, sources/drivesuprim.md, sources/latent-wam.md, sources/drivevla-w0.md, sources/epona.md, sources/policy-world-model.md]
+related: [sources/world4scorer.md, sources/geoworldad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/nuscenes-waymo-evals.md, concepts/rl-for-ad.md, sources/drivelaw.md, sources/brainwam.md, sources/foresight.md, sources/simwam.md, sources/driveva.md, sources/drivewam.md, sources/recogdrive.md, sources/auto-jepa.md, sources/da-wam.md, sources/wa-jepa.md, sources/clear.md, sources/drivesuprim.md, sources/latent-wam.md, sources/drivevla-w0.md, sources/epona.md, sources/policy-world-model.md]
 created: 2026-09-04
-updated: 2026-09-04
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -324,7 +324,7 @@ The paper's own framing is appropriately cautious: *"passing the quality thresho
 
 8. **Five noise indices, one scheduler, one backbone family.** The paper says so explicitly.
 
-9. **The v2 table has five baselines and mixes evaluator conventions.** DiffusionDrive at 84.5 matches the wiki's *corrected* cohort while ReCogDrive 83.6 and DriveVLA-W0 86.1 match the *pre-fix* cohort. This is the fourth ingested table shown to mix, after GeoWAM, DA-WAM, and BrainWAM. 89.9 EPDMS therefore cannot be placed against the wiki's v2 leaderboard.
+9. **The v2 table has five baselines and mixes evaluator conventions.** DiffusionDrive at 84.5 matches the wiki's *corrected* cohort while ReCogDrive 83.6 and DriveVLA-W0 86.1 match the *pre-fix* cohort. This is the fourth ingested table shown to mix, after GeoWAM, DA-WAM, and BrainWAM. 89.9 EPDMS therefore cannot be placed against the wiki's v2 leaderboard. *(lint 2026-10-06: the mix rests on DiffusionDrive 84.5 being corrected. Since the World4Scorer ingest the wiki reads 84.5 as the pre-fix value ([[concepts/navsim-benchmark.md#world4scorer]]), which makes all three named baselines pre-fix and this table possibly consistent. Its own row's protocol is still unknown, and the human agent's 90.3 in this table is the pre-fix value, so 89.9 is more likely pre-fix too. Not resolved.)*
 
 10. **NAVSIM and zero-shot nuScenes only.** No navhard, no Bench2Drive, no HUGSIM, no reactive closed loop. The routing thesis — spend more compute on harder scenes — is exactly the claim a hard/OOD split would test, and navhard exists.
 
@@ -352,3 +352,4 @@ The paper's own framing is appropriately cautious: *"passing the quality thresho
 - **CLOVER lineage**: the first author is CLOVER's first author, and CLOVER supplies both [[sources/auto-jepa.md]]'s scorer initialization and this paper's pseudo-expert target protocol. CLOVER remains un-ingested and is now referenced by two wiki papers.
 
 - **Fills a recorded gap**: [[sources/driveva.md]]'s page notes its NAVSIM sub-scores were truncated in source. Table 2 supplies them (NC 99.2, DAC 97.5, TTC 98.7, Comf 100, EP 83.5) and disambiguates 90.9 (mixed data) from 90.5 (NAVSIM only).
+- *(2026-10-06)* **The CLOVER group's third paper in the wiki**: [[sources/world4scorer.md]] (Sining Ang and Yan Wang among its authors) uses CLOVER's scene-matched bank of simulator-labelled trajectories as extra scorer supervision and reaches 94.0 PDMS. CLOVER itself is still not ingested.

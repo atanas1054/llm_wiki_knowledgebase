@@ -1,10 +1,10 @@
 ---
 title: Reinforcement Learning for Autonomous Driving
 type: concept
-sources: ["raw/papers/Learning to Drive from a World Model.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md, raw/papers/PlannerRFT_ Reinforcing Diffusion Planners through Closed-Loop and Sample-Efficient Fine-Tuning.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/DisCO_ Reinforcing Large Reasoning Models with Discriminative Constrained Optimization.md, raw/papers/DAPO_ An Open-Source LLM Reinforcement Learning System at Scale.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [sources/learning-to-drive-from-a-world-model.md, concepts/data-driven-simulators.md, sources/drivereferee.md, sources/grava.md, concepts/alpasim-benchmark.md, sources/qwen-drive-1.0.md, sources/simwam.md, sources/sgdrive.md, sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, sources/dreameraD.md, sources/nord.md, sources/diffusiondrive-v2.md, sources/wam-diff.md, sources/explorevla.md, sources/elf-vla.md, sources/dynvla.md, sources/spanvla.md, sources/had.md, sources/feaxdrive.md, sources/understanding-r1-zero-like-training.md, sources/plan-r1.md, sources/plannerrft.md, sources/pair-drive.md, sources/dial.md, sources/disco.md, sources/dapo.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/nuplan-benchmark.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md, concepts/discriminative-policy-optimization.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md, concepts/r1-zero-like-training.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md]
+sources: ["raw/papers/RAD_ Training an End-to-End Driving Policy via Large-Scale 3DGS-based Reinforcement Learning.md", "raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/Think2Drive_ Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2).md", "raw/papers/SimScale_ Learning to Drive via Real-World Simulation at Scale.md", "raw/papers/Learning to Drive from a World Model.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md, raw/papers/WAM-Flow_ Parallel Coarse-to-Fine Motion Planning via Discrete Flow Matching for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoDrive-R²_ Incentivizing Reasoning and Self-Reflection Capacity for VLA Model in Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md, raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/Unleashing VLA Potentials in Autonomous Driving via Explicit Learning from Failures.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/SpanVLA_ Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md, raw/papers/Understanding R1-Zero-Like Training_ A Critical Perspective.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md, raw/papers/PlannerRFT_ Reinforcing Diffusion Planners through Closed-Loop and Sample-Efficient Fine-Tuning.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/DisCO_ Reinforcing Large Reasoning Models with Discriminative Constrained Optimization.md, raw/papers/DAPO_ An Open-Source LLM Reinforcement Learning System at Scale.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
+related: [sources/rad.md, sources/raw2drive.md, sources/think2drive.md, sources/simscale.md, sources/learning-to-drive-from-a-world-model.md, concepts/data-driven-simulators.md, sources/drivereferee.md, sources/grava.md, concepts/alpasim-benchmark.md, sources/qwen-drive-1.0.md, sources/simwam.md, sources/sgdrive.md, sources/recogdrive.md, sources/wam-flow.md, sources/senna2.md, sources/reasoning-vla.md, sources/drivefine.md, sources/curious-vla.md, sources/autovla.md, sources/autodrive-r2.md, sources/alpamayo-r1.md, sources/adathinkdrive.md, sources/flare.md, sources/dreameraD.md, sources/nord.md, sources/diffusiondrive-v2.md, sources/wam-diff.md, sources/explorevla.md, sources/elf-vla.md, sources/dynvla.md, sources/spanvla.md, sources/had.md, sources/feaxdrive.md, sources/understanding-r1-zero-like-training.md, sources/plan-r1.md, sources/plannerrft.md, sources/pair-drive.md, sources/dial.md, sources/disco.md, sources/dapo.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/dual-system-vla.md, concepts/navsim-benchmark.md, concepts/nuplan-benchmark.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md, concepts/discriminative-policy-optimization.md, concepts/vlm-domain-adaptation.md, concepts/world-model-for-ad.md, concepts/r1-zero-like-training.md, concepts/action-tokenization.md, concepts/gspo-vs-grpo.md]
 created: 2026-04-05
-updated: 2026-10-02
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -22,8 +22,15 @@ RL allows the model to **explore** driving behaviors in a simulated environment 
 - Limitation: sim-to-real gap
 
 ### RAD
-- Trains end-to-end AD agent via RL in photorealistic 3DGS environment
-- Addresses simulator realism gap
+- Trains a camera-input end-to-end policy with PPO in 3DGS reconstructions of real driving, interleaved with imitation; see [below](#rad) and [[sources/rad.md]]
+- Addresses simulator realism gap; other agents are log-replayed
+- *(2026-10-06)* [[sources/simscale.md]] positions itself against it: the same kind of 3DGS environment used to build a stored dataset of off-log states for any planner, instead of an online loop for one policy. See [below](#simscale-offline)
+
+### Think2Drive
+- *(2026-10-06)* Model-based RL (DreamerV3) for a privileged BEV planner in CARLA Leaderboard v2; the expert behind Bench2Drive's data. See [below](#think2drive) and [[sources/think2drive.md]]
+
+### Raw2Drive
+- *(2026-10-06)* Model-based RL from cameras in CARLA v2, bootstrapped from Think2Drive's privileged world model, reward heads and policy; 71.36 DS on Bench2Drive. See [below](#raw2drive) and [[sources/raw2drive.md]]
 
 ### CarPlanner
 - Auto-regressive planner with RL policy for multi-modal trajectory generation
@@ -62,6 +69,8 @@ $$L = L_{RL} - \lambda L_{BC}$$
 
 NAVSIM's non-reactive simulator does not model other agents responding to ego actions. This simplifies RL but may limit generalization to scenarios requiring interaction. A fully interactive closed-loop simulator is much harder to build and maintain.
 
+*(2026-10-06)* The interactive side has one ingested RL result: [[sources/think2drive.md]] trains a privileged planner in CARLA v2, whose agents react, through a learned latent model of it ([below](#think2drive)).
+
 *(2026-10-02)* Data-driven simulators built from real logs (reprojection, 3DGS reconstruction, learned world models) are the middle ground. Their trade-offs, including a policy's ability to learn the renderer's artifacts, are collected on [[concepts/data-driven-simulators.md]]. The one deployed policy trained this way in the wiki uses no reward at all ([below](#on-policy-imitation)).
 
 ## FeaXDrive: Feasibility-Aware GRPO
@@ -88,7 +97,7 @@ PlannerRFT also introduces survival reward for hard groups. Terminal reward make
 
 ## PaIR-Drive: RL as a Reusable Parallel Refiner
 
-[[sources/pair-drive.md]] rejects fine-tuning the IL policy entirely. A separate RL branch learns intention-conditioned residual trajectories around human references with simulator-scored GRPO. At deployment, it is centered on an IL proposal and retained as a proposal module; an RWM ranks the trajectory tree.
+[[sources/pair-drive.md]] rejects fine-tuning the IL policy entirely. A separate RL branch learns intention-conditioned residual trajectories around human references with simulator-scored GRPO. At deployment, it is centered on an IL proposal and retained as a proposal module; an RWM ranks the trajectory tree. The design pattern is collected in [[concepts/parallel-il-rl.md]].
 
 This changes the IL/RL tradeoff. Direct gradient conflict and catastrophic drift are structurally avoided because the networks are separate, and one RL branch improves both TransFuser and DiffusionDrive without RL retraining. In exchange, the system introduces training-to-inference reference shift, extra candidate-selection cost, and dependence on an under-specified reward model.
 
@@ -1099,6 +1108,72 @@ $$\mathcal L=w_v\,\mathcal L^{\mathrm{vid}}_{\mathrm{FM}}+w_a\,\mathcal L^{\math
 
 Not tested: more than two rules, a reactive benchmark, more than one training seed. DriveDPO, the preference-optimization paper it cites as precedent, is not ingested.
 
+## PPO in 3DGS Reconstructions, With Imitation as Regularizer: RAD {#rad}
+
+[[sources/rad.md]] (HUST + Horizon Robotics) post-trains a multi-camera policy with PPO in 3,968 3DGS reconstructions of real clips, alternating RL and imitation steps 4:1. Actions are two independent 61-way categorical distributions (lateral and longitudinal displacement over 0.5 s), each with its own value head and its own share of the reward: dynamic collisions drive longitudinal advantages, static collisions and deviation from the expert trajectory drive lateral ones. Every penalty ends the episode.
+
+**What carries the gain** (collision ratio over 337 held-out reconstructed clips):
+
+| Stage-3 recipe | CR |
+|---|---:|
+| Imitation only | 0.229 |
+| PPO + imitation, no auxiliary losses | **0.249** |
+| Directional auxiliary losses + imitation, no PPO | 0.187 |
+| PPO without imitation (with auxiliary losses) | 0.143 |
+| PPO + auxiliary losses + imitation | **0.089** |
+
+- **PPO alone does not beat imitation.** The four auxiliary losses do most of the work: each shifts probability mass in a hand-chosen direction (slower if a collision is ahead, faster if behind, away from a static obstacle, back toward the expert), weighted by the PPO advantage for that event. The combination is what reaches 0.089.
+- **Imitation steps keep the policy human-like**: without them deviation from the expert rises to 0.345 m (0.257 with them), and collisions are higher (0.143).
+- **The agents are log-replayed**, so interactive behaviours are learned against traffic that does not respond; the "accelerate when hit from behind" auxiliary direction is the visible trace.
+- **Its "3× lower collision rate" is on a private benchmark** whose reward and metric coincide; [[sources/senna2.md]]'s 3DGS benchmark from the same institutions gives RAD 0.281 and a 1.5× advantage over VADv2. See [[sources/rad.md#second-benchmark]].
+- **Against the NAVSIM GRPO methods on this page**: RAD's rollouts change the states the policy sees and run for 8 s; NAVSIM's change nothing. RAD's environment is the photoreal half of the "Key Tension" above, without reacting agents.
+
+## Model-Based RL in a Reactive Simulator: Think2Drive {#think2drive}
+
+[[sources/think2drive.md]] trains a planner on privileged BEV input in CARLA Leaderboard v2 with DreamerV3: a recurrent latent world model learns transitions, rewards and terminations from the policy's CARLA experience, and an actor-critic learns from 15-step imagined rollouts.
+
+**Against model-free PPO with the same engineering:**
+
+| Evaluation | Think2Drive | PPO ("Roach" reimplementation) |
+|---|---:|---:|
+| 390 single-scenario routes, DS | 83.8 ± 1 | 57.5 ± 9 |
+| Same, route completion | 99.6 | 96.4 |
+| CARLA v2 official routes (7–10 km), DS / RC | 56.8 / 98.6 | 0.7 / 1.0 |
+
+**Seven bricks**, several of which apply to any RL for driving:
+
+| Problem | Fix |
+|---|---|
+| Contradictory optima across scenarios trap training (keep distance vs. merge) | Re-initialize the planner mid-training, keep the world model (primacy-bias reset) |
+| Corner cases are rare in the routes | Scenario generator over short routes |
+| Valuable transitions are rare in time | Termination-priority replay (half the samples end at a termination) |
+| Steering wobble | Steering-change cost in the reward |
+| Hard scenarios push the policy to over-caution | Lane-following warm-up curriculum |
+| The planner learns slowly from delayed model rewards | Planner updated up to 4× as often as the world model |
+| CARLA resets take 40–60 s | Asynchronous reset and parallel environments |
+
+- **The reset is cheap only because of the world model.** A re-initialized model-free policy must relearn from noisy replayed rewards; a model-based one gets dense predicted rewards immediately. The paper's account of PPO's failure on long routes rests on this.
+- **The ablation has no numbers in the clipping**; reset and warm-up are said to matter most.
+- **The reward is hand-shaped** (speed, route progress, lane-centre deviation, steering change) with unstated weights, and the output is one of 30 discrete actions.
+- **Placement.** The NAVSIM RL methods on this page sample trajectories that are scored, not driven. Think2Drive is the one RL result here in a fully reactive simulator, at the cost of privileged input and game-engine traffic. Its camera student trained by imitation scores 36.4 DS against its 83.8.
+
+## From Privileged to Camera Input: Raw2Drive {#raw2drive}
+
+[[sources/raw2drive.md]] extends [Think2Drive](#think2drive) to six cameras. Stage I is Think2Drive (reusable). Stage II trains a camera encoder into the privileged world model's latent space, shares its dynamics, takes rewards and continuation flags from its heads, and fine-tunes the privileged policy by actor-critic RL in the camera stream's imagined rollouts.
+
+| What the ablations price (Dev10, 10 clips × 3 repeats) | DS |
+|---|---:|
+| Full system | 83.5 |
+| Privileged policy used on camera latents without RL fine-tuning | 58.4 |
+| Reward head learned from camera latents (instead of the privileged one) | 46.6 |
+| Without the shared RSSM | 53.2 |
+| Without any rollout alignment | 0.0 |
+
+- **The RL stage is worth +25 Dev10 DS** over transplanting the privileged policy onto camera latents. That is fine-tuning a policy to imperfect perception, not learning to drive from scratch.
+- **Reward cannot be learned from the cameras here.** Adjacent frames with opposite rewards make a camera reward head diverge (83.5 → 46.6). The reward stays privileged.
+- **On Bench2Drive it is 71.36 DS**, above the imitation baselines in its table (best 64.22) and about 20 below the best imitation methods in the wiki ([[concepts/bench2drive.md]]). Whether RL beats imitation from cameras at matched data and backbone is not tested: no imitation-only student with the same encoder and privileged latents is reported.
+- **Cost**: 64 H800 GPU-days (40 reusing Think2Drive); 600 ms per frame for the BEVFormer encoder at test time.
+
 ## On-Policy Imitation in a Learned Simulator, With No Reward {#on-policy-imitation}
 
 [[sources/learning-to-drive-from-a-world-model.md]] trains a deployed openpilot steering policy on its own rollouts, which is what this page's methods use simulators for, but without any reward. It belongs here as the alternative to RL that keeps the on-policy part.
@@ -1132,6 +1207,21 @@ This is DAgger-style relabelling with a learned, future-conditioned expert. The 
 - **Lane changes need a side input.** The decision is made by the future anchor, so the policy is given a lane-change impulse in training and at inference.
 
 See [[concepts/data-driven-simulators.md]] for the simulators and their failure modes.
+
+## Off-Log States Without a Policy in the Loop (SimScale) {#simscale-offline}
+
+[[sources/simscale.md]] uses a 3DGS environment with reacting IDM agents, the setting of [[sources/senna2.md]] (and of [[sources/rad.md]], which uses log-replayed agents), but never runs the policy in it. Ego trajectories are sampled around the log, a pseudo-expert labels the resulting states, and the rendered scenes are stored. The paper calls its reward-only variant "reward learning (i.e. offline RL)".
+
+| | 3DGS online RL (RAD; Senna-2) | SimScale |
+|---|---|---|
+| Who chooses the states | The current policy | A perturbation sampler around the log |
+| Signal | Reward or penalties along the policy's rollout | An expert trajectory, or EPDMS sub-scores for every vocabulary trajectory, at each stored state |
+| Update | Policy gradient, repeated | Supervised regression (imitation, or sub-score prediction for a scorer) |
+| Planners | One | LTF, DiffusionDrive, GTRS-Dense from the same data |
+
+- **"Offline RL" here is sub-score regression.** A vocabulary scorer learns to predict EPDMS sub-scores of fixed trajectories in new states. There is no return, no advantage and no policy-improvement loop. It is the Hydra-MDP++ distillation recipe ([[concepts/selection-based-planning.md#origin]]) on more states.
+- **Its result is the relevant comparison point for RL on NAVSIM**: +5 to +9 navhard EPDMS across three planner families from data alone, with the sub-score variant ahead of expert trajectories by +0.3 to +0.8 (single runs).
+- **No paper compares it with online RL** in the same renderer.
 
 ## Connection to LLM RL (GRPO / DeepSeek-R1)
 

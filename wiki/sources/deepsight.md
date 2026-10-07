@@ -2,9 +2,9 @@
 title: "DeepSight: Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/pdm-lite.md, sources/futuresightdrive.md, sources/dynvla.md, sources/flare.md, sources/adathinkdrive.md, sources/orion.md, sources/autovla.md]
+related: [sources/think2drive.md, concepts/world-model-for-ad.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/pdm-lite.md, sources/futuresightdrive.md, sources/dynvla.md, sources/flare.md, sources/adathinkdrive.md, sources/orion.md, sources/autovla.md]
 created: 2026-07-01
-updated: 2026-07-01
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -20,7 +20,7 @@ confidence: high
 
 DeepSight is a unified generative-understanding VLA for closed-loop driving whose central idea is **parallel prediction of latent semantic features for five consecutive future frames** in the bird's-eye-view (BEV) space, produced in a single forward pass via learnable **World Queries**. Instead of autoregressively generating future *pixels* (VAE-codebook world models such as [[sources/futuresightdrive.md]]), DeepSight regresses the DINOv3 features of future BEV frames with an MSE loss — capturing planning-relevant semantics and spatial layout while avoiding the cost and short-sightedness of pixel generation. A second component, an **adaptive Chain-of-Thought** module, lets the model decide per-scene whether to emit text reasoning (for long-tail cases such as emergency-vehicle yielding, construction zones, traffic signs) or a placeholder token, keeping inference cheap.
 
-On Bench2Drive (CARLA V2 closed-loop, Think2Drive expert protocol), DeepSight reports **84.52 DS / 65.91% SR without CoT** and **86.23 DS / 71.36% SR with adaptive CoT**, plus best open-loop nuScenes L2/collision in its comparison table. The world model contributes the bulk of the gain; adaptive CoT is a smaller complementary boost.
+On Bench2Drive (CARLA V2 closed-loop, Think2Drive expert protocol; the expert is [[sources/think2drive.md]], which itself scores 91.85 DS there), DeepSight reports **84.52 DS / 65.91% SR without CoT** and **86.23 DS / 71.36% SR with adaptive CoT**, plus best open-loop nuScenes L2/collision in its comparison table. The world model contributes the bulk of the gain; adaptive CoT is a smaller complementary boost.
 
 ---
 

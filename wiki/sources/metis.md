@@ -2,9 +2,9 @@
 title: "Metis: A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation"
 type: source-summary
 sources: ["raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md"]
-related: [sources/hydra-mdp-pp.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/mixture-of-experts.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/simwam.md, sources/suv.md, sources/driveva.md, sources/drivewam.md, sources/drivelaw.md, sources/epona.md, sources/drivevla-w0.md, sources/drivefine.md, sources/sgdrive.md, sources/vega.md, sources/recogdrive.md, sources/brainwam.md, sources/adaptive-wam.md, sources/wa-jepa.md, sources/redrive.md]
+related: [sources/simscale.md, sources/hydra-mdp-pp.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/mixture-of-experts.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/simwam.md, sources/suv.md, sources/driveva.md, sources/drivewam.md, sources/drivelaw.md, sources/epona.md, sources/drivevla-w0.md, sources/drivefine.md, sources/sgdrive.md, sources/vega.md, sources/recogdrive.md, sources/brainwam.md, sources/adaptive-wam.md, sources/wa-jepa.md, sources/redrive.md]
 created: 2026-09-27
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: medium
 ---
 
@@ -146,7 +146,7 @@ The paper's argument (App. A.1) has two halves:
 
 **The "best in both stages" claim holds only against this table.** In the wiki's [unscored navhard cohort](../concepts/navhard-ood-evaluation.md#scorer-cohort), 32.2 ranks **below** SpanVLA 40.1, SUV 36.9, GeoWAM 36.6, EponaV2 36.1, World4Drive 34.9, DriveFuture-unscored 34.6 and NavFormer 34.1. The paper's own "+7.9 DAC in Stage 2" is measured only against the two VLA rows.
 
-**Baseline provenance differs from other papers.** Its DiffusionDrive (27.5) and LTF (24.4) differ from the values in GeoWAM/SUV (LTF 25.1) and DriveFuture (DiffusionDrive 24.2). Rows labelled "copied from GTRS" do not match what other papers copy from other sources.
+**Baseline provenance differs from other papers.** Its DiffusionDrive (27.5) and LTF (24.4) differ from the values in GeoWAM/SUV (LTF 25.1) and DriveFuture (DiffusionDrive 24.2). Rows labelled "copied from GTRS" do not match what other papers copy from other sources. *(2026-10-06: both rows are digit-identical, on all 18 sub-scores and both stage scores, to the real-only baselines of [[sources/simscale.md]], which presents them as its own camera-only retrains. See [[sources/simscale.md#baseline-provenance]].)*
 
 ### Table 2 — NAVSIM-v2 navtest
 

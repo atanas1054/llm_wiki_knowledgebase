@@ -2,9 +2,9 @@
 title: "Senna-2: Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning"
 type: source-summary
 sources: [raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md]
-related: [concepts/dual-system-vla.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, sources/recogdrive.md]
+related: [sources/rad.md, concepts/dual-system-vla.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, sources/recogdrive.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -160,11 +160,13 @@ Best on all metrics. −5.7% FDE vs. Senna.
 | VAD | 0.502 | 0.280 | 0.458 | 0.362 |
 | GenAD | 0.557 | 0.244 | 0.402 | 0.332 |
 | VADv2 | 0.422 | 0.199 | 0.514 | 0.458 |
-| RAD | 0.281 | 0.113 | 0.613 | 0.543 |
+| [[sources/rad.md]] | 0.281 | 0.113 | 0.613 | 0.543 |
 | Senna | 0.310 | 0.111 | 0.638 | 0.539 |
 | **Senna-2** | **0.269** | **0.077** | **0.667** | **0.565** |
 
 −30.6% AF-CR vs. Senna. Beats RAD (0.113) despite both using RL — gain attributed to alignment strategy, not RL alone.
+
+*(2026-10-06: RAD's own paper reports a collision ratio of 0.089 on its 337-clip 3DGS benchmark, and VADv2 0.270 and TransFuser 0.320 there, against 0.281, 0.422 and 0.435 here. Same institutions, two benchmarks; RAD's advantage over VADv2 is 3.0× there and 1.5× here. RAD's paper also uses log-replayed agents, where this page describes Senna-2's as reactive. See [[sources/rad.md#second-benchmark]].)*
 
 ### NAVSIM-v2 (Table 6, after fine-tuning on NAVSIM)
 

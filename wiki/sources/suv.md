@@ -2,9 +2,9 @@
 title: "SUV: Future Scene Understanding as Video Generation for End-to-End Driving"
 type: source-summary
 sources: ["raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md"]
-related: [sources/metis.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/nuscenes-waymo-evals.md, concepts/perception-for-planning.md, concepts/foundation-backbones-for-ad.md, concepts/mixture-of-experts.md, concepts/diffusion-planner.md, sources/simwam.md, sources/driveva.md, sources/drivewam.md, sources/coworld-vla.md, sources/drivelaw.md, sources/wa-jepa.md, sources/drivefuture.md, sources/geowam.md, sources/spanvla.md, sources/drivevla-w0.md, sources/explorevla.md, sources/adaptive-wam.md, sources/qwen-drive-1.0.md, sources/dial.md, sources/grava.md, sources/physwam.md]
+related: [sources/foredrive.md, sources/metis.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/nuscenes-waymo-evals.md, concepts/perception-for-planning.md, concepts/foundation-backbones-for-ad.md, concepts/mixture-of-experts.md, concepts/diffusion-planner.md, sources/simwam.md, sources/driveva.md, sources/drivewam.md, sources/coworld-vla.md, sources/drivelaw.md, sources/wa-jepa.md, sources/drivefuture.md, sources/geowam.md, sources/spanvla.md, sources/drivevla-w0.md, sources/explorevla.md, sources/adaptive-wam.md, sources/qwen-drive-1.0.md, sources/dial.md, sources/grava.md, sources/physwam.md]
 created: 2026-09-27
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: medium
 ---
 
@@ -254,7 +254,7 @@ The WOD-E2E model is trained separately (5 frames of history, 10 future frames, 
 
 Six repeated evaluations of the fixed checkpoint returned **90.84 PDMS and 91.01 EPDMS** every time. Inference is deterministic, so this is not a variance estimate.
 
-The scene-level SD is **17.84 (v1)** and **18.21 (v2)** over 12,146 scenes, which gives a standard error of the mean of about **0.16**. That bounds *evaluation* noise only. As [[sources/coworld-vla.md]] notes, nobody has measured training-seed variance for a NAVSIM planner.
+The scene-level SD is **17.84 (v1)** and **18.21 (v2)** over 12,146 scenes, which gives a standard error of the mean of about **0.16**. That bounds *evaluation* noise only. As [[sources/coworld-vla.md]] notes, nobody had measured training-seed variance for a NAVSIM planner. *(2026-10-06: [[sources/foredrive.md]] reports three training seeds, sd 0.1 PDMS; see [[concepts/evaluation-variance.md#training-seed]].)*
 
 ---
 

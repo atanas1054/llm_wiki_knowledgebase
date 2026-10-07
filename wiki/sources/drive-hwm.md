@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md]
 related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/dual-system-vla.md, concepts/best-of-n.md, concepts/visual-tokenization.md, concepts/action-tokenization.md, concepts/selection-based-planning.md, concepts/counterfactual-prediction.md, concepts/hugsim-benchmark.md, sources/drivevla-w0.md, sources/coworld-vla.md, sources/wa-jepa.md, sources/drivefuture.md, sources/drivelaw.md, sources/geowam.md, sources/geoworldad.md, sources/da-wam.md, sources/auto-jepa.md, sources/drive-jepa.md, sources/clear.md, sources/simwam.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, sources/unified-driving-tokens.md, sources/latent-wam.md, sources/deepsight.md, sources/drivesuprim.md, sources/diffusiondrive.md, sources/autovla.md, sources/adathinkdrive.md, sources/epona.md, sources/lwdrive.md, sources/wcog-vla.md, sources/drivewam.md, sources/hybriddriveVLA.md, sources/recogdrive.md, sources/sgdrive.md, sources/driveva.md, sources/pair-drive.md, sources/wam-diff.md, sources/explorevla.md, sources/had.md, sources/dreameraD.md, sources/dynvla.md]
 created: 2026-09-14
-updated: 2026-09-14
+updated: 2026-10-06
 confidence: medium
 ---
 
@@ -58,7 +58,7 @@ Three further passages use the same set: "improving PDMS from 93.0 to 93.3" (§I
 
 The paper's own text picks the smaller one and describes it as validating the design. +0.3 sits inside the range this wiki has repeatedly found for named world-model mechanisms — [[sources/da-wam.md]]'s per-candidate future is +0.15, [[sources/foresight.md]]'s world model under vanilla attention is +0.3 — and close to the ~0.2 floor that [[concepts/navsim-benchmark.md]] treats as meaningful given measured sampler noise.
 
-**It also decides a leaderboard position.** 93.8 would be the highest non-BoN NAVSIM-v1 score in this wiki, 0.1 above [[sources/clear.md]] and [[sources/da-wam.md]] at 93.7. 93.3 exactly ties [[sources/drive-jepa.md]] and sits below three other methods. **A reader cannot determine from this paper which of those two statements is true**, so this page records both. Confidence is `medium` for that reason alone.
+**It also decides a leaderboard position.** 93.8 would be the highest non-BoN NAVSIM-v1 score in this wiki, 0.1 above [[sources/clear.md]] and [[sources/da-wam.md]] at 93.7. *(lint 2026-10-06: no longer: [[sources/world4scorer.md]] reports 94.0 on navtrain and [[sources/mm-future.md]] 94.0 on trainval, so 93.8 would be third.)* 93.3 exactly ties [[sources/drive-jepa.md]] and sits below three other methods. **A reader cannot determine from this paper which of those two statements is true**, so this page records both. Confidence is `medium` for that reason alone.
 
 The most likely mechanical explanation is that the tables were refreshed after a final run and the prose was not — the deltas all point the same way, and the largest (LK +1.8) is on a metric the prose treats as a weakness. That is a guess. The paper offers no comment, and its abstract makes no numerical claim at all.
 

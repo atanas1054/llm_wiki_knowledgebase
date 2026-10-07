@@ -2,9 +2,9 @@
 title: "DriveFuture: Future-Aware Latent World Models for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md]
-related: [sources/mm-future.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/diffusion-planner.md, concepts/intent-conditioned-planning.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/wa-jepa.md, sources/da-wam.md, sources/drivelaw.md, sources/geowam.md, sources/geoworldad.md, sources/latent-wam.md, sources/adaptive-wam.md, sources/reworld.md, sources/drivesuprim.md, sources/spanvla.md, sources/drivefine.md, sources/auto-jepa.md, sources/drivevla-w0.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/dial.md, sources/elf-vla.md, sources/lwdrive.md, sources/simwam.md, sources/physwam.md, sources/momworld.md]
+related: [sources/simscale.md, sources/mm-future.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/diffusion-planner.md, concepts/intent-conditioned-planning.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/wa-jepa.md, sources/da-wam.md, sources/drivelaw.md, sources/geowam.md, sources/geoworldad.md, sources/latent-wam.md, sources/adaptive-wam.md, sources/reworld.md, sources/drivesuprim.md, sources/spanvla.md, sources/drivefine.md, sources/auto-jepa.md, sources/drivevla-w0.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/dial.md, sources/elf-vla.md, sources/lwdrive.md, sources/simwam.md, sources/physwam.md, sources/momworld.md]
 created: 2026-09-11
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -167,6 +167,8 @@ NAVSIM navtrain, Adam $1{\times}10^{-4}$, batch 16 with 5-step accumulation, 100
 | | | 2 | 91.4 | 82.0 | 91.0 | 98.5 | 53.1 | 90.6 | 52.3 | 93.3 | 62.8 | |
 | **DriveFuture** | V2-99 | 1 | **99.8** | **99.8** | **100** | 99.6 | 85.7 | **99.8** | **98.7** | 97.6 | 66.2 | **55.5** |
 | | | 2 | 90.6 | 87.5 | 94.1 | 99.1 | 84.6 | 88.8 | 58.3 | 93.5 | 45.6 | |
+
+*(2026-10-06: the SimScale row (53.2) does not appear in [[sources/simscale.md]] (v3), whose best is a three-model ensemble at 50.9 and best single model 48.0. The row's sub-scores are internally consistent; where DriveFuture took it from is not stated. See [[sources/simscale.md#provenance]].)*
 
 **This is by far the largest navhard table in the wiki**, and it changes the picture on [[concepts/navhard-ood-evaluation.md]] substantially. The previous leaderboard there came from [[sources/geowam.md]] and topped out at **36.6**; it contained no trajectory-scoring method at all. Here, every entry above 42 is a selection-based planner (DriveSuprim, ZTRS, GTRS-E, SimScale, DrivoR) or DriveFuture with a scorer bolted on.
 

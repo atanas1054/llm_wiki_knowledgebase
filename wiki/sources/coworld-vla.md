@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md]
 related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/chain-of-thought-for-ad.md, concepts/diffusion-planner.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/perception-for-planning.md, sources/wa-jepa.md, sources/drivefuture.md, sources/reworld.md, sources/drivelaw.md, sources/latent-wam.md, sources/onevl.md, sources/dynvla.md, sources/geoworldad.md, sources/geowam.md, sources/unified-driving-tokens.md, sources/drive-jepa.md, sources/auto-jepa.md, sources/da-wam.md, sources/simwam.md, sources/brainwam.md, sources/adaptive-wam.md, sources/drivewam.md, sources/driveva.md, sources/recogdrive.md, sources/sgdrive.md, sources/drivevla-w0.md, sources/dreameraD.md, sources/policy-world-model.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md, sources/wcog-vla.md, sources/epona.md, sources/wam-flow.md, sources/clear.md, sources/drivedreamer-policy.md, sources/physwam.md]
 created: 2026-09-11
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -298,7 +298,7 @@ Reading it as a factorial:
 
 > "These results indicate low sensitivity to the evaluated inference seeds. They do not replace variance estimates over independently trained models, which were not conducted because of the high training cost."
 
-That caveat is the most valuable sentence in the appendix. **It is the first paper in this wiki to name the training-seed gap explicitly** — every variance number on [[concepts/navsim-benchmark.md]] is sampler noise, and nobody has measured the one that would actually license 0.2-point ablation claims.
+That caveat is the most valuable sentence in the appendix. **It is the first paper in this wiki to name the training-seed gap explicitly** — every variance number on [[concepts/navsim-benchmark.md]] is sampler noise, and nobody has measured the one that would actually license 0.2-point ablation claims. *(lint 2026-10-06: measured once since, by [[sources/foredrive.md]]: sd 0.1 PDMS over three training seeds; see [[concepts/evaluation-variance.md#training-seed]].)*
 
 **One oddity worth flagging.** PDMS (v1 protocol) and EPDMS (v2 protocol) are different metrics with different sub-metric sets, different weights, and different penalty products, yet both means land at 89.98 and both tables headline 90.0. That can happen; two independent aggregations of the same trajectories are not forbidden from coinciding. But the coincidence is close enough that a reader should confirm the two rows are what their labels say before quoting either. The paper offers no comment.
 

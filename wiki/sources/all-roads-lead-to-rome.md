@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md]
 related: [concepts/divergent-thinking-in-vlms.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/chain-of-thought-for-ad.md, concepts/r1-zero-like-training.md]
 created: 2026-06-18
-updated: 2026-06-18
+updated: 2026-10-06
 confidence: high
 ---
 
@@ -84,7 +84,7 @@ Observed behavior:
 
 This is a distinct GRPO failure mode from [[sources/understanding-r1-zero-like-training.md]]:
 - Dr. GRPO addresses length and per-question reward-std bias.
-- MUPO addresses strategy-diversity collapse across sampled responses.
+- MUPO addresses strategy-diversity collapse across sampled responses. See [[concepts/divergent-thinking-in-vlms.md]].
 
 ---
 

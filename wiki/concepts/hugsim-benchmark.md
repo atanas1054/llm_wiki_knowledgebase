@@ -4,7 +4,7 @@ type: concept
 sources: ["raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md"]
 related: [sources/mm-future.md, sources/had.md, sources/latent-wam.md, sources/wa-jepa.md, sources/physwam.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/inference-latency.md, research-directions.md]
 created: 2026-05-01
-updated: 2026-09-30
+updated: 2026-10-06
 confidence: medium
 ---
 
@@ -54,7 +54,7 @@ All baselines rescored by WA-JEPA's authors under one code snapshot, sharing sce
 
 Three observations the aggregate hides:
 
-- **The Extreme tier goes to DrivoR**, 0.1407 vs. 0.1362, on 103 of 436 scenarios — roughly a quarter of the benchmark. Every method is near the floor there (0.06-0.14), which is the real story: **the hardest quarter of HUGSIM is essentially unsolved**, mirroring navhard Stage 2's stall near 40 EPDMS.
+- **The Extreme tier goes to DrivoR**, 0.1407 vs. 0.1362, on 103 of 436 scenarios — roughly a quarter of the benchmark. Every method is near the floor there (0.06-0.14), which is the real story: **the hardest quarter of HUGSIM is essentially unsolved**, mirroring navhard Stage 2's stall near 40 EPDMS *(lint 2026-10-06: for unscored planners trained on real data; scored entries above 50 combined must sit higher in Stage 2, and SimScale's simulation data moves unscored planners out of the Stage-2 lane-keeping band, see [[concepts/navhard-ood-evaluation.md#simscale]])*.
 - **Comfort is where world-model planners lose.** WA-JEPA scores 0.6620 against ~0.95 for LTF, DrivoR, and VAD. UniAD is similarly poor at 0.6633. The pattern matches NAVSIM-v2's EC column, where world-model and flow/diffusion planners routinely trail rule-based and anchor-based ones — a continuous sampler has no mechanism enforcing kinematic consistency across closed-loop timesteps.
 - **The gains concentrate in the middle.** WA-JEPA is +0.265 over DrivoR on Medium and +0.106 on Hard, but only +0.018 on Easy and −0.005 on Extreme. Closed-loop improvements are showing up where scenarios are hard enough to separate methods and not so hard that everything fails.
 

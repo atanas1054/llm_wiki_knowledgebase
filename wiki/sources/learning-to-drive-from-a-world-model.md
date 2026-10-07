@@ -2,9 +2,9 @@
 title: "Learning to Drive from a World Model"
 type: source-summary
 sources: ["raw/papers/Learning to Drive from a World Model.md"]
-related: [concepts/data-driven-simulators.md, concepts/world-model-for-ad.md, concepts/rl-for-ad.md, concepts/counterfactual-prediction.md, concepts/teacher-pseudo-labels.md, concepts/evaluation-variance.md, concepts/navhard-ood-evaluation.md, concepts/wam-attention-masks.md, concepts/perception-for-planning.md, concepts/foundation-backbones-for-ad.md, concepts/inference-latency.md, concepts/alpasim-benchmark.md, sources/dreameraD.md, sources/senna2.md, sources/driving-wm-counterfactuals.md, sources/ad-e2e-jepa.md, sources/physwam.md, sources/qwen-drive-1.0.md, sources/latent-wam.md, sources/simwam.md, sources/drivevla-w0.md]
+related: [sources/simscale.md, concepts/data-driven-simulators.md, concepts/world-model-for-ad.md, concepts/rl-for-ad.md, concepts/counterfactual-prediction.md, concepts/teacher-pseudo-labels.md, concepts/evaluation-variance.md, concepts/navhard-ood-evaluation.md, concepts/wam-attention-masks.md, concepts/perception-for-planning.md, concepts/foundation-backbones-for-ad.md, concepts/inference-latency.md, concepts/alpasim-benchmark.md, sources/dreameraD.md, sources/senna2.md, sources/driving-wm-counterfactuals.md, sources/ad-e2e-jepa.md, sources/physwam.md, sources/qwen-drive-1.0.md, sources/latent-wam.md, sources/simwam.md, sources/drivevla-w0.md]
 created: 2026-10-02
-updated: 2026-10-02
+updated: 2026-10-06
 confidence: medium
 ---
 
@@ -21,7 +21,7 @@ confidence: medium
 
 ## What It Is
 
-The wiki's first paper in which a world model is **the training environment, not part of the policy**. A small vision policy is trained **on-policy**: it drives inside a simulator built from real driving logs, sees the frames its own actions produce, and is supervised at every step by a model that knows where the human driver ended up. The trained policy then steers real cars in openpilot, a production Level 2 driver-assistance system.
+The wiki's first paper in which a world model is **the training environment, not part of the policy** *(lint 2026-10-06: first with pixel-space rollouts and supervised labels. [[sources/dreameraD.md]], ingested earlier, already ran GRPO inside a latent world model, and [[sources/think2drive.md]] (2024) is the earliest world model used as an RL environment in the wiki)*. A small vision policy is trained **on-policy**: it drives inside a simulator built from real driving logs, sees the frames its own actions produce, and is supervised at every step by a model that knows where the human driver ended up. The trained policy then steers real cars in openpilot, a production Level 2 driver-assistance system.
 
 Two simulators are compared, both data-driven:
 
@@ -299,6 +299,7 @@ The MAE's unit and horizon are not stated.
 - **[[sources/physwam.md]]**: the other measured check that generated video follows an action, also with a measured floor.
 - **[[sources/qwen-drive-1.0.md]]**: its AlpaSim reproduction shows NAVSIM's open-loop ranking inverting in a reactive closed loop. Table 2 here is the same inversion inside one paper, with three policies.
 - **[[sources/latent-wam.md]]**: also a frame-wise block-causal mask; see [[concepts/wam-attention-masks.md]].
+- **[[sources/simscale.md]]**: off-log states with corrective labels, but from a fixed perturbation sampler in 3DGS with reacting agents, labelled by PDM-Closed or log retrieval, and stored as a dataset for any planner. Tested on NAVSIM (+5 to +9 navhard EPDMS) rather than MetaDrive or the road. Its recovery teacher, like the Plan Model, uses the recorded future (the logged state 4 s ahead). See [[concepts/data-driven-simulators.md#fixed-perturbations]].
 
 ---
 
