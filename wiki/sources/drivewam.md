@@ -2,9 +2,9 @@
 title: "DriveWAM: Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/physicalai-av-benchmark.md, concepts/dual-system-vla.md, concepts/nuscenes-waymo-evals.md, sources/simwam.md, sources/driveva.md, sources/epona.md, sources/drivevla-w0.md, sources/drivedreamer-policy.md, sources/alpamayo-r1.md, sources/futuresightdrive.md, sources/automot.md, sources/spanvla.md]
+related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/physicalai-av-benchmark.md, concepts/dual-system-vla.md, concepts/nuscenes-waymo-evals.md, sources/simwam.md, sources/driveva.md, sources/epona.md, sources/drivevla-w0.md, sources/drivedreamer-policy.md, sources/alpamayo-r1.md, sources/futuresightdrive.md, sources/automot.md, sources/spanvla.md, sources/idol.md]
 created: 2026-08-17
-updated: 2026-08-17
+updated: 2026-10-12
 confidence: high
 ---
 
@@ -248,3 +248,4 @@ Two caveats keep this from being a clean refutation. SimWAM's mask ablation span
 - **Backbone roles**: [[concepts/foundation-backbones-for-ad.md]] — Wan2.2-TI2V-5B as *the* policy core (second wiki use after DriveVA); frozen Qwen3-VL-8B in a new "inference-time semantic guide" role (also dataset tagger).
 - **Frozen-VLM guidance vs. dual-system**: [[concepts/dual-system-vla.md]] — chunk-level free-text guidance via localized cross-attention is a third bridge type next to Senna-2's meta-actions and AutoMoT's layer-wise KV cache.
 - **KV memory**: [[sources/automot.md]] (layer-wise shared KV cache for async execution) and [[sources/spanvla.md]] (sparse-KV action bridge) are the wiki's nearest KV-efficiency mechanisms; DriveWAM's is the only *content-based eviction* policy.
+- **A different "inverse dynamics"**: [[sources/idol.md]] uses the term for an MLP over consecutive BEV states of a rollout generated *under* a candidate anchor, supervised toward the expert's correction to that anchor. DriveWAM's inverse dynamics reads the action from a future generated without it; IDOL's module cannot recover anything the anchor did not already fix.

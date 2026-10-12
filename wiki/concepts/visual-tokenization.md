@@ -1,10 +1,10 @@
 ---
 title: Discrete Visual Tokenization for Driving
 type: concept
-sources: [raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md]
-related: [sources/unified-driving-tokens.md, sources/policy-world-model.md, sources/explorevla.md, sources/futuresightdrive.md, sources/drivevla-w0.md, sources/dynvla.md, sources/drivelaw.md, sources/reworld.md, sources/geoworldad.md, sources/geowam.md, sources/epona.md, sources/uniugp.md, sources/brainwam.md, concepts/world-model-for-ad.md, concepts/action-tokenization.md, concepts/foundation-backbones-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, research-directions.md]
+sources: ["raw/papers/HyWorldVLA_ A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving.md", raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md]
+related: [sources/hyworldvla.md, sources/unified-driving-tokens.md, sources/policy-world-model.md, sources/explorevla.md, sources/futuresightdrive.md, sources/drivevla-w0.md, sources/dynvla.md, sources/drivelaw.md, sources/reworld.md, sources/geoworldad.md, sources/geowam.md, sources/epona.md, sources/uniugp.md, sources/brainwam.md, concepts/world-model-for-ad.md, concepts/action-tokenization.md, concepts/foundation-backbones-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, research-directions.md]
 created: 2026-09-04
-updated: 2026-09-30
+updated: 2026-10-12
 confidence: medium
 ---
 
@@ -39,6 +39,7 @@ What it costs is fidelity and stability: quantization discards information, and 
 | [[sources/futuresightdrive.md]] | **MoVQGAN** VQ-VAE | vocabulary appended to the MLLM's | 128 × 192 generation; the sole architectural change is extending the text vocabulary, which activates image generation with ~0.3% of prior data |
 | [[sources/explorevla.md]] | **MAGVIT-v2** (inside Show-o) | 8192 | 16 × 16 patches; masked-token loss over the image codebook |
 | [[sources/drivevla-w0.md]] | **Emu3-8B** discrete visual tokens | – | The AR world-model variant; the diffusion variant uses continuous latents instead — the same paper implements both |
+| [[sources/hyworldvla.md]] | **Emu3** VQ tokens (DriveVLA-W0's stack), first frame of each 1 s chunk; frames generated at 256×144 | – | Image tokens are a **pre-training-only** target (weight 0.5; 1.0 costs 0.76 PDMS); fine-tuning predicts a continuous video-VAE latent instead. Pixel tokens over the latent alone: +2.4 PDMS |
 | [[sources/policy-world-model.md]] | Context-guided two-branch | 8192 (both branches) | Frozen high-res first-frame branch guides a low-res branch at **28 tokens/frame**; compression is the point |
 | [[sources/dynvla.md]] | Dual VQ over *dynamics*, not appearance | **64 ego + 64 environment** | Tokenizes the *change* between adjacent frames; embedding dim 32 |
 | [[sources/unified-driving-tokens.md]] | DINOv3-guided + geometry, MCB | 16384 or **4 × 4096** | The only one trained with planning-consumability as an explicit objective |

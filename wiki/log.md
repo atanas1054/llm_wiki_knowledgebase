@@ -4,7 +4,7 @@ type: comparison
 sources: []
 related: [index.md]
 created: 2026-04-05
-updated: 2026-10-06
+updated: 2026-10-12
 confidence: high
 ---
 
@@ -3673,3 +3673,96 @@ The wiki cites no component effect size from this paper on any concept page.
 - Ingest DrivoR, GTRS / GTRS-Dense and CLOVER: each is now a base or supervision source for two or more ingested papers.
 - Does World4Scorer's re-ranking gain survive in a closed loop, or is it specific to NAVSIM-v2's EC metric?
 - Does any NAVSIM leader report CARLA or Bench2Drive results without adaptation, so the 94.0 / 73.27 DS gap can be read?
+
+## 2026-10-12 - Ingest: HyWorldVLA: A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving
+
+**Source**: `raw/papers/HyWorldVLA_ A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving.md` (arXiv 2607.20988v1, 23 July 2026)
+**Orgs**: Automotive New Technology Research Institute, BYD Company Limited. No code announced.
+**Pages created**: `wiki/sources/hyworldvla.md`
+**Pages updated**: `concepts/world-model-for-ad.md` (Pattern 50, two open questions), `concepts/navsim-benchmark.md` (v1 and v2 ladder rows, corrected-cohort entry, new `#hyworldvla` audit section), `concepts/evaluation-variance.md` (new `#noisy-subset` section), `concepts/selection-based-planning.md` (methods row for the Emu3 VLAs' vocabulary head), `concepts/foundation-backbones-for-ad.md` (Emu3 role row), `concepts/visual-tokenization.md`, `concepts/action-tokenization.md`, `concepts/inference-latency.md`, `concepts/navhard-ood-evaluation.md` (dated note on the navtest-small / hard-split-large shape), `concepts/teacher-pseudo-labels.md`, `sources/drivevla-w0.md`, `sources/drive-hwm.md`, `sources/latent-wam.md`, `sources/dreameraD.md`, `sources/coworld-vla.md`, `research-directions.md`, `index.md`, `README.md` (94 papers, 50 patterns)
+**Confidence**: **medium**. The method and navtest ablations are internally consistent (all ablation residuals −1.38 to −1.73 except Pure LWM), but the named effects are 0.24–0.42 PDMS on single runs. The robustness result rests on a private 655-scene subset with undescribed selection, and the baseline tables contain shifted rows.
+
+**What it is**: DriveVLA-W0's Emu3-8B stack (VQ image tokens, FAST action tokens, Emu3 text tokenizer, π0-style joint-attention action expert, Hydra-MDP-style vocabulary head) with a second future target. A VideoVAEPlus video VAE, fine-tuned on nuPlan with Flan-T5 text cross-attention over Qwen3.6-plus captions, supplies a latent $z_2$. Pre-training (OpenScene, 4,000 steps) predicts language, image and action tokens for six one-second chunks plus $\hat z_2$ from a learnable query through an MLP (MSE, weight 0.1; image tokens 0.5). Co-fine-tuning (NAVSIM trainval, 4,000 steps) predicts only $\hat z_2$ (weight 0.1), which the action expert reads with history and commands.
+
+**Reported results**: 90.59 PDMS (vocabulary head) / 88.76 (flow matching); 89.71 EPDMS; 86.87 PDMS on 655 rain/fog OpenScene-test scenes. No latency, parameter count, navhard, HUGSIM or closed loop.
+
+**Finding 1 - the matched gain over DriveVLA-W0 is small.** +0.39 over DriveVLA-W0's published 90.2★ (same head), +0.68 over the paper's own pixel-only rerun (89.91), +1.56 with flow matching (against DriveVLA-W0's published FM row, copied). Components: VAE text guidance +0.24, latent read by the action expert +0.30, latent loss in fine-tuning +0.42; pixel tokens over latent-only +3.09. No run without any future target.
+
+**Finding 2 - the robustness effect is large, comes from the fine-tuning latent loss, and is weakly calibrated.** On the subset: 86.87 hybrid, 73.18 without the fine-tuning latent loss, 69.95 pixel-only, 61.18 DriveVLA-W0, 67.49 DriveLaW, 60.65 WoTE. λ3 0.05 → 1.0 moves the subset 84.52 → 92.94 and navtest 90.47 → 89.75. At λ3 = 1.0 the subset scores above every navtest score in the paper; DriveVLA-W0 and the pixel-only rerun (0.29 apart on navtest) are 8.77 apart on the subset; scene-sampling SE ≥ 0.7. Mostly a DAC effect (≈76 → 91 → 98).
+
+**Finding 3 - the "latent" is a pixel-reconstruction VAE code**, regressed by MSE from one query token, so the paper's "latent = noise-robust" account is untested against a semantic target or against weather augmentation.
+
+**Table and figure problems found**:
+- v2 table: "Latent-WAM 87.7 / EC 72.4" is DreamerAD's published row on all ten numbers; "DreamerAD 86.8" is DriveWorld-VLA's row. Latent-WAM's own 89.3 / EC 87.3 is absent; the margin over it is +0.4, not +2.0.
+- v2 table mixes evaluators: block rows +1.25 to +2.48 (pre-fix-like), own row −0.91 and ExploreVLA −0.68 (corrected-like), DriveVLA-W0 −1.31. Tenth recorded user of the shared baseline block.
+- v1: CoWorld-VLA printed at 89.8 (99.2 / 96.8 / 96.6 / 100 / 83.6), matching no row the wiki holds (published 90.0).
+- Table 7's DriveVLA-W0 (fm) 87.2 is DriveVLA-W0's published row.
+- Table 6's WoTE row repeats 64.4 for TTC and EP (TTC 64.4 with NC 98.9).
+- Baseline categories inconsistent: WoTE (BEV + LiDAR) and CoWorld-VLA (V-JEPA / VGGT targets) as pixel-based; Epona latent-based but DriveLaW pixel-based; OneVL latent-based despite its visual decoder.
+- Text cites "Table 5" for Table 4; Figure 3(a) is captioned "turn right" while Appendix C.4 calls it the left-turn scenario.
+- Figure 3(a): HyWorldVLA's "Light" and "Dark" BEV panels are the same file in the arXiv HTML. The "dark" inputs in Figures 3(a) and 11 carry a "豆包AI生成" (Doubao AI-generated) watermark and are 2732×1534 against 1920×1080 originals, so the illumination test uses generative edits.
+- Figure 4(b): predicted frames t+2 to t+4 are nearly identical while ground truth moves; the claimed yielding is not visible.
+
+**New syntheses surfaced while writing**:
+- Three Emu3-8B systems now share DriveVLA-W0's stack (DriveVLA-W0, Drive-HWM, HyWorldVLA); each adds a non-pixel future and prices it under 1 PDMS on navtest.
+- A fixed-planner pixel vs latent vs both comparison inside one VLA (89.91 / 87.50 / 90.59), opposite in order to DriveLaW's.
+- Shared feature-space futures read by the planner: ForeDrive +0.4 to +0.6, HyWorldVLA +0.30, DA-WAM −0.5.
+- The world-model VLAs' headlines rest on a metric-supervised vocabulary head: worth +3.0 (DriveVLA-W0) and +1.83 (HyWorldVLA) over flow matching on the same backbone, more than either world-model effect.
+- The navtest-small / hard-split-large shape now appears on a weather subset as well as on navhard (+0.42 / +13.7).
+- Pre-training on OpenScene (which navtest derives from) with action tokens, exclusion unstated: another instance of the wiki's systemic overlap concern.
+
+**Research directions** (`wiki/research-directions.md`): now 52 questions (41 open, 11 partially answered) and 2 answered.
+- *Evidence added*: error bars (single-run 0.24–0.42 effects; the subset's SE and 8.77-point spread); EPDMS comparability (shifted rows as a new failure mode; tenth shared-block table); open-loop vs robustness (+0.42 navtest / +13.7 subset); test-time future (a shared VAE latent read by the action expert, +0.30); supervision rules (MSE on a VAE code: helps at 0.1, hurts at ≥ 0.2 on navtest, monotonic on the subset); pixels vs latent under one planner (89.91 / 87.50 / 90.59); scorers and the metric (the Emu3 VLAs' vocabulary head); inference cost (none reported).
+- *Added*: Does world-model supervision buy robustness to sensor degradation (rain, fog, lighting)?
+- *Answered*: none.
+
+**Not reported**: latency, parameter count, code, seeds, navhard, HUGSIM, Bench2Drive or closed loop, VAE reconstruction quality, the subset's selection rule and navtest overlap, the vocabulary size, whether pre-training excluded OpenScene test logs, a no-world-model run.
+
+**New gaps**: VideoVAEPlus (cross-modal video VAE), Latent-CoT-Drive, DriveWorld-VLA (already listed), WoTE, ReSim, LAW, World4Drive, WorldRFT, OpenDriveVLA, Emu3 itself.
+
+**Figure note**: the clipping keeps only the first tile of each multi-panel figure (11 tiles from Figures 3–13) and drops the (b) sub-captions of Figures 3, 4 and 11. All 112 tiles were downloaded from the arXiv HTML and composed into eleven figure images following the HTML layout (`raw/assets/hyworldvla_fig3.jpg` … `hyworldvla_fig13.jpg`), with the legend redrawn from the HTML's colours (GT #1E9646, prediction #E1826E). Figures 1 and 2 are the clipping's `paradigm14.png` and `framework3.png`. All 13 figures are embedded and all eight tables reproduced, with computed v1 and v2 residual columns and navtest columns added to the robustness tables. `raw/papers/` was not modified.
+
+## 2026-10-12 - Ingest: IDOL: Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving
+
+**Source**: `raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md` (arXiv 2605.31476v2)
+**Orgs**: Department of Electronic Engineering, Tsinghua University. Code released (github.com/Waterloo-ins/IDOL).
+**Pages created**: `wiki/sources/idol.md`
+**Pages updated**: `concepts/world-model-for-ad.md` (Pattern 51, one open question), `concepts/navsim-benchmark.md` (v1 and v2 ladder rows, corrected-cohort entry, new `#idol` audit section), `concepts/navhard-ood-evaluation.md` (scorer-cohort row, new `#idol` section), `concepts/selection-based-planning.md` (methods row), `concepts/bench2drive.md` (ladder row; WoTE and SeerDrive values), `concepts/inference-latency.md` (recorded-numbers row), `concepts/evaluation-variance.md` (identical-rows note), `sources/hyworldvla.md` (WoTE TTC 94.4 flagged as the outlier), `sources/resworld.md`, `sources/drivewam.md`, `sources/futuresightdrive.md`, `research-directions.md`, `index.md`, `README.md` (95 papers, 51 patterns, WoTE gap row)
+**Confidence**: **medium**. Internally consistent ablations with a parameter-matched control, but single runs on navtest only; the navhard and v2 margins cross evaluator scales; the ResNet-34 "SOTA" omits three entries above it.
+
+**What it is**: WoTE's design (TransFuser ResNet-34 + LiDAR, 8×8 latent BEV, 256 offline anchors, a transformer world model rolled out per anchor with the anchor's query injected, WoTE's reward model to rank) plus a loop. An MLP over each ordered pair of consecutive predicted BEV states (the "inverse dynamics model") gives a spatial map and a global feature; cross-attention and MLN refine the candidate query; the refined query drives a second rollout and refinement; offsets are decoded and ranked. A training-only head makes the global feature predict the expert's speed / acceleration / heading-rate difference from the nearest anchor (weight 0.2).
+
+**Reported results**: 90.0 PDMS (navtest); 89.6 EPDMS (v2 navtest); 38.0 two-stage navhard and 76.2 stage-1-only (camera-only "IDOL-LTF" retrain); 63.22 DS / 34.09% SR Bench2Drive; 69.36M parameters, 17.65 FPS on one RTX 3090.
+
+**Finding 1 - feedback from per-candidate futures is the larger effect.** No feedback 87.3; future states fed back (with one iteration) 88.6; learned pair encoder without iteration 89.2; with one iteration 90.0; two or three iterations 89.4. +1.3 to +2.7, not compute-matched against the base, which is itself 1.0 below WoTE's published 88.3.
+
+**Finding 2 - transitions beat states at equal parameters.** State-only 88.6 (+MLP 88.9), latent difference 89.0 (+MLP 89.1), learned ordered-pair encoder 90.0 at 69.4M for all three matched rows. Spatial branch −0.7 when removed, global −0.5; adjacent pairs beat 4-frame windows (90.0 vs 89.6); K = 128 / 256 / 512 anchors give 89.8 / 90.0 / 89.6.
+
+**Finding 3 - the "inverse dynamics" label is not tested.** Rollouts are conditioned on their anchor, so the transition's action is known; the module's only direct target is the expert's correction to the anchor. No probe and no ablation of the correction loss. The wiki's earlier inverse-dynamics planners (DriveWAM, FutureSightDrive) read actions from futures generated without them.
+
+**Table and figure problems found**:
+- navhard stage-1-only: baseline residuals (closed form − reported) +1.8 to +7.6, IDOL −0.4; by closed form Hydra-MDP (V2-99) 80.4 > IDOL 75.9, reversing the claimed +3.1.
+- Two-stage navhard: product of stage closed forms minus reported is +0.2 to +2.2 for the five learned baselines, −2.6 for IDOL (PDM-Closed −1.0). Approximate check; the "+10.1 over WoTE" is probably about half on a common scale.
+- v2 navtest: mixed evaluators (IDOL −0.60, MeanFuser −0.90, SGDrive, DriveVLA-W0, WorldRFT, World4Drive, Epona corrected-like; human 90.3 and five shared-block rows pre-fix-like); "competitive with the human agent" uses the pre-fix human. Eleventh table recorded with the shared block.
+- An unidentified "VADv2 85.8" v2 row (DAC 98.3; VADv2's v1 DAC is 89.1 in the same paper); ReCogDrive DDC and HC swapped; TransFuser LK 92.7 vs 92.4.
+- "Best among ResNet-34 methods" omits iPad 91.1, DiffusionDriveV2 91.2 (in its own v2 table) and PaIR-Drive 91.2.
+- Two DiffusionDrive stage-1 rows with different sub-scores in Tables 2 and 10.
+- Concat-MLP fusion (Table 13) and K = 128 (Table 14) print identical values in all six columns.
+- Rollout length U never stated.
+
+**New syntheses surfaced while writing**:
+- A third use of per-candidate futures (refine the candidate, rather than score it against its future), with a larger navtest effect than the two scorer designs.
+- The residual-sign fingerprint extends to navhard stage 1, with a larger pre-fix gap (+5 to +8) than on navtest.
+- WoTE's v1 TTC is 94.9 everywhere except HyWorldVLA's 94.4.
+- Within-paper Bench2Drive order of the two baselines (WoTE, SeerDrive) inverts their NAVSIM order.
+
+**Research directions** (`wiki/research-directions.md`): now 53 questions (42 open, 11 partially answered) and 2 answered.
+- *Evidence added*: EPDMS comparability (navhard stage-1 fingerprint; mixed v2 table); reactive closed loop (SeerDrive / WoTE swap between NAVSIM and Bench2Drive); generator vs selector on navhard (a scored ResNet-34 entry at 38.0, no unscored run); open-loop vs robustness (+1.7 / +10.1 / +1.51 DS, navhard cross-scale); test-time futures (+1.3 to +2.7 for per-candidate feedback); per-candidate futures (refinement as a third use); inference cost (57 ms).
+- *Added*: What does a transition encoder over candidate-conditioned futures encode?
+- *Answered*: none.
+
+**Not reported**: rollout length, seeds, navhard ablations, a probe or ablation of the correction loss, which rollouts the future-BEV loss supervises, the camera-only variant's navtest score, Bench2Drive training data and adaptation, how the no-IDM base differs from WoTE.
+
+**New gaps**: WoTE (now load-bearing), SeerDrive, MeanFuser, DiffE2E, GuideFlow, GTRS-DP, DiffRefiner, iPad, World4Drive.
+
+**Figure note**: the clipping has Figures 1, 2, 5 and the first row of Figure 4, and no image for Figure 3. From the arXiv HTML, Figure 3 (`visual.svg`) was rendered with headless Edge to `raw/assets/idol_fig3.png`, and Figure 4's left- and right-turn rows were downloaded as `idol_left2.png` and `idol_right2.png`. All five figures are embedded and all 14 tables reproduced (Tables 6–8 condensed), with v1, v2 and stage-1 closed-form residuals and a two-stage product column computed. `raw/papers/` was not modified.

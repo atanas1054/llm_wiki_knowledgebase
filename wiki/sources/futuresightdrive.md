@@ -2,9 +2,9 @@
 title: "FutureSightDrive: Thinking Visually with Spatio-Temporal CoT for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/FutureSightDrive_ Thinking Visually with Spatio-Temporal CoT for Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md]
+related: [concepts/world-model-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, sources/idol.md]
 created: 2026-04-07
-updated: 2026-04-07
+updated: 2026-10-12
 confidence: high
 ---
 
@@ -201,3 +201,4 @@ Figure 3: Red trajectory = prediction, green = GT. Without visual CoT, erroneous
 - **Visual world model role**: [[concepts/world-model-for-ad.md]] — FSDrive adds Pattern 5: VQ-VAE autoregressive visual CoT as planning intermediate
 - **Vocabulary expansion strategy**: [[concepts/vlm-domain-adaptation.md]] — minimal-change approach to add visual generation without architectural modification
 - **NAVSIM standing**: [[concepts/navsim-benchmark.md]] — 85.1 PDMS (pre-2025 comparisons only); well below current wiki SOTA
+- **Later use of the term**: [[sources/idol.md]] cites FSDrive's inverse-dynamics formulation (actions recovered from imagined futures) and applies the name to a pairwise encoder over latent BEV states rolled out under each trajectory anchor.

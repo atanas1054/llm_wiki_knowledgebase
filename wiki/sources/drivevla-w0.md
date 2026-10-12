@@ -2,9 +2,9 @@
 title: "DriveVLA-W0: World Models Amplify Data Scaling Law in Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md]
+related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/hyworldvla.md]
 created: 2026-04-07
-updated: 2026-04-07
+updated: 2026-10-12
 confidence: high
 ---
 
@@ -233,3 +233,4 @@ MoE reduces latency to 63.1% of baseline (74ms vs. 118ms for query-based).
 - **Supervision deficit + world model for VLA scaling**: [[concepts/world-model-for-ad.md]] — Pattern 7: training-time-only world modeling for data scaling
 - **NAVSIM standings**: [[concepts/navsim-benchmark.md]] — 90.2★ (anchors), 93.0 BoN-6 (1 cam); 86.1 EPDMS v2 (EC=58.9)
 - **Action decoder scaling reversal (FM vs. AR)**: [[concepts/diffusion-planner.md]] — FM loses to AR at massive scale
+- **Later work on the same Emu3 stack** *(2026-10-12)*: [[sources/hyworldvla.md]] adds a video-VAE latent target that is kept through fine-tuning and read by the action expert: +0.39 over 90.2★ with the same anchor head, +0.68 over its own pixel-only rerun of this recipe (89.91), +1.56 over this paper's FM row (87.2 → 88.76). It reruns DriveVLA-W0 on a private 655-scene rain/fog subset (61.18 PDMS). [[sources/drive-hwm.md]] adds a V-JEPA optical-flow slow branch instead. The same comparisons put the anchor head's advantage over flow matching at +3.0 here and +1.83 there.

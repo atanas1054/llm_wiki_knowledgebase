@@ -2,9 +2,9 @@
 title: "Latent-WAM: Latent World Action Modeling for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md]
-related: [sources/mm-future.md, concepts/world-model-for-ad.md, concepts/perception-for-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/foundation-backbones-for-ad.md, sources/epona.md, sources/drivevla-w0.md, sources/dreameraD.md, sources/driveva.md, sources/ad-e2e-jepa.md, sources/momworld.md]
+related: [sources/mm-future.md, concepts/world-model-for-ad.md, concepts/perception-for-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/foundation-backbones-for-ad.md, sources/epona.md, sources/drivevla-w0.md, sources/dreameraD.md, sources/driveva.md, sources/ad-e2e-jepa.md, sources/momworld.md, sources/hyworldvla.md]
 created: 2026-05-01
-updated: 2026-09-30
+updated: 2026-10-12
 confidence: high
 ---
 
@@ -202,6 +202,7 @@ The deployed model is lightweight relative to large VLM/video-backbone planners.
 - **MM-Future** ([[sources/mm-future.md]]): uses this paper as its HUGSIM comparison (28.9 HD-Score against its 32.3) and as the compact-token precedent. Its table is captioned 436 scenarios, and this paper's overall scores (45.9 RC / 28.9 HDS) equal the 80 / 157 / 96 / 103-weighted means of its four tiers. **That places this result on the 436-scenario HUGSIM set**, where the wiki had filed it under the 345-scenario release. See [[concepts/hugsim-benchmark.md#mm-future]].
 - **HAD**: both report HUGSIM, but HAD is a hierarchical diffusion/RL planner while Latent-WAM is a latent world-state representation learner.
 - **AD-E2E-JEPA** ([[sources/ad-e2e-jepa.md]]): the other compress-then-predict design. Latent-WAM compresses each view to 16 scene queries and found that compression alone slightly hurts until geometric distillation is added. AD-E2E-JEPA compresses frozen DINOv3 to 32 tokens with a conv projector held open by SIGReg, and finds the compression costs ranking reliability at matched training (top-1 hit rate 45% → 27% on 100 scenes). **Citation note**: its Table 3 lists Latent-WAM with **EC 72.4**. The value in Table 1 above is **87.3**; 72.4 is DreamerAD's EC from the adjacent row of WA-JEPA's table, from which the row was copied.
+- **HyWorldVLA** ([[sources/hyworldvla.md]]): its NAVSIM-v2 table prints a "Latent-WAM" row at 87.7 EPDMS (EC 72.4) that is DreamerAD's published row digit for digit. This paper's 89.3 (EC 87.3) is absent there, so HyWorldVLA's 89.71 leads it by +0.4, not the +2.0 its table implies.
 
 ## Limitations
 

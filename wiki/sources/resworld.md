@@ -2,9 +2,9 @@
 title: "ResWorld: Temporal Residual World Model for End-to-End Autonomous Driving"
 type: source-summary
 sources: ["raw/papers/ResWorld_ Temporal Residual World Model for End-to-End Autonomous Driving.md"]
-related: [concepts/world-model-for-ad.md, concepts/nuscenes-waymo-evals.md, concepts/navsim-benchmark.md, concepts/evaluation-variance.md, concepts/perception-for-planning.md, concepts/inference-latency.md, sources/drivefuture.md, sources/momworld.md, sources/wa-jepa.md, sources/redrive.md, sources/drive-hwm.md, sources/simwam.md, sources/drivevla-w0.md, sources/auto-jepa.md, sources/diffusiondrive.md, sources/foresight.md, research-directions.md]
+related: [concepts/world-model-for-ad.md, concepts/nuscenes-waymo-evals.md, concepts/navsim-benchmark.md, concepts/evaluation-variance.md, concepts/perception-for-planning.md, concepts/inference-latency.md, sources/drivefuture.md, sources/momworld.md, sources/wa-jepa.md, sources/redrive.md, sources/drive-hwm.md, sources/simwam.md, sources/drivevla-w0.md, sources/auto-jepa.md, sources/diffusiondrive.md, sources/foresight.md, research-directions.md, sources/idol.md]
 created: 2026-10-02
-updated: 2026-10-02
+updated: 2026-10-12
 confidence: medium
 ---
 
@@ -311,3 +311,4 @@ All of ResWorld's averages reproduce from its per-horizon values. The Drive-OccW
 - [[concepts/nuscenes-waymo-evals.md]] — two metric conventions, ego status, and collision deltas of a few samples.
 - [[concepts/evaluation-variance.md]] — ablation effects below the sample granularity.
 - [[concepts/perception-for-planning.md]] — 87.3 without perception supervision against 88.3 / 89.0 with it.
+- [[sources/idol.md]] — prints the history-frame variant (89.0) in its ResNet-34 table. IDOL also reads change between BEV states, but between *predicted* consecutive states of a per-candidate rollout, through a learned pairwise encoder (+0.9 over fixed latent differences at equal parameters).
