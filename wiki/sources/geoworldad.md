@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md]
 related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/perception-for-planning.md, concepts/selection-based-planning.md, sources/geowam.md, sources/adaptive-wam.md, sources/drivelaw.md, sources/da-wam.md, sources/simwam.md, sources/foresight.md, sources/brainwam.md, sources/latent-wam.md, sources/epona.md, sources/drivevla-w0.md, sources/wa-jepa.md, sources/drive-jepa.md, sources/drivesuprim.md, sources/diffusiondrive.md, sources/sgdrive.md, sources/deepsight.md]
 created: 2026-09-04
-updated: 2026-10-06
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -163,7 +163,7 @@ Total objective: $L = L_{\mathrm{traj}} + L_{\mathrm{score}} + L_{\mathrm{recon}
 | GeoWorldAD (+ latent future) | 99.0 | 95.8 | 85.9 | **91.0** | 99.0 | 98.6 | 89.1 | **90.4** |
 | **Δ** | +0.1 | +0.1 | **+3.3** | **+1.7** | +0.1 | +0.3 | **+2.8** | **+2.8** |
 
-**This is the largest positive result for inference-time future prediction in the wiki**, and the profile is exactly what the paper predicts: safety metrics essentially unchanged, **ego progress up 3.3 / 2.8**. The stated mechanism is that a planner without future guidance behaves conservatively under uncertainty; anticipating how free space evolves lets it commit.
+**This is the largest positive result for inference-time future prediction in the wiki** *(lint 2026-10-14: at ingest. [[sources/idol.md]]'s per-candidate rollouts fed back into the candidates are worth +1.3 to +2.7 PDMS, not compute-matched; among shared futures, [[sources/maneuverflow.md]]'s path-sampled forecast is +1.58 before refinement)*, and the profile is exactly what the paper predicts: safety metrics essentially unchanged, **ego progress up 3.3 / 2.8**. The stated mechanism is that a planner without future guidance behaves conservatively under uncertainty; anticipating how free space evolves lets it commit.
 
 It is also, structurally, the configuration this wiki has repeatedly measured as worthless: **one shared future for all 64 proposals**, not one per candidate. [[sources/da-wam.md]]'s matched ablation puts that at **−0.50 PDMS**; [[sources/foresight.md]] measured +0.3; [[sources/simwam.md]]'s isolated mask measured ~0. GeoWorldAD measures +1.7 for the same shape of mechanism with a **geometric** target.
 

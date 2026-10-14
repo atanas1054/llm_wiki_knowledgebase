@@ -4,7 +4,7 @@ type: source-summary
 sources: ["raw/papers/HyWorldVLA_ A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving.md"]
 related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/evaluation-variance.md, concepts/foundation-backbones-for-ad.md, concepts/visual-tokenization.md, concepts/action-tokenization.md, concepts/inference-latency.md, concepts/teacher-pseudo-labels.md, concepts/navhard-ood-evaluation.md, sources/drivevla-w0.md, sources/drive-hwm.md, sources/coworld-vla.md, sources/onevl.md, sources/latent-wam.md, sources/dreameraD.md, sources/drivelaw.md, sources/explorevla.md, sources/epona.md, sources/resworld.md, sources/foredrive.md, sources/wa-jepa.md, sources/redrive.md, sources/world4scorer.md, sources/momworld.md, sources/hydra-mdp-pp.md, sources/recogdrive.md, sources/futuresightdrive.md, sources/policy-world-model.md, sources/autovla.md, sources/suv.md, sources/geowam.md, research-directions.md, sources/idol.md]
 created: 2026-10-12
-updated: 2026-10-12
+updated: 2026-10-14
 confidence: medium
 ---
 
@@ -206,7 +206,7 @@ The paper's group header rows have nine cells where the table has eleven columns
 | 0.2 | 98.6 | 98.7 | 94.6 | 99.4 | 83.9 | 90.01 |
 | 1.0 | 98.6 | 98.3 | 95.0 | 99.4 | 83.4 | 89.75 |
 
-Every navtest configuration except Pure LWM lies in 89.75–90.59, a 0.84-point band, against a training-seed sd of 0.1 measured once for another planner ([[concepts/evaluation-variance.md]]). The residuals of the Table 3–5 rows sit between −1.38 and −1.73 except Pure LWM (−2.75), so sub-scores and aggregates are mutually consistent.
+Every navtest configuration except Pure LWM lies in 89.75–90.59, a 0.84-point band, against a training-seed sd of 0.1 measured once for another planner ([[concepts/evaluation-variance.md]]) *(lint 2026-10-14: three recipes measured now, sd 0.04–0.1)*. The residuals of the Table 3–5 rows sit between −1.38 and −1.73 except Pure LWM (−2.75), so sub-scores and aggregates are mutually consistent.
 
 ### Table 7 (Appendix B.1): Flow-matching action expert
 

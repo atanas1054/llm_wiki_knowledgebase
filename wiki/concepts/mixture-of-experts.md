@@ -1,10 +1,10 @@
 ---
 title: Mixture of Experts for Autonomous Driving VLAs
 type: concept
-sources: [raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
-related: [sources/brainwam.md, sources/wam-diff.md, sources/drivefine.md, sources/drivevla-w0.md, sources/automot.md, sources/unidrivevla.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/perception-for-planning.md, research-directions.md]
+sources: ["raw/papers/ManeuverFlow_ Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving.md", raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/WAM-Diff_ A Masked Diffusion VLA Framework with MoE and Online Reinforcement Learning for Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md"]
+related: [sources/maneuverflow.md, sources/brainwam.md, sources/wam-diff.md, sources/drivefine.md, sources/drivevla-w0.md, sources/automot.md, sources/unidrivevla.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/perception-for-planning.md, research-directions.md]
 created: 2026-04-21
-updated: 2026-09-30
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -102,6 +102,9 @@ A dedicated small model handles trajectory output while the large VLA backbone h
 | UniDriveVLA | MoT (3 streams) | 3 streams | Masked joint attention | Per-stream FFN/proj | 78.37 DS Bench2Drive | Unified multi-task learning |
 | DriveVLA-W0 | Side expert | 3 variants | None (dedicated) | 500M | 63% latency | Modular action decoding |
 | BrainWAM | Dual-MoT x2 + action-space bridge | 2 branches (2 streams each) | None; 8-token CAB/CIF interface | 16.8M CAB + 49.3M CIF | 89.5 PDMS (+1.4 over WAM-only) | Avoiding modality competition |
+| [[sources/maneuverflow.md]] | FFN experts in a 6-block one-step flow generator | 8 | **Hard, by the candidate's maneuver family** (from a rule-defined Gaussian prior), not learned | None at matched count (control: a dense field with the same total parameters) | +0.44 PDMS over the parameter-matched dense field | One expert per motion family |
+
+**A non-learned router** *(2026-10-14)*. [[sources/maneuverflow.md]] routes each trajectory candidate to the expert of the maneuver family its source was drawn from, so routing is fixed by the prior rather than learned and cannot collapse. Against a dense field of the same total parameter count it is worth +0.44 PDMS on navtest (single runs). Its Figure S3 pushes one source through all eight experts and gets eight visibly different paths, so the experts do specialize.
 
 ## MoE and RL: The Routing Stability Problem
 

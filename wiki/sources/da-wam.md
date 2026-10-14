@@ -2,9 +2,9 @@
 title: "DA-WAM: Decision-Aligned Future Latents for Driving World Models"
 type: source-summary
 sources: [raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md]
-related: [sources/world4scorer.md, sources/mm-future.md, sources/geoworldad.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/counterfactual-prediction.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/drive-jepa.md, sources/latent-wam.md, sources/geowam.md, sources/simwam.md, sources/drivelaw.md, sources/drivesuprim.md, sources/dreameraD.md, sources/ad-e2e-jepa.md, sources/momworld.md]
+related: [sources/maneuverflow.md, sources/world4scorer.md, sources/mm-future.md, sources/geoworldad.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/counterfactual-prediction.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/wa-jepa.md, sources/auto-jepa.md, sources/drive-jepa.md, sources/latent-wam.md, sources/geowam.md, sources/simwam.md, sources/drivelaw.md, sources/drivesuprim.md, sources/dreameraD.md, sources/ad-e2e-jepa.md, sources/momworld.md]
 created: 2026-09-02
-updated: 2026-10-06
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -350,3 +350,4 @@ Two caveats keep this from overturning anything. GeoWorldAD's ablation is **not 
 *(2026-09-30)* [[sources/momworld.md]] is a further shared-future scorer, at a much larger scale: one action-free latent rollout read by 16,384 vocabulary candidates. It argues the opposite of this page's design (c) diagnosis, that distinct candidate queries attending to one shared memory is sufficient, and explicitly performs "no candidate-specific world rollout". Its target is feature-space, so a clean positive result would contradict the scoped verdict above. The wiki does not count it as one: its ablation tables show unexplained exact regularities, and its only end-to-end comparison is +1.1 navhard over its base with NC and TTC *falling* and EP *rising*, the reverse of the sub-score pattern measured here.
 
 *(2026-09-30)* [[sources/mm-future.md]] is the second scorer in the wiki that reads one future per candidate, and its matched ablation gives **+0.4 PDMS** for doing so (92.9 → 93.3, TTC +0.5), against +0.15 here. Its futures are 4 s long and are generated jointly with each trajectory; it runs no shared-future control, so the −0.50 on this page is still the only measurement of that configuration. It has this page's open problem in a larger form: 63 of its 64 futures per scene are never supervised. DA-WAM is not cited.
+*(2026-10-14)* **A shared future that helps.** [[sources/maneuverflow.md]] predicts one action-free BEV forecast per scene and samples it along each of 64 candidate paths before scoring: +1.58 PDMS before refinement, +0.55 after (single runs, and the ablation also removes the forecast's training loss). This paper's shared configuration gave every candidate the same future; ManeuverFlow's gives each candidate the part of the shared future its path passes through. The −0.50 may therefore be a readout effect rather than a sharing effect. See [[concepts/world-model-for-ad.md#shared-future-path-readout]].

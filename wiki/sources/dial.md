@@ -2,9 +2,9 @@
 title: "Driving Intents Amplify Planning-Oriented Reinforcement Learning"
 type: source-summary
 sources: [raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
-related: [concepts/intent-conditioned-planning.md, concepts/rl-for-ad.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/nuscenes-waymo-evals.md]
+related: [sources/maneuverflow.md, concepts/intent-conditioned-planning.md, concepts/rl-for-ad.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/nuscenes-waymo-evals.md]
 created: 2026-06-23
-updated: 2026-06-23
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -195,3 +195,4 @@ Multi-intent DIAL peaks highest and declines least. All single-intent runs peak 
 - [[concepts/best-of-n.md]] — distinguishes support ceilings from deployable intent-classified performance.
 - [[concepts/diffusion-planner.md]] — intent CFG structures a continuous flow action distribution before RL.
 - [[concepts/nuscenes-waymo-evals.md]] — adds WOD-E2E RFS protocol, data-split, and evaluation-leakage caveats.
+- *(2026-10-14)* [[sources/maneuverflow.md]] uses a similar eight-family rule ontology (displacement, mean heading, speed trend) on NAVSIM, as separate Gaussian sources with routed generator experts instead of CFG. It reports what this page lists as missing for DIAL: the family predictor's recall (98.3% at top-3 against the expert's nearest family) and a fixed-budget sweep over how many families to route (top-1 90.33 → top-3 90.58 PDMS at 64 candidates), plus a control replacing the rules with K-means clusters (−0.54).

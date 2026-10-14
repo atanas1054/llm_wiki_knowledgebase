@@ -1,10 +1,10 @@
 ---
 title: HUGSIM Benchmark
 type: concept
-sources: ["raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md"]
-related: [sources/mm-future.md, sources/had.md, sources/latent-wam.md, sources/wa-jepa.md, sources/physwam.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/inference-latency.md, research-directions.md]
+sources: ["raw/papers/SimVTA_ Simulation-Grounded Video-Trajectory Alignment for Driving World Action Models.md", "raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md"]
+related: [sources/simvta.md, sources/mm-future.md, sources/had.md, sources/latent-wam.md, sources/wa-jepa.md, sources/physwam.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/inference-latency.md, research-directions.md]
 created: 2026-05-01
-updated: 2026-10-06
+updated: 2026-10-14
 confidence: medium
 ---
 
@@ -24,11 +24,14 @@ Note the scale convention differs by paper: [[sources/had.md]] and [[sources/lat
 
 ## ⚠ The Benchmark Changed: Two Incompatible Eras
 
+*(lint 2026-10-14: three protocols now. The 345-scenario group splits: DrivoR's published table and [[sources/simvta.md]] share one count weighting and a controller their papers call "corrected", while HAD-L's averages fit neither that weighting nor the 436-scenario one. See [below](#simvta).)*
+
 **Results on this page split into two groups that cannot be compared.** HUGSIM grew from **345 scenarios to 436**, and [PR #57](https://github.com/hyzhou404/HUGSIM/pull/57) applied a **trajectory-to-heading coordinate-order correction** to the controller. [[sources/wa-jepa.md]] pins commit [`ead17f2`](https://github.com/hyzhou404/HUGSIM/commit/ead17f2ad97f71fd21fa6f66237a7c05364ed98e) and rescores every baseline under it; the HAD and Latent-WAM results predate that snapshot.
 
 | Era | Scenarios | Heading fix | Entries |
 |---|---|---|---|
-| Earlier release | 345 | No | HAD-L (and DrivoR's *published* numbers). *Latent-WAM was filed here; its averages say otherwise, see [below](#mm-future)* |
+| Earlier release | 345 | No | HAD-L (and DrivoR's *published* numbers). *Latent-WAM was filed here; its averages say otherwise, see [below](#mm-future)*. *(2026-10-14: [[sources/simvta.md]] says DrivoR's numbers used a "corrected evaluator and controller", and HAD-L's averages do not fit the weighting that DrivoR's table does, so this row holds two protocols; see [below](#simvta).)* |
+| 345 "pre-challenge" scenarios, "corrected evaluator and controller" (correction not named) | 345 | Stated as corrected | DrivoR's published rows (with its UniAD / LTF / VAD), [[sources/simvta.md]] |
 | 436 scenarios, commit not stated | 436 | Unknown | The benchmark paper's UniAD / LTF / VAD, BeyondDrive, [[sources/physwam.md]], [[sources/mm-future.md]], and by weighting arithmetic [[sources/latent-wam.md]] |
 | Current snapshot `ead17f2` | 436 | Yes (PR #57) | WA-JEPA, plus its rescored LTF / DrivoR / UniAD / VAD |
 
@@ -152,6 +155,26 @@ Latent-WAM's averages match the 436-scenario weights to the second decimal on bo
 
 MM-Future prints UniAD's overall HD-Score as 28.6; the weighted mean of the tiers it prints is 28.9.
 
+## SimVTA: a 345-Scenario Protocol With a "Corrected" Controller {#simvta}
+
+[[sources/simvta.md]] evaluates its NAVSIM-trained, one-camera planner on "the same 345 pre-challenge HUGSIM scenarios, using the same corrected evaluator and controller as" DrivoR's paper, and copies DrivoR's Table 2 for its baselines. Values ×100.
+
+| Method | RC E / M / H / X | RC Avg | HDS E / M / H / X | HDS Avg |
+|---|---|---:|---|---:|
+| VAD | 51.3 / 31.1 / 25.3 / 26.5 | 31.4 | 36.3 / 9.5 / 8.0 / 11.5 | 13.4 |
+| LTF | 67.8 / 35.1 / 26.2 / 40.5 | 38.9 | 58.9 / 18.0 / 9.8 / 25.9 | 23.7 |
+| UniAD | 78.4 / 60.5 / 33.6 / 17.8 | 45.9 | 64.9 / 45.8 / 20.6 / 6.6 | 32.7 |
+| DrivoR | 80.9 / 50.5 / 33.8 / 47.1 | 49.8 | 73.3 / 34.6 / 18.8 / 32.5 | 35.7 |
+| **SimVTA** | 78.8 / 57.6 / 38.3 / 40.1 | **51.5** | 69.9 / 45.0 / 23.3 / 27.2 | **38.8** |
+
+**Weighting arithmetic (computed here), as for Latent-WAM [above](#mm-future).** Tier counts of about **49 / 126 / 86 / 84** (summing to 345) reproduce all five rows' RC and HD-Score averages to within 0.06. The 436-scenario weights (80 / 157 / 96 / 103) miss by 1.0–2.0 points and unweighted means by 1.7–4.5. So these five rows are count-weighted over one 345-scenario set. **HAD-L's averages fit neither** (these weights predict 50.6 RC / 33.1 HDS against its 47.5 / 30.8), so the "earlier release" group in the era table holds at least two protocols.
+
+- **The controller question is not settled.** The era table has filed DrivoR's published numbers as pre-PR #57. SimVTA describes DrivoR's evaluator and controller as "corrected" without naming the correction. If it is PR #57, the heading fix is not what separates the 345 and 436 groups; the scenario set is.
+- **The tiers are not the same tiers.** Extreme HD-Score reaches 25.9–32.5 here (LTF, SimVTA, DrivoR) and DrivoR scores 32.5; in WA-JEPA's 436-scenario rescoring DrivoR's Extreme is 14.1 and no method passes 14.
+- **A NAVSIM-order inversion inside one table.** DrivoR is 1.8 PDMS above SimVTA on NAVSIM v1 (93.1 vs 91.3) and 3.1 HD-Score below it here. WA-JEPA (91.8 PDMS) beat DrivoR on the 436 set by more (44.6 vs 32.5). Two lower-PDMS world-model planners now sit above the register-token scorer on HUGSIM, under two protocols.
+- **No control for the post-training.** The initialization and the RL-only arm were not run on HUGSIM, as the paper says, so nothing here is attributable to its video supervision. SimVTA's encoder is trained on 3DGS-rendered frames (World Engine's reconstructions of navtrain, not HUGSIM's), and HUGSIM is a 3DGS benchmark; whether familiarity with 3DGS images contributes is not tested.
+- No sub-metrics, per-dataset split or commit hash.
+
 ## Earlier Release (345 scenarios, pre-PR #57)
 
 | Method | Easy RC | Easy HDS | Medium RC | Medium HDS | Hard RC | Hard HDS | Extreme RC | Extreme HDS | Overall RC | Overall HDS |
@@ -173,8 +196,8 @@ HAD-L's result is useful because it evaluates the same planner family outside NA
 
 - **Where do HAD-L and Latent-WAM actually sit now?** Both are the wiki's other closed-loop-capable planners and neither has been rescored under the current snapshot. Until someone runs them, the 44.62 vs. 30.8 gap is uninterpretable.
 - **[Answered: no] Is the comfort deficit inherent to sampled planners?** *([[sources/physwam.md]] samples video, depth and motion from noise and scores 96.3 closed-loop comfort and 90.5 navtest EC. What it does differently from WA-JEPA is unisolated; candidates are its SE(3) relative-pose action rows and a metric pose loss.)* WA-JEPA (0.662) and UniAD (0.663) are far below LTF, DrivoR, and VAD (~0.95) on closed-loop comfort, and the same ordering appears in NAVSIM-v2 EC. Drive-JEPA's momentum-aware selector fixed the open-loop version of this ([[sources/drive-jepa.md]], EC 47.9 → 84.8) by comparing each proposal against the previously selected trajectory. No closed-loop planner in the wiki has tried the analogous fix.
-- **Does anything move the Extreme tier?** Every ingested method scores 0.06-0.14 there (BeyondDrive, not ingested, is reported at 0.16 in PhysWAM's table). This is the closest closed-loop analogue to navhard Stage 2, and like it, no ingested method has made progress.
-- **Should HUGSIM become the wiki's primary closed-loop benchmark?** It has properties Bench2Drive lacks — real-log reconstructions rather than CARLA assets, natural zero-shot structure, and per-difficulty reporting. What it lacks is adoption: only five ingested papers report it (HAD, Latent-WAM, WA-JEPA, PhysWAM and MM-Future), against far more for Bench2Drive.
+- **Does anything move the Extreme tier?** Every ingested method scores 0.06-0.14 there (BeyondDrive, not ingested, is reported at 0.16 in PhysWAM's table). *(2026-10-14: on the 436-scenario set. On the 345-scenario set of DrivoR's and [[sources/simvta.md]]'s tables, Extreme HD-Scores are 6.6–32.5 and DrivoR leads at 32.5; the tier is not comparable across sets.)* This is the closest closed-loop analogue to navhard Stage 2, and like it, no ingested method has made progress.
+- **Should HUGSIM become the wiki's primary closed-loop benchmark?** It has properties Bench2Drive lacks — real-log reconstructions rather than CARLA assets, natural zero-shot structure, and per-difficulty reporting. What it lacks is adoption: only five ingested papers report it (HAD, Latent-WAM, WA-JEPA, PhysWAM and MM-Future), against far more for Bench2Drive. *(2026-10-14: six, with [[sources/simvta.md]] on the 345-scenario set.)*
 - **Which protocol did PhysWAM and BeyondDrive run?** Both report on 436 episodes without naming a commit. Rescoring either under `ead17f2`, or WA-JEPA's authors confirming the benchmark paper's baseline numbers, would put all three on one table.
 - **Why do NAVSIM-only models collapse after the Easy tier?** PhysWAM (86.9 → 30.1) and Latent-WAM (72.5 → 24.0) both do; WA-JEPA, with nuPlan multi-view video pretraining, does not (79.8 → 55.6). Pretraining data, camera count (3 vs 4) and the JEPA objective are all confounded.
   *(2026-09-30: [[sources/mm-future.md]], also NAVSIM-only, has the opposite shape: a low Easy score (53.8) and the second-best Medium (40.0). So the collapse is not a property of NAVSIM-only training as such.)*

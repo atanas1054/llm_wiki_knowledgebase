@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md]
 related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, concepts/best-of-n.md, sources/drive-jepa.md, sources/auto-jepa.md, sources/latent-wam.md, sources/simwam.md, sources/drivelaw.md, sources/deepsight.md, sources/flare.md, sources/had.md, sources/drivevla-w0.md, sources/wam-diff.md, sources/drivefine.md, sources/ad-e2e-jepa.md, sources/physwam.md, sources/redrive.md]
 created: 2026-09-02
-updated: 2026-09-30
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -281,7 +281,7 @@ KITTI-360 is the hardest domain for everyone (0.2963 best), Waymo the easiest (0
 | DriveFuture | 98.8 | 99.1 | 95.4 | 100 | 84.2 | 90.7 |
 | **WA-JEPA (ours)** | **99.5** | 98.3 | **97.7** | **100** | 85.0 | **91.8** |
 
-**The Drive-JEPA row here is its 89.0 perception-free baseline, not its 93.3 full planner** — see [Limitations](#limitations). NC 99.5 is the highest NAVSIM-v1 no-at-fault-collision score in the wiki, edging DriveLaW's 99.0.
+**The Drive-JEPA row here is its 89.0 perception-free baseline, not its 93.3 full planner** — see [Limitations](#limitations). NC 99.5 is the highest NAVSIM-v1 no-at-fault-collision score in the wiki, edging DriveLaW's 99.0. *(lint 2026-10-14: tied or passed by Drive-HWM, 99.6 in its tables and 99.5 in its prose.)*
 
 ### Table 4: Ablations (NAVSIM-v2 navtest)
 

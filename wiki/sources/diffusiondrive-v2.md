@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md]
 related: [sources/diffusiondrive.md, sources/recogdrive.md, sources/drivefine.md, sources/flare.md, sources/dreameraD.md, sources/curious-vla.md, sources/nord.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/navsim-benchmark.md]
 created: 2026-04-16
-updated: 2026-04-16
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -264,7 +264,7 @@ V2 selector alone adds +1.0 to DiffusionDrive — but the full RL training adds 
 
 4. **Inter-Anchor truncation provides a global safety floor**: the "truncate negatives, penalize collisions" rule prevents locally-valid unsafe trajectories from receiving positive gradients in their respective anchor groups.
 
-5. **91.2 PDMS with ResNet-34**: DiffusionDriveV2 is the strongest non-VLM result in the wiki and competitive with (or superior to) several VLM methods (FLARE 91.4, WAM-Flow 90.3, DriveFine 90.7) despite no language backbone. The gap to FLARE (91.4) is 0.2 PDMS — within comparison noise given different training setups.
+5. **91.2 PDMS with ResNet-34**: DiffusionDriveV2 is the strongest non-VLM result in the wiki *(lint 2026-10-14: at ingest; non-VLM entries now reach 94.0 (World4Scorer), 93.7 (DA-WAM) and 93.5 (DriveSuprim); among ResNet-34 entries it still ties PaIR-Drive at 91.2)* and competitive with (or superior to) several VLM methods (FLARE 91.4, WAM-Flow 90.3, DriveFine 90.7) despite no language backbone. The gap to FLARE (91.4) is 0.2 PDMS — within comparison noise given different training setups.
 
 6. **NAVSIM-v2 EPDMS not SOTA**: 85.5 EPDMS is strong but below DriveDreamer-Policy (88.7), DreamerAD (87.7), and Senna-2 (86.6) on this benchmark. The V2 comparison table omits these methods.
 

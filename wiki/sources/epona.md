@@ -2,9 +2,9 @@
 title: "Epona: Autoregressive Diffusion World Model for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/Epona_ Autoregressive Diffusion World Model for Autonomous Driving.md]
-related: [sources/walt.md, sources/foresight.md, sources/dreameraD.md, sources/drivelaw.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/foundation-backbones-for-ad.md]
+related: [sources/simvta.md, sources/walt.md, sources/foresight.md, sources/dreameraD.md, sources/drivelaw.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/foundation-backbones-for-ad.md]
 created: 2026-04-17
-updated: 2026-09-30
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -287,3 +287,5 @@ DrivingGPT uses discrete tokens (AR) and predicts single-step actions. Epona pre
 7. **Superseded for planning by DreamerAD**: for pure planning purposes, DreamerAD is the preferred successor (+2.5 PDMS, +1.5 EPDMS). Epona's primary value is as a **world generation model** and as evidence that joint video+trajectory training benefits planning.
 
 9. **Its successor is now a frozen backbone too.** [[sources/walt.md]] freezes EponaV2 (not ingested) and changes only the trajectory head's output space. It supplies the first EponaV2 numbers without RL in the wiki: 89.4 PDMS / 87.3 EPDMS, against the 90.4 / 88.9 headline carried by other tables.
+
+10. **Now the base of the highest Epona-family score, through RL with rendered video targets.** [[sources/simvta.md]] adapts this checkpoint to NAVSIM at 2 Hz (re-evaluated at 86.2 PDMS / 85.0 EPDMS) and post-trains it with Flow-GRPO on the PDM reward (89.1) plus a VisDiT flow-matching loss on 3DGS renders of the policy's own sampled trajectories, with gradients into the MST (91.3 PDMS / 88.2 EPDMS, three seeds). The video loss helps only when it reaches the MST (89.1 with VisDiT-only updates), the same lesson as this paper's joint-training ablation, now during RL. Shuffled targets drop it to 83.1. Planning still runs MST + TrajDiT only. The Epona family now reads 86.2 (Epona), 88.7 (DreamerAD), 89.3 (ForeSight), 89.8 (WALT on EponaV2) and 91.3 (SimVTA).

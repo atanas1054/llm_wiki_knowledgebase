@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md]
 related: [concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, sources/redrive.md, sources/physwam.md]
 created: 2026-04-23
-updated: 2026-09-30
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -276,7 +276,7 @@ where $m$ indexes multiplier/imitation metrics and $n$ indexes weighted-average 
 
 ## Position in the Wiki
 
-DriveSuprim (93.5 PDMS ViT-L) is the **highest single-sample, non-VLM, non-ensemble result on NAVSIM-v1** in the wiki, surpassing DiffusionDriveV2 (91.2, Camera+LiDAR ResNet34) and HybridDriveVLA (92.1, dual-model ensemble). It falls below Curious-VLA BoN-6 (94.8) and AdaThinkDrive BoN-4 (93.0) which use oracle selection.
+DriveSuprim (93.5 PDMS ViT-L) is the **highest single-sample, non-VLM, non-ensemble result on NAVSIM-v1** in the wiki *(lint 2026-10-14: at ingest; since passed by World4Scorer 94.0, DA-WAM 93.7 and MM-Future 93.4 on navtrain, none of them VLMs)*, surpassing DiffusionDriveV2 (91.2, Camera+LiDAR ResNet34) and HybridDriveVLA (92.1, dual-model ensemble). It falls below Curious-VLA BoN-6 (94.8) and AdaThinkDrive BoN-4 (93.0) which use oracle selection.
 
 On NAVSIM-v2, 87.1 EPDMS slots between DreamerAD (87.7) and HydraMDP++ (85.6). EC = 78.6 — in the middle range.
 

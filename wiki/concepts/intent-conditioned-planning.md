@@ -1,10 +1,10 @@
 ---
 title: Intent-Conditioned Trajectory Planning
 type: concept
-sources: [raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [sources/drivefuture.md, concepts/world-model-for-ad.md, sources/auto-jepa.md, sources/dial.md, sources/pair-drive.md, sources/sgdrive.md, concepts/rl-for-ad.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/parallel-il-rl.md, concepts/nuscenes-waymo-evals.md, concepts/perception-for-planning.md]
+sources: ["raw/papers/ManeuverFlow_ Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
+related: [sources/maneuverflow.md, sources/drivefuture.md, concepts/world-model-for-ad.md, sources/auto-jepa.md, sources/dial.md, sources/pair-drive.md, sources/sgdrive.md, concepts/rl-for-ad.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/parallel-il-rl.md, concepts/nuscenes-waymo-evals.md, concepts/perception-for-planning.md]
 created: 2026-06-23
-updated: 2026-09-11
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -18,7 +18,7 @@ One logged scene usually supplies one demonstrated trajectory even when several 
 
 Intent conditioning supplies an explicit axis along which proposals can differ. It changes the learning question from “reproduce this path with noise” to “produce a plausible path under this maneuver hypothesis.”
 
-## Four Uses in the Wiki
+## Uses in the Wiki
 
 | Method | Intent mechanism | Training role | Inference role |
 | --- | --- | --- | --- |
@@ -26,6 +26,7 @@ Intent conditioning supplies an explicit axis along which proposals can differ. 
 | [[sources/dial.md]] | Eight rule-derived labels with classifier-free guidance | Expand SFT support and balance every GRPO group across intents | Intent classifier selects one mode; conditioned flow generates |
 | [[sources/sgdrive.md]] | Continuous goal pose ~4 s ahead, predicted by an MLP head on a dedicated ⟨world⟩ subquery | Auxiliary $L_1$ supervision that shapes the VLM representation | Goal subquery hidden state conditions the DiT; never decoded |
 | [[sources/auto-jepa.md]] | Continuous 8×1024 latent encoding the *entire* 4 s future trajectory, predicted by a JEPA predictor | The only training objective — aligned with a frozen trajectory encoder's output | The retrieval key into a memory of 110,335 recorded trajectories |
+| [[sources/maneuverflow.md]] | Eight rule-derived motion families (stop, cruise, accelerate, decelerate, left/right lane change, left/right turn), each a fixed Gaussian source | Soft classification of the expert's nearest family; the family index routes a feed-forward expert in a one-step MeanFlow generator | Top-3 families share 64 candidates; every candidate keeps its family index through scoring and refinement |
 | [[sources/drivefuture.md]] | Tokenized trajectory (8 pose-difference tokens) fed to a **world model**, not to the planner | Drawn from expert / kinematic rollout / null token at 0.4/0.4/0.2 | Two surrogates on a phase schedule: a constant-acceleration rollout, then a Tweedie estimate of the proposal being denoised |
 
 PaIR-Drive treats intent as tree-branch structure in a separate RL refiner. DIAL treats intent as a condition inside one continuous generative policy and explicitly preserves all modes during preference fine-tuning.
@@ -83,6 +84,21 @@ DA-WAM's answer is the structurally simplest — move the action-conditional fut
 
 **What this adds to the page's ontology discussion.** DriveFuture's "intent" is a full 8-pose trajectory, so by the taxonomy above it sits with Auto-JEPA at the fully-specified end and has **no mode-spanning capacity at all** — conditioning on it cannot open alternative maneuver basins. But it is used for something no other entry here uses intent for: as the *action argument of a dynamics model*, which is the sense the term carries in model-based RL rather than in behaviour prediction. **The wiki now has three unrelated objects sharing the word "intent"** — a maneuver class, a goal or path specification, and a dynamics-model action — and only the first supports the multimodality argument this page is built on.
 
+## Maneuver-Indexed Sources and Experts: ManeuverFlow {#maneuverflow}
+
+*(2026-10-14)* [[sources/maneuverflow.md]] is the second eight-class rule ontology on this page after DIAL's, used differently. Each family is a **fixed Gaussian source** in normalized displacement–heading space; a scene classifier picks the top three families; candidates are drawn from those sources and transported in one step by a flow field whose FFN experts are **chosen by the family index**. The index stays attached to each candidate, and the refiner's target is the best candidate of the *same* family. It reports several of the [evaluation requirements](#evaluation-requirements) below:
+
+| Requirement | ManeuverFlow |
+|---|---|
+| Label derivation and class frequency | Bins on mean heading (±4.5°, ±13°), first-to-last displacement (5 m) and a speed-trend proxy (±0.25 m per step); navtrain occupancy 5.3% (right lane change) to 23.7% (decelerating) |
+| Classifier quality | Recall of the expert's nearest family in the top $k$: 87.2% ($k=1$), 96.5%, 98.3%, 99.2% ($k=4$). Not semantic accuracy; there are no human maneuver labels |
+| Fixed-budget comparison | Top-1 routing at 64 candidates 90.33 PDMS, top-3 90.58, top-4 90.57; 8 candidates at top-3 90.06 |
+| Ontology control | The same pipeline with eight K-means clusters as sources: 90.04 against 90.58 (+0.54 for the rule ontology; one run each) |
+| Routing control | Routed experts against a dense field of equal parameter count: +0.44 |
+| Per-intent reward, diversity metrics, closed-loop safety by intent | Not reported |
+
+**What it adds.** The K-means control is the first test in the wiki of a rule ontology against an unsupervised one inside the same planner, and the rule ontology wins. K-means clusters are also MeanFuser's and [[sources/mm-future.md]]'s mixture prior. **What it shows about the ontology's weakness.** A "lane change" is a mean heading of 4.5–13°, which also describes a gentle curve, and the paper says the families are not tied to lane topology. In its qualitative figures one routed family per scene appears as a single line, so samples within a family can be nearly identical: the diversity comes from routing across families, not from sampling within one.
+
 ## Intent-CFG
 
 Classifier-free guidance trains one generator with both conditional and unconditional intent inputs. At sampling time, the conditional and unconditional flow fields are combined to strengthen the selected maneuver mode.
@@ -118,7 +134,7 @@ A practical ontology should be:
 
 DIAL's eight classes satisfy simplicity but not full coverage. For example, “yield while changing lanes,” “creep,” and obstacle-specific avoidance are not explicit classes. Hard rule thresholds can also make semantically similar trajectories receive different labels.
 
-## Evaluation Requirements
+## Evaluation Requirements {#evaluation-requirements}
 
 Report all of the following:
 

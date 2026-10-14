@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md]
 related: [sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, concepts/nuscenes-waymo-evals.md, sources/simwam.md, sources/drivewam.md, sources/driveva.md, sources/epona.md, sources/policy-world-model.md, sources/drivevla-w0.md, sources/recogdrive.md, sources/sgdrive.md, sources/uniugp.md, sources/futuresightdrive.md, sources/dreameraD.md, sources/driving-wm-counterfactuals.md, concepts/counterfactual-prediction.md]
 created: 2026-08-17
-updated: 2026-09-04
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -130,7 +130,7 @@ The abstract's "33.3% FID / 1.8% FVD" improvements are measured against differen
 | PWM | NeurIPS'25 | ✓ | | 98.6 | 95.9 | 95.4 | 100 | 81.8 | 88.1 |
 | **DriveLaW** | – | ✓ | | **99.0** | **97.1** | **96.7** | 100 | 81.3 | **89.1** |
 
-**NC 99.0 is the highest No-at-fault-Collision score recorded anywhere in this wiki**, and TTC 96.7 is likewise exceptional. EP 81.3 is the trade-off — below DiffusionDrive's 82.2 and well below ReCogDrive's RFT 87.3. This is a conspicuously *safety-skewed* policy. Achieved with **no RL and no learned scorer**.
+**NC 99.0 is the highest No-at-fault-Collision score recorded anywhere in this wiki** *(lint 2026-10-14: at ingest; since passed by WA-JEPA 99.5, WCog-VLA 99.4, DriveVA 99.2 and Drive-HWM 99.6 / 99.5)*, and TTC 96.7 is likewise exceptional. EP 81.3 is the trade-off — below DiffusionDrive's 82.2 and well below ReCogDrive's RFT 87.3. This is a conspicuously *safety-skewed* policy. Achieved with **no RL and no learned scorer**.
 
 ### nuScenes open-loop planning (Table 3)
 

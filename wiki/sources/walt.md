@@ -4,7 +4,7 @@ type: source-summary
 sources: ["raw/papers/WALT_ Learning World-Model-Aligned Latent Trajectories for Autonomous Driving.md"]
 related: [concepts/action-tokenization.md, concepts/diffusion-planner.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/evaluation-variance.md, concepts/inference-latency.md, sources/reworld.md, sources/clear.md, sources/auto-jepa.md, sources/epona.md, sources/geowam.md, sources/geoworldad.md, sources/suv.md, sources/qwen-drive-1.0.md, sources/lwdrive.md, sources/drivevla-w0.md, sources/unified-driving-tokens.md, sources/coworld-vla.md, sources/drivelaw.md, sources/ad-e2e-jepa.md, sources/redrive.md]
 created: 2026-09-30
-updated: 2026-10-06
+updated: 2026-10-14
 confidence: medium
 ---
 
@@ -223,7 +223,7 @@ Latent-generation cost includes decoding. The frozen world model is excluded.
 | Autoencoder → WALT (contrastive alignment to the frozen world model) | **+0.35** |
 
 - **The nulls are the solid part.** Generating in a learned trajectory latent instead of waypoints, giving that latent a JEPA objective, and REPA-aligning the planner to it all land within 0.07 of the baseline. The action representation, taken alone, is not a lever on this backbone.
-- **The positive result is one run at +0.35.** Sampler-seed noise for flow planners on navtest has been measured at 0.013–0.05 ([[concepts/evaluation-variance.md]]), so +0.35 is probably outside sampler noise. Training-seed noise has never been measured and the paper reports no seeds. *(lint 2026-10-06: measured once since, at sd 0.1 PDMS for [[sources/foredrive.md]]'s recipe, which puts +0.35 at about three sd for that recipe; WALT's own is unmeasured.)*
+- **The positive result is one run at +0.35.** Sampler-seed noise for flow planners on navtest has been measured at 0.013–0.05 ([[concepts/evaluation-variance.md]]), so +0.35 is probably outside sampler noise. Training-seed noise has never been measured and the paper reports no seeds. *(lint 2026-10-06: measured once since, at sd 0.1 PDMS for [[sources/foredrive.md]]'s recipe, which puts +0.35 at about three sd for that recipe; WALT's own is unmeasured.)* *(lint 2026-10-14: three recipes measured now, sd 0.04–0.1.)*
 - **It is a trade inside the sub-scores.** NC +0.49 and TTC +1.08 against DAC −0.33, with EP flat. The closed form of the mean sub-scores moves 87.51 → 88.10.
 
 ### 2. v2 tells a different story about the same gain {#ec}

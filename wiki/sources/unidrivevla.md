@@ -1,7 +1,7 @@
 ---
 title: "UniDriveVLA: Unifying Understanding, Perception, and Action Planning for Autonomous Driving"
 type: source-summary
-sources: [raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md]
+sources: ["raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md"]
 related: [concepts/dual-system-vla.md, concepts/perception-for-planning.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, sources/orion.md, sources/automot.md, sources/percept-wam.md]
 created: 2026-04-07
 updated: 2026-04-07

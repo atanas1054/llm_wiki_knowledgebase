@@ -2,9 +2,9 @@
 title: "DriveVA: Video Action Models are Zero-Shot Drivers"
 type: source-summary
 sources: [raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md]
-related: [sources/adaptive-wam.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/foundation-backbones-for-ad.md, concepts/nuscenes-waymo-evals.md, sources/drivewam.md, sources/simwam.md]
+related: [sources/simvta.md, sources/adaptive-wam.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/foundation-backbones-for-ad.md, concepts/nuscenes-waymo-evals.md, sources/drivewam.md, sources/simwam.md]
 created: 2026-04-23
-updated: 2026-09-30
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -203,5 +203,7 @@ This page has carried a **medium** confidence rating because DriveVA's own NAVSI
 **TTC 98.7 is the highest recorded in this wiki** — above DriveLaW's 96.7, which this wiki had listed as exceptional — and NC 99.2 is second only to WA-JEPA's 99.5 *(lint 2026-09-30: since passed by WCog-VLA 99.4 and Drive-HWM 99.6 / 99.5)*. DriveVA is a markedly safety-skewed policy, which was invisible while the row was truncated. EP 83.5 is the trade-off.
 
 It also **disambiguates the headline number**. Adaptive-WAM states its 92.6 exceeds "DriveVA's mixed-data headline result by 1.7 points and its NAVSIM-only result by 2.1", which places DriveVA at **90.9 with mixed data and 90.5 trained on NAVSIM alone**. This wiki has been carrying 90.9 without that qualification. For NAVSIM-only comparisons the correct figure is 90.5, and Adaptive-WAM compares against it rather than the higher one — good practice worth crediting.
+
+*(2026-10-14)* **The same sub-scores now appear with the other aggregate.** [[sources/simvta.md]]'s Table 1 prints DriveVA as 99.2 / 97.5 / 98.7 / 100 / 83.5 with **90.9** and a caption noting that DriveVA also trains on CARLA data, i.e. the mixed-data configuration. Adaptive-WAM prints the identical sub-scores with 90.5. The closed form of these sub-scores is 89.55, so both aggregates are plausible (residuals −0.95 and −1.35). One of the two tables has attached the sub-scores to the wrong configuration; DriveVA's own truncated table would settle it.
 
 **One efficiency note for the same-backbone comparison**: DriveVA runs the full Wan2.2-5B backbone and generates future images; Adaptive-WAM reads an intermediate block in a single conditional forward at 170 ms. On zero-shot nuScenes DriveVA leads 0.84 vs 0.88 L2 and 0.06 vs 0.08% collision — a real but small margin, against a video path Adaptive-WAM profiles at 13.22 s if run to completion.

@@ -4,7 +4,7 @@ type: concept
 sources: [raw/papers/Qwen-Drive-1.0_ An Initial Step towards a Vision-Language Foundation Model for Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md]
 related: [concepts/physicalai-av-benchmark.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/bench2drive.md, concepts/navhard-ood-evaluation.md, concepts/world-model-for-ad.md, concepts/nuscenes-waymo-evals.md, sources/qwen-drive-1.0.md, sources/alpamayo-r1.md, sources/drivewam.md, sources/simwam.md, research-directions.md]
 created: 2026-09-18
-updated: 2026-09-30
+updated: 2026-10-14
 confidence: medium
 ---
 
@@ -51,7 +51,7 @@ From [[sources/qwen-drive-1.0.md]] Table 7. **All comparison methods are reprodu
 
 | Method | NAVSIM-v1 PDMS | AlpaSim at-fault score | AlpaSim progress |
 |---|---:|---:|---:|
-| [[sources/simwam.md]] | **91.5** — highest world-action model in the wiki | **0.30** — last | 62 % |
+| [[sources/simwam.md]] | **91.5** — highest world-action model in the wiki at ingest *(lint 2026-10-14: since passed by DA-WAM 93.7, MM-Future 93.4, DriveReferee 92.0 and WA-JEPA 91.8)* | **0.30** — last | 62 % |
 | [[sources/qwen-drive-1.0.md]] (RL) | 90.7 | 0.37 | 48 % |
 | [[sources/drivewam.md]] | 90.1 | 0.53 | **35 %** |
 | Alpamayo-1.5 | not reported | 0.45 | 59 % |

@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md]
 related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/hyworldvla.md]
 created: 2026-04-07
-updated: 2026-10-12
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -106,7 +106,7 @@ In-house: 50k pretraining + 30k fine-tune; 64 GPUs, batch=256.
 | DiffusionDrive | 84.5 | 87.7 |
 | **DriveVLA-W0** | **86.1** | **58.9** |
 
-EC = 58.9 is by far the lowest in the wiki — world model training produces good safety/progress but very poor extended comfort compliance.
+EC = 58.9 is by far the lowest in the wiki *(lint 2026-10-14: at ingest; lower v2 EC values since include AD-E2E-JEPA 19.5–43.8, World4Drive 53.9 and GTRS-Dense 55–59)* — world model training produces good safety/progress but very poor extended comfort compliance.
 
 ### In-House 70M-Frame Dataset (Table 3)
 
@@ -217,7 +217,7 @@ MoE reduces latency to 63.1% of baseline (74ms vs. 118ms for query-based).
 ## Limitations
 
 1. **90.2 PDMS uses trajectory anchors** — effectively a multi-candidate selection scheme, not single-sample; the pure single-sample query-based performance is 88.4 PDMS (Table 4), below DriveFine (90.7) and WAM-Flow (90.3)
-2. **EC = 58.9 on NAVSIM-v2** — lowest in the wiki; world model training does not improve comfort compliance
+2. **EC = 58.9 on NAVSIM-v2** — lowest in the wiki at ingest *(lint 2026-10-14: see above)*; world model training does not improve comfort compliance
 3. **In-house 70M dataset is proprietary** — the paper's most compelling scaling results are not reproducible by the community
 4. **Design asymmetry between WM variants**: AR WM predicts current frame (reconstruction-adjacent); Diffusion WM predicts future frame — different hypotheses tested under the same "world modeling" label
 5. **World model bypassed at inference** — training-time benefit only; no inference-time visual reasoning (unlike FSDrive)

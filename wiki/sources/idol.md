@@ -2,9 +2,9 @@
 title: "IDOL: Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving"
 type: source-summary
 sources: ["raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md"]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/selection-based-planning.md, concepts/bench2drive.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/perception-for-planning.md, sources/resworld.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/pair-drive.md, sources/drive-jepa.md, sources/drivewam.md, sources/futuresightdrive.md, sources/da-wam.md, sources/mm-future.md, sources/world4scorer.md, sources/drivefuture.md, sources/simscale.md, sources/hydra-mdp-pp.md, sources/drivevla-w0.md, sources/sgdrive.md, sources/hyworldvla.md, sources/geoworldad.md, sources/lwdrive.md, research-directions.md]
+related: [sources/maneuverflow.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/selection-based-planning.md, concepts/bench2drive.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/perception-for-planning.md, sources/resworld.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/pair-drive.md, sources/drive-jepa.md, sources/drivewam.md, sources/futuresightdrive.md, sources/da-wam.md, sources/mm-future.md, sources/world4scorer.md, sources/drivefuture.md, sources/simscale.md, sources/hydra-mdp-pp.md, sources/drivevla-w0.md, sources/sgdrive.md, sources/hyworldvla.md, sources/geoworldad.md, sources/lwdrive.md, research-directions.md]
 created: 2026-10-12
-updated: 2026-10-12
+updated: 2026-10-14
 confidence: medium
 ---
 
@@ -196,7 +196,7 @@ The five learned baselines' reported scores sit 0.2–2.2 *below* the product of
 | MeanFuser | 98.3 | 97.2 | 99.6 | 99.8 | 87.6 | 97.4 | 97.3 | 98.3 | 88.2 | 89.5 | −0.90 |
 | **IDOL** | 98.8 | 97.6 | 99.5 | 99.8 | 87.1 | 98.3 | 96.3 | 98.3 | 85.5 | **89.6** | **−0.60** |
 
-\* VLA/VLM, † RL or reward-guided training, ‡ extra synthetic, pseudo-expert or QA data (the paper's marks). Residual = closed form − reported. ⚠ The "VADv2" row matches no other record: VADv2 scores 80.9 PDMS with DAC 89.1 in IDOL's own Table 1, and 76.6 under the Hydra-MDP++ formula; a DAC of 98.3 here is not its profile. ReCogDrive's DDC and HC are swapped relative to every other wiki copy (98.3 / 99.5).
+\* VLA/VLM, † RL or reward-guided training, ‡ extra synthetic, pseudo-expert or QA data (the paper's marks). Residual = closed form − reported. ⚠ The "VADv2" row matches no other record: VADv2 scores 80.9 PDMS with DAC 89.1 in IDOL's own Table 1, and 76.6 under the Hydra-MDP++ formula; a DAC of 98.3 here is not its profile. ReCogDrive's DDC and HC are swapped relative to every other wiki copy (98.3 / 99.5). *(2026-10-14: [[sources/maneuverflow.md]] prints an ICLR 2026 VADv2 at 89.3 PDMS v1 (98.3 / 97.4 / 95.7 / 100 / 82.3), whose sub-scores are compatible with this row; the two are plausibly the v1 and v2 results of an updated VADv2, distinct from the original 80.9.)*
 
 ### Table 10 (Appendix): navhard stage 1 only
 
@@ -334,6 +334,7 @@ The +2.7 is mostly DAC (+2.7) and EP (+2.5); NC and TTC barely move. The no-IDM 
 - WoTE (not ingested): the base. IDOL keeps its anchors, BEV world model and reward-model ranking. WoTE is now load-bearing in one ingested paper and a baseline in many.
 - [[sources/da-wam.md]], [[sources/mm-future.md]], [[sources/world4scorer.md]]: the other per-candidate future designs. They use per-candidate futures to *score* candidates (+0.15, +0.4; World4Scorer's states are outcome-supervised). IDOL uses them to *refine* each candidate before scoring, and measures +1.3 to +2.7 for doing so.
 - [[sources/drivewam.md]], [[sources/futuresightdrive.md]]: "inverse dynamics" in the wiki's earlier sense, an action read from a future generated *without* that action. IDOL's futures are generated *with* the anchor, which is why its module cannot be inverse dynamics in that sense.
+- [[sources/maneuverflow.md]] *(2026-10-14)*: the nearest design on a similar ResNet-34 TransFuser backbone. One shared action-free BEV forecast sampled along each of 64 generated candidates, instead of a rollout per anchor; a Frenet refiner on the best 16, then a re-score. Future evidence is worth +1.58 / +0.55 there against +1.3 to +2.7 for feedback here; 90.58 / 90.14 against 90.0 / 89.6. It cites WoTE, not IDOL.
 - [[sources/geoworldad.md]], [[sources/lwdrive.md]]: other iterative refiners (five stages, six stages). IDOL finds one refinement iteration best and two or three worse.
 - [[sources/resworld.md]]: also an action-side reading of predicted BEV change (temporal residuals as input); IDOL prints its history variant at 89.0.
 - [[sources/drivefuture.md]], [[sources/simscale.md]]: sources of IDOL's lineage-B navhard baselines and its GTRS-Dense + SimScale v2 row.

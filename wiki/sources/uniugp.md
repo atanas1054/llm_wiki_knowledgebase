@@ -1,7 +1,7 @@
 ---
 title: "UniUGP: Unifying Understanding, Generation, and Planning for End-to-end Autonomous Driving"
 type: source-summary
-sources: [raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md]
+sources: ["raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md"]
 related: [concepts/world-model-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, sources/recogdrive.md, sources/wam-flow.md]
 created: 2026-04-05
 updated: 2026-04-05

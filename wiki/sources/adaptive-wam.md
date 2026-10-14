@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md]
 related: [sources/world4scorer.md, sources/geoworldad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/nuscenes-waymo-evals.md, concepts/rl-for-ad.md, sources/drivelaw.md, sources/brainwam.md, sources/foresight.md, sources/simwam.md, sources/driveva.md, sources/drivewam.md, sources/recogdrive.md, sources/auto-jepa.md, sources/da-wam.md, sources/wa-jepa.md, sources/clear.md, sources/drivesuprim.md, sources/latent-wam.md, sources/drivevla-w0.md, sources/epona.md, sources/policy-world-model.md]
 created: 2026-09-04
-updated: 2026-10-06
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -25,7 +25,7 @@ This paper asks the question the wiki has been circling for three ingests — *h
 
 That second result is new to this wiki. Nobody has previously reported *where in the network* to read a video prior, and it turns out to matter roughly forty times more than the noise level everyone has been ablating.
 
-Adaptive-WAM builds the obvious system on top: attach six independent [[sources/recogdrive.md]]-style 5-step trajectory diffusion heads to Wan2.2-TI2V-5B at blocks {5, 9, 15, 18, 22, 30}, decode one trajectory per exit, and let a DINOv2-Small quality scorer terminate execution once a decoded plan looks good enough. **90.8 PDMS on NAVSIM v1 / 89.9 EPDMS on v2 at 170 ms average end-to-end latency on an A100** — the fastest world-action model in the wiki by a factor of three, against a full 40-step video rollout that costs **13.22 s** on the same hardware.
+Adaptive-WAM builds the obvious system on top: attach six independent [[sources/recogdrive.md]]-style 5-step trajectory diffusion heads to Wan2.2-TI2V-5B at blocks {5, 9, 15, 18, 22, 30}, decode one trajectory per exit, and let a DINOv2-Small quality scorer terminate execution once a decoded plan looks good enough. **90.8 PDMS on NAVSIM v1 / 89.9 EPDMS on v2 at 170 ms average end-to-end latency on an A100** — the fastest world-action model in the wiki by a factor of three *(lint 2026-10-14: at ingest. [[sources/metis.md]], a Wan2.2-5B world-action model ingested later, reports 147 ms at two steps on an RTX 4090; different hardware, but the factor of three no longer holds, and latent world-model planners such as [[sources/foredrive.md]] run in 58 ms)*, against a full 40-step video rollout that costs **13.22 s** on the same hardware.
 
 A separate fixed-exit variant with 64 proposals reaches 92.6 PDMS, but it is a different model with privileged pseudo-expert supervision and belongs in the [selection-based](../concepts/selection-based-planning.md) family, not next to single-trajectory scores.
 

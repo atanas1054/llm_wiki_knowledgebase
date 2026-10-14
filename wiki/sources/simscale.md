@@ -2,9 +2,9 @@
 title: "SimScale: Learning to Drive via Real-World Simulation at Scale"
 type: source-summary
 sources: ["raw/papers/SimScale_ Learning to Drive via Real-World Simulation at Scale.md"]
-related: [sources/rad.md, concepts/data-driven-simulators.md, concepts/navhard-ood-evaluation.md, concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/diffusion-planner.md, concepts/teacher-pseudo-labels.md, concepts/rl-for-ad.md, concepts/evaluation-variance.md, concepts/world-model-for-ad.md, concepts/pdm-lite.md, sources/learning-to-drive-from-a-world-model.md, sources/senna2.md, sources/dreameraD.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/hydra-mdp-pp.md, sources/drivefuture.md, sources/momworld.md, sources/metis.md, sources/redrive.md, sources/drivevla-w0.md, research-directions.md]
+related: [sources/simvta.md, sources/rad.md, concepts/data-driven-simulators.md, concepts/navhard-ood-evaluation.md, concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/diffusion-planner.md, concepts/teacher-pseudo-labels.md, concepts/rl-for-ad.md, concepts/evaluation-variance.md, concepts/world-model-for-ad.md, concepts/pdm-lite.md, sources/learning-to-drive-from-a-world-model.md, sources/senna2.md, sources/dreameraD.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/hydra-mdp-pp.md, sources/drivefuture.md, sources/momworld.md, sources/metis.md, sources/redrive.md, sources/drivevla-w0.md, research-directions.md]
 created: 2026-10-06
-updated: 2026-10-06
+updated: 2026-10-14
 confidence: medium
 ---
 
@@ -451,6 +451,7 @@ PDM-Closed scores EC 36.0 / 25.4. Students trained on its labels lose Stage-2 ex
 - **[[sources/learning-to-drive-from-a-world-model.md]]**: the other paper in the wiki that trains a policy on off-log states with corrective labels. openpilot is on-policy (states come from the current policy), uses reprojection or a learned world model, and labels with a future-anchored learned teacher; it is tested in MetaDrive and deployed. SimScale's states come from a fixed perturbation sampler, are rendered by 3DGS with reacting agents, labelled by PDM-Closed or retrieval, and tested on NAVSIM. Neither compares against the other's state sampler or teacher.
 - **[[sources/senna2.md]]** and [[sources/rad.md]]: RL in 3DGS reconstructions (RAD with log-replayed agents). Figure 6 positions SimScale against this "3DGS-based online RL". The trade: SimScale's data works for any planner and can be reused; online RL follows the policy's own state distribution.
 - **[[sources/dreameraD.md]]**: off-log states from a latent world model instead of a renderer, with a learned reward and GRPO.
+- **[[sources/simvta.md]]** *(2026-10-14)*: the same lab (SimScale's first author is its project lead) uses a 3DGS engine (World Engine) on navtrain in a different role. The renders are video-loss targets for a world-action model during GRPO, rendered along the current policy's own executed paths, and the policy never sees them as input. Its one sampler comparison, renders cached once from the initial policy against renders refreshed each round (90.4 vs 91.3 PDMS), is the nearest thing in the wiki to the fixed-versus-on-policy test this paper's limitations call for.
 - **[[sources/hydra-mdp-pp.md]]**: the scorer-distillation recipe; reward-only co-training is that recipe on simulated states.
 - **[[sources/drivefuture.md]]** and **[[sources/momworld.md]]**: both build on GTRS-Dense, the planner that benefits most here; DriveFuture's navhard table is where the 53.2 SimScale row comes from.
 - **[[sources/diffusiondrive.md]]** and **[[sources/diffusiondrive-v2.md]]**: DiffusionDrive is one of the three planners. DiffusionDriveV2's diagnosis (imitation supervises one anchor per scene) is the counterpart of SimScale's finding that a multimodal head absorbs several labels per scene.

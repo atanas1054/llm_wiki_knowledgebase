@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md]
 related: [concepts/visual-tokenization.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/selection-based-planning.md, concepts/action-tokenization.md, concepts/perception-for-planning.md, sources/drivelaw.md, sources/reworld.md, sources/geoworldad.md, sources/geowam.md, sources/policy-world-model.md, sources/explorevla.md, sources/futuresightdrive.md, sources/drivevla-w0.md, sources/dynvla.md, sources/epona.md, sources/drivesuprim.md, sources/diffusiondrive.md, sources/deepsight.md, sources/latent-wam.md, sources/adaptive-wam.md, sources/lwdrive.md, sources/simwam.md]
 created: 2026-09-04
-updated: 2026-09-04
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -189,7 +189,7 @@ Multi-codebook quantization then recovers appearance almost entirely (26.33) and
 
 **The claim is scoped honestly as a result of that.** DriveSuprim sits *above* Ours in the same table, and the paper says only "the highest PDMS among methods that plan from frozen visual tokens," conceding explicitly that "several end-to-end systems benefit from multi-camera or LiDAR inputs, which makes direct comparison less controlled."
 
-**Where 91.8 sits in the wiki**: tied with [[sources/wa-jepa.md]] 91.8 and DriveFine\* 91.8, below CLEAR/DA-WAM 93.7, DriveSuprim 93.5, [[sources/drive-jepa.md]] 93.3, WCog-VLA 92.9, [[sources/adaptive-wam.md]] (aux) 92.6, HybridDriveVLA 92.1, and [[sources/lwdrive.md]] 92.0. **EP 87.3 is the standout sub-score** — the joint-best in the wiki alongside ReCogDrive and LWDrive, and 5.5 above DriveLaW's 81.3 on the same single-camera input.
+**Where 91.8 sits in the wiki**: tied with [[sources/wa-jepa.md]] 91.8 and DriveFine\* 91.8, below CLEAR/DA-WAM 93.7, DriveSuprim 93.5, [[sources/drive-jepa.md]] 93.3, WCog-VLA 92.9, [[sources/adaptive-wam.md]] (aux) 92.6, HybridDriveVLA 92.1, and [[sources/lwdrive.md]] 92.0. **EP 87.3 is the standout sub-score** — the joint-best in the wiki alongside ReCogDrive and LWDrive *(lint 2026-10-14: not wiki-wide; DriveSuprim's ViT-L model reports v1 EP 91.3)*, and 5.5 above DriveLaW's 81.3 on the same single-camera input.
 
 **One classification quibble.** The † group mixes discrete-token conditioning (Ours, and DriveVLA-W0's AR variant) with *continuous* latent conditioning ([[sources/drivelaw.md]] caches Video DiT activations; [[sources/epona.md]] is AR+diffusion). "Frozen tokenizer" is doing loose work, and the comparison is really "planners that consume a frozen upstream generative representation."
 

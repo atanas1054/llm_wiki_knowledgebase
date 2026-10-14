@@ -3766,3 +3766,138 @@ The wiki cites no component effect size from this paper on any concept page.
 **New gaps**: WoTE (now load-bearing), SeerDrive, MeanFuser, DiffE2E, GuideFlow, GTRS-DP, DiffRefiner, iPad, World4Drive.
 
 **Figure note**: the clipping has Figures 1, 2, 5 and the first row of Figure 4, and no image for Figure 3. From the arXiv HTML, Figure 3 (`visual.svg`) was rendered with headless Edge to `raw/assets/idol_fig3.png`, and Figure 4's left- and right-turn rows were downloaded as `idol_left2.png` and `idol_right2.png`. All five figures are embedded and all 14 tables reproduced (Tables 6–8 condensed), with v1, v2 and stage-1 closed-form residuals and a two-stage product column computed. `raw/papers/` was not modified.
+
+## 2026-10-14 - Ingest: SimVTA: Simulation-Grounded Video-Trajectory Alignment for Driving World Action Models
+
+**Source**: `raw/papers/SimVTA_ Simulation-Grounded Video-Trajectory Alignment for Driving World Action Models.md` (arXiv 2610.13781v1)
+**Orgs**: Shanghai Innovation Institute, OpenDriveLab (HKU), Li Auto, Tongji, Tsinghua. Project page and GitHub repo ("results and demo"); code release not stated.
+**Pages created**: `wiki/sources/simvta.md`
+**Pages updated**: `concepts/world-model-for-ad.md` (Pattern 52, Epona successor note, training-time camp, NAVSIM generation table, one open question), `concepts/navsim-benchmark.md` (v1 and v2 ladder rows, new `#simvta` audit section), `concepts/hugsim-benchmark.md` (new `#simvta` section, third protocol row in the era table, Extreme-tier and adoption annotations), `concepts/data-driven-simulators.md` (new `#video-targets` section, role, supervision, range and evidence rows, open-question annotation), `concepts/rl-for-ad.md` (new `#simvta` section, reward-table row), `concepts/evaluation-variance.md` (second training-seed measurement), `concepts/inference-latency.md` (no-latency list), `sources/epona.md`, `sources/dreameraD.md`, `sources/simwam.md`, `sources/simscale.md`, `sources/driveva.md`, `research-directions.md`, `index.md`, `README.md` (96 papers, stale "93" in At a Glance fixed; World Engine and ReSim / CausalDrive / DriveZero gap rows; DrivoR row)
+**Confidence**: **medium**. A wide ablation set with three-seed repeats for four configurations, but the logged-future control is missing, the initialization's video quality is unreported, HUGSIM has no control, the v2 table mixes evaluators, and there is one backbone.
+
+**What it is**: Epona adapted to NAVSIM (86.2 PDMS), post-trained by repeated rounds of: 32 Flow-GRPO SDE trajectory samples per scene; PDM execution and a reward NC·DAC·(10 EP + 5 TTC + 2 C)/17; World Engine 3DGS renders of the front-view future along the four highest-reward candidates that pass NC/DAC/TTC/DDC ≥ 0.999 and pose-support checks; a flow-matching video loss on the renders whose teacher-forced error is at or above the scene mean (Q2), with gradients into the shared encoder at 0.2 scale; a BC anchor to the frozen initial TrajDiT's ODE chain. No importance ratio, no KL. No video, simulator or reranking at inference.
+
+**Reported results**: 91.3 PDMS (seeds 91.3 / 91.4 / 91.3); 88.2 EPDMS (v2.2 devkit); 51.5 RC / 38.8 HD-Score on 345 HUGSIM scenarios (DrivoR 49.8 / 35.7); FID 13.1 / FVD 46.3 along logged trajectories (RL-only 20.4 / 105.4; World Engine renders 7.6 / 21.8). No latency, no training length.
+
+**Finding 1 - the +5.1 splits into +2.9 RL and +2.2 video, and the video part needs the encoder.** Initialization 86.2; GRPO + BC 89.1 (NC −0.7); video loss into VideoDiT only 89.1; into the encoder 91.3. Closed-form attribution of the video step: EP +1.2, NC +0.8, DAC +0.4, TTC +0.4.
+
+**Finding 2 - matched targets beat none, mismatched targets are far worse than none.** Fixed initial-policy cache 90.4; online renders 91.3; shuffled among a scene's candidates 83.1 (NC 94.1, DAC 91.3, TTC 91.8), below the initialization. The shuffle also breaks frame–pose consistency in the encoder's history input. The logged-video control is never run.
+
+**Finding 3 - selection effects are small but survive seeds.** Q2 91.3, Q1+Q2 91.0, Q2+Q3 90.9, Q1–Q4 90.9, video GRPO 91.0, 2× rendering budget 91.2. Exp2 beats Exp5 and Exp7 on every seed (sd 0.06). Mixed-pool arms also change unsafe candidates' advantages.
+
+**Table and figure problems found**:
+- v2 table mixes evaluators: SimVTA (−0.76), re-evaluated Epona (−1.70), DreamerAD (−1.24), SGDrive (−0.70) corrected-like; ResAD, DriveSuprim, DiffRefiner, DriveWorld-VLA, ELF-VLA, SafeDrive pre-fix-like (+2.57 to +4.03). By closed form five of these six sit above SimVTA.
+- **DriveVA's sub-scores carry 90.9 here and 90.5 in Adaptive-WAM's table**, digit-identical; both pass the closed-form check, so one table attaches them to the wrong configuration.
+- Table 1's world-model block stops at SimVTA's 91.3; SimWAM 91.5 and WA-JEPA 91.8 appear only in appendix Table 15. EponaV2 (88.9 EPDMS) absent.
+- Three in-text table references off by one (Tables 5, 7, 9 cited as 6, 8, 10).
+- Figure 3 axes start at 80 (a) and span 90.8–91.4 (c).
+- Table 4 lacks the initialization and Exp1, and clip count and resolution.
+- "Results averaged over three runs" but only four settings appear in the seed table.
+
+**New syntheses surfaced while writing**:
+- A fourth role for a data-driven simulator: the source of a world model's training targets, with the policy seeing only logged images.
+- The wiki's first fixed-versus-on-policy comparison under one renderer (+0.9, video-target role).
+- HUGSIM weighting arithmetic: tier counts ≈ 49 / 126 / 86 / 84 fit all five rows of the DrivoR-protocol table to 0.06; HAD-L fits neither these nor the 436-scenario weights, so the wiki's 345-scenario era holds two protocols. The Extreme tier on this set reaches 25.9–32.5, against at most 14 on the 436 set.
+- Two lower-PDMS world-model planners now beat DrivoR on HUGSIM under two different protocols (WA-JEPA, SimVTA).
+- A stated v2.2-devkit row lands on the corrected side of the residual-sign fingerprint.
+- The Epona family now spans 86.2 / 88.7 / 89.3 / 89.8 / 91.3 (Epona, DreamerAD, ForeSight, WALT, SimVTA); RL with the simulator reward alone (89.1) passes DreamerAD's latent-reward RL (88.7) from the same initialization.
+
+**Research directions** (`wiki/research-directions.md`): now 54 questions (43 open, 11 partially answered) and 2 answered.
+- *Evidence added*: error bars (second training-seed measurement, RL post-training of a 2.5B model, sd 0.06–0.1); EPDMS comparability (stated v2.2 row on the corrected side; mixed table); NAVSIM vs closed loop (SimVTA above DrivoR on HUGSIM, no control); HUGSIM one table (third protocol, weighting split, Extreme tier set-dependent); generation quality vs planning (co-movement without separation); video follows action (shuffle −8.2, no off-log measurement); world-model-shaped representation (encoder-only effect, shuffled targets −6.0 below none); which simulator trains best (fourth role, fixed vs on-policy +0.9); simulated data scaling (2× rendering budget flat); renderer artifacts (high-error selection may favour bad renders); RL recipe (Flow-GRPO without ratio or KL, +2.9 on Epona).
+- *Added*: Does RL post-training of a world-action model need video targets for its own trajectories, or only a retained video loss?
+- *Answered*: none.
+
+**Not reported**: training steps and wall-clock, rendering cost, inference latency, navhard, HUGSIM sub-metrics or controls, the initialization's FID/FVD, video quality along off-log paths, renderer fidelity off-log, how many navtrain scenes have reconstructions, agent behaviour in the renders.
+
+**New gaps**: World Engine (load-bearing), ReSim, CausalDrive, DriveZero; DrivoR's HUGSIM protocol; EponaV2 (again).
+
+**Figure note**: all seven figures are in the clipping (`raw/assets/1 1.png`, `2.png` … `7.png`) and embedded; all 15 tables reproduced (Tables 5–10 as slices of Table 13), with v1 and v2 closed-form residuals and a HUGSIM weighting check computed here. `raw/papers/` was not modified.
+
+## 2026-10-14 - Ingest: ManeuverFlow: Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving
+
+**Source**: `raw/papers/ManeuverFlow_ Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving.md` (arXiv 2610.13409v1)
+**Orgs**: Chongqing University; AI Center, Geely Automotive Research Institute. Code link given (github.com/wyh-autonomy/maneuverflow).
+**Pages created**: `wiki/sources/maneuverflow.md`, `wiki/concepts/worldengine-benchmark.md` (new concept page; 40 concept pages)
+**Pages updated**: `concepts/world-model-for-ad.md` (Pattern 53, a row in the per-candidate futures table, an annotation on the shared-vs-per-candidate box, imagine-then-act camp, one open question), `concepts/navsim-benchmark.md` (v1 and v2 ladder rows, new `#maneuverflow` audit section, VADv2 annotation in the IDOL section), `concepts/selection-based-planning.md` (methods row, new `#maneuverflow` section), `concepts/best-of-n.md` (new `#maneuverflow-oracle` section), `concepts/intent-conditioned-planning.md` (uses-table row, new `#maneuverflow` section, anchor on evaluation requirements), `concepts/mixture-of-experts.md` (comparison row, non-learned router note), `concepts/diffusion-planner.md` (source-distribution row), `concepts/evaluation-variance.md` (third training-seed and first closed-loop measurement), `concepts/inference-latency.md` (partial-pipeline FPS), `concepts/data-driven-simulators.md` (evaluation-role row, World Engine dual role), `sources/idol.md`, `sources/dial.md`, `sources/mm-future.md`, `sources/da-wam.md`, `research-directions.md`, `index.md`, `README.md` (97 papers, 40 concept pages; VADv2-2026, iMF / MM-FM / GoalFlow gap rows; World Engine and MeanFuser rows)
+**Confidence**: **medium**. Three-run means with small spreads and two matched controls, but no seeds on the ablations, a future ablation that removes training and inference together, evaluator-label supervision, a mixed v2 table, and a partial latency figure.
+
+**What it is**: ResNet-34 TransFuser (TF with LiDAR; LTF camera-only). A classifier weights eight rule-defined motion families (bins on mean heading at ±4.5°/±13°, displacement, speed trend); the top 3 share 64 candidates, each drawn from its family's fixed Gaussian and transported in one step by an Improved-MeanFlow field whose FFN expert is chosen by the family index. A world model predicts one action-free BEV feature field at 1–4 s (absolute + residual), supervised by the encoder's features of the real future frames; a probe samples current and future features at each candidate's footprint. A set scorer predicts the five PDM factors (BCE on NAVSIM v1 evaluator labels for the model's own 64 candidates per training step) and ranks by log-PDM. A Frenet refiner corrects the best 16 toward the evaluator-best candidate of the same family; all 64 are re-scored.
+
+**Reported results**: 90.58 ± 0.05 PDMS (TF; LTF 89.98); 90.14 ± 0.04 EPDMS (TF; LTF 89.70) with v1 checkpoints; WorldEngine (288 navtest-derived 3DGS scenarios, LTF) PDMS\* 75.19 ± 0.85 logged traffic / 74.58 ± 0.64 IDM, SR 87.5 / 87.9, EP 60.7 / 60.9. Proposal FPS 53.86 at 64 candidates (perception → generator only).
+
+**Finding 1 - the ladder is mostly scoring and refinement.** TransFuser 84.01 → candidates + current-feature scorer 86.14 → maneuver prior + larger generator 87.91 → routed experts 88.35 (+0.44 at matched parameters) → future evidence 89.93 (+1.58) → refiner 90.58 (+0.65). Refiner without future +1.68; future after refinement +0.55; together +2.23. Rule prior over K-means +0.54.
+
+**Finding 2 - a shared future helps when read along each path.** One action-free forecast, sampled at each candidate's footprint: +1.58 before refinement, against DA-WAM's −0.50 for an unindexed shared future and +0.15 / +0.4 for per-candidate futures (DA-WAM, MM-Future). The ablation also removes the forecast's training loss.
+
+**Finding 3 - the selector, not the generator, sets the score.** Frozen generator best-of-N: 92.20 (8), 94.25 (64), 94.85 (256, past the human 94.8), 95.02 (512). Deployed plan: 90.06 (8) → 90.58 (64) → 90.56 (128). Scorer top-1 = pool oracle in 40.1% of scenes, within one point in 75.3%.
+
+**Table and figure problems found**:
+- v2 mixes evaluators under a "single official benchmark version" caption: TransFuser 76.7 (+1.28) and DriveSuprim 83.1 (+2.28) pre-fix-like; DiffusionDrive 88.3 (−0.94), MeanFuser 89.5 (−0.90) and both own rows (−0.72, −0.80) corrected-like.
+- **DiffusionDrive 88.3** is a third corrected-like DiffusionDrive row, strengthening the reading of 84.5 as pre-fix.
+- **VADv2 (ICLR 2026) at 89.3 PDMS** matches no other VADv2 row (80.9); IDOL's unidentified v2 "VADv2 85.8" is plausibly its v2 half. Annotated on IDOL and NAVSIM pages.
+- v1 scope omits DiffusionDriveV2 91.2, PaIR-Drive 91.2, iPad 91.1 (ResNet-34); v2 omits eight corrected-cohort entries above 90.14.
+- WorldEngine baselines have no stated source or spread.
+- Appendix slips: "Figures S2 and S2", Section 5.2 cites Table S5 for Table S4's numbers, Section 6.2 without 6.1.
+- Figure 1(a) is a schematic (the paper says so).
+
+**New syntheses surfaced while writing**:
+- A fourth shared-vs-per-candidate configuration (shared prediction, per-candidate readout) that reframes DA-WAM's negative result as a readout question.
+- Open-loop training-seed sd is now 0.04–0.1 across three recipes; the first closed-loop seed spread is ten times larger (0.64–0.92 on 288 scenarios).
+- A ResNet-34 one-step generator's oracle passes the human score at 256 candidates; the deployed plan plateaus at 64.
+- The wiki's first rule-vs-K-means ontology control inside one planner (+0.54), and a fixed (non-learned) MoE router.
+- World Engine now has two roles in the wiki (training renderer for SimVTA, benchmark here), which sets up a train–test renderer confound.
+
+**Research directions** (`wiki/research-directions.md`): now 55 questions (44 open, 11 partially answered) and 2 answered.
+- *Evidence added*: error bars (third seed measurement, first closed-loop one); EPDMS comparability (third corrected DiffusionDrive row; a second VADv2); NAVSIM-v1 saturation (best-of-256 past the human from a ResNet-34 one-step generator); reactive closed loop (WorldEngine, VADv2 inversion, IDM barely matters); 3DGS benchmark agreement (a public navtest-derived benchmark, untested against others); generator vs selector (navtest version: N 8 → 64 adds 0.5, oracle adds 2.05); test-time future (shared latent read per candidate); per-candidate futures (fourth configuration); scorers and the metric (online evaluator labels; good v2 transfer without v2 training); diversity (rule families, top-3 routing); inference cost (partial FPS).
+- *Added*: Is the harm of a shared future in the sharing or in the readout?
+- *Answered*: none.
+
+**Not reported**: end-to-end latency and its hardware, seeds for the ablations, a future-loss-without-evidence arm, per-family scores, navhard, HUGSIM, Bench2Drive, WorldEngine baseline provenance, PDMS\* definition.
+
+**New gaps**: VADv2 (ICLR 2026 version), Improved MeanFlow, MM-FM, GoalFlow, MeanFuser (now load-bearing), World Engine (now also a benchmark), WoTE, Gen-Drive, DTPP.
+
+**Figure note**: the clipping has eight of nine figures (`fg.png`, `appendix_sampling_oracle_draft.png`, `fg2.png`, `fg3.png`, `qualitative_2x3.png`, `kmeans_gmp_atlas.png`, `m3f_expert_specialization_two_scene.png`, `four_model_qualitative_comparison_appendix_450dpi_q95.jpg`). Figure S2 (`rule_aligned_mgmp_atlas.png` in the HTML) was downloaded from the arXiv HTML as `raw/assets/maneuverflow_figS2.png`. All nine figures are embedded and all tables reproduced (Table S2 condensed), with v1 and v2 closed-form residuals and an oracle-minus-selected column computed. `raw/papers/` was not modified.
+
+## 2026-10-14 - Lint
+
+**Structural checks**: 140 pages (97 sources, 40 concepts, index, log, research directions). No broken wiki links or anchors (the three hits are template placeholders in `research-directions.md` and the log). All 97 raw papers have a source page; every page is in `index.md`, and README's paper and concept tables list all 97 and 40. All 629 embedded images resolve; the one remote image (`sources/walt.md` Figure 1) is by design. No orphan or single-link pages.
+
+**Frontmatter fixed (20 pages).** Three raw filenames contain commas (`UniDriveVLA_ Unifying Understanding, Perception, and Action…`, `UniUGP_ Unifying Understanding, Generation, and Planing…`, `See Tomorrow, Act Today_…`), and they were unquoted in the `sources:` lists of 17 concept pages and their own three source pages, so a YAML parser split each into two or three non-existent paths. Quoted everywhere; all 140 frontmatter blocks now parse with PyYAML and every `sources` and `related` entry exists.
+
+**The v2 mixing recount** (pending since the 2026-10-06 lint). A script applied the EPDMS closed form to every navtest v2 table transcribed on the source pages: **53 tables from 48 pages, 397 rows; 37 tables contain both pre-fix-like (residual ≥ +1.0) and corrected-like (≤ −0.2) rows**, 35–37 under stricter cut-offs; 11 are entirely pre-fix-like, 4 entirely corrected-like. Only 18 of 397 rows (4.5%) fall in the ambiguous band, so the residual distribution is bimodal and the sign classifies nearly every row. New section `navsim-benchmark.md#v2-recount`; the "at least eleven" figure replaced in `research-directions.md` and README.
+
+**Stale claims fixed** (annotated in place, dated):
+- *World-action / world-model leaders*: SimWAM as "highest world-action model" (`alpasim-benchmark.md`) and "strongest world-model-class v1 result" (`navsim-benchmark.md` caveat); DreamerAD as "best world-model-class RL" (`navsim-benchmark.md`) and "strongest world-model RL on v2" (`sources/dreameraD.md`), both now passed on the same Epona base by SimVTA.
+- *Superlatives the last four ingests or earlier ones overtook*: DriveSuprim as highest non-VLM single-sample v1 (World4Scorer, DA-WAM, MM-Future); DiffusionDriveV2 as strongest non-VLM result; GeoWorldAD as the largest inference-time future effect (IDOL +1.3 to +2.7); DriveVLA-W0's EC 58.9 as the lowest (AD-E2E-JEPA, World4Drive, GTRS-Dense); DriveLaW's NC 99.0 and WA-JEPA's NC 99.5 as highest (WA-JEPA; Drive-HWM 99.6 / 99.5); Unified Driving Tokens' EP 87.3 as joint-best (DriveSuprim ViT-L 91.3); DiffusionDriveV2's EC 91.0 and WA-JEPA's corrected 91.7 (framewise only; World4Scorer re-ranked 92.8 EC / 93.0 EPDMS).
+- *Adaptive-WAM "fastest world-action model by a factor of three"*: Metis, a Wan2.2-5B WAM ingested later, reports 147 ms at two steps on an RTX 4090. Annotated on `sources/adaptive-wam.md`, `navsim-benchmark.md` (twice) and `index.md`.
+- *Training seed "measured once / twice"*: now three recipes (sd 0.04–0.1) and one closed-loop spread (0.64–0.92). `index.md`, README (concept row and Open Thread 8), `sources/hyworldvla.md`, `sources/walt.md`, `world-model-for-ad.md`.
+- *HUGSIM "two incompatible eras"*: the 345-scenario group holds two protocols (DrivoR's / SimVTA's shared weighting, HAD-L outside it). `hugsim-benchmark.md` heading, `index.md`, `research-directions.md`.
+- *Counts*: README "51 world-model patterns" → 53; `general-capability-retention.md` 93 → 97 papers.
+- README Open Threads 2 and 4 annotated with ManeuverFlow's oracle curve, SimVTA's HUGSIM row and WorldEngine.
+
+**Contradictions recorded, not resolved**:
+- *HUGSIM 345 protocol*: the wiki filed DrivoR's published numbers as pre-PR #57; SimVTA calls the same controller "corrected". Named on `hugsim-benchmark.md`.
+- *DriveVA 90.9 vs 90.5*: identical sub-scores in SimVTA's and Adaptive-WAM's tables with different aggregates; one table has the wrong configuration.
+- *Two VADv2s*: 80.9 PDMS in most tables, 89.3 for the ICLR 2026 version (ManeuverFlow), plausibly paired with IDOL's unexplained v2 85.8.
+- *Shared futures*: DA-WAM −0.50 against ManeuverFlow's path-read +1.58; now a research question.
+- Carried over and still open: Drive-HWM 93.8 / 93.3; the navhard split size; regression on future latents (WA-JEPA vs ReDrive, ForeDrive, World4Scorer); bidirectional attention (MM-Future vs Metis); DINOv3 vs V-JEPA 2; DriveVLA-W0's 86.1; HUGSIM commits; MomWorld's ablation regularities; the origin of DiffusionDrive 84.5 (now three corrected-like copies at 88.2–88.3).
+
+**Research directions** (`wiki/research-directions.md`): 55 questions (**42 open, 13 partially answered**) and 2 answered.
+- *Status changed*: "Can NAVSIM-v2 EPDMS be compared across papers at all?" → partially answered (the recount: residual signs are bimodal, so rows can be classified, and 37 of 53 tables mix them). "Is NAVSIM-v1 saturated?" → partially answered for candidate quality (Curious-VLA best-of-6 94.8, World4Scorer's pool oracle 99.33, ManeuverFlow's best-of-256 94.85); the selection part stays open.
+- *Corrected*: the HUGSIM entry's opening sentence (two eras → two eras plus a split 345 group).
+- *Evidence added*: the renderer-artifacts question gains World Engine's dual role (training renderer and benchmark).
+- *Page-level Open Questions checked*: all represented. Still on its page only: velocity versus x-prediction for flow-matching planners (`diffusion-planner.md`).
+- *Answered*: none.
+
+**Concept pages suggested** (none has its own page):
+- **Trajectory refinement** (39 source pages): IDOL's rollout–refine loop, ManeuverFlow's Frenet refiner with re-scoring, MomWorld's un-re-scored residual flow, GeoWorldAD's and LWDrive's multi-stage refiners, PaIR-Drive, HAD, DriveFine, ReflectDrive, ResWorld. ManeuverFlow's refiner is its largest single component (+1.68).
+- **One-step generative planners** (18 pages): MeanFlow (ManeuverFlow, MeanFuser), DreamerAD's shortcut forcing, CLEAR's drift, two-step Euler in MM-Future.
+- Carried over: extended comfort and frame-to-frame consistency (52 pages), JEPA for driving (45), model-based RL and world models as environments (46), CARLA Driving Score and route length, sensor configuration (LiDAR, 46) and distillation (36).
+- **Entities** (`wiki/entities/` is still empty): DrivoR (10 source pages; HUGSIM protocol source, base of World4Scorer and MM-Future), GTRS (14), WoTE (39; base of IDOL), EponaV2 (11), World Engine (3, but load-bearing in two consecutive ingests), MeanFuser (5), CLOVER (6).
+
+**Questions to investigate next**:
+- Ingest World Engine: it defines WorldEngine's PDMS\* and scenario selection and should report renderer fidelity off the log, which SimVTA's target selection and every WorldEngine result depend on.
+- Read the ICLR 2026 VADv2 to confirm the 89.3 / 85.8 pairing, and DrivoR to settle which HUGSIM controller its published table used.
+- Is the harm of a shared future in the readout? Give DA-WAM's shared future a path-indexed readout, or ManeuverFlow's an averaged one.
+- How many runs does a closed-loop comparison need? ManeuverFlow's seed spread on WorldEngine (0.6–0.9) is ten times navtest's.
+- Apply the recount to papers' own rows: what fraction of headline v2 claims compare across residual signs?

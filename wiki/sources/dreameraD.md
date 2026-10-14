@@ -2,9 +2,9 @@
 title: "DreamerAD: Efficient Reinforcement Learning via Latent World Model for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md]
-related: [sources/raw2drive.md, sources/think2drive.md, sources/epona.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/ad-e2e-jepa.md, concepts/selection-based-planning.md, sources/hyworldvla.md]
+related: [sources/simvta.md, sources/raw2drive.md, sources/think2drive.md, sources/epona.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/ad-e2e-jepa.md, concepts/selection-based-planning.md, sources/hyworldvla.md]
 created: 2026-04-08
-updated: 2026-10-12
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -14,7 +14,7 @@ Yang, P., Zheng, Y., Qian, D., Xing, Z., Zhang, Q., Wang, L., Zhang, Y., Guo, S.
 
 ## One-line Summary
 
-DreamerAD performs RL entirely within the latent imagination space of a diffusion world model by compressing 100-step diffusion sampling to 1 step (80× speedup), training an autoregressive dense reward model on latent features, and sampling physically-constrained trajectories via Gaussian vocabulary selection — achieving 87.7 EPDMS on NAVSIM-v2 (new world-model SOTA).
+DreamerAD performs RL entirely within the latent imagination space of a diffusion world model by compressing 100-step diffusion sampling to 1 step (80× speedup), training an autoregressive dense reward model on latent features, and sampling physically-constrained trajectories via Gaussian vocabulary selection — achieving 87.7 EPDMS on NAVSIM-v2 (new world-model SOTA at ingest).
 
 ## Problem Addressed
 
@@ -197,8 +197,10 @@ RL training primarily improves **collision avoidance behavior** — the model le
 | FLARE | BC-GRPO | NAVSIM PDM | 91.4 | 86.3 |
 | **DreamerAD** | **Latent imagination GRPO** | **Latent AD-RM** | **88.7** | **87.7** |
 
+*(2026-10-14)* **The same initialization with the simulator kept.** [[sources/simvta.md]] post-trains the same NAVSIM-adapted Epona with Flow-GRPO's SDE and the real PDM reward (no latent reward model, no vocabulary sampling) and reaches 89.1 PDMS without any video loss, 0.4 above this paper's 88.7. Adding a video loss on 3DGS renders of the policy's sampled trajectories gives 91.3 PDMS / 88.2 EPDMS; on v2 both rows are corrected-like by residual sign (SimVTA −0.76, DreamerAD −1.24), so the +0.5 is same-scale. The two papers differ in sampler, reward and training length, so this does not isolate the latent reward, but it does not support the claim that Flow-GRPO's SDE is the weaker sampler for Epona. See [[concepts/rl-for-ad.md#simvta]].
+
 *(2026-10-12)* **A misattributed copy.** [[sources/hyworldvla.md]]'s NAVSIM-v2 table prints this paper's row (98.0 / 97.2 / 99.5 / 99.8 / 87.8 / 97.4 / 97.5 / 98.3 / 72.4 / 87.7) under Latent-WAM's name, and under DreamerAD's name prints DriveWorld-VLA's 86.8 row. Its v1 row for DreamerAD (88.7) is correct.
 
 *(2026-10-06)* **An earlier latent-RL planner, in a different setting.** [[sources/think2drive.md]] (2024) trains a privileged BEV planner in CARLA v2 with DreamerV3: an RSSM world model with reward and termination heads, an actor-critic on 15-step imagined rollouts, and CARLA supplying new on-policy experience throughout. DreamerAD's world model is learned from fixed real logs and never sees the policy's own states, which is the main structural difference. See [[concepts/world-model-for-ad.md#latent-rl-carla]]. Its camera sequel, [[sources/raw2drive.md]], reports that a reward head trained on camera latents breaks training (Dev10 DS 83.5 → 46.6) and takes rewards from a privileged model instead; DreamerAD's learned reward on video latents is the counterexample, with denser multi-horizon targets.
 
-DreamerAD's PDMS of 88.7 is below FLARE (91.4), ReCogDrive (89.6), and WAM-Flow (90.3) on NAVSIM-v1. However, its EPDMS of 87.7 exceeds WorldRFT (86.7), DriveVLA-W0 (86.1), Senna-2 (86.6), and FLARE (86.3) on NAVSIM-v2 — strongest among world-model-based RL methods on the extended metric.
+DreamerAD's PDMS of 88.7 is below FLARE (91.4), ReCogDrive (89.6), and WAM-Flow (90.3) on NAVSIM-v1. However, its EPDMS of 87.7 exceeds WorldRFT (86.7), DriveVLA-W0 (86.1), Senna-2 (86.6), and FLARE (86.3) on NAVSIM-v2 — strongest among world-model-based RL methods on the extended metric. *(lint 2026-10-14: [[sources/simvta.md]], RL from the same Epona initialization, reaches 88.2, corrected-like like this row.)*
