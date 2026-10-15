@@ -4305,3 +4305,14 @@ The wiki cites no component effect size from this paper on any concept page.
 - WorldRFT RFT with the reward zeroed (regularizers only), to explain why a collision reward moved DAC and EP rather than NC.
 - Carried over: World Engine, the ICLR 2026 VADv2, GTRS; and whether DA-WAM's shared future is harmful because of its readout.
 - Recover `raw/assets/vis_supp_2.png` (truncated) from the arXiv HTML. This is the user's decision, since `raw/` is immutable.
+
+## 2026-10-15 - Query: self-rollout training in latent space
+
+**Question**: is there a paper in which a model predicts both a future latent and a trajectory, and is trained on its own rollouts (the planner re-plans from its own predicted latent), so that it becomes robust to its own deviations in closed-loop evaluation such as navhard?
+
+**Answer**: no ingested paper does this on NAVSIM. The loop exists only with RL in CARLA (Think2Drive, Raw2Drive) and with a separate world model and steering policy in openpilot (Learning to Drive from a World Model). NAVSIM papers have parts of it: DreamerAD (fixed trajectories scored in imagination), IDOL (rollout-and-refine at one decision time), ReDrive Stage 3 (single-step), Epona chain-of-forward (generator only), DriveWAM (clean latents in training, generated at inference).
+
+**Research directions** (`wiki/research-directions.md`): 63 questions (50 open, 13 partially answered) and 2 answered.
+- *Added* (section 2, after "What happens when a planner that consumes a predicted future is given a wrong one?"): "Does training a planner on its own multi-step latent rollouts make it robust to its own deviations?", with evidence from Think2Drive, Raw2Drive, Learning to Drive from a World Model, DreamerAD, IDOL, ReDrive, DriveLaW, DriveFuture, ForeDrive and SimScale. Frontmatter `related` gains DriveLaW, DriveFuture, DreamerAD, ReDrive and `rl-for-ad.md`.
+
+**Pages updated**: `wiki/concepts/world-model-for-ad.md` (matching page-level Open Question, linking Patterns 40, 44, 46 and 47).
