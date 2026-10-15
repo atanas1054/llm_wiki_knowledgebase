@@ -1,10 +1,10 @@
 ---
 title: Perception-Enhanced Planning in VLA Models
 type: concept
-sources: ["raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/ResWorld_ Temporal Residual World Model for End-to-End Autonomous Driving.md", "raw/papers/Learning to Drive from a World Model.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, "raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md", raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [sources/raw2drive.md, sources/resworld.md, sources/learning-to-drive-from-a-world-model.md, sources/drivereferee.md, sources/hydra-mdp-pp.md, concepts/teacher-pseudo-labels.md, sources/suv.md, sources/grava.md, concepts/general-capability-retention.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/foresight.md, sources/geowam.md, sources/auto-jepa.md, sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md, research-directions.md]
+sources: ["raw/papers/Enhancing End-to-End Autonomous Driving with Latent World Model.md", "raw/papers/DVGT-2_ Vision-Geometry-Action Model for Autonomous Driving at Scale.md", "raw/papers/Driving on Registers.md", "raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/ResWorld_ Temporal Residual World Model for End-to-End Autonomous Driving.md", "raw/papers/Learning to Drive from a World Model.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, "raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md", raw/papers/GeoWAM_ Visual Geometry World Action Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Percept-WAM_ Perception-Enhanced World-Awareness-Action Model for Robust End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
+related: [sources/law.md, sources/dvgt-2.md, sources/drivor.md, sources/raw2drive.md, sources/resworld.md, sources/learning-to-drive-from-a-world-model.md, sources/drivereferee.md, sources/hydra-mdp-pp.md, concepts/teacher-pseudo-labels.md, sources/suv.md, sources/grava.md, concepts/general-capability-retention.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/foresight.md, sources/geowam.md, sources/auto-jepa.md, sources/percept-wam.md, sources/unidrivevla.md, sources/onedrive.md, sources/latent-wam.md, sources/sgdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/dual-system-vla.md, concepts/intent-conditioned-planning.md, research-directions.md]
 created: 2026-04-05
-updated: 2026-10-06
+updated: 2026-10-15
 confidence: high
 ---
 
@@ -214,7 +214,7 @@ Its targets are dense point maps — one 3D point per pixel in the ego frame —
 
 Two things follow. GeoWAM is the only entry here that **produces inspectable 3D output at inference** without having paid for 3D annotation — Figure 3 of the paper shows forecast trees, poles, and road markings, and a following vehicle tracked through a left turn. And it is supervising *future* geometry, so the same head doubles as a motion-forecasting mechanism, much as SGDrive's agent head predicts boxes at $t$ and $t{+}n$.
 
-**The cost is a dependency the paper does not discuss.** Pseudo-labels bound the supervision ceiling at whatever the geometry foundation model gets right, and GeoWAM's encoder is *initialized from DVGT-2* while its targets come from that same family of models. "Requires only RGB" is presented as a pure advantage; part of what is being learned is another model's biases. Compare Latent-WAM, which has the same dependency but discards the teacher at inference, and whose ablation showed the distillation target demanded full backbone updates — LoRA collapsed it from 89.3 to 68.5 EPDMS.
+**The cost is a dependency the paper does not discuss.** Pseudo-labels bound the supervision ceiling at whatever the geometry foundation model gets right, and GeoWAM's encoder is *initialized from DVGT-2* while its targets come from that same family of models. *(2026-10-14: [[sources/dvgt-2.md]]'s own labels are MoGe-2 monocular depth, so the chain runs MoGe-2 → DVGT-2 → GeoWAM.)* "Requires only RGB" is presented as a pure advantage; part of what is being learned is another model's biases. Compare Latent-WAM, which has the same dependency but discards the teacher at inference, and whose ablation showed the distillation target demanded full backbone updates — LoRA collapsed it from 89.3 to 68.5 EPDMS.
 
 **On the page's central tension**, GeoWAM sits with Latent-WAM on the side that says explicit perception heads are not required: there is no detection, no segmentation, no occupancy classification. What it shares with the perception camp is the belief that *metric spatial structure* must be represented explicitly rather than left implicit in features — it just gets that structure from geometry rather than from semantics.
 
@@ -317,6 +317,32 @@ This is the auxiliary-perception route with the heads kept for display, plus a c
 - **The decoded BEV shows where it fails** (its Figure 8): distant and occluded vehicles and road segments are missing or smeared.
 - **The encoder costs 600 ms**, against 2 ms for the privileged one.
 
+## No Perception Labels, and Registers That Choose What to Look At: DrivoR {#registers}
+
+*(2026-10-14)* [[sources/drivor.md]] reaches 93.1 PDMS (navtrain) with no 3D boxes, maps or BEV, from 16 learned register tokens per camera on a LoRA-tuned DINOv2-S. Its attention maps show front-camera registers specializing (traffic lights, the lead vehicle, kerbs) and the back camera's collapsing to about one distinct token, the camera-level version of the ego-relevance [[sources/auto-jepa.md]] measures per object. The scorer, but not the generator, draws on side and rear cameras for sharp turns. Its failure case is a missing-history one, not a perception one. It is another point for "both routes work" on the [research-directions question](../research-directions.md) about perception supervision.
+
+## Dense Geometry as the Intermediate: DVGT-2's "Vision-Geometry-Action" {#vga}
+
+*(2026-10-14)* [[sources/dvgt-2.md]] proposes dense 3D point maps as the representation between pixels and action, against sparse perception (boxes, maps, voxel occupancy) and language. One 1.8B network reconstructs per-camera point maps in the current ego frame, the ego pose relative to the previous frame, and the trajectory; its labels are MoGe-2 monocular depth, so it needs no human annotation but does need a teacher ([[concepts/teacher-pseudo-labels.md]]).
+
+- **Where it lands.** 90.3 PDMS / 89.6 EPDMS after a NAVSIM fine-tune (88.6 / 88.9 without one), camera-only, with 8 cameras and 4 frames. That is in the band of the other label-free routes on this page, below [[sources/drivor.md]]'s 93.1 with no labels of any kind at 41M parameters.
+- **What it does not show.** There is no run without the geometry loss or without geometry pre-training, and no swap of the target for boxes or language under the same model. "Dense geometry is the critical cue" rests on a cross-paper table (its Table 5 groups baselines by auxiliary supervision). [[sources/geoworldad.md]]'s ablations are the controlled evidence for the geometry route: geometry pre-training 89.3 against 84.2 from scratch, and the ego-frame convention, which DVGT-2 also uses, +2.5 over an anchor-frame one.
+- **The dependency chain is now visible.** MoGe-2 labels DVGT-2; DVGT-2 initializes [[sources/geowam.md]] (section above); DVGT, its predecessor, labels [[sources/unified-driving-tokens.md]]'s depth. "Requires only RGB" holds at inference along the whole chain, and every link inherits a monocular depth model's errors.
+
+## Temporal Self-Supervision Instead of Perception Labels: LAW {#law}
+
+[[sources/law.md]] (2024) asks whether a future-latent prediction loss can stand in for perception labels, and runs it on both sides.
+
+| Setting | Without latent loss | With latent loss |
+|---|---:|---:|
+| nuScenes, perception-free (L2 m / collision %) | 0.71 / 0.41 | 0.61 / 0.30 |
+| nuScenes, perception-based (VAD: map and motion labels) | 0.54 / 0.25 | **0.49 / 0.19** |
+| NAVSIM-v1 PDMS, perception-free | 77.5 | 84.6 |
+
+- **On nuScenes the labels still win**, and the latent loss helps both frameworks; it does not close the gap (0.61 against 0.49 m).
+- **On NAVSIM the latent loss brings a label-free model level with label-supervised ones**: 84.6 against camera-only LTF 83.8 and TransFuser 84.0 (camera + LiDAR), all ResNet-34. The perception-based variant is not run on NAVSIM, so the matched comparison exists only on nuScenes.
+- It is the earliest entry in the wiki's perception-free latent-world-model line ([[sources/worldrft.md]], [[sources/latent-wam.md]], [[sources/drivefuture.md]]), all of which later add some other source of structure: semantic pseudo-labels, geometry teachers, or a privileged training-time future.
+
 ## Comparison: Perception Integration Approaches in AD VLMs
 
 | Approach | Spatial supervision | World state type | Shared params? | Planning benefit |
@@ -330,6 +356,7 @@ This is the auxiliary-perception route with the heads kept for display, plus a c
 | Latent-WAM | Geometry foundation distillation | Compact scene/world-status tokens | No VLM | Spatial grounding without inference-time perception heads |
 | **Auto-JEPA** | **None — ego-trajectory latent target only** | **No scene state is represented at all** | No VLM; frozen V-JEPA 2 | **Agent selectivity emerges (2.97× occlusion ratio); no spatial output available** |
 | **GeoWAM** | **Dense metric point maps (pseudo-labelled)** | **Future 3D point clouds in the ego frame** | No VLM; DVGT-2 encoder | **Explicit metric structure with no human annotation; decoded and inspectable at inference** |
+| **DVGT-2** ([[sources/dvgt-2.md]]) | **Dense metric point maps of the present (MoGe-2 pseudo-labels)** | **Per-camera point maps in the current ego frame, relative ego pose; 4-frame feature cache** | No VLM; one 1.8B geometry transformer for geometry and planning | **88.6 → 90.3 PDMS with a NAVSIM fine-tune; no ablation of the geometry objective** |
 | World model (UniUGP) | Video generation | Future frame prediction | ✓ | Causal feature grounding |
 | **Probe head (Qwen-Drive-1.0)** | **Direct (detection + occupancy + map), as a *diagnostic*** | **Ego-frame BEV + voxel volume, decoded and inspectable** | **✓ (shares encoder and VLM; head is external)** | **None measured: the planner never reads the perception output (+0.05 RFS, unattributed)** |
 

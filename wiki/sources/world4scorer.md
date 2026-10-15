@@ -2,9 +2,9 @@
 title: "World4Scorer: Outcome-Grounded World Modeling for Autonomous Driving"
 type: source-summary
 sources: ["raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md"]
-related: [concepts/selection-based-planning.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/counterfactual-prediction.md, concepts/teacher-pseudo-labels.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/da-wam.md, sources/mm-future.md, sources/drive-jepa.md, sources/adaptive-wam.md, sources/auto-jepa.md, sources/hydra-mdp-pp.md, sources/drivesuprim.md, sources/geowam.md, sources/foredrive.md, sources/ad-e2e-jepa.md, sources/raw2drive.md, sources/recogdrive.md, sources/wa-jepa.md, sources/drivereferee.md, research-directions.md]
+related: [sources/clover.md, sources/drivor.md, concepts/selection-based-planning.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/counterfactual-prediction.md, concepts/teacher-pseudo-labels.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/da-wam.md, sources/mm-future.md, sources/drive-jepa.md, sources/adaptive-wam.md, sources/auto-jepa.md, sources/hydra-mdp-pp.md, sources/drivesuprim.md, sources/geowam.md, sources/foredrive.md, sources/ad-e2e-jepa.md, sources/raw2drive.md, sources/recogdrive.md, sources/wa-jepa.md, sources/drivereferee.md, research-directions.md]
 created: 2026-10-06
-updated: 2026-10-06
+updated: 2026-10-14
 confidence: medium
 ---
 
@@ -12,7 +12,7 @@ confidence: medium
 
 **Paper**: Outcome-Grounded World Modeling for Autonomous Driving (method name: World4Scorer)
 **Authors**: Jieyuan Pei, Meiyi Lu, Sining Ang, Yubo Zhao, Zhangyi Hu, Mingwei Xu, Haokai Ding, Wei Li, Zihan You, Jianwei Zheng, Li Yu, Yifeng Pan, Ji Tao, Rongjunchen Zhang, Yan Wang (corresponding)
-**Orgs**: Institute for AI Industry Research (AIR), Tsinghua University; HiThink Research; HKUST (Guangzhou); Zhejiang University; USTC; SMBU; University of Washington; MBZUAI; Zhejiang University of Technology; Southeast University; Changan Automobile. **The CLOVER group**: Sining Ang and Yan Wang are authors of CLOVER (not ingested) and of [[sources/adaptive-wam.md]].
+**Orgs**: Institute for AI Industry Research (AIR), Tsinghua University; HiThink Research; HKUST (Guangzhou); Zhejiang University; USTC; SMBU; University of Washington; MBZUAI; Zhejiang University of Technology; Southeast University; Changan Automobile. **The CLOVER group**: Sining Ang and Yan Wang are authors of CLOVER ([[sources/clover.md]], ingested 2026-10-14) and of [[sources/adaptive-wam.md]].
 **arXiv**: 2609.36438v1 (September 2026)
 **Code**: project page, GitHub and Hugging Face links are given; the reproducibility statement says code will be released on publication.
 **Source**: `raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md`. The clipping stops after the Table 1 caption. Sections 4.1–5, Tables 1–13, Figures 3–14 and Appendices A–E were recovered from the arXiv HTML (v1); the missing figure files were downloaded into `raw/assets/`.
@@ -21,7 +21,7 @@ confidence: medium
 
 ## What It Is
 
-A **generate-and-select planner whose scorer is a trajectory-conditioned latent predictor**. It is built on DrivoR (not ingested): the same LoRA-adapted DINOv2 encoder, trajectory generator, 64 candidates and training split.
+A **generate-and-select planner whose scorer is a trajectory-conditioned latent predictor**. It is built on [[sources/drivor.md]] (ingested 2026-10-14): the same LoRA-adapted DINOv2 encoder, trajectory generator, 64 candidates and training split.
 
 1. **Encoder and generator** (DrivoR's): DINOv2 ViT-S/14 with rank-32 LoRA encodes four cameras into scene tokens $s_t$; a transformer generates $N=64$ trajectories, trained by winner-take-all L1 imitation.
 2. **Scorer = "latent world model"**: an action encoder $\phi$ turns each (stop-gradient) candidate into a query; a 4-block predictor $P$ (self-attention among candidates, cross-attention to scene tokens) maps it to a state $z_i$; score heads $H(z_i+e_t)$ predict NC, DAC, DDC, TTC, EP and comfort.
@@ -85,7 +85,7 @@ Generated progress uses soft-label cross-entropy; NC/DDC targets of 0.5 are mapp
 
 **Total loss**: $\mathcal L=\mathcal L_\mathrm{WTA}+\mathcal L_\mathrm{score}+\lambda_\mathrm{fut}\mathcal L_\mathrm{fut}+\lambda_\mathrm{bank}\mathcal L_\mathrm{bank}$ with $\lambda_\mathrm{fut}=1$, $\lambda_\mathrm{bank}=0.5$. WTA L1 is summed for the logged 4 s trajectory and the same trajectory time-warped to 5 s.
 
-**Candidate bank** (following CLOVER): scene-matched perturbed trajectories with precomputed simulator labels; 54.5 valid entries per scene on average, 16 sampled per step (30.8% of a scene's pool); 310 scenes have no bank entries and 10.7% cannot fill the quota in every safety category.
+**Candidate bank** (following CLOVER): scene-matched perturbed trajectories with precomputed simulator labels; 54.5 valid entries per scene on average *(2026-10-14: more than the 50 + 3 per scene that [[sources/clover.md]] retains, so probably drawn from its scored pool of up to 180)*, 16 sampled per step (30.8% of a scene's pool); 310 scenes have no bank entries and 10.7% cannot fill the quota in every safety category.
 
 **Simulator labels** (Appendix B.1): a model-independent cache (ego state, centerline, lanes, drivable area, PDM planner progress, 51 occupancy steps as STRtree polygons); each candidate resampled to 40 poses at 0.1 s and tracked by LQR on a kinematic bicycle model for 4 s; polygon queries for NC/DAC/DDC. Training progress is normalized by max(candidate, PDM planner progress). **Online labelling of 64 candidates per sample on CPU (NumPy, Shapely) dominates training time.**
 
@@ -428,7 +428,7 @@ Correct vs. wrong-log: +2.96 [2.63, 3.34]; vs. two-step-old: +1.01 [0.86, 1.16].
 - **TransFuser at 83.9 with different sub-scores** (DAC 92.1, LK 95.7, EC 88.7 against the block's 89.9, 92.7, 87.2), corrected-like (−1.1). It is within 0.1 of GeoWAM's 84.0, which GeoWAM printed beside the block's sub-scores.
 - **New or changed rows**: DrivoR 93.7 / 90.7; Drive-JEPA **93.7 / 90.8** (the Drive-JEPA page has 93.3 / 87.8; here EP¹ = EP² = 91.4 and EC 76.9 against 84.8); ReCogDrive 82.7 with **EC 27.6** (the shared block has 83.6, EC 87.7) and WAM-Flow 84.9 with **EC 33.8** (its own paper: 84.7, EC 73.9); SafeDrive 91.6 / 87.5; DAWN 89.1 / 83.2 (v1 check +6.9, the largest here, probably because its v1 DAC is not printed); UniTeD 90.2 PDMS. The paper does not say which baselines it re-evaluated.
 - **Internal references**: Section 4.2 calls the main NAVSIM table "Table 4" (it is Table 1), and Table 4's caption contrasts its pool with "the Table 4 pool" (Table 10's caption says it is not "the generator-pool result").
-- **Omitted**: on v1, CLEAR and DA-WAM (93.7) and DriveSuprim (93.5), all below 94.0. On v2, WA-JEPA (91.7) and MM-Future (91.5), both above the framewise 91.4; SUV, ReDrive and PhysWAM; and the group's own CLOVER (90.4 EPDMS as reported by [[sources/auto-jepa.md]]). WoTE's row matches GeoWAM's on every sub-score (87.6 here, 87.7 there).
+- **Omitted**: on v1, CLEAR and DA-WAM (93.7) and DriveSuprim (93.5), all below 94.0. On v2, WA-JEPA (91.7) and MM-Future (91.5), both above the framewise 91.4; SUV, ReDrive and PhysWAM; and the group's own CLOVER (90.4 EPDMS as reported by [[sources/auto-jepa.md]]). *(2026-10-14: [[sources/clover.md]] also reports **94.5 PDMS** on v1, above this paper's 94.0, with its training split unstated; its baseline is DrivoR's released model with the same pool statistics this paper measures (oracle 99.33, selected 93.69). On v2 CLOVER's 90.4 is below the 90.66 this paper measures for DrivoR.)* WoTE's row matches GeoWAM's on every sub-score (87.6 here, 87.7 there).
 
 ### 5. NAVSIM v1 and v2 reward different plans {#v1-v2}
 
@@ -462,8 +462,8 @@ So a single checkpoint cannot be optimal on both ladders, and the per-benchmark 
 
 ## Relationships
 
-- **DrivoR** (not ingested): the base system. Same encoder, generator, candidate count and software stack; World4Scorer replaces its scorer. Also the encoder source of [[sources/mm-future.md]] and second on navhard (54.6).
-- **CLOVER** (not ingested): the bank and the simulator-label protocol. Same group (Sining Ang, Yan Wang). CLOVER is now load-bearing in three wiki papers: [[sources/auto-jepa.md]] (scorer initialization), [[sources/adaptive-wam.md]] (pseudo-expert targets) and this one (bank).
+- **[[sources/drivor.md]]**: the base system. Same encoder, generator, candidate count and software stack; World4Scorer replaces its scorer. Also the encoder source of [[sources/mm-future.md]] and second on navhard (54.6).
+- **CLOVER** ([[sources/clover.md]], ingested 2026-10-14): the bank and the simulator-label protocol. Same group (Sining Ang, Yan Wang). CLOVER is now load-bearing in three wiki papers: [[sources/auto-jepa.md]] (scorer initialization), [[sources/adaptive-wam.md]] (pseudo-expert targets) and this one (bank).
 - **[[sources/da-wam.md]]**, **[[sources/mm-future.md]]**: per-candidate futures read by a scorer, supervised only for the expert. World4Scorer is the third per-candidate design and the first to supervise every candidate's state, with outcomes rather than futures.
 - **[[sources/drive-jepa.md]]**: the other continuity selector (momentum-aware, EC 47.9 → 84.8), and a Drive-JEPA row (93.7 / 90.8) this paper reports that the wiki had not seen.
 - **[[sources/hydra-mdp-pp.md]]**, **[[sources/drivesuprim.md]]**: the simulator-distilled multi-head scorer recipe and its log-domain weighted combination, which World4Scorer reuses.

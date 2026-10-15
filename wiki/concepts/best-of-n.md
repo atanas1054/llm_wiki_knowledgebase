@@ -1,8 +1,8 @@
 ---
 title: Best-of-N Sampling
 type: concept
-sources: ["raw/papers/ManeuverFlow_ Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
-related: [sources/maneuverflow.md, sources/world4scorer.md, sources/drivereferee.md, sources/physwam.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, sources/drivesuprim.md, sources/explorevla.md, sources/clear.md, sources/all-roads-lead-to-rome.md, sources/pair-drive.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/divergent-thinking-in-vlms.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md]
+sources: ["raw/papers/CLOVER_ Closed-Loop Value Estimation & Ranking for End-to-End Autonomous Driving Planning.md", "raw/papers/Driving on Registers.md", "raw/papers/ManeuverFlow_ Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", raw/papers/WCog-VLA_ A Dual-Level World-Cognitive Vision-Language-Action Model for End-to-End Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md, raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md, raw/papers/AdaThinkDrive_ Adaptive Thinking via Reinforcement Learning for Autonomous Driving.md, raw/papers/NoRD_ A Data-Efficient Vision-Language-Action Model that Drives without Reasoning.md, raw/papers/Vega_ Learning to Drive with Natural Language Instructions.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/All Roads Lead to Rome_ Incentivizing Divergent Thinking in Vision-Language Models.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
+related: [sources/clover.md, sources/drivor.md, sources/maneuverflow.md, sources/world4scorer.md, sources/drivereferee.md, sources/physwam.md, sources/qwen-drive-1.0.md, sources/wcog-vla.md, sources/autovla.md, sources/curious-vla.md, sources/drivevla-w0.md, sources/adathinkdrive.md, sources/nord.md, sources/vega.md, sources/dreameraD.md, sources/hybriddriveVLA.md, sources/drivesuprim.md, sources/explorevla.md, sources/clear.md, sources/all-roads-lead-to-rome.md, sources/pair-drive.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md, concepts/dual-system-vla.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/divergent-thinking-in-vlms.md, concepts/parallel-il-rl.md, concepts/intent-conditioned-planning.md]
 created: 2026-04-15
 updated: 2026-10-14
 confidence: high
@@ -41,11 +41,14 @@ N is typically 4 or 6 in current AD papers. Comparing BoN scores across differen
 | Vega              | 87.9               | **89.8**  | 6   | +1.9              |
 | **Qwen-Drive-1.0-RL** | 90.7            | **91.4**  | 6   | **+0.7**          |
 | Qwen-Drive-1.0-SFT | 88.2              | **89.3**  | 6   | +1.1              |
+| TransDiffuser (C+L; via [[sources/drivor.md]]) | – | **94.9** | not given | – (above the human's 94.8) |
 
 ★ DriveVLA-W0's "90.2" single-sample uses query-based expert with trajectory anchors (multi-candidate selection within the model); the underlying single-model output is 88.4 PDMS. BoN-6 adds oracle selection on top.
 
 
 **Qwen-Drive-1.0 is the smallest BoN gain recorded here, and the pattern is instructive.** Its SFT policy gains +1.1 from oracle-6 and its RL policy only +0.7 — RL consumed most of the headroom that oracle selection would otherwise have found, which is the same inverse relationship observation 2 below describes, seen *within one method* rather than across methods. Its reading of the residual is the right one: the gap "indicates that the sampled set already contains stronger trajectories than the default prediction, suggesting headroom that better inference-time selection could recover." The paper also notes independently that its six candidates are tightly clustered (PAI-AV avg-ADE 0.42 against minADE 0.39), which bounds what any selector could recover — see observation 4.
+
+*(2026-10-14)* [[sources/drivor.md]]'s appendix files AutoVLA, DriveVLA-W0 and TransDiffuser under a separate best-of-N block and calls the practice "not aligned with the evaluation protocol defined in NAVSIM", since it selects with the evaluator. TransDiffuser's 94.9 is the highest best-of-N number recorded here and the only one above the human score.
 
 ### NAVSIM-v2 (EPDMS)
 
@@ -104,6 +107,19 @@ PhysWAM is the first paper here to report, on one set of samples, no selection, 
 - The two papers' base models differ (three cameras with depth against one camera), so the rows are not one controlled ladder.
 
 ---
+
+### Oracle and scorer-ranked top-K across training stages {#clover-oracle}
+
+*(2026-10-14)* [[sources/clover.md]] reports the 64-candidate oracle and the scorer's top-$K$ for DrivoR's released pool and its own two training stages (navtest, 12,146 scenes):
+
+| Pool | Oracle@64 | Scorer top-1 | Best in scorer top-3 | Best in scorer top-6 | Mean of 64 | Proposals < 0.50 |
+|---|---:|---:|---:|---:|---:|---:|
+| DrivoR (released) | 99.33 | 93.69 | 95.12 | 96.03 | 79.72 | 9.05 |
+| CLOVER Stage 1 (pseudo-expert coverage) | **99.76** | 94.13 | **95.70** | **96.60** | 73.74 | 12.21 |
+| CLOVER Stage 2 (self-distillation) | 99.39 | **94.43** | 95.54 | 96.25 | **82.77** | **6.83** |
+
+- **Coverage training raises the oracle, and the oracle is not where the deployed gain comes from.** Stage 1's +0.43 oracle buys +0.44 at top-1; Stage 2 loses most of the oracle gain and adds +0.30 at top-1 by ranking better.
+- **The oracle over 64 learned candidates is 99.3–99.8 in every configuration**, 4.5–5.0 above the human's 94.8, against [[sources/maneuverflow.md]]'s 94.25 at 64 from a one-step ResNet-34 generator. What a pool's oracle measures depends heavily on the generator.
 
 ## Key Observations
 
@@ -229,7 +245,7 @@ The vocabulary ceiling (98.7 at top-256) is substantially higher than stochastic
 
 **Why stochastic BoN saturates earlier**: a well-trained model assigns high probability to a narrow neighborhood of trajectories. Drawing 6 samples from this distribution produces 6 similar trajectories — the oracle selects the best among them but they are all close to the same local optimum. The vocabulary, by contrast, explicitly covers the full action space including turning scenarios that stochastic sampling rarely reaches.
 
-**A generated pool reaches the same territory** *(2026-10-06)*. On the 64 candidates of DrivoR's released generator, the per-scene oracle is **99.33 PDMS** over all 12,146 navtest scenes, against 93.69 for DrivoR's own scorer and 94.19 for [[sources/world4scorer.md]]'s scorer on the same pools. Sixty-four learned, scene-conditioned proposals cover about as much as DriveSuprim's top-256 of a fixed vocabulary.
+**A generated pool reaches the same territory** *(2026-10-06)*. On the 64 candidates of DrivoR's released generator, the per-scene oracle is **99.33 PDMS** over all 12,146 navtest scenes, against 93.69 for DrivoR's own scorer and 94.19 for [[sources/world4scorer.md]]'s scorer on the same pools. Sixty-four learned, scene-conditioned proposals cover about as much as DriveSuprim's top-256 of a fixed vocabulary. *(2026-10-14: [[sources/clover.md]] reports the same 99.33 for DrivoR's pool, 99.76 after training the generator to cover evaluator-filtered pseudo-experts, and 99.39 after its self-distillation stage; see [above](#clover-oracle).)*
 
 This implies the **true capability ceiling** of AD planners is better measured by fixed-vocabulary oracle selection than stochastic BoN, and that closing the gap between top-1 (91.9) and top-4 (94.5) is a tractable near-term target for selection quality research. See [[concepts/selection-based-planning.md]] for the full paradigm context.
 

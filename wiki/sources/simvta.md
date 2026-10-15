@@ -2,7 +2,7 @@
 title: "SimVTA: Simulation-Grounded Video-Trajectory Alignment for Driving World Action Models"
 type: source-summary
 sources: ["raw/papers/SimVTA_ Simulation-Grounded Video-Trajectory Alignment for Driving World Action Models.md"]
-related: [concepts/world-model-for-ad.md, concepts/rl-for-ad.md, concepts/data-driven-simulators.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/evaluation-variance.md, concepts/inference-latency.md, sources/epona.md, sources/dreameraD.md, sources/foresight.md, sources/walt.md, sources/simwam.md, sources/simscale.md, sources/rad.md, sources/plannerrft.md, sources/recogdrive.md, sources/driveva.md, sources/wa-jepa.md, sources/mm-future.md, sources/foredrive.md, sources/world4scorer.md, sources/physwam.md, sources/learning-to-drive-from-a-world-model.md, research-directions.md]
+related: [sources/drivor.md, concepts/world-model-for-ad.md, concepts/rl-for-ad.md, concepts/data-driven-simulators.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/evaluation-variance.md, concepts/inference-latency.md, sources/epona.md, sources/dreameraD.md, sources/foresight.md, sources/walt.md, sources/simwam.md, sources/simscale.md, sources/rad.md, sources/plannerrft.md, sources/recogdrive.md, sources/driveva.md, sources/wa-jepa.md, sources/mm-future.md, sources/foredrive.md, sources/world4scorer.md, sources/physwam.md, sources/learning-to-drive-from-a-world-model.md, research-directions.md]
 created: 2026-10-14
 updated: 2026-10-14
 confidence: medium
@@ -310,7 +310,7 @@ Computed sds are 0.10 for Exp0 and 0.06 for the other three. The seeds vary the 
 1. **v1 rows are consistent.** All 17 Table 1 rows and all ten ablation rows pass the closed-form check (−1.17 to −4.12; Exp3 −6.91). Copied rows match the wiki's copies (DreamerAD, ExploreVLA, SGDrive RFT, DriveWAM, PWM, ReCogDrive's 90.8), except that DriveVA's sub-scores, identical to Adaptive-WAM's copy, carry 90.9 here and 90.5 there.
 2. **v2 mixes evaluators** (above). SimVTA, Epona, DreamerAD and SGDrive corrected-like; ResAD, DriveSuprim, DiffRefiner, DriveWorld-VLA, ELF-VLA and SafeDrive pre-fix-like. SafeDrive's +4.03 matches its residual in [[sources/world4scorer.md]]'s and [[sources/idol.md]]'s tables. DriveSuprim (87.1, EC 78.6) is the row SUV's table also carries; DiffRefiner (87.4) is a different row from IDOL's 86.2.
 3. **Comparison scope.** Table 1's world-model block stops at SimVTA, while Table 15 shows SimWAM (91.5) and WA-JEPA (91.8) above it. Also absent: every world-model entry above 91.3 in the wiki (DriveReferee 92.0, DA-WAM 93.7, Drive-HWM, MM-Future, World4Scorer), and on v2 EponaV2 (88.9, same model family) and the corrected cohort above 88.2. The paper claims a gain over its initialization, not state of the art, so this is a framing issue rather than a false claim.
-4. **HUGSIM** baselines are copied, and the five rows are internally consistent on one weighting. The "corrected evaluator and controller" is attributed to DrivoR's paper without naming the correction.
+4. **HUGSIM** baselines are copied, and the five rows are internally consistent on one weighting. The "corrected evaluator and controller" is attributed to DrivoR's paper without naming the correction. *(2026-10-14: [[sources/drivor.md]] names it: a heading fix for the trajectory passed to the controller and a fix to the comfort metric's acceleration bounds, applied to all rows it reports.)*
 5. **Figure scales.** Figure 3(a)'s axis starts at 80 and Figure 3(c)'s spans 90.8–91.4, so 0.1–0.4 PDMS differences fill most of the panel.
 6. **Table numbering.** Three in-text references point one table too far (above).
 
@@ -348,7 +348,7 @@ The wiki adds:
 - [[sources/wa-jepa.md]], [[sources/mm-future.md]], [[sources/physwam.md]]: HUGSIM entries on the 436-scenario set, not comparable with SimVTA's 345-scenario numbers.
 - [[sources/plannerrft.md]]: the same group's closed-loop reinforcement fine-tuning of diffusion planners (nuPlan).
 - [[sources/recogdrive.md]]: source of the 10 / 5 / 2 reward weights.
-- Not ingested: **World Engine** (arXiv 2606.19836, the renderer and post-training framework SimVTA runs on, same group); **DrivoR** (the HUGSIM baseline and the source of the protocol); **ReSim** (a video simulator trained on simulated non-expert trajectories for action controllability, the nearest prior on the generation side); **CausalDrive** (a learned renderer); **Fast-WAM**; **DriveZero**; **EponaV2**.
+- Not ingested: **World Engine** (arXiv 2606.19836, the renderer and post-training framework SimVTA runs on, same group); **DrivoR** (now ingested as [[sources/drivor.md]]; the HUGSIM baseline and the source of the protocol); **ReSim** (a video simulator trained on simulated non-expert trajectories for action controllability, the nearest prior on the generation side); **CausalDrive** (a learned renderer); **Fast-WAM**; **DriveZero**; **EponaV2**.
 
 ---
 

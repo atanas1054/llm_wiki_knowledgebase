@@ -2,9 +2,9 @@
 title: "Drive-JEPA: Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving"
 type: source-summary
 sources: [raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md]
-related: [sources/world4scorer.md, sources/wa-jepa.md, sources/auto-jepa.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/foundation-backbones-for-ad.md, sources/latent-wam.md, sources/epona.md, sources/drivesuprim.md, sources/diffusiondrive.md, sources/ad-e2e-jepa.md, sources/redrive.md]
+related: [sources/law.md, sources/world4scorer.md, sources/wa-jepa.md, sources/auto-jepa.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/foundation-backbones-for-ad.md, sources/latent-wam.md, sources/epona.md, sources/drivesuprim.md, sources/diffusiondrive.md, sources/ad-e2e-jepa.md, sources/redrive.md]
 created: 2026-05-01
-updated: 2026-10-06
+updated: 2026-10-15
 confidence: high
 ---
 
@@ -118,6 +118,8 @@ This mechanism is important: in Table 5, adding MTD without momentum-aware selec
 | iPad              | ViT/L    | Camera | 99.2 | 97.4 | 87.8 | 99.7 | 96.3 | 91.7 |
 | DriveSuprim       | ViT/L    | Camera | 98.6 | 98.6 | 91.3 |  100 | 95.5 | 93.5 |
 | Drive-JEPA (Ours) | ViT/L    | Camera | 99.1 | 98.2 | 90.8 | 99.9 | 95.9 | 93.3 |
+
+*(2026-10-15)* **The LAW row (83.8, "C & L") is not LAW's published result.** [[sources/law.md]]'s v1 has no NAVSIM table and its v2 reports 84.6 from cameras (NC 96.4, DAC 95.4, TTC 88.7, EP 81.7), the row 24 other ingested pages print. This 83.8 row passes the closed-form check (−4.02), so its source is unknown rather than impossible. [[sources/redrive.md]] carries the same row ([[concepts/navsim-benchmark.md#law]]).
 
 ### Table 3: NAVSIM-v2
 

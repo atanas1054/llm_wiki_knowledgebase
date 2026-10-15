@@ -2,9 +2,9 @@
 title: "DreamerAD: Efficient Reinforcement Learning via Latent World Model for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DreamerAD_ Efficient Reinforcement Learning via Latent World Model for Autonomous Driving.md]
-related: [sources/simvta.md, sources/raw2drive.md, sources/think2drive.md, sources/epona.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/ad-e2e-jepa.md, concepts/selection-based-planning.md, sources/hyworldvla.md]
+related: [sources/worldrft.md, sources/simvta.md, sources/raw2drive.md, sources/think2drive.md, sources/epona.md, concepts/rl-for-ad.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/ad-e2e-jepa.md, concepts/selection-based-planning.md, sources/hyworldvla.md]
 created: 2026-04-08
-updated: 2026-10-14
+updated: 2026-10-15
 confidence: high
 ---
 
@@ -148,6 +148,8 @@ Gains over Epona: NC +0.9, DAC +1.5, TTC +1.1, LK +0.5, HC +0.3, EC +4.6. EP reg
 
 All three components contribute. SF-WM contributes more than AD-RM (comparing IDs 2 vs. 3). Vocab sampling outperforms both WorldRFT and Flow-GRPO alternatives.
 
+*(2026-10-15, after ingesting [[sources/worldrft.md]])* Row 5 is WorldRFT's Gaussian sampler re-implemented inside this paper's world model. In WorldRFT itself the sampled trajectories are scored against logged agent boxes and never enter a world model, so the "world model hallucinations" in the comparison table above describe this re-implementation only. WorldRFT shares this paper's first author and three other authors.
+
 ### Qualitative (Figure 5)
 
 ![Figure 5: Comparison before/after RL training](../../raw/assets/x8%208.png)
@@ -192,10 +194,12 @@ RL training primarily improves **collision avoidance behavior** — the model le
 |--------|---------|--------------|----------------|-----------------|
 | ReCogDrive | Diffusion-chain GRPO | NAVSIM PDM | 89.6 | 83.6 |
 | WAM-Flow | DFM output GRPO | NAVSIM PDM | 90.3 | 84.7 |
-| WorldRFT | Gaussian GRPO | NAVSIM PDM | 87.8 | 86.7 |
+| WorldRFT | Gaussian GRPO | Binary collision with logged agent boxes ⚠ | 87.8 | 86.7 † |
 | DriveFine | Masked diffusion GRPO | NAVSIM PDM | 90.7 | 87.1 (bugged) / 89.7 (fixed) |
 | FLARE | BC-GRPO | NAVSIM PDM | 91.4 | 86.3 |
 | **DreamerAD** | **Latent imagination GRPO** | **Latent AD-RM** | **88.7** | **87.7** |
+
+⚠ *(Corrected 2026-10-15.)* This row read "NAVSIM PDM". [[sources/worldrft.md]]'s reward is −1 per trajectory point whose ego box overlaps an annotated agent box, with no other term. † WorldRFT's own paper reports no NAVSIM-v2 number; this paper and [[sources/latent-wam.md]], both March 2026 and both sharing WorldRFT authors, are the earliest prints of 86.7 ([[concepts/navsim-benchmark.md#worldrft]]).
 
 *(2026-10-14)* **The same initialization with the simulator kept.** [[sources/simvta.md]] post-trains the same NAVSIM-adapted Epona with Flow-GRPO's SDE and the real PDM reward (no latent reward model, no vocabulary sampling) and reaches 89.1 PDMS without any video loss, 0.4 above this paper's 88.7. Adding a video loss on 3DGS renders of the policy's sampled trajectories gives 91.3 PDMS / 88.2 EPDMS; on v2 both rows are corrected-like by residual sign (SimVTA −0.76, DreamerAD −1.24), so the +0.5 is same-scale. The two papers differ in sampler, reward and training length, so this does not isolate the latent reward, but it does not support the claim that Flow-GRPO's SDE is the weaker sampler for Epona. See [[concepts/rl-for-ad.md#simvta]].
 

@@ -2,9 +2,9 @@
 title: "Metis: A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation"
 type: source-summary
 sources: ["raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md"]
-related: [sources/simscale.md, sources/hydra-mdp-pp.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/mixture-of-experts.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/simwam.md, sources/suv.md, sources/driveva.md, sources/drivewam.md, sources/drivelaw.md, sources/epona.md, sources/drivevla-w0.md, sources/drivefine.md, sources/sgdrive.md, sources/vega.md, sources/recogdrive.md, sources/brainwam.md, sources/adaptive-wam.md, sources/wa-jepa.md, sources/redrive.md]
+related: [sources/worldrft.md, sources/simscale.md, sources/hydra-mdp-pp.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/mixture-of-experts.md, concepts/foundation-backbones-for-ad.md, concepts/best-of-n.md, sources/simwam.md, sources/suv.md, sources/driveva.md, sources/drivewam.md, sources/drivelaw.md, sources/epona.md, sources/drivevla-w0.md, sources/drivefine.md, sources/sgdrive.md, sources/vega.md, sources/recogdrive.md, sources/brainwam.md, sources/adaptive-wam.md, sources/wa-jepa.md, sources/redrive.md]
 created: 2026-09-27
-updated: 2026-10-06
+updated: 2026-10-15
 confidence: medium
 ---
 
@@ -223,6 +223,7 @@ The paper's argument (App. A.1) has two halves:
 | Metis ‡ | 1×C | 98.5 | 97.5 | 84.0 | 95.1 | 100 | 89.7 |
 
 - **"State-of-the-art, reaching 89.7" relies on the best-of-6 row.** Single-sample Metis (89.1) **ties DriveLaW and is below UniWorldVLA (89.4)** in its own table.
+- *(2026-10-15)* **"WorldRFT\*" is WorldRFT's pre-RL row.** 97.5 / 96.0 / 80.9 / 94.0 / 100 / 87.0 is the "without RFT" row of [[sources/worldrft.md]]'s Table 2; its RL result is 87.8 (NC 97.8, DAC 96.8, EP 81.7), as every other v1 copy in the wiki prints. Metis's \* marks RL methods, and Metis shares two authors with WorldRFT.
 - This is also the source of the **Drive-JEPA TTC/Comf column swap** that [[sources/suv.md]] copied (TTC 100.0, C 95.5). It is now traced to Metis.
 - In the wiki's v1 ladder, 89.1 is well down. It is below both same-backbone siblings: SimWAM 91.5 (90.3 before RL) and DriveVA 90.9.
 

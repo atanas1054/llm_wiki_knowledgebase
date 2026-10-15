@@ -1,10 +1,10 @@
 ---
 title: Bench2Drive Benchmark
 type: concept
-sources: ["raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/Think2Drive_ Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2).md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
-related: [sources/idol.md, sources/world4scorer.md, sources/raw2drive.md, sources/think2drive.md, sources/momworld.md, sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, sources/deepsight.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md, concepts/pdm-lite.md, research-directions.md]
+sources: ["raw/papers/SparseDriveV2_ Scoring is All You Need for End-to-End Autonomous Driving.md", "raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/Think2Drive_ Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2).md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
+related: [sources/sparsedrivev2.md, sources/idol.md, sources/world4scorer.md, sources/raw2drive.md, sources/think2drive.md, sources/momworld.md, sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, sources/deepsight.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md, concepts/pdm-lite.md, research-directions.md]
 created: 2026-04-15
-updated: 2026-10-12
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -86,7 +86,7 @@ Five standardized scenario categories; reported separately by ORION and LinkVLA:
 | DeepSight (Think2Drive) | 86.23 | 71.36 | 201.71 | 16.11 | Parallel 5-frame DINOv3 latent world model in BEV + adaptive CoT; strongest Think2Drive-protocol VLM in its own table (see expert caveat below) |
 | HiP-AD *(not ingested)* | 86.77 | 69.09 | 203.12 | 19.36 | Non-VLM; from [[sources/momworld.md]]'s table |
 | DynVLA | 88.34 | 72.73 | — | — | Dynamics CoT with ego/environment VQ dynamics tokens; below LinkVLA, above AutoMoT; table omits LinkVLA |
-| SparseDriveV2 *(not ingested)* | 89.15 | 70.00 | 199.84 | 18.32 | Non-VLM scorer ("scoring is all you need"); from [[sources/momworld.md]]'s table |
+| **SparseDriveV2** ([[sources/sparsedrivev2.md]]) | 89.15 | 70.00 | 199.84 | 18.32 | **The highest non-VLM entry here.** A 262,144-combination factorized vocabulary scored in two passes; ResNet-50, six cameras, SparseDrive's auxiliary perception, **pure imitation (no metric supervision)**; training data unstated. Verified at the primary source; see [below](#sparsedrivev2) |
 | **LinkVLA** | **91.01** | **74.55** | **255.84** | **34.62** | **Shared codebook + C2F; current SOTA** |
 | *Think2Drive (privileged expert)* | *91.85* | *85.41* | *269.14* | *25.97* | *Reference, not a leaderboard entry: ground-truth BEV input; generated the base-set training data. From [[sources/raw2drive.md]]'s and [[sources/dynvla.md]]'s tables; see [below](#expert) and [[sources/think2drive.md]]* |
 | *PDM-Lite (privileged expert)* | *97.02* | *92.27* | – | – | *Reference: rule-based; the alternative expert-data protocol. From [[sources/dynvla.md]]'s table* |
@@ -149,7 +149,21 @@ Braking (+11.7 vs. SimLingo) and overtaking (+11.1) drive LinkVLA's gains. ORION
 | SimLingo | 85.07 DS (this page), 85.94 ([[sources/deepsight.md]]) | 86.02 | Three values for one method; SR 67.27 agrees everywhere |
 | SparseDrive | — | 44.54 / 16.71 | See the MomAD row |
 
-Two non-VLM entries in that table are near the top of this page. **SparseDriveV2 (89.15 DS)** is above every ingested method except LinkVLA; **HiP-AD (86.77)** is above all but LinkVLA, DynVLA and AutoMoT. Neither is ingested.
+Two non-VLM entries in that table are near the top of this page. **SparseDriveV2 (89.15 DS)** is above every ingested method except LinkVLA; **HiP-AD (86.77)** is above all but LinkVLA, DynVLA and AutoMoT. Neither is ingested. *(2026-10-14: SparseDriveV2 is now ingested ([[sources/sparsedrivev2.md]]). Its own table prints the SparseDrive, SimLingo, HiP-AD and Hydra-NeXt rows that MomWorld carries, so MomWorld's attribution of 44.54 / 16.71 to SparseDrive is also SparseDrive's first author's.)*
+
+### SparseDriveV2: a Scorer Trained by Imitation Alone {#sparsedrivev2}
+
+*(2026-10-14)* [[sources/sparsedrivev2.md]] reports **89.15 DS / 70.00 SR**. That is the highest non-VLM entry on this page, second only to LinkVLA (91.01, posted earlier the same month and absent from its table).
+
+- **The model.** A ResNet-50 over six cameras (256×704), with SparseDrive's detection, online mapping and motion prediction as auxiliary tasks. A vocabulary of 1,024 paths × 256 speed profiles is scored in two passes.
+  - **No metric supervision**: the scorer learns only to imitate the logged trajectory.
+  - Control decomposes the selected trajectory: a preview point on the path at 0.5 v + 2.5 m for steering, and the profile's first speed for throttle and brake.
+- **Not the NAVSIM model.** The NAVSIM configuration is a ResNet-34 on three cameras with rule-based-teacher distillation. The two share only the vocabulary and scoring design.
+- **Training data and expert protocol are not stated.** If it is the base set, it sits 2.7 DS below the [Think2Drive expert](#expert) that produced that set, closer than any Think2Drive-protocol student recorded here (DeepSight, 5.6 below).
+- **Multi-ability**: Merging 66.25 (the best on this page), Overtaking 75.55, Emergency Brake 75.00, Give Way 50.00, Traffic Sign 71.57; mean 67.67, below LinkVLA (73.40) and DeepSight (70.20).
+  - In its own table HiP-AD is higher on overtaking, braking and traffic signs.
+  - Comfort 18.32 is among the lowest here; efficiency is 199.84.
+- **Attributions.** Its table prints SparseDrive at 44.54 / 16.71 (from SparseDrive's own first author) and SimLingo at 86.02, as [[sources/momworld.md]] does six months later. MomWorld's SparseDriveV2, HiP-AD and Hydra-NeXt rows are this table's rows. That settles the [MomAD row](#momworld): 44.54 / 16.71 belongs to SparseDrive.
 
 ---
 
@@ -161,7 +175,7 @@ The two benchmarks test complementary capabilities:
 - **NAVSIM**: diverse real-world-like traffic; reward-shaped safety metrics; non-reactive agents
 - **Bench2Drive**: interactive CARLA simulation; explicit scenario types; closed-loop agent reactions
 
-AutoVLA and DynVLA are the wiki methods with published results on both. AutoVLA is competitive but not SOTA on either (89.11 PDMS, 78.84 DS). DynVLA is stronger on both (91.7 PDMS, 88.34 DS), but still trails LinkVLA on Bench2Drive and DriveSuprim/HybridDriveVLA on NAVSIM. This reinforces that strong cross-benchmark performance is possible, but SOTA on one benchmark still does not imply SOTA on the other.
+AutoVLA and DynVLA are the wiki methods with published results on both. AutoVLA is competitive but not SOTA on either (89.11 PDMS, 78.84 DS). DynVLA is stronger on both (91.7 PDMS, 88.34 DS), but still trails LinkVLA on Bench2Drive and DriveSuprim/HybridDriveVLA on NAVSIM. This reinforces that strong cross-benchmark performance is possible, but SOTA on one benchmark still does not imply SOTA on the other. *(2026-10-14: so does [[sources/sparsedrivev2.md]], 92.0 PDMS and 89.15 DS, but with two different models: ResNet-34, three cameras and metric distillation on NAVSIM; ResNet-50, six cameras, auxiliary perception and pure imitation in CARLA.)*
 
 Drive-JEPA ([[sources/drive-jepa.md]]) also reports both NAVSIM and Bench2Drive, but with a different profile: very strong NAVSIM-v1 (93.3 PDMS) and moderate Bench2Drive (64.52 DS / 36.82 SR). Its Bench2Drive value is evidence that MTD improves over iPad (60.52 DS), not evidence of closed-loop frontier performance; LinkVLA (91.01), DynVLA (88.34), and AutoMoT (87.34) remain much stronger on this benchmark.
 
@@ -175,6 +189,6 @@ Drive-JEPA ([[sources/drive-jepa.md]]) also reports both NAVSIM and Bench2Drive,
 - Does LinkVLA's 91.01 DS (on a 1B backbone) scale further with a 7B backbone, and would DynVLA's dynamics-token CoT close the remaining gap if combined with LinkVLA-style action tokenization?
 - Are the GRPO-optimized NAVSIM methods (FLARE, DriveFine) competitive on Bench2Drive's interactive scenarios, or does their non-reactive training regime limit reactive behavior?
 - Can PDM-Lite usage be standardized across papers, or should the benchmark track PDM-Lite and non-PDM-Lite leaderboards separately?
-- **What do SparseDriveV2 (89.15 DS) and HiP-AD (86.77) do?** Both are non-VLM planners that match the VLA leaders here, and both are known to this wiki only through [[sources/momworld.md]]'s table.
-- **Which Bench2Drive row is MomAD's?** Two ingested tables give it SparseDrive's numbers.
-- **Does the expert bound the leaderboard?** The best Think2Drive-protocol student is 5.6 DS below its 91.85-DS teacher and LinkVLA (protocol undisclosed) is 0.84 below it. Whether any student trained only on the base set can pass the expert, and whether PDM-Lite-protocol gains are simply the stronger teacher, is untested. See [above](#expert).
+- **What do SparseDriveV2 (89.15 DS) and HiP-AD (86.77) do?** Both are non-VLM planners that match the VLA leaders here, and both are known to this wiki only through [[sources/momworld.md]]'s table. *(2026-10-14: SparseDriveV2 answered. It is a factorized fixed-vocabulary scorer trained by imitation alone, on SparseDrive's perception; see [above](#sparsedrivev2). HiP-AD remains un-ingested.)*
+- **Which Bench2Drive row is MomAD's?** Two ingested tables give it SparseDrive's numbers. *(2026-10-14: SparseDrive's own first author prints 44.54 / 16.71 as SparseDrive's in [[sources/sparsedrivev2.md]], agreeing with MomWorld; the ORION and DeepSight attribution to MomAD is the outlier.)*
+- **Does the expert bound the leaderboard?** The best Think2Drive-protocol student is 5.6 DS below its 91.85-DS teacher and LinkVLA (protocol undisclosed) is 0.84 below it. Whether any student trained only on the base set can pass the expert, and whether PDM-Lite-protocol gains are simply the stronger teacher, is untested. See [above](#expert). *(2026-10-14: [[sources/sparsedrivev2.md]] is 2.7 DS below the expert (89.15) and states no training data.)*

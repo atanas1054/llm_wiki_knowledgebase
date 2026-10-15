@@ -2,7 +2,7 @@
 title: "DriveSuprim: Towards Precise Trajectory Selection for End-to-End Planning"
 type: source-summary
 sources: [raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md]
-related: [concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, sources/redrive.md, sources/physwam.md]
+related: [sources/sparsedrivev2.md, concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, sources/redrive.md, sources/physwam.md]
 created: 2026-04-23
 updated: 2026-10-14
 confidence: high
@@ -284,4 +284,4 @@ The oracle study (Table 1) directly shows that the selection-based ceiling is 94
 
 See [[concepts/selection-based-planning.md]] for the broader paradigm context.
 
-**How this method's row is cited elsewhere.** Later tables carry DriveSuprim at three different v1 values: the correct ViT-L 93.5, the ResNet-34 89.9 (sometimes labelled, as in [[sources/physwam.md]], often not), and a hybrid. [[sources/redrive.md]] prints the **ViT-L sub-scores from the table above (98.6 / 98.6 / 91.3 / 95.5) next to the ResNet-34 PDMS of 89.9**. The mismatch is detectable from the row alone: 89.9 is below the closed form of those sub-scores (91.9), which a per-scene-averaged PDMS never is. See [[concepts/navsim-benchmark.md#redrive]].
+**How this method's row is cited elsewhere.** Later tables carry DriveSuprim at three different v1 values: the correct ViT-L 93.5, the ResNet-34 89.9 (sometimes labelled, as in [[sources/physwam.md]], often not), and a hybrid. [[sources/redrive.md]] prints the **ViT-L sub-scores from the table above (98.6 / 98.6 / 91.3 / 95.5) next to the ResNet-34 PDMS of 89.9**. The mismatch is detectable from the row alone: 89.9 is below the closed form of those sub-scores (91.9), which a per-scene-averaged PDMS never is. See [[concepts/navsim-benchmark.md#redrive]]. *(2026-10-14: on v2 the three circulating values are this paper's ViT-L 87.1, the ResNet-34 83.1 of the shared block, and 86.0 (EP 90.6, EC 77.9). The last first appears in [[sources/sparsedrivev2.md]] labelled **V2-99**, a configuration this paper reports on v1 only (92.1). That v1 row is absent from SparseDriveV2's table, which at 92.0 it beats.)*

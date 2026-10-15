@@ -2,9 +2,9 @@
 title: "DeepSight: Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
-related: [sources/think2drive.md, concepts/world-model-for-ad.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/pdm-lite.md, sources/futuresightdrive.md, sources/dynvla.md, sources/flare.md, sources/adathinkdrive.md, sources/orion.md, sources/autovla.md]
+related: [sources/law.md, sources/think2drive.md, concepts/world-model-for-ad.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/pdm-lite.md, sources/futuresightdrive.md, sources/dynvla.md, sources/flare.md, sources/adathinkdrive.md, sources/orion.md, sources/autovla.md]
 created: 2026-07-01
-updated: 2026-10-06
+updated: 2026-10-15
 confidence: high
 ---
 
@@ -154,7 +154,7 @@ Largest gains in overtaking (91.11) and merging (60.00) — the paper attributes
 | FSDrive* | 0.27 | 0.33 | 0.56 | 0.35 | 0.07 | 0.10 | 0.24 | 0.14 |
 | **DeepSight** | **0.16** | **0.31** | **0.52** | **0.33** | **0.02** | **0.07** | 0.27 | **0.12** |
 
-Note: §4.2 separately states "our L2 error is reduced to 0.58" (a different, likely no-ego protocol); Table 11's 0.33 avg is under the with-ego protocol used for the VAD/LAW/World4Drive comparison. The FSDrive comparison here is DeepSight's **own reproduction** (0.35 avg), not FSDrive's published no-ego 0.96 avg — different protocol, not directly comparable to the FSDrive paper.
+Note: §4.2 separately states "our L2 error is reduced to 0.58" (a different, likely no-ego protocol); Table 11's 0.33 avg is under the with-ego protocol used for the VAD/LAW/World4Drive comparison. *(2026-10-15: LAW's own paper states it uses no historical ego status ([[sources/law.md]]), so its 0.61 / 0.30 row here is a no-ego result beside DeepSight's with-ego 0.33 / 0.12.)* The FSDrive comparison here is DeepSight's **own reproduction** (0.35 avg), not FSDrive's published no-ego 0.96 avg — different protocol, not directly comparable to the FSDrive paper.
 
 ---
 

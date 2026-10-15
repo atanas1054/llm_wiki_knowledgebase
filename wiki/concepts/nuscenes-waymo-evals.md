@@ -1,10 +1,10 @@
 ---
 title: nuScenes and Waymo Evaluations
 type: concept
-sources: ["raw/papers/ForeDrive_ Foresight-Guided End-to-End Autonomous Driving with a Planning-Relevant Latent World Model.md", "raw/papers/ResWorld_ Temporal Residual World Model for End-to-End Autonomous Driving.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, "raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md", raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, "raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md", raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md]
-related: [sources/foredrive.md, sources/resworld.md, sources/momworld.md, sources/suv.md, sources/qwen-drive-1.0.md, sources/lwdrive.md, sources/adaptive-wam.md, sources/foresight.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/intent-conditioned-planning.md, concepts/best-of-n.md, concepts/physicalai-av-benchmark.md, sources/autovla.md, sources/hermes.md, sources/uniugp.md, sources/reasoning-vla.md, sources/driveva.md, sources/explorevla.md, sources/onedrive.md, sources/policy-world-model.md, sources/dial.md, sources/drivewam.md, sources/simwam.md]
+sources: ["raw/papers/Enhancing End-to-End Autonomous Driving with Latent World Model.md", "raw/papers/WorldRFT_ Latent World Model Planning with Reinforcement Fine-Tuning for Autonomous Driving.md", "raw/papers/CLOVER_ Closed-Loop Value Estimation & Ranking for End-to-End Autonomous Driving Planning.md", "raw/papers/DVGT-2_ Vision-Geometry-Action Model for Autonomous Driving at Scale.md", "raw/papers/ForeDrive_ Foresight-Guided End-to-End Autonomous Driving with a Planning-Relevant Latent World Model.md", "raw/papers/ResWorld_ Temporal Residual World Model for End-to-End Autonomous Driving.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, "raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md", raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/HERMES_ A Holistic End-to-End Risk-Aware Multimodal Embodied System with Vision–Language Models for Long-Tail Autonomous Driving.md, "raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md", raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md, raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/ExploreVLA_ Dense World Modeling and Exploration for End-to-End Autonomous Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/From Forecasting to Planning_ Policy World Model for Collaborative State-Action Prediction.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md]
+related: [sources/law.md, sources/worldrft.md, sources/clover.md, sources/dvgt-2.md, sources/foredrive.md, sources/resworld.md, sources/momworld.md, sources/suv.md, sources/qwen-drive-1.0.md, sources/lwdrive.md, sources/adaptive-wam.md, sources/foresight.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/world-model-for-ad.md, concepts/intent-conditioned-planning.md, concepts/best-of-n.md, concepts/physicalai-av-benchmark.md, sources/autovla.md, sources/hermes.md, sources/uniugp.md, sources/reasoning-vla.md, sources/driveva.md, sources/explorevla.md, sources/onedrive.md, sources/policy-world-model.md, sources/dial.md, sources/drivewam.md, sources/simwam.md]
 created: 2026-05-01
-updated: 2026-10-06
+updated: 2026-10-15
 confidence: high
 ---
 
@@ -236,3 +236,52 @@ MomWorld is best or tied in all 22 of its cells across Turning-nuScenes, Adv-nuS
 - **The ablations are a few samples apart.** Collision differences between ablation rows are 0.02–0.11 percentage points, averaged over three horizons. On the validation split (roughly 6,000 samples), 0.04 points is two or three samples, the same granularity problem as the Turning-nuScenes margins [above](#the-robustness-subsets). No seeds.
 - **The gain sits at one horizon.** Without ego status, 3 s collision is 0.64% for both baseline and full model; the average falls because 2 s goes from 0.25% to 0.04%.
 - **Its LAW row matches [[sources/foresight.md]]'s** (0.61 m / 0.30%, VAD-style), a small cross-paper consistency check.
+
+## DVGT-2: Both Conventions, Ego Status Unmarked, and nuScenes in the Training Mix {#dvgt2}
+
+*(2026-10-14)* [[sources/dvgt-2.md]] prints both averaging conventions for itself:
+
+| Convention | DVGT-2 L2 / collision | Best other row in that convention |
+|---|---|---|
+| ST-P3 (per-horizon) | 0.78 m / **0.19%** | GaussianAD **0.64 m** / 0.42%; UniUGP 1.23 m / 0.33% |
+| VAD (temporal average) | **0.41 m** / 0.22% | GaussianAD 0.47 m / 0.50%; GenAD 0.52 m / **0.19%**; VAD-Base 0.72 m / 0.22% |
+
+- **"Significantly lower collision rate" holds in one convention.** In the VAD convention, 0.22% ties VAD-Base and trails GenAD.
+- **Ego status is fed to the planner and not marked.** Velocity, acceleration and command enter the trajectory token; the table has no ego-status column. [ResWorld](#resworld) measured ego status as worth as much as its method on L2.
+- **nuScenes is in the training mix** (6% of batches, with trajectory supervision), so "applied without fine-tuning" is not zero-shot in the sense of the WAM cluster above.
+- **The paper's appendix disagrees with itself**: 1-second nuScenes L2 0.56 m in Table A.2 against 0.25 m (0.20 m VAD-style) in Table 7. All Table 7 averages reproduce from the per-horizon values.
+- *(2026-10-14)* **The "ST-P3" label is not a fixed convention across papers.** [[sources/clover.md]] prints UniAD at 0.69 m / 0.12% under "ST-P3" and at 1.03 / 0.31 under "UniAD"; [[sources/dvgt-2.md]]'s table prints UniAD's 1.03 / 0.31 in its unmarked "ST-P3 convention" block. So in DVGT-2's table "ST-P3" is the per-horizon convention and in CLOVER's the temporal-average one. UniAD's row is the reliable key. See [below](#clover).
+
+## CLOVER: Lowest L2 in a Table, With No nuScenes Training Described {#clover}
+
+*(2026-10-14)* [[sources/clover.md]] is a NAVSIM planner (DrivoR's architecture trained against the NAVSIM evaluator) that adds a "supplementary" nuScenes table:
+
+| Protocol (paper's label) | CLOVER L2 / collision | Best other rows |
+|---|---|---|
+| "ST-P3" (temporal average; UniAD 0.69 / 0.12) | **0.31 m / 0.10%** | EMMA 0.32 m; OpenDriveVLA and Impromptu VLA 0.33 m; OpenDriveVLA 0.10% |
+| "UniAD" (per-horizon; UniAD 1.03 / 0.31) | **0.65 m / 0.30%** | OpenDriveVLA and Impromptu VLA 0.67 m; OpenDriveVLA 0.30% |
+
+- **How the model was trained on nuScenes is not described.** Both of its training stages need NAVSIM's metric cache and PDM evaluator, which nuScenes lacks; the paper does not say which stages ran, which cameras were used or whether the NAVSIM model was retrained.
+- **Ego status is an input and is not marked**, as for every DrivoR-style planner; [ResWorld](#resworld) measured ego status as worth as much as its method on L2.
+- **The margins are 0.01–0.02 m on L2 and ties on collision.**
+- Its "ST-P3" numbers are temporal averages, so they sit beside [DVGT-2](#dvgt2)'s † rows (0.41 m), not its "ST-P3" 0.78 m.
+
+## WorldRFT: An RL Reward That Counts the Metric's Collisions, and Sweeps Won by a Sample or Two {#worldrft}
+
+*(2026-10-15)* [[sources/worldrft.md]] reports **0.48 m / 0.05%** (temporal-average convention, no ego status) and 0.33 / 0.04 with ego status, against LAW's 0.61 / 0.30 and World4Drive's 0.50 / 0.16.
+
+- **The headline collision gain is the training objective.** Its RL reward is −1 for each trajectory point whose ego box overlaps an annotated agent box, which is what the collision rate counts. RL takes the per-horizon rates from 0.10 / 0.11 / 0.23% to 0.00 / 0.00 / 0.16% (about six, seven and fourteen samples to zero, zero and ten on a validation split of about 6,000), with L2 0.47 → 0.48.
+- **The table crosses conventions.** UniAD is printed at its per-horizon 1.03 / 0.31 (temporal-average 0.69 / 0.12, as in [ForeSight's table](#foresight-hedging-the-benchmark-while-reporting-on-it)), and Epona at its per-horizon 1.25 / 0.36. The LAW and World4Drive rows match ForeSight's and [ResWorld's](#resworld) temporal-average copies. At UniAD's 0.12, WorldRFT before RL (0.15) and World4Drive (0.16) are behind it.
+- **A copied row that does not add up.** SSR† is printed with collisions 0.00 / 0.10 / 0.20 and average 0.13; the horizons average 0.10, and [[sources/resworld.md]] prints the same L2 with 0.10 / 0.10 / 0.24 (0.15).
+- **Three sweeps, each won only by the chosen value.** Spatial-path configuration (five of six settings at 0.09–0.12%, the chosen one 0.05), refinement iterations (0.08 / 0.05 / 0.07 at K = 1 / 3 / 6, and 0.06 with no refinement) and GRPO group size (0.08 / 0.05 / 0.07). Each neighbour is one to four samples away, all single runs on the evaluation split ([[concepts/evaluation-variance.md#sweep-minimum]]).
+- **The ego-status variant is not described**, although the main text says the supplement describes it.
+
+## LAW: The Layout Later Tables Copy, No Ego Status, and Few-Sample Ablations {#law}
+
+*(2026-10-15)* [[sources/law.md]] reports **0.61 m / 0.30%** (perception-free) and **0.49 / 0.19** (perception-based, on VAD) in the temporal-average convention, and states that it uses no historical ego status.
+
+- **Its Table 1 is the earliest ingested instance of a layout that crosses conventions**: UniAD at its per-horizon 1.03 / 0.31 beside VAD-convention rows, with LAW's own collision "computed by the traditional computation way used in [VAD]". At UniAD's temporal-average 0.12 ([ForeSight](#foresight-hedging-the-benchmark-while-reporting-on-it)), LAW's 0.19 would not be the table's lowest collision. [WorldRFT](#worldrft), in the same latent-world-model line, keeps the layout.
+- **BEV-Planner's collision row uses BEV-Planner's own computation** (marked ‡), so LAW's perception-free collision cannot be compared with it.
+- **No ego status.** [[sources/deepsight.md]] prints LAW's 0.61 / 0.30 in a table captioned "with ego status", beside its own with-ego 0.33 / 0.12.
+- **Ablations a few samples apart.** On a split of about 6,000 samples, each step of its world-model-input ablation is one to four colliding samples, single runs. The horizon sweep (0.5 / 1.5 / 3 / 10 s: 0.30 / 0.25 / 0.27 / 0.43% collision) is larger at its ends; the 10 s target cannot exist for the last 10 s of each 20 s scene, and the paper does not say how that is handled.
+- Its rows match every later copy: [[sources/foresight.md]], [[sources/resworld.md]], [[sources/policy-world-model.md]], [[sources/worldrft.md]], [[sources/deepsight.md]].

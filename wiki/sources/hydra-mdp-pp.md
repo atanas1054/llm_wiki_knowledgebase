@@ -2,9 +2,9 @@
 title: "Hydra-MDP++: Advancing End-to-End Driving via Expert-Guided Hydra-Distillation"
 type: source-summary
 sources: ["raw/papers/Hydra-MDP++_ Advancing End-to-End Driving via Expert-Guided Hydra-Distillation.md"]
-related: [concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/teacher-pseudo-labels.md, concepts/perception-for-planning.md, concepts/inference-latency.md, concepts/evaluation-variance.md, concepts/pdm-lite.md, sources/drivesuprim.md, sources/recogdrive.md, sources/sgdrive.md, sources/wcog-vla.md, sources/wa-jepa.md, sources/da-wam.md, sources/auto-jepa.md, sources/diffusiondrive.md, sources/drivevla-w0.md, sources/metis.md]
+related: [sources/sparsedrivev2.md, concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/teacher-pseudo-labels.md, concepts/perception-for-planning.md, concepts/inference-latency.md, concepts/evaluation-variance.md, concepts/pdm-lite.md, sources/drivesuprim.md, sources/recogdrive.md, sources/sgdrive.md, sources/wcog-vla.md, sources/wa-jepa.md, sources/da-wam.md, sources/auto-jepa.md, sources/diffusiondrive.md, sources/drivevla-w0.md, sources/metis.md]
 created: 2026-09-27
-updated: 2026-09-27
+updated: 2026-10-14
 confidence: medium
 ---
 
@@ -113,7 +113,7 @@ The formula is verified on this paper's own V2-99 row: 0.988 · 0.978 · 0.991 �
 - They sit beside rows evaluated with official NAVSIM-v2 (ARTEMIS 83.1, ReCogDrive 83.6, DiffusionDrive 84.3, all with LK ≈ 96).
 - **The column those papers label "HC" and fill with 100 is this paper's "C" column.** ReCogDrive's Table 7 still heads it "C". SGDrive and WCog-VLA relabel it "HC".
 - **This resolves an open puzzle on [[sources/wcog-vla.md]]**, which flagged TransFuser 77.8 as "a fourth distinct set" whose NC/DAC/EP/TTC match its own v1 row and whose LK (67.6) matches nothing else. Both follow from this formula: EPDMS computed on the v1 navtest with a strict LK.
-- **The wiki's pre-fix list also carried "HydraMDP++ 84.1"** (via [[sources/wa-jepa.md]]'s partition). That is this paper's V2-99 own-formula number. On official NAVSIM-v2, Hydra-MDP++ is reported elsewhere at **81.4** (ResNet-34; LK 94.4, EC 70.9) and **85.6 / 85.1** (ViT-L), by [[sources/drivesuprim.md]], [[sources/da-wam.md]] and the shared baseline block.
+- **The wiki's pre-fix list also carried "HydraMDP++ 84.1"** (via [[sources/wa-jepa.md]]'s partition). That is this paper's V2-99 own-formula number. On official NAVSIM-v2, Hydra-MDP++ is reported elsewhere at **81.4** (ResNet-34; LK 94.4, EC 70.9) and **85.6 / 85.1** (ViT-L), by [[sources/drivesuprim.md]], [[sources/da-wam.md]] and the shared baseline block. *(2026-10-14: the 85.1 row's earliest print in the wiki, [[sources/sparsedrivev2.md]]'s Table 3 (March 2026), labels it **V2-99**, not ViT-L; DA-WAM's "ViT/L" label is the later one. 85.6 is the ViT-L value in [[sources/drivesuprim.md]].)*
 
 ---
 

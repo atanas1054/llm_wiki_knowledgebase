@@ -2,7 +2,7 @@
 title: "GeoWorldAD: Geometry World Action Model for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/perception-for-planning.md, concepts/selection-based-planning.md, sources/geowam.md, sources/adaptive-wam.md, sources/drivelaw.md, sources/da-wam.md, sources/simwam.md, sources/foresight.md, sources/brainwam.md, sources/latent-wam.md, sources/epona.md, sources/drivevla-w0.md, sources/wa-jepa.md, sources/drive-jepa.md, sources/drivesuprim.md, sources/diffusiondrive.md, sources/sgdrive.md, sources/deepsight.md]
+related: [sources/dvgt-2.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/perception-for-planning.md, concepts/selection-based-planning.md, sources/geowam.md, sources/adaptive-wam.md, sources/drivelaw.md, sources/da-wam.md, sources/simwam.md, sources/foresight.md, sources/brainwam.md, sources/latent-wam.md, sources/epona.md, sources/drivevla-w0.md, sources/wa-jepa.md, sources/drive-jepa.md, sources/drivesuprim.md, sources/diffusiondrive.md, sources/sgdrive.md, sources/deepsight.md]
 created: 2026-09-04
 updated: 2026-10-14
 confidence: high
@@ -17,7 +17,7 @@ confidence: high
 
 ## Summary
 
-This is the wiki's **second** geometry world-action model, and it arrives from a completely different group than [[sources/geowam.md]] (NTU + Xiaomi EV vs. Uber AV Labs). The two share a thesis, share a common ancestor in **DVGT-2**, report near-identical NAVSIM-v2 scores (90.4 vs. 90.2), and **do not cite each other**.
+This is the wiki's **second** geometry world-action model, and it arrives from a completely different group than [[sources/geowam.md]] (NTU + Xiaomi EV vs. Uber AV Labs). The two share a thesis, share a common ancestor in **DVGT-2** *(2026-10-14: loosely; GeoWorldAD's backbone is StreamVGGT, from the same Tsinghua group as [[sources/dvgt-2.md]], and DVGT-2 is its comparison row rather than its initialization)*, report near-identical NAVSIM-v2 scores (90.4 vs. 90.2), and **do not cite each other**.
 
 GeoWorldAD's contribution over GeoWAM is that it runs the ablations GeoWAM did not, and two of them are the most useful geometry results in the wiki:
 
@@ -133,7 +133,7 @@ Total objective: $L = L_{\mathrm{traj}} + L_{\mathrm{score}} + L_{\mathrm{recon}
 
 **Baseline hygiene is good on v1.** Transfuser 84.0, UniAD 83.4, PARA-Drive 84.0, VADv2 80.9, DiffusionDrive 88.1, WoTE 88.3, Epona 86.2, DriveLaW 89.1 all match this wiki's canonical values. Notably it lists **DriveVLA-W0 at 90.2** — the anchor-based headline — rather than the 87.2 reimplementation row that [[sources/drivelaw.md]], [[sources/brainwam.md]], and [[sources/adaptive-wam.md]] all propagate. DriveSuprim appears at 89.9, the widely-circulated non-ViT-L figure rather than 93.5.
 
-**Five methods new to the wiki**: iPad 91.7, EponaV2 90.4 / 88.9, DVGT-2 90.3 / 89.6, WorldDrive 89.0, LFG 85.2.
+**Five methods new to the wiki**: iPad 91.7, EponaV2 90.4 / 88.9, DVGT-2 90.3 / 89.6, WorldDrive 89.0, LFG 85.2. *(2026-10-14: the DVGT-2 row has DVGT-2-NAVSIM's sub-scores; the general model is 88.6 / 88.9. See [[sources/dvgt-2.md]].)*
 
 ### Table 2 — NAVSIM v2 navtest (EPDMS)
 
@@ -229,7 +229,7 @@ These tables are **not a clean ego-alignment ablation**: EgoStreamVGGT is both r
 
 ## The GeoWAM Comparison {#geowam}
 
-Two independent "geometry world action model" papers, same year, same DVGT-2 ancestor, no mutual citation:
+Two independent "geometry world action model" papers, same year, same DVGT-2 ancestor, no mutual citation *(2026-10-14: GeoWorldAD's ancestor is StreamVGGT, from DVGT-2's group. Its EgoStreamVGGT convention, point maps in each timestep's ego frame and adjacent-frame relative poses, is the one [[sources/dvgt-2.md]] already used in April 2026 to bound its cache; GeoWorldAD is the first to price it for planning, +2.5)*:
 
 | | [[sources/geowam.md]] | **GeoWorldAD** |
 |---|---|---|
@@ -308,4 +308,4 @@ Practically: **GeoWAM's 90.2 and GeoWorldAD's 90.4 are comparable to each other*
 - **Readout depth, second data point**: [[sources/adaptive-wam.md]] found a mid-network single layer beats the final layer by 4.80 on Wan2.2; GeoWorldAD finds four selected layers with iterative refinement beat both the final layer alone (+1.1) and all 24 at once (+1.7) on StreamVGGT. Two backbones, same conclusion that the default is wrong.
 - **The shared-future question, reopened**: [[concepts/world-model-for-ad.md]] — GeoWorldAD is the first sizeable *positive* result for a shared imagined future (+1.7 / +2.8), against DA-WAM's −0.50, ForeSight's +0.3, and SimWAM's ~0. The distinguishing variable is a geometric rather than photometric target; the confound is 64K unmatched training steps.
 - **Progress vs. safety**: the +3.3 EP with flat NC/TTC is the cleanest instance in the wiki of a future-prediction module buying *progress* rather than safety, which is the trade-off [[sources/drivelaw.md]] (NC 99.0 / EP 81.3) and [[sources/da-wam.md]]'s shared-future row (EP collapse 91.36 → 88.68) both sit on the wrong side of.
-- **New methods for the gap list**: DVGT-2 (arXiv 2604.00813) is now cited as a baseline by two ingested papers and is the direct ancestor of both geometry WAMs; EponaV2 (2605.14696), iPad (2505.15111), WorldDrive (2603.14948), LFG (CVPR'26), and StreamVGGT (2507.11539) also appear.
+- **New methods for the gap list**: DVGT-2 (arXiv 2604.00813) is now cited as a baseline by two ingested papers and is the direct ancestor of both geometry WAMs *(ingested 2026-10-14 as [[sources/dvgt-2.md]]; the direct ancestor of GeoWAM, a sibling of this paper's StreamVGGT base)*; EponaV2 (2605.14696), iPad (2505.15111), WorldDrive (2603.14948), LFG (CVPR'26), and StreamVGGT (2507.11539) also appear.

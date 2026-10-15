@@ -1,10 +1,10 @@
 ---
 title: Dual-System VLA for Autonomous Driving
 type: concept
-sources: ["raw/papers/RAD_ Training an End-to-End Driving Policy via Large-Scale 3DGS-based Reinforcement Learning.md", raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
-related: [sources/rad.md, sources/drive-hwm.md, sources/lwdrive.md, sources/brainwam.md, sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md, research-directions.md]
+sources: ["raw/papers/Driving on Registers.md", "raw/papers/RAD_ Training an End-to-End Driving Policy via Large-Scale 3DGS-based Reinforcement Learning.md", raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
+related: [sources/drivor.md, sources/rad.md, sources/drive-hwm.md, sources/lwdrive.md, sources/brainwam.md, sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md, research-directions.md]
 created: 2026-04-05
-updated: 2026-10-06
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -239,7 +239,7 @@ $$\tau_\alpha = \alpha \cdot \tau_\text{ViT} + (1-\alpha) \cdot \tau_\text{VLM},
 
 11-candidate set: both endpoints + 9 interpolations. The expert often lies in the interior of this segment.
 
-**Step 2 — Scorer selection**: DrivoR-style trajectory scorer predicts PDMS sub-score components from decoded waypoints + scene tokens. Scorer is explicitly separated from the generator (re-embeds finalized trajectories rather than reading generator latents).
+**Step 2 — Scorer selection**: DrivoR-style ([[sources/drivor.md]]) trajectory scorer predicts PDMS sub-score components from decoded waypoints + scene tokens. Scorer is explicitly separated from the generator (re-embeds finalized trajectories rather than reading generator latents).
 
 **Result**: 92.10 PDMS on NAVSIM-v1 (new SOTA in paper's comparison table, which includes DiffusionDriveV2 91.2 and iPad 91.7).
 

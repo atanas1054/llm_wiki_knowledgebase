@@ -160,7 +160,7 @@ Residual = closed form − reported, computed here; negative values are normal f
 | **ManeuverFlow (LTF)** | 98.49 | 97.40 | 95.13 | 99.99 | 84.87 | 89.98 | −2.05 |
 | **ManeuverFlow (TF)** | 98.42 | 98.01 | 95.19 | 99.99 | 85.36 | **90.58** | −1.94 |
 
-Every row passes the closed-form check. ⚠ **VADv2 at 89.3 matches no VADv2 row in the wiki**, where VADv2 appears at 80.9 (DAC 89.1) in [[sources/idol.md]]'s and other tables. It is cited as the ICLR 2026 version, so the published model was probably re-evaluated or retrained. IDOL's v2 table carries an unidentified "VADv2 85.8" row with DAC 98.3 that the wiki could not place; that row and this one have compatible sub-scores (NC 98.0 vs 98.3, DAC 98.3 vs 97.4) and may be the v1 and v2 halves of the same new VADv2. DriveSuprim's 89.9 here carries its ResNet-34 sub-scores, unlike the mixed row in [[sources/redrive.md]]'s table.
+Every row passes the closed-form check. ⚠ **VADv2 at 89.3 matches no VADv2 row in the wiki**, where VADv2 appears at 80.9 (DAC 89.1) in [[sources/idol.md]]'s and other tables. *(Correction, 2026-10-14: not quite. [[sources/da-wam.md]]'s table, already in the wiki, carries a VAD-v2 row at 86.2 also labelled ICLR'26, and [[sources/drivor.md]]'s carries the same 86.2 row. The wiki therefore has three VADv2 values, 80.9, 86.2 and 89.3, two of them labelled ICLR 2026; the pairing argued below is uncertain.)* It is cited as the ICLR 2026 version, so the published model was probably re-evaluated or retrained. IDOL's v2 table carries an unidentified "VADv2 85.8" row with DAC 98.3 that the wiki could not place; that row and this one have compatible sub-scores (NC 98.0 vs 98.3, DAC 98.3 vs 97.4) and may be the v1 and v2 halves of the same new VADv2. DriveSuprim's 89.9 here carries its ResNet-34 sub-scores, unlike the mixed row in [[sources/redrive.md]]'s table.
 
 ### Table 2: NAVSIM v2 navtest
 
@@ -290,7 +290,7 @@ Nested prefixes of one 512-candidate draw per scene from the unrefined generator
 ## Table Audit {#table-audit}
 
 1. **v1 is consistent.** All eleven rows pass the closed-form check (−1.94 to −4.12). MeanFuser, WoTE, DiffusionDrive, DriveSuprim, World4Drive (85.1) and the ResNet-34 GoalFlow (85.7) match the wiki's other copies.
-2. **VADv2 at 89.3** is unlike every other VADv2 row in the wiki (80.9) and probably belongs with IDOL's unexplained v2 "VADv2 85.8" (above).
+2. **VADv2 at 89.3** is unlike every other VADv2 row in the wiki (80.9) and probably belongs with IDOL's unexplained v2 "VADv2 85.8" (above). *(2026-10-14: there is a third, 86.2, in [[sources/drivor.md]]'s and DA-WAM's tables, the latter also labelled ICLR'26; the pairing is uncertain.)*
 3. **v2 mixes evaluators** despite the "single official benchmark version" caption: two pre-fix-like rows (TransFuser +1.28, DriveSuprim +2.28), four corrected-like. The corrected-cohort entries above 90.14 are absent (WA-JEPA 91.7, MM-Future 91.5, World4Scorer 91.4, SUV 91.0, ReDrive 90.8 and others).
 4. **v1 scope.** "Highest listed" is accurate, but the ResNet-34 rows above 90.58 in the wiki (DiffusionDriveV2 91.2, PaIR-Drive 91.2, iPad 91.1) are not listed. The first two use RL.
 5. **WorldEngine baselines** have no stated source and no spread.

@@ -1,10 +1,10 @@
 ---
 title: Intent-Conditioned Trajectory Planning
 type: concept
-sources: ["raw/papers/ManeuverFlow_ Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
-related: [sources/maneuverflow.md, sources/drivefuture.md, concepts/world-model-for-ad.md, sources/auto-jepa.md, sources/dial.md, sources/pair-drive.md, sources/sgdrive.md, concepts/rl-for-ad.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/parallel-il-rl.md, concepts/nuscenes-waymo-evals.md, concepts/perception-for-planning.md]
+sources: ["raw/papers/WorldRFT_ Latent World Model Planning with Reinforcement Fine-Tuning for Autonomous Driving.md", "raw/papers/ManeuverFlow_ Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md, raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md]
+related: [sources/worldrft.md, sources/maneuverflow.md, sources/drivefuture.md, concepts/world-model-for-ad.md, sources/auto-jepa.md, sources/dial.md, sources/pair-drive.md, sources/sgdrive.md, concepts/rl-for-ad.md, concepts/gspo-vs-grpo.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/parallel-il-rl.md, concepts/nuscenes-waymo-evals.md, concepts/perception-for-planning.md]
 created: 2026-06-23
-updated: 2026-10-14
+updated: 2026-10-15
 confidence: high
 ---
 
@@ -25,6 +25,7 @@ Intent conditioning supplies an explicit axis along which proposals can differ. 
 | [[sources/pair-drive.md]] | Learned intention tokens in a recurrent residual tree | Structure GRPO candidates around a human reference | Expand alternatives around an IL trajectory; RWM selects |
 | [[sources/dial.md]] | Eight rule-derived labels with classifier-free guidance | Expand SFT support and balance every GRPO group across intents | Intent classifier selects one mode; conditioned flow generates |
 | [[sources/sgdrive.md]] | Continuous goal pose ~4 s ahead, predicted by an MLP head on a dedicated ⟨world⟩ subquery | Auxiliary $L_1$ supervision that shapes the VLM representation | Goal subquery hidden state conditions the DiT; never decoded |
+| [[sources/worldrft.md]] | Laplace target region $(\mu, b)$ over the trajectory's endpoint, plus a time-free path every 2 m | Negative log-likelihood on the endpoint (weight 0.001); L1 on the path | The scale $b$ conditions every refinement step; never sampled |
 | [[sources/auto-jepa.md]] | Continuous 8×1024 latent encoding the *entire* 4 s future trajectory, predicted by a JEPA predictor | The only training objective — aligned with a frozen trajectory encoder's output | The retrieval key into a memory of 110,335 recorded trajectories |
 | [[sources/maneuverflow.md]] | Eight rule-derived motion families (stop, cruise, accelerate, decelerate, left/right lane change, left/right turn), each a fixed Gaussian source | Soft classification of the expert's nearest family; the family index routes a feed-forward expert in a one-step MeanFlow generator | Top-3 families share 64 candidates; every candidate keeps its family index through scoring and refinement |
 | [[sources/drivefuture.md]] | Tokenized trajectory (8 pose-difference tokens) fed to a **world model**, not to the planner | Drawn from expert / kinematic rollout / null token at 0.4/0.4/0.2 | Two surrogates on a phase schedule: a constant-acceleration rollout, then a Tweedie estimate of the proposal being denoised |
@@ -42,6 +43,15 @@ Three consequences follow from continuity:
 - **The measured effect is efficiency, not safety.** In SGDrive's Table 4 the goal subquery moves PDMS 86.3 → 87.0, and the gain is concentrated in Ego Progress (80.4 → 81.2) — the largest single jump in that ablation. The paper's motivation matches: without goal prediction the ego "may exhibit incomplete or suboptimal maneuvers, such as covering only part of the planned path."
 
 This is a useful contrast for the ontology discussion below. A continuous goal buys progress and sidesteps every labeling difficulty, at the cost of the mode-spanning property that makes discrete intent valuable for preference optimization. The two uses are complementary rather than competing, and no ingested paper has combined them.
+
+## A Goal With a Width: WorldRFT {#worldrft}
+
+[[sources/worldrft.md]] predicts the endpoint as a **Laplace region** $(\mu, b)$ rather than a point, trained by its negative log-likelihood, and feeds the scale $b$ into each refinement step as a measure of how hard the scene is. Beside it, a path resampled every 2 m carries the geometry without timing.
+
+- **A point is worse than no goal; a region is better.** On nuScenes, a deterministic endpoint scores 0.53 m / 0.10% and the Laplace region 0.48 / 0.05; the same model without any target scores 0.51 / 0.08. On NAVSIM the target adds +0.6 PDMS given the other components, near SGDrive's +0.7 for its deterministic goal. The deterministic variant has no $b$ for the refiner, so the comparison changes the refiner's input as well, and every difference is a few samples.
+- **The width behaves sensibly in two figures**: a narrow ellipse along the lane when only speed is uncertain, a broad one when direction is too. No calibration of $b$ against endpoint error is reported.
+- **Still one mode.** A Laplace is unimodal, so like SGDrive's goal it commits to one maneuver and cannot span alternatives; it adds a confidence, not multimodality.
+- **The path is the factorization [[sources/sparsedrivev2.md]] later builds its vocabulary from** (path and speed separately), here used as an auxiliary output worth +0.7 PDMS.
 
 ## Full-Trajectory Latent as Intent: Auto-JEPA
 

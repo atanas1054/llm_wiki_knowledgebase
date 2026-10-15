@@ -2,7 +2,7 @@
 title: "DiffusionDriveV2: Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md]
-related: [sources/diffusiondrive.md, sources/recogdrive.md, sources/drivefine.md, sources/flare.md, sources/dreameraD.md, sources/curious-vla.md, sources/nord.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/navsim-benchmark.md]
+related: [sources/sparsedrivev2.md, sources/diffusiondrive.md, sources/recogdrive.md, sources/drivefine.md, sources/flare.md, sources/dreameraD.md, sources/curious-vla.md, sources/nord.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/navsim-benchmark.md]
 created: 2026-04-16
 updated: 2026-10-14
 confidence: high
@@ -168,7 +168,7 @@ Key: +3.1 PDMS over DiffusionDrive; +5.3 EP gain; +2.9 over DIVER (also RL-based
 | ARTEMIS | 98.3 | 95.1 | 98.6 | 99.8 | 81.5 | 97.4 | 96.5 | 98.3 | — | 83.1 |
 | **DiffusionDriveV2 (Ours)** | **97.7** | **96.6** | **99.2** | **99.8** | **88.9** | **97.2** | **96.0** | **97.8** | **91.0** | **85.5** |
 
-EC = 91.0 — very strong extended comfort. EP = 88.9 — best in the table. EPDMS = 85.5.
+EC = 91.0 — very strong extended comfort. EP = 88.9 — best in the table. EPDMS = 85.5. *(2026-10-14: the earliest corrected value for this row in the wiki is 87.5, from [[sources/sparsedrivev2.md]]'s Table 3 (March 2026), on these same sub-scores (residual +0.10, so the sub-scores are this paper's original-evaluator run). Later tables copy the pair. SparseDriveV2 also scores above this paper on both ladders with a fixed-grid scorer on the same ResNet-34: 92.0 / 90.1 against 91.2 / 87.5.)*
 
 **Caveat**: the v2 table excludes DriveDreamer-Policy (88.7 EPDMS), DreamerAD (87.7), and Senna-2 (86.6). DiffusionDriveV2 (85.5) is below these in the wiki ranking.
 

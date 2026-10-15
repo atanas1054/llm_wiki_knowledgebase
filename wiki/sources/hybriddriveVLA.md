@@ -2,9 +2,9 @@
 title: "HybridDriveVLA / DualDriveVLA: From Representational Complementarity to Dual Systems"
 type: source-summary
 sources: [raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md]
-related: [sources/brainwam.md, sources/recogdrive.md, concepts/dual-system-vla.md, concepts/best-of-n.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md]
+related: [sources/drivor.md, sources/brainwam.md, sources/recogdrive.md, concepts/dual-system-vla.md, concepts/best-of-n.md, concepts/navsim-benchmark.md, concepts/rl-for-ad.md]
 created: 2026-04-19
-updated: 2026-09-04
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -128,7 +128,7 @@ $$\tau_\alpha = \alpha \cdot \tau_\text{ViT} + (1-\alpha) \cdot \tau_\text{VLM},
 
 11-candidate set: {τ_ViT, τ_VLM, τ_0.1, …, τ_0.9}. Expert behavior often lies between the two endpoints — these interpolations target the most likely region.
 
-**Trajectory scorer**: DrivoR-style; predicts PDMS sub-score components from decoded waypoints + perceptual scene tokens. Score queries are explicitly re-embedded (MLP) from finalized trajectories, not from generator latents — separating generation from scoring. Trained with component-wise BCE/regression supervision:
+**Trajectory scorer**: DrivoR-style ([[sources/drivor.md]]); predicts PDMS sub-score components from decoded waypoints + perceptual scene tokens. Score queries are explicitly re-embedded (MLP) from finalized trajectories, not from generator latents — separating generation from scoring. Trained with component-wise BCE/regression supervision:
 $$\mathcal{L}_\text{score} = \sum_c \lambda_c \cdot \mathbb{E}[\ell_c(\hat{\mathcal{G}}_c(\tau, i), \mathcal{G}_c(\tau, i))]$$
 
 Final selection:

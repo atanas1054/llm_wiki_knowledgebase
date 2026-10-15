@@ -2,9 +2,9 @@
 title: "MomWorld: Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving"
 type: source-summary
 sources: ["raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md"]
-related: [concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/nuscenes-waymo-evals.md, concepts/bench2drive.md, concepts/diffusion-planner.md, concepts/evaluation-variance.md, concepts/inference-latency.md, sources/drivefuture.md, sources/had.md, sources/da-wam.md, sources/latent-wam.md, sources/drive-jepa.md, sources/drivesuprim.md, sources/hydra-mdp-pp.md, sources/spanvla.md, sources/drivelaw.md, sources/epona.md, sources/policy-world-model.md, sources/geoworldad.md, sources/redrive.md, sources/foresight.md]
+related: [sources/sparsedrivev2.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/nuscenes-waymo-evals.md, concepts/bench2drive.md, concepts/diffusion-planner.md, concepts/evaluation-variance.md, concepts/inference-latency.md, sources/drivefuture.md, sources/had.md, sources/da-wam.md, sources/latent-wam.md, sources/drive-jepa.md, sources/drivesuprim.md, sources/hydra-mdp-pp.md, sources/spanvla.md, sources/drivelaw.md, sources/epona.md, sources/policy-world-model.md, sources/geoworldad.md, sources/redrive.md, sources/foresight.md]
 created: 2026-09-30
-updated: 2026-09-30
+updated: 2026-10-14
 confidence: low
 ---
 
@@ -532,7 +532,7 @@ Tables 11 and 12 have 22 MomWorld cells. MomWorld is best or tied in all of them
 - **[[sources/drive-jepa.md]]**: a different "momentum". Drive-JEPA's momentum-aware selection compares each proposal with the previously selected trajectory to repair extended comfort. MomWorld's momentum is a latent rate of change.
 - **[[sources/redrive.md]]** and other training-time-only models: MomWorld's rollout runs at inference (40 steps) and its future image targets are training-only.
 - **Same-group baselines, none ingested**: MomAD, DIVER, GraphWorld, GuideFlow, FUMP, DriveWorld-VLA. These six comparison methods share authors with this paper.
-- **New to the wiki**: RAP-DINO (36.9 navhard), Hydra-NeXt (73.86 DS Bench2Drive), HiP-AD (86.77 DS), SparseDriveV2's Bench2Drive result (89.15 DS).
+- **New to the wiki**: RAP-DINO (36.9 navhard), Hydra-NeXt (73.86 DS Bench2Drive), HiP-AD (86.77 DS), SparseDriveV2's Bench2Drive result (89.15 DS). *(2026-10-14: SparseDriveV2 is now ingested ([[sources/sparsedrivev2.md]]). Its own Tables 4–5 (March 2026) contain the SparseDriveV2, HiP-AD, Hydra-NeXt, SimLingo and SparseDrive rows of this paper's Bench2Drive table digit for digit, abilities included, and its first author is SparseDrive's, so the SparseDrive attribution of 44.54 / 16.71 now has two first authors behind it.)*
 
 ---
 

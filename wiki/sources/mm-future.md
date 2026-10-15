@@ -2,7 +2,7 @@
 title: "MM-Future: Multi-Mode Joint World–Action Modeling for Autonomous Driving"
 type: source-summary
 sources: ["raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md"]
-related: [sources/maneuverflow.md, sources/world4scorer.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, concepts/diffusion-planner.md, concepts/foundation-backbones-for-ad.md, concepts/counterfactual-prediction.md, concepts/evaluation-variance.md, sources/da-wam.md, sources/drivefuture.md, sources/latent-wam.md, sources/wa-jepa.md, sources/physwam.md, sources/drivesuprim.md, sources/metis.md, sources/suv.md, sources/simwam.md, sources/ad-e2e-jepa.md, sources/redrive.md, sources/momworld.md, sources/lwdrive.md, sources/hydra-mdp-pp.md, sources/drivereferee.md]
+related: [sources/drivor.md, sources/maneuverflow.md, sources/world4scorer.md, concepts/world-model-for-ad.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, concepts/diffusion-planner.md, concepts/foundation-backbones-for-ad.md, concepts/counterfactual-prediction.md, concepts/evaluation-variance.md, sources/da-wam.md, sources/drivefuture.md, sources/latent-wam.md, sources/wa-jepa.md, sources/physwam.md, sources/drivesuprim.md, sources/metis.md, sources/suv.md, sources/simwam.md, sources/ad-e2e-jepa.md, sources/redrive.md, sources/momworld.md, sources/lwdrive.md, sources/hydra-mdp-pp.md, sources/drivereferee.md]
 created: 2026-09-30
 updated: 2026-10-14
 confidence: medium
@@ -349,7 +349,7 @@ Chained from Table 3 and Table 2 (navtrain, v1 PDMS):
 ## Relationships
 
 - **[[sources/da-wam.md]]**: the other scorer that reads one future per candidate. See [the comparison](#per-candidate). DA-WAM's taxonomy has a cell "(d) one latent per candidate" that it occupied alone; MM-Future is a second occupant that generates trajectory and future jointly. DA-WAM is not cited.
-- **DrivoR** (not ingested): the source of the register-token encoder and the closest baseline, +0.3 PDMS behind on both training sets. It is a scorer-based planner and the second-highest navhard entry in the wiki (54.6).
+- **[[sources/drivor.md]]**: the source of the register-token encoder and the closest baseline, +0.3 PDMS behind on both training sets. It is a scorer-based planner and the second-highest navhard entry in the wiki (54.6). *(2026-10-14: 54.6 uses 134k SimScale scenes; 48.3 without.)*
 - **[[sources/wa-jepa.md]]**: the nearest generative recipe. Both flow-match future latents whose targets come from an EMA encoder, jointly with actions. WA-JEPA generates one pair from a V-JEPA 2 encoder with no scorer; MM-Future generates 64 from 64-token chunks and scores them. WA-JEPA is ahead on v2 (91.7) and on HUGSIM (44.6) and is not cited.
 - **[[sources/drivefuture.md]]**: named the strongest WAM baseline (90.7 / 89.9). It also gives each candidate its own future, inside a diffusion planner, and submits through a GTRS-Dense scorer.
 - **[[sources/latent-wam.md]]**: the compact-token predecessor (16 scene queries per view) and the HUGSIM comparison row.

@@ -1,10 +1,10 @@
 ---
 title: Evaluation Variance and Single-Run Reporting
 type: concept
-sources: ["raw/papers/ManeuverFlow_ Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving.md", "raw/papers/SimVTA_ Simulation-Grounded Video-Trajectory Alignment for Driving World Action Models.md", "raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md", "raw/papers/HyWorldVLA_ A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/RAD_ Training an End-to-End Driving Policy via Large-Scale 3DGS-based Reinforcement Learning.md", "raw/papers/ForeDrive_ Foresight-Guided End-to-End Autonomous Driving with a Planning-Relevant Latent World Model.md", "raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/Think2Drive_ Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2).md", "raw/papers/SimScale_ Learning to Drive via Real-World Simulation at Scale.md", "raw/papers/ResWorld_ Temporal Residual World Model for End-to-End Autonomous Driving.md", "raw/papers/Learning to Drive from a World Model.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/WALT_ Learning World-Model-Aligned Latent Trajectories for Autonomous Driving.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, "raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
-related: [sources/maneuverflow.md, sources/simvta.md, sources/idol.md, sources/hyworldvla.md, sources/world4scorer.md, sources/rad.md, sources/foredrive.md, sources/raw2drive.md, sources/think2drive.md, sources/simscale.md, sources/resworld.md, sources/learning-to-drive-from-a-world-model.md, sources/drivereferee.md, sources/walt.md, sources/momworld.md, sources/physwam.md, sources/ad-e2e-jepa.md, sources/wa-jepa.md, sources/coworld-vla.md, sources/suv.md, sources/adaptive-wam.md, sources/driving-wm-counterfactuals.md, sources/grava.md, sources/metis.md, sources/simwam.md, sources/drive-hwm.md, sources/da-wam.md, sources/brainwam.md, sources/auto-jepa.md, sources/foresight.md, sources/drivefuture.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, research-directions.md]
+sources: ["raw/papers/Enhancing End-to-End Autonomous Driving with Latent World Model.md", "raw/papers/WorldRFT_ Latent World Model Planning with Reinforcement Fine-Tuning for Autonomous Driving.md", "raw/papers/CLOVER_ Closed-Loop Value Estimation & Ranking for End-to-End Autonomous Driving Planning.md", "raw/papers/Driving on Registers.md", "raw/papers/ManeuverFlow_ Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving.md", "raw/papers/SimVTA_ Simulation-Grounded Video-Trajectory Alignment for Driving World Action Models.md", "raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md", "raw/papers/HyWorldVLA_ A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/RAD_ Training an End-to-End Driving Policy via Large-Scale 3DGS-based Reinforcement Learning.md", "raw/papers/ForeDrive_ Foresight-Guided End-to-End Autonomous Driving with a Planning-Relevant Latent World Model.md", "raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/Think2Drive_ Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2).md", "raw/papers/SimScale_ Learning to Drive via Real-World Simulation at Scale.md", "raw/papers/ResWorld_ Temporal Residual World Model for End-to-End Autonomous Driving.md", "raw/papers/Learning to Drive from a World Model.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/WALT_ Learning World-Model-Aligned Latent Trajectories for Autonomous Driving.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md, "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/How Can Driving World Models Do Counterfactual Prediction_.md, "raw/papers/[-0.5mm] GRAVA GRAVA_ Grounded Reasoning-to-Action Representation and Learning for Autonomous Driving.md", "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, "raw/papers/See Tomorrow, Act Today_ Foresight-Driven Autonomous Driving.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Driving Intents Amplify Planning-Oriented Reinforcement Learning.md]
+related: [sources/law.md, sources/worldrft.md, sources/clover.md, sources/drivor.md, sources/maneuverflow.md, sources/simvta.md, sources/idol.md, sources/hyworldvla.md, sources/world4scorer.md, sources/rad.md, sources/foredrive.md, sources/raw2drive.md, sources/think2drive.md, sources/simscale.md, sources/resworld.md, sources/learning-to-drive-from-a-world-model.md, sources/drivereferee.md, sources/walt.md, sources/momworld.md, sources/physwam.md, sources/ad-e2e-jepa.md, sources/wa-jepa.md, sources/coworld-vla.md, sources/suv.md, sources/adaptive-wam.md, sources/driving-wm-counterfactuals.md, sources/grava.md, sources/metis.md, sources/simwam.md, sources/drive-hwm.md, sources/da-wam.md, sources/brainwam.md, sources/auto-jepa.md, sources/foresight.md, sources/drivefuture.md, sources/dial.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, research-directions.md]
 created: 2026-09-27
-updated: 2026-10-14
+updated: 2026-10-15
 confidence: medium
 ---
 
@@ -43,7 +43,7 @@ How much of a reported difference could be noise, and which kind of noise. Twent
 
 Its step sweep shows what this does to a single-sample table: 4 steps −0.6 (one sample), 8 steps +0.7 (three samples), 15 steps −0.4 (one sample), all against the 30-step mean. The sweep is not monotone, and two of its three points are single draws within about two standard deviations of zero.
 
-### Training seed, measured three times {#training-seed}
+### Training seed, measured four times {#training-seed}
 
 *(2026-10-06)* [[sources/foredrive.md]] retrains its default recipe (DINOv3 ViT-B/16 front camera, JEPA-style latent predictor, DiffusionDrive-style planner, 118.4M parameters, 100 epochs) from three seeds: **89.7–89.9 PDMS on navtest, sd 0.1**. Its tables report the primary run (89.9), the top of that range.
 
@@ -77,6 +77,17 @@ Its step sweep shows what this does to a single-sample table: 4 steps −0.6 (on
 - **Open-loop training-seed sd is now 0.04–0.1 in three different recipes** (a DiffusionDrive-class planner, RL post-training of a 2.5B WAM, and this scorer pipeline). Rule 2's "under 0.5 is no detectable effect" is conservative for separately trained runs of one recipe on navtest.
 - **Closed loop is an order of magnitude noisier.** The same three checkpoints spread by 0.64–0.92 PDMS\* on 288 rendered closed-loop scenarios. Part of that is fewer scenarios and part is compounding in closed loop; the paper does not separate them. ManeuverFlow's margin over its strongest closed-loop baseline (+1.3 to +1.4) is under two of its own sds, and the baseline's spread is unknown. See [[concepts/worldengine-benchmark.md]].
 - **The ablations are not covered.** The paper says so; its component effects of 0.44–0.65 are single comparisons.
+
+**A fourth measurement, the tightest yet** *(2026-10-14)*. [[sources/clover.md]] repeats its full training three times (DrivoR's ViT-S stack, Stage-1 coverage training, 30 cycles of Stage-2 self-distillation with the backbone frozen):
+
+| Metric | Seed 1 | Seed 2 | Seed 3 | Range |
+|---|---:|---:|---:|---:|
+| NAVSIM v1 PDMS | 94.488 | 94.502 | 94.492 | 0.014 |
+| NAVSIM v2 EPDMS | 90.354 | 90.358 | 90.368 | 0.014 (printed "< 0.01") |
+| NAVSIM v2 EPDMS* (pre-fix) | 87.201 | 87.207 | 87.210 | 0.009 |
+
+- **A range of 0.014 is an order of magnitude below the other three recipes** (sd 0.04–0.1) and as small as the sampler-seed figures. Which stages each seed re-runs is not stated; if the Stage-1 checkpoint is shared, this is mostly Stage-2 variance.
+- **Its ablations are single runs on navtest** (component differences of 0.1–0.4) and are not covered.
 
 ### Scene-level dispersion
 
@@ -174,11 +185,14 @@ Together with PhysWAM's 0.29° yaw floor, these are the wiki's three measured fl
 
 ### Selection effects that inflate single numbers
 
+*(2026-10-14)* **Model selection on 7 scenes.** [[sources/drivor.md]] chose its NAVSIM-v2 inference weights, training length (10 against 25 epochs), training split and trajectory targets on warmup-two-stage, which it describes as 7 scenes. Its Figure 7 sub-scores move in steps of about 1/8. Such choices are then scored on the navhard test (244 or 450 Stage-1 scenes, depending on the paper), so this is validation noise, not leakage, but every decision in that list rests on a few scenes.
+
 - [[sources/adaptive-wam.md]] reports the **validation-best checkpoint per seed, aggregated over ten seeds**. That is a selection procedure, not a variance estimate, and it is optimistic relative to a single run.
 - [[sources/suv.md]] selects checkpoints on the NAVSIM validation PDM score.
 - [[sources/dial.md]] compares methods at their best held-out checkpoint, even though several later collapse.
 - Best-of-N oracle rows ([[concepts/best-of-n.md]]) are the extreme case.
 - [[sources/simscale.md]] reports the best of two or three training-label variants per planner on the test split, and its tables are 0.5–1.9 EPDMS above every point its own scaling figure plots for the same GTRS-Dense configurations ([[sources/simscale.md#figure-table]]).
+- [[sources/clover.md]] sweeps its three NAVSIM-v2 anchor-reranking weights on the split it reports (the best of fourteen anchored settings is the headline 90.4; they span 0.34), and runs its ablations and its choice of $K$ on navtest.
 
 ### Too little variance: ablation columns that are functions of each other {#column-regularity}
 
@@ -212,6 +226,8 @@ A single instance of the same kind *(2026-10-12)*: in [[sources/idol.md]], two d
 - **Closed-loop driving scores can move by ten points between runs** for weaker policies, against 1 point for the strong one. One run of a weak CARLA policy says little.
 - **Two metrics computed from the same runs disagree about the spread by a factor of 18–60.** The paper's Weighted DS has sds of 0.2–0.5 beside DS sds of 9–12. Its definition (route completion times penalties raised to infraction counts over scenario density) does not obviously damp variance that much, and the paper does not explain it. Treat its spread as unverified.
 
+**A world-model effect inside the CARLA spread** *(2026-10-15)*. [[sources/law.md]] reports Town05 Long (CARLA 0.9.10) as mean ± sd over an unstated number of runs: 67.9 ± 2.1 DS without its latent world-model loss, 70.1 ± 2.6 with it. The +2.2 is smaller than either sd, while the same loss is worth +7.1 PDMS on NAVSIM in the same paper. Its comparison against Interfuser (68.3 ± 1.9) is inside the spread too.
+
 **Private 3DGS benchmarks: clip counts, and two that disagree** *(2026-10-06)*. [[sources/rad.md]] reports collision and deviation as fractions of 337 reconstructed clips. Near a collision ratio of 0.15 the binomial SE is about 0.019 (six clips), so its headline (77 → 30 clips) is robust and several of its ablation differences (49–56 clips) are not. The same methods on [[sources/senna2.md]]'s 256-clip 3DGS benchmark, built by the same institutions:
 
 | Method | CR, RAD's benchmark | CR, Senna-2's benchmark |
@@ -236,6 +252,21 @@ A single instance of the same kind *(2026-10-12)*: in [[sources/idol.md]], two d
 - **Rule**: a real-world usage metric without a matched design supports "deployable", not "better".
 
 **nuScenes ablations below sample granularity** *(2026-10-02)*. [[sources/resworld.md]]'s ablation tables separate variants by 0.02–0.11 percentage points of average collision rate. On a validation split of roughly 6,000 samples, 0.04 points is two or three samples; the paper's headline ablation conclusion (future supervision hurts: 0.17% → 0.21%) rests on a difference of that size, from single runs. The same arithmetic applies to MomWorld's Turning-nuScenes margins ([[concepts/nuscenes-waymo-evals.md#the-robustness-subsets]]).
+
+#### Sweeps Won Only by the Chosen Value {#sweep-minimum}
+
+*(2026-10-15)* [[sources/worldrft.md]] tunes three hyperparameters on nuScenes validation, the split it reports, and in each sweep the chosen value is the only one at its headline 0.05% collision:
+
+| Sweep | Chosen | Others | Component removed |
+|---|---:|---|---:|
+| Spatial path (points × spacing) | 50 × 2 m: 0.05 | 0.09–0.12 | 0.09 |
+| Refinement iterations K | 3: 0.05 | K = 1: 0.08; K = 6: 0.07 | 0.06 |
+| GRPO group size G | 10: 0.05 | G = 5: 0.08; G = 15: 0.07 | 0.15 (no RL) |
+
+- One sample is about 0.017 points on a split of about 6,000, so each neighbour is one to four samples away.
+- In two sweeps the non-chosen settings are no better than removing the component.
+- The paper's explanations ("potential overfitting" at K = 6, "less stable advantage estimation" at G = 5) read structure into differences of that size.
+- **Rule**: when a sweep's optimum is selected on the reported split and its neighbours are within a few samples, the optimum's value is the sweep's minimum, not an estimate of the method.
 
 ---
 

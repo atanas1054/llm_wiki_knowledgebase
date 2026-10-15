@@ -2,9 +2,9 @@
 title: "DriveReferee: Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models"
 type: source-summary
 sources: ["raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md"]
-related: [concepts/inference-time-safety.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, concepts/discriminative-policy-optimization.md, concepts/evaluation-variance.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/perception-for-planning.md, concepts/inference-latency.md, concepts/foundation-backbones-for-ad.md, sources/physwam.md, sources/drivefuture.md, sources/feaxdrive.md, sources/reflectdrive.md, sources/hydra-mdp-pp.md, sources/plan-r1.md, sources/adaptive-wam.md, sources/reworld.md, sources/metis.md, sources/suv.md, sources/wa-jepa.md, sources/da-wam.md]
+related: [sources/sparsedrivev2.md, concepts/inference-time-safety.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/rl-for-ad.md, concepts/discriminative-policy-optimization.md, concepts/evaluation-variance.md, concepts/navsim-benchmark.md, concepts/world-model-for-ad.md, concepts/perception-for-planning.md, concepts/inference-latency.md, concepts/foundation-backbones-for-ad.md, sources/physwam.md, sources/drivefuture.md, sources/feaxdrive.md, sources/reflectdrive.md, sources/hydra-mdp-pp.md, sources/plan-r1.md, sources/adaptive-wam.md, sources/reworld.md, sources/metis.md, sources/suv.md, sources/wa-jepa.md, sources/da-wam.md]
 created: 2026-09-30
-updated: 2026-10-06
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -125,7 +125,7 @@ Values printed in Figure 3:
 | Smoother | Map-blind control | −0.01 | No | 1,966 |
 | Conservative | Map-blind control | −0.02 | No | 1,514 |
 | Score gating (Hydra-MDP) | Learned verifier | +0.23 | Yes | 1,246 |
-| Argmax selection (SparseDriveV2) | Learned verifier | −0.04 | No | 2,161 |
+| Argmax selection ([[sources/sparsedrivev2.md]]) | Learned verifier | −0.04 | No | 2,161 |
 | Confidence gating (DriveVer) | Learned verifier | +0.26 | Yes | 1,540 |
 | Per-metric distillation (Hydra-MDP) | Learned verifier | +0.06 | No | 2,174 |
 | Pairwise ranking (Bradley–Terry) | Learned verifier | 0.00 | No | 2,017 |

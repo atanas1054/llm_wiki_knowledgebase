@@ -2,9 +2,9 @@
 title: "ReDrive: Shaping Representations with World Modeling for End-to-End Driving"
 type: source-summary
 sources: ["raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md"]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/foundation-backbones-for-ad.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, concepts/evaluation-variance.md, concepts/physicalai-av-benchmark.md, concepts/counterfactual-prediction.md, concepts/diffusion-planner.md, sources/wa-jepa.md, sources/drive-jepa.md, sources/da-wam.md, sources/auto-jepa.md, sources/ad-e2e-jepa.md, sources/metis.md, sources/simwam.md, sources/suv.md, sources/reworld.md, sources/drivelaw.md, sources/drivefuture.md, sources/latent-wam.md, sources/drivesuprim.md, sources/physwam.md, sources/diffusiondrive.md]
+related: [sources/law.md, sources/sparsedrivev2.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/foundation-backbones-for-ad.md, concepts/wam-attention-masks.md, concepts/inference-latency.md, concepts/evaluation-variance.md, concepts/physicalai-av-benchmark.md, concepts/counterfactual-prediction.md, concepts/diffusion-planner.md, sources/wa-jepa.md, sources/drive-jepa.md, sources/da-wam.md, sources/auto-jepa.md, sources/ad-e2e-jepa.md, sources/metis.md, sources/simwam.md, sources/suv.md, sources/reworld.md, sources/drivelaw.md, sources/drivefuture.md, sources/latent-wam.md, sources/drivesuprim.md, sources/physwam.md, sources/diffusiondrive.md]
 created: 2026-09-30
-updated: 2026-10-06
+updated: 2026-10-15
 confidence: medium
 ---
 
@@ -156,6 +156,8 @@ Columns as printed (NC, DAC, EP, C, TTC). ⚠ marks rows discussed under [Table 
 | | ReWorld | Camera | 99.1 | 98.2 | 82.0 | 99.8 | 97.7 | 90.4 |
 | | DAWN | Camera | 98.7 | 95.9 | 84.3 | 100 | 96.0 | 89.1 |
 | | **ReDrive** | Camera | **99.1** | 97.9 | 84.3 | 100 | 97.2 | **91.0** |
+
+*(2026-10-15)* The LAW row (83.8, "C + L") is [[sources/drive-jepa.md]]'s, not LAW's published 84.6 camera-only result ([[sources/law.md]]); see [[concepts/navsim-benchmark.md#law]].
 
 ### Table 2: NAVSIM v2 (all rows stated to be corrected-evaluator)
 
@@ -402,7 +404,7 @@ This establishes that the predictor's output depends on the action. It does not 
 - **[[sources/ad-e2e-jepa.md]]**: two uses of one signal (see [point 4](#4-stage-3-is-a-differentiable-goal-matching-loss)). Its transfer experiment is also the sequential version of ReDrive's Stage 2: pretrain with action-conditioned prediction, then fine-tune for imitation.
 - **[[sources/reworld.md]] / [[sources/drivelaw.md]]**: the previous "best perception-free" entries in ReDrive's v1 table, from a group sharing two senior authors. ReWorld improved a video generator's latents for a planner that reads them; ReDrive drops the generator.
 - **[[sources/suv.md]]**: ties ReDrive on navhard Stage 1 (82.3) and leads overall (36.9) with inference-time access to a generated future. ReDrive sits between SUV's access and no-access variants.
-- **Un-ingested**: DAWN (89.1 PDMS, "world-action interactive models"), GoalFlow (90.3), DriveDPO (90.0), GuideFlow, GTRS-DP, SparseDriveV2.
+- **Un-ingested**: DAWN (89.1 PDMS, "world-action interactive models"), GoalFlow (90.3), DriveDPO (90.0), GuideFlow, GTRS-DP, SparseDriveV2. *(2026-10-14: SparseDriveV2 ingested as [[sources/sparsedrivev2.md]]; its corrected 90.1 checks out.)*
 
 ---
 

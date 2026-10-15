@@ -2,9 +2,9 @@
 title: "PhysWAM: Physically Consistent World Action Model for Autonomous Driving"
 type: source-summary
 sources: ["raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md"]
-related: [sources/drivereferee.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/best-of-n.md, concepts/selection-based-planning.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/teacher-pseudo-labels.md, concepts/foundation-backbones-for-ad.md, concepts/wam-attention-masks.md, sources/geowam.md, sources/geoworldad.md, sources/drivedreamer-policy.md, sources/suv.md, sources/wa-jepa.md, sources/simwam.md, sources/metis.md, sources/drivefuture.md, sources/coworld-vla.md, sources/reworld.md, sources/ad-e2e-jepa.md, sources/adaptive-wam.md, sources/spanvla.md, sources/latent-wam.md, sources/hydra-mdp-pp.md]
+related: [sources/dvgt-2.md, sources/drivereferee.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/best-of-n.md, concepts/selection-based-planning.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/teacher-pseudo-labels.md, concepts/foundation-backbones-for-ad.md, concepts/wam-attention-masks.md, sources/geowam.md, sources/geoworldad.md, sources/drivedreamer-policy.md, sources/suv.md, sources/wa-jepa.md, sources/simwam.md, sources/metis.md, sources/drivefuture.md, sources/coworld-vla.md, sources/reworld.md, sources/ad-e2e-jepa.md, sources/adaptive-wam.md, sources/spanvla.md, sources/latent-wam.md, sources/hydra-mdp-pp.md]
 created: 2026-09-30
-updated: 2026-10-06
+updated: 2026-10-14
 confidence: medium
 ---
 
@@ -569,7 +569,7 @@ The two evaluators define time-to-collision and ego progress differently, which 
 - **LTF at 83.6 against TransFuser at 76.7** is the visible symptom: the camera-only variant scores 6.9 above the camera+LiDAR model it is derived from. About 4.5 of that is sub-scores; the rest is the evaluator.
 - It is the **eighth user of the shared baseline block** (TransFuser 76.7, Hydra-MDP++ 81.4, DriveSuprim 83.1, ARTEMIS 83.1, DiffusionDrive 84.5, DriveVLA-W0 86.1), and it labels the two ResNet-34 rows as such.
 - It prints **ARTEMIS with HC blank and EC 98.3**, a new variant of that row's known duplication.
-- It separates **DVGT-2 (88.9)** from **DVGT-2-NAVSIM (89.6)**. The row the wiki has carried as "DVGT-2 89.6" is the second.
+- It separates **DVGT-2 (88.9)** from **DVGT-2-NAVSIM (89.6)**. The row the wiki has carried as "DVGT-2 89.6" is the second. *(2026-10-14: confirmed by [[sources/dvgt-2.md]]'s own Tables 5 and 6, digit for digit.)*
 
 **What the comparison omits.** Among methods with no scorer and no RL: [[sources/wa-jepa.md]] 91.7, [[sources/suv.md]] 91.0, CoWorld-VLA 90.0 (cited, for its FVD only). With a scorer: [[sources/geoworldad.md]] 90.4 (cited, not tabled), SparseDriveV2 90.1 (cited, not tabled), DriveFuture 89.9 (cited for navhard only). The paper's claim is hedged ("among the highest reported values for methods trained without a learned trajectory scorer or reinforcement-learning post-training") and survives as worded. "The best … world-action models … lie below" does not.
 
@@ -653,7 +653,7 @@ Rank-128 LoRA (122.7M parameters, 16,000 updates, no EMA) reaches 88.2 PDMS; the
 - **[[sources/reworld.md]]**: both papers improve planning through action-side objectives while generation quality is flat or moves separately.
 - **[[sources/ad-e2e-jepa.md]]**: the other no-scorer selector ingested the same day. AD-E2E-JEPA selects by distance to an oracle future frame; PhysWAM selects by agreement among its own samples. Neither comes close to a learned scorer.
 - **[[sources/adaptive-wam.md]]**: measured a full video rollout at 13.22 s and planned from an intermediate feature at 170 ms. PhysWAM pays the full-rollout price by design.
-- **Un-ingested and load-bearing**: **BeyondDrive** (89.7 / 90.1 navtest, 34.8 HUGSIM; "learning from hard negatives"), **4D-WAM** (35.9 navhard; geometry recovered from generated video as supervision, the nearest competing idea), **Cosmos 3** (the backbone), **MapAnything** (the depth teacher and the consistency probe), **DVGT-2**, **EponaV2**.
+- **Un-ingested and load-bearing**: **BeyondDrive** (89.7 / 90.1 navtest, 34.8 HUGSIM; "learning from hard negatives"), **4D-WAM** (35.9 navhard; geometry recovered from generated video as supervision, the nearest competing idea), **Cosmos 3** (the backbone), **MapAnything** (the depth teacher and the consistency probe), **DVGT-2** (*ingested 2026-10-14 as [[sources/dvgt-2.md]]*), **EponaV2**.
 
 ---
 

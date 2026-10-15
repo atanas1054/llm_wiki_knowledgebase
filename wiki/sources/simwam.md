@@ -2,9 +2,9 @@
 title: "SimWAM: A Simple World Action Model for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md]
-related: [sources/simvta.md, sources/metis.md, sources/suv.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/rl-for-ad.md, concepts/nuscenes-waymo-evals.md, concepts/diffusion-planner.md, sources/drivewam.md, sources/driveva.md, sources/epona.md, sources/policy-world-model.md, sources/drivevla-w0.md, sources/flare.md, sources/explorevla.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/dreameraD.md, sources/recogdrive.md, sources/driving-wm-counterfactuals.md, concepts/counterfactual-prediction.md]
+related: [sources/worldrft.md, sources/simvta.md, sources/metis.md, sources/suv.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/rl-for-ad.md, concepts/nuscenes-waymo-evals.md, concepts/diffusion-planner.md, sources/drivewam.md, sources/driveva.md, sources/epona.md, sources/policy-world-model.md, sources/drivevla-w0.md, sources/flare.md, sources/explorevla.md, sources/futuresightdrive.md, sources/drivedreamer-policy.md, sources/dreameraD.md, sources/recogdrive.md, sources/driving-wm-counterfactuals.md, concepts/counterfactual-prediction.md]
 created: 2026-08-17
-updated: 2026-10-14
+updated: 2026-10-15
 confidence: high
 ---
 
@@ -262,7 +262,7 @@ The latency scaling (≈45 ms per step plus ≈70 ms fixed) implies the action e
 6. **RL depends on early stopping and a hand-set difficulty threshold.** Both curves in Figure 3 decline after 15k steps, and the hard subset is defined by a fixed PDMS < 90 cut. No sensitivity analysis for the threshold, and the peak is selected on the evaluation benchmark.
 7. **No comfort reported in the ablations.** Tables 2–5 and 7–10 omit the C column even though it enters PDMS; only Table 1 reports it (100.0). Sub-metric trade-offs involving comfort cannot be checked.
 8. **The video expert's inference cost is unquantified.** The paper says the future-frame decoder "could be discarded after training," but never reports the parameter count or FLOPs actually executed at inference, and latency scales with sampling steps in a way that suggests the shared stack is re-entered per step.
-9. **Several Table 1 baselines are absent from this wiki** (UniWorldVLA 89.4, SeerDrive 88.9, ImagiDrive 87.4, WorldRFT 87.8), so their numbers are transcribed but not independently corroborated here. Two have since been ingested and **both confirm SimWAM's transcription exactly**: [[sources/sgdrive.md]] reports 91.1, and [[sources/drivelaw.md]] reports 89.1 with matching sub-scores (NC 99.0 / DAC 97.1 / EP 81.3 / TTC 96.7). SimWAM's table is accurate where it can be checked.
+9. **Several Table 1 baselines are absent from this wiki** (UniWorldVLA 89.4, SeerDrive 88.9, ImagiDrive 87.4, WorldRFT 87.8), so their numbers are transcribed but not independently corroborated here. Two have since been ingested and **both confirm SimWAM's transcription exactly**: [[sources/sgdrive.md]] reports 91.1, and [[sources/drivelaw.md]] reports 89.1 with matching sub-scores (NC 99.0 / DAC 97.1 / EP 81.3 / TTC 96.7). SimWAM's table is accurate where it can be checked. *(lint 2026-10-15: a third, [[sources/worldrft.md]], also confirms its row: 97.8 / 96.8 / 94.0 / 100 / 81.7 / 87.8.)*
 
 ---
 

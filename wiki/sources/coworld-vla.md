@@ -2,9 +2,9 @@
 title: "CoWorld-VLA: Thinking in a Multi-Expert World Model for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/CoWorld-VLA_ Thinking in a Multi-Expert World Model for Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/chain-of-thought-for-ad.md, concepts/diffusion-planner.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/perception-for-planning.md, sources/wa-jepa.md, sources/drivefuture.md, sources/reworld.md, sources/drivelaw.md, sources/latent-wam.md, sources/onevl.md, sources/dynvla.md, sources/geoworldad.md, sources/geowam.md, sources/unified-driving-tokens.md, sources/drive-jepa.md, sources/auto-jepa.md, sources/da-wam.md, sources/simwam.md, sources/brainwam.md, sources/adaptive-wam.md, sources/drivewam.md, sources/driveva.md, sources/recogdrive.md, sources/sgdrive.md, sources/drivevla-w0.md, sources/dreameraD.md, sources/policy-world-model.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md, sources/wcog-vla.md, sources/epona.md, sources/wam-flow.md, sources/clear.md, sources/drivedreamer-policy.md, sources/physwam.md, sources/hyworldvla.md]
+related: [sources/sparsedrivev2.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/chain-of-thought-for-ad.md, concepts/diffusion-planner.md, concepts/selection-based-planning.md, concepts/adaptive-routing.md, concepts/perception-for-planning.md, sources/wa-jepa.md, sources/drivefuture.md, sources/reworld.md, sources/drivelaw.md, sources/latent-wam.md, sources/onevl.md, sources/dynvla.md, sources/geoworldad.md, sources/geowam.md, sources/unified-driving-tokens.md, sources/drive-jepa.md, sources/auto-jepa.md, sources/da-wam.md, sources/simwam.md, sources/brainwam.md, sources/adaptive-wam.md, sources/drivewam.md, sources/driveva.md, sources/recogdrive.md, sources/sgdrive.md, sources/drivevla-w0.md, sources/dreameraD.md, sources/policy-world-model.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md, sources/wcog-vla.md, sources/epona.md, sources/wam-flow.md, sources/clear.md, sources/drivedreamer-policy.md, sources/physwam.md, sources/hyworldvla.md]
 created: 2026-09-11
-updated: 2026-10-12
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -210,7 +210,7 @@ EPDMS* = before the benchmark bug fix; EPDMS = after.
 
 Three numbers appear for methods whose own papers never published them, with **no statement of where they came from.** Either CoWorld-VLA re-evaluated released checkpoints — which would be the good practice [[concepts/navsim-benchmark.md]] keeps asking for, and worth far more than the numbers themselves — or they were drawn from an unnamed source. The paper does not distinguish, and it matters which. The Drive-JEPA row is the counter-example that shows the authors *can* be careful: labelling it "(R34)" correctly marks it as the ResNet-34 configuration rather than passing it off as the headline.
 
-**And a third distinct DriveSuprim v2 value.** 86.0 pre-fix, with submetrics (EP 90.6, EC 77.9) matching neither WA-JEPA's 87.1 row nor the shared-block 83.1 row. That is now three values from three submetric sets for one method on one split.
+**And a third distinct DriveSuprim v2 value.** 86.0 pre-fix, with submetrics (EP 90.6, EC 77.9) matching neither WA-JEPA's 87.1 row nor the shared-block 83.1 row. That is now three values from three submetric sets for one method on one split. *(2026-10-14: this is DriveSuprim's V2-99 configuration. [[sources/sparsedrivev2.md]] (March 2026) prints the same row labelled V2-99, as [[sources/wa-jepa.md]]'s table on its page does; the "87.1 row" above is DriveSuprim's own ViT-L. [[sources/da-wam.md]] labels it ViT/L.)*
 
 ### Table 3 — Future video generation (FVD ↓)
 

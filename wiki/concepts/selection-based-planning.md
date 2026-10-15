@@ -1,8 +1,8 @@
 ---
 title: Selection-Based Trajectory Planning
 type: concept
-sources: ["raw/papers/ManeuverFlow_ Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving.md", "raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md", "raw/papers/HyWorldVLA_ A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/SimScale_ Learning to Drive via Real-World Simulation at Scale.md", "raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", "raw/papers/Hydra-MDP++_ Advancing End-to-End Driving via Expert-Guided Hydra-Distillation.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
-related: [sources/maneuverflow.md, sources/idol.md, sources/hyworldvla.md, sources/world4scorer.md, sources/simscale.md, sources/mm-future.md, sources/drivereferee.md, sources/momworld.md, sources/physwam.md, sources/ad-e2e-jepa.md, concepts/world-model-for-ad.md, concepts/inference-latency.md, sources/hydra-mdp-pp.md, sources/drivefuture.md, concepts/navhard-ood-evaluation.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/lwdrive.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/da-wam.md, sources/auto-jepa.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, sources/pair-drive.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md]
+sources: ["raw/papers/SparseDriveV2_ Scoring is All You Need for End-to-End Autonomous Driving.md", "raw/papers/CLOVER_ Closed-Loop Value Estimation & Ranking for End-to-End Autonomous Driving Planning.md", "raw/papers/Driving on Registers.md", "raw/papers/ManeuverFlow_ Maneuver Hypothesis Generation with Future Evidence for Trajectory Evaluation and Refinement in End-to-End Autonomous Driving.md", "raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md", "raw/papers/HyWorldVLA_ A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/SimScale_ Learning to Drive via Real-World Simulation at Scale.md", "raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", "raw/papers/AD-E2E-JEPA_ A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving.md", "raw/papers/Hydra-MDP++_ Advancing End-to-End Driving via Expert-Guided Hydra-Distillation.md", raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md, raw/papers/Unified Driving Tokens_ Representation- and Geometry-Guided Discrete Tokenizer for Driving World Models and Planning.md, raw/papers/ReWorld_ Representation Learning for World Action Models.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/GeoWorldAD_ Geometry World Action Model for Autonomous Driving.md, raw/papers/Adaptive-WAM_ Quality-Guided Early-Exit Planningfrom Intermediate Video-Diffusion Features.md, raw/papers/DA-WAM_ Decision-Aligned Future Latents for Driving World Models.md, raw/papers/Auto-JEPA_ A Latent World Model of Continuous Intent for End-to-End Autonomous Driving.md, raw/papers/DriveSuprim_ Towards Precise Trajectory Selection for End-to-End Planning.md, raw/papers/DiffusionDriveV2_ Reinforcement Learning-Constrained Truncated Diffusion Modeling in End-to-End Autonomous Driving.md, raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md, raw/papers/CLEAR_ Cognition and Latent Evaluation for Adaptive Routing in End-to-End Autonomous Driving.md, raw/papers/Fine-tuning is Not Enough_ A Parallel Framework for Collaborative Imitation and Reinforcement Learning in End-to-end Autonomous Driving.md]
+related: [sources/sparsedrivev2.md, sources/clover.md, sources/drivor.md, sources/maneuverflow.md, sources/idol.md, sources/hyworldvla.md, sources/world4scorer.md, sources/simscale.md, sources/mm-future.md, sources/drivereferee.md, sources/momworld.md, sources/physwam.md, sources/ad-e2e-jepa.md, concepts/world-model-for-ad.md, concepts/inference-latency.md, sources/hydra-mdp-pp.md, sources/drivefuture.md, concepts/navhard-ood-evaluation.md, sources/unified-driving-tokens.md, concepts/visual-tokenization.md, sources/reworld.md, sources/lwdrive.md, sources/geoworldad.md, sources/adaptive-wam.md, sources/da-wam.md, sources/auto-jepa.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/hybriddriveVLA.md, sources/dreameraD.md, sources/drive-jepa.md, sources/had.md, sources/clear.md, sources/pair-drive.md, concepts/navsim-benchmark.md, concepts/best-of-n.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/adaptive-routing.md, concepts/parallel-il-rl.md]
 created: 2026-04-23
 updated: 2026-10-14
 confidence: high
@@ -50,7 +50,7 @@ DriveSuprim's oracle study (Table 1) quantifies how much selection-based methods
 | Top-256 | 98.7 |
 | Human ground truth | 94.8 |
 
-**Key insight**: with oracle selection from just **4 candidates**, you nearly match human GT (94.5 vs. 94.8). With 256 candidates, you reach 98.7 PDMS — near-perfect on NAVSIM. The bottleneck is entirely in the **selector quality**, not candidate coverage.
+**Key insight**: with oracle selection from just **4 candidates**, you nearly match human GT (94.5 vs. 94.8). With 256 candidates, you reach 98.7 PDMS — near-perfect on NAVSIM. The bottleneck is entirely in the **selector quality**, not candidate coverage. *(2026-10-14: [[sources/sparsedrivev2.md]] argues the other way from deployed scores. EPDMS rises with every doubling of a retrained Hydra-MDP vocabulary from 1,024 to 16,384 anchors (+2.33), and again on a 262,144-combination factorized grid. It reports no oracle, so the two do not conflict directly: a finer grid can help the selector without raising the ceiling. See [SparseDriveV2](#sparsedrivev2).)*
 
 This ceiling is higher than stochastic BoN-N results (e.g., Curious-VLA BoN-6 = 94.8 PDMS at N=6) because the vocabulary is purpose-built for coverage, whereas stochastic sampling from a single model produces correlated outputs. See [[concepts/best-of-n.md]].
 
@@ -117,7 +117,10 @@ Safety scores are {0,1} per metric. BCE against binary labels creates sharp trai
 | **GTRS-Dense + SimScale data** ([[sources/simscale.md]]) | 16,384 at training; 8,192 (navhard) / 16,384 (navtest) at inference | GTRS-Dense heads, trained on real data plus sub-score labels for every vocabulary trajectory in 237K simulated off-log scenes | Data, not architecture: navhard 41.9 → 48.0 (V2-99), 38.3 → 46.9 (ResNet-34); a three-scorer ensemble 50.9; see [below](#simscale) |
 | **DriveVLA-W0 / HyWorldVLA** ([[sources/drivevla-w0.md]], [[sources/hyworldvla.md]]) | Hydra-MDP-style offline vocabulary (**size not stated** in either) | Joint-attention action expert on an Emu3-8B VLA; KL to target scores built from the expert trajectory and the evaluation metrics | Both world-model VLAs take their headline from this head (90.2★, 90.59). Against flow matching on the same backbone it is worth +3.0 (DriveVLA-W0) and +1.83 (HyWorldVLA), more than either paper's world-model effect |
 | **IDOL** ([[sources/idol.md]]) | 256 offline anchors (128 → 89.8, 512 → 89.6 PDMS) | WoTE's reward model: imitation heads plus BCE on five cached PDM metrics | Each anchor's query is refined from its own latent BEV rollout (twice) before an offset head and the scorer; the refinement is worth +2.7 PDMS on navtest over the same scorer without it. navhard 38.0 with a camera-only variant |
+| **DrivoR** ([[sources/drivor.md]]) | 64 learned queries, each decoded into one whole trajectory (no vocabulary) | Separate scoring decoder: each decoded trajectory is re-embedded with **stopped gradients** and six heads predict the PDMS sub-scores (BCE on the NAVSIM oracle); weights re-combinable at inference | 93.1 / 93.7 PDMS (navtrain / trainval), 48.3 navhard; the base of World4Scorer and the scorer design HybridDriveVLA copies; see [below](#drivor) |
 | **ManeuverFlow** ([[sources/maneuverflow.md]]) | 64 generated in one step (top-3 of eight maneuver families) | Set scorer with five PDM-factor heads (BCE on **NAVSIM v1 evaluator labels for the model's own 64 candidates at every training step**), reading each candidate's current and shared-future BEV evidence; log-PDM ranking | The best 16 are Frenet-refined toward the best same-family candidate and **re-scored with the other 48**. 90.58 PDMS / 90.14 EPDMS (ResNet-34, 3 runs); see [below](#maneuverflow) |
+| **CLOVER** ([[sources/clover.md]]) | DrivoR's 64 learned queries; generator trained to cover evaluator-filtered pseudo-experts from the metric cache, then the scorer's top-$k$ / Pareto picks | DrivoR's scorer, **refit every cycle to the evaluator's sub-scores on the current proposals** (30 alternating cycles) | 94.5 PDMS; +0.69 of its +0.74 over DrivoR is regret reduction; optional anchor reranking for v2; see [below](#clover) |
+| **SparseDriveV2** ([[sources/sparsedrivev2.md]]) | 1,024 paths × 256 speed profiles = 262,144 combinations; factorized filtering keeps 128 × 64, then 20 × 20 = **400** (20 × 10 = 200 on v2) | Path and profile scores trained by imitation only; the 400 composed trajectories re-conditioned on the scene and scored by metric heads distilled from the rule-based teacher, labelled during training | 92.0 PDMS / 90.1 EPDMS on a ResNet-34; 89.15 DS on Bench2Drive with no metric supervision. See [below](#sparsedrivev2) |
 
 | **AD-E2E-JEPA** (zero-shot mode) | 8192, angularly subsampled to 256 (also 512 … 8192) | **No scorer.** Squared latent distance between each candidate's 4 s world-model rollout and the **ground-truth future frame** | Oracle-goal diagnostic, not a deployable selector; 67.3 EPDMS at 256 / 72.9 at 8192; see [below](#no-scorer) |
 
@@ -294,7 +297,7 @@ The privileged-supervision caveat still applies. The rule is the benchmark's own
 4. **Generation and selection are not separated.** There is no many-mode row without a scorer and no oracle over the hypotheses, so this table cannot say how far the scorer is from the ceiling of its own candidates. [[sources/physwam.md]] is still the only entry that reports first-sample, selector and oracle on one set.
 5. **The scorer's targets are the v1 components**, and it shows on v2: the highest ego progress of any ingested method (92.2) beside the lowest DDC, LK and HC in its own table.
 
-Its encoder design comes from DrivoR (register tokens; not ingested), which scores 93.1 on navtrain with no world model. MM-Future is +0.3 above it.
+Its encoder design comes from [[sources/drivor.md]] (register tokens), which scores 93.1 on navtrain with no world model. MM-Future is +0.3 above it.
 
 ### World4Scorer: the Scorer as a Trajectory-Conditioned Predictor, Priced on a Fixed Pool {#world4scorer}
 
@@ -355,6 +358,82 @@ The wrong log's previous plan is worse than none (−0.4), a two-step-old one gi
 - **The selector, not the generator, limits the score.** With the generator frozen, best-of-$N$ rises 92.20 → 94.25 from 8 to 64 candidates while the deployed plan rises 90.06 → 90.58, and 128 candidates give 90.56. The oracle-to-selected gap widens from 2.1 to 3.7.
 - **How often the scorer finds the best candidate.** On the unrefined 64-candidate pool its first choice is the evaluator-best candidate in 40.1% of scenes and within one PDMS point of it in 75.3%; within its top ten, 52.7% and 83.2%. This is the first within-pool hit rate for a learned scorer in the wiki; [[sources/ad-e2e-jepa.md]]'s 53.8% top-1 measures a rollout matching an oracle future, not a scorer.
 
+### DrivoR: What the Scorer's Design Is Worth, and a Re-Weighting That Is Not Isolated {#drivor}
+
+[[sources/drivor.md]] is the generate-and-score design World4Scorer, MM-Future and HybridDriveVLA build on. Its navval ablations price the scorer's structure (single runs):
+
+| Scoring design | PDMS |
+|---|---:|
+| One decoder for generation and scoring (separate MLP heads) | 84.7 |
+| Separate decoders, scorer reading the generator's tokens | 86.8 |
+| **Separate decoders, decoded trajectories re-embedded and gradient-stopped** | **90.0** |
+| Same, one aggregate score head instead of six sub-scores | 88.2 |
+
+- **Disentangling the scorer is worth +5.3**, more than any encoder change in the paper. Its Figure 6 suggests why: generation attends almost only to the front camera, scoring to the side or rear camera when a trajectory turns sharply.
+- **Sub-score heads beat one score by +1.8**, the same direction as Hydra-MDP++'s per-metric heads.
+- **On navhard the heads matter more than the encoder.** With the same ViT-S register encoder, GTRS-Dense's vocabulary scorer scores 45.8 and DrivoR's generator and scorer 48.3; the encoder swap itself (V2-99 → ViT-S registers) is +0.8 ([[concepts/navhard-ood-evaluation.md#evaluator-fix]]).
+- **Candidate diversity is low.** Its single-token decoder produces, in the paper's own figure, 64 near-duplicates of the expert's manoeuvre; World4Scorer's oracle of 99.33 over DrivoR's pools says the best candidate is usually present anyway.
+- **"Behavior conditioning" by re-weighting is shown on a different checkpoint.** The safety-oriented agent and the passive agent come from the NAVSIM-v2 model (10 epochs on navtrain), not from the v1 model with new weights; Figure 11's candidate sets differ. The v2 weights (NC 10, DAC 13, DDC 6, TTC 14, EP 15, Comf 2) were tuned on 7 scenes.
+
+### CLOVER: Training the Generator on Its Scorer's Choices, and Where the Gain Lands {#clover}
+
+[[sources/clover.md]] (AIR Tsinghua, May 2026) keeps [[sources/drivor.md]]'s inference graph and changes training. Stage 1 adds up to eight evaluator-filtered pseudo-experts per scene, built by rule from the training metric cache (route centerline, drivable area, future occupancy), as extra winner-take-all targets. Stage 2 alternates two epochs, 30 times: refit the scorer to the evaluator's sub-scores on the current 64 proposals, then distil the scorer's top-$k$ and vector-Pareto picks from a frozen teacher into the student generator, with a stability L1 to the teacher.
+
+**1. Where the +0.74 lands.** The paper's own identity splits a deployed gain into oracle gain and regret reduction. Its stage-wise table, on the same navtest pools World4Scorer used for DrivoR:
+
+| Pool / selector | Oracle@64 | Selected | Regret |
+|---|---:|---:|---:|
+| DrivoR's released pool / DrivoR's scorer | 99.33 | 93.69 | 5.64 |
+| DrivoR's pool / [[sources/world4scorer.md]]'s scorer | 99.33 | 94.19 | 5.14 |
+| CLOVER Stage 1 / its scorer | 99.76 | 94.13 | 5.63 |
+| **CLOVER Stage 2 / its scorer** | **99.39** | **94.43** | **4.95** |
+
+Stage 1 raises the oracle and leaves regret where it was; Stage 2 gives most of the oracle back and cuts regret. **Of +0.74, +0.05 is candidates and +0.69 ranking.** With World4Scorer's +0.50 scorer swap at fixed candidates and [[sources/maneuverflow.md]]'s widening oracle-to-selected gap, three measurements on two stacks now say the same thing: above about 93.5 PDMS, a generate-and-select planner gains by ranking, not by covering.
+
+**2. The loop matters more than the targets.** A non-iterative joint update collapses (< 10 PDMS); self-distillation without refitting the scorer saturates at 93.8–94.0; the full loop gives 94.5. Targets picked by the true PDMS (scalar top-$k$) give 93.9 and fewer qualified clusters (6.45) than the learned scorer's vector-Pareto picks (94.5, 8.71), a comparison that also changes scalar to vector selection. $K$ = 32 / 64 / 96 gives 93.9 / 94.5 / 94.4. Single runs on navtest.
+
+**3. A scorer trained in isolation does worse than the co-trained one.** On fixed CLOVER-generated 64-candidate pools, scorers with five backbones select 92.4 (DINOv2-S) to 92.8 (Wan2.2-5B features) on navtest, all about 2 points under the deployed 94.5; the video backbone's +0.4 comes with a train–test gap of 4.9 against 2.6. The paper says the fixed pool differs from the deployed system without saying how.
+
+**4. Diversity costs extended comfort; three fixes now exist.**
+
+| Fix | EC without → with | EPDMS | Needs |
+|---|---|---:|---|
+| [[sources/drive-jepa.md]] momentum-aware selection | 47.9 → 84.8 | (part of 87.8) | The previous selected trajectory |
+| [[sources/world4scorer.md]] inertial re-ranking | 77.0 → 92.8 | +1.6 | The previous plan; the benchmark's own EC thresholds |
+| **[[sources/clover.md]] anchor reranking** | **35.0 → 75.5** | **+1.1** | **A second, single-mode network; no state** |
+
+CLOVER's diverse pool is the cause of its 35.0: DrivoR's narrow pool scores EC 75.5 with no fix at all (World4Scorer's measurement), which is where the anchor brings CLOVER back. The anchor costs 5.5 points of EP, and its weights were swept on navtest.
+
+**5. The privileged-supervision caveat at full strength.** The generator learns from trajectories built with future obstacle occupancy and filtered by the evaluator, and the scorer is refit to the evaluator's labels on the generator's own outputs every cycle. On navhard the result equals its base ([[concepts/navhard-ood-evaluation.md#clover]]).
+
+### SparseDriveV2: Density as the Lever, and a Grid Scored in Two Passes {#sparsedrivev2}
+
+[[sources/sparsedrivev2.md]] (Tsinghua and Horizon, March 2026) is the first entry on this page built to test whether a fixed vocabulary loses to generated proposals only because it is too coarse.
+
+**1. The density evidence.**
+
+| Design | Vocabulary | EPDMS |
+|---|---|---|
+| Hydra-MDP, retrained (evaluator and backbone unstated) | 1,024 / 2,048 / 4,096 / 8,192 / 16,384 anchors | 85.02 / 85.80 / 86.33 / 86.78 / 87.35 (32,768 runs out of 48 GB) |
+| Factorized grid (corrected evaluator, navtest) | 512 × 128 / 512 × 256 / 1,024 × 128 / 1,024 × 256 | 88.7 / 89.2 / 89.5 / 90.1 |
+
+Each doubling is worth about +0.5 in both designs, from single runs. Training memory for the monolithic vocabulary grows linearly, about 1.9 MB per anchor. The factorization avoids that growth: 1,024 paths and 256 speed profiles are scored separately, and only the surviving combinations are composed.
+
+**2. What the metric scorer actually sees.**
+- Two filtering layers keep 128 paths × 64 profiles (8,192 combinations), then 20 × 20 = **400** (200 on v2).
+- Only those 400 are composed, re-conditioned on the scene, and given metric heads. The heads are trained on rule-based-teacher labels computed during training.
+- The filter itself is trained by imitation only, with soft labels from distance to the logged path and profile.
+
+So the deployed candidate set is scene-dependent, as in DriveSuprim (8,192 → 256), Auto-JEPA (retrieval, 300 of 110,335) and the generated pools of DrivoR and CLOVER (64). What stays fixed is the grid the candidates come from. [[sources/drivereferee.md]]'s two-candidate test prices "argmax (SparseDriveV2 style)" selection at −0.04 EPDMS against +0.23 for a gated rule ([above](#computed-verdict)). That tests the decision rule on a different policy, not SparseDriveV2.
+
+**3. It does not meet the oracle evidence head on.** DriveSuprim's oracle (98.7 PDMS within 256 of 8,192; [above](#theoretical-ceiling-oracle-study)) and CLOVER's (99.33–99.76 over 64 generated candidates; [below](#clover)) say coverage is not the bottleneck. SparseDriveV2 reports no oracle, only deployed scores rising with density. Both can hold if a finer grid helps the selector without raising the ceiling, for example by putting a candidate closer to whatever the scorer ranks first. Two other pages bear on coverage:
+- [[sources/ad-e2e-jepa.md]]'s endpoint-matching search is the one case here where more candidates clearly buy coverage (+5.6 EPDMS from 256 to 8,192).
+- [[sources/idol.md]]'s anchors are flat from 128 to 512.
+
+**4. Comfort.** EC is 78.4 with no continuity term. That is inside the band of the other fixed-vocabulary scorers in its table (Hydra-MDP++ 70.9 / 77.4, DriveSuprim 77.0 / 77.9). Grids pay the per-frame selection cost too; CLOVER's diverse generated pool paid more (35.0, [below](#clover)).
+
+**5. Without the metric.** The Bench2Drive model has no metric supervision at all: the same factorized scorer, on a ResNet-50 with auxiliary perception, trained by imitation, reaches 89.15 DS ([[concepts/bench2drive.md#sparsedrivev2]]). It is the only scorer on this page with a strong closed-loop number that owes nothing to learning an evaluator. On NAVSIM it belongs to the [scorer cohort](#top-of-leaderboard).
+
 ### PaIR-Drive: Residual Tree plus Reward World Model
 
 [[sources/pair-drive.md]] turns an IL trajectory into the root of a recurrent proposal tree. Intention tokens generate residual branches; a learned reward world model scores their predicted reward and confidence and chooses the final plan. This is a hybrid of generative refinement and selection rather than fixed-vocabulary classification.
@@ -376,7 +455,7 @@ Only trajectory filtering helps. Adding decoder depth or auxiliary supervision w
 
 **Why this works**: once easy negatives are removed in Stage 1, Stage 2 faces a set of trajectories that all look plausible. The refinement decoder must develop genuine fine-grained discrimination. The gradient signal from easy negatives no longer dominates.
 
-This is analogous to Cascade R-CNN for object detection (two-stage cascade with progressively tightening IoU thresholds), applied to trajectory scoring.
+This is analogous to Cascade R-CNN for object detection (two-stage cascade with progressively tightening IoU thresholds), applied to trajectory scoring. *(2026-10-14: [[sources/sparsedrivev2.md]] runs the same cascade on a factorized grid: two layers keep 128 paths × 64 profiles, then 20 × 20, and only those 400 are composed and given metric heads. Its coarse layers are trained by imitation alone, so the hard negatives the fine scorer sees are trajectories near the logged one.)*
 
 ---
 
@@ -433,7 +512,7 @@ Selection-based methods' trajectory on the NAVSIM-v1 leaderboard:
 
 *HydraMDP++'s paper evaluates on navtest with **its own** EPDMS formula (80.6 / 84.1). 85.6 is the ViT-L official-v2 value reported by later papers. See [[sources/hydra-mdp-pp.md#two-epdms]].
 
-DriveSuprim (93.5) remains the strongest fixed-vocabulary selection result in the wiki, surpassing DiffusionDriveV2 (91.2 with Camera+LiDAR) and HybridDriveVLA (92.1 dual-model ensemble). CLEAR later reports 93.7 with online candidate generation plus learned adaptive routing, so it is adjacent to selection but not a fixed-vocabulary selector. Auto-JEPA (91.3) is adjacent in the other direction — retrieval rather than classification — and is the cheapest of the three to train, since its visual encoder is frozen and only small task modules are optimized. See [[concepts/navsim-benchmark.md]] and [[concepts/adaptive-routing.md]].
+DriveSuprim (93.5) remains the strongest fixed-vocabulary selection result in the wiki, surpassing DiffusionDriveV2 (91.2 with Camera+LiDAR) and HybridDriveVLA (92.1 dual-model ensemble). CLEAR later reports 93.7 with online candidate generation plus learned adaptive routing, so it is adjacent to selection but not a fixed-vocabulary selector. Auto-JEPA (91.3) is adjacent in the other direction — retrieval rather than classification — and is the cheapest of the three to train, since its visual encoder is frozen and only small task modules are optimized. See [[concepts/navsim-benchmark.md]] and [[concepts/adaptive-routing.md]]. *(2026-10-14: at ResNet-34 the strongest is now [[sources/sparsedrivev2.md]], 92.0 against DriveSuprim's 89.9 on the same backbone and 0.1 below DriveSuprim's V2-99 92.1.)*
 
 ### Nothing Above 92 PDMS Scores Its Own Candidates {#top-of-leaderboard}
 
@@ -441,6 +520,7 @@ With [[sources/lwdrive.md]] ingested, this is now a complete statement about the
 
 | Rank | Method | PDMS | What the scorer is trained on |
 |---:|---|---:|---|
+| – *(2026-10-14)* | [[sources/clover.md]] (training split not stated; most plausibly trainval) | 94.5 | DrivoR's sub-score heads, **refit every cycle to the evaluator's labels on its own 64 proposals**; the generator is also trained toward evaluator-filtered pseudo-experts and the scorer's picks |
 | 1 | [[sources/world4scorer.md]] | 94.0 | BCE heads on simulator sub-scores of all 64 generated candidates and 16 bank trajectories per scene, read from per-candidate predictor states |
 | 2= | [[sources/clear.md]] | 93.7 | Pairwise hinge + MSE against per-candidate PDMS |
 | 2= | [[sources/da-wam.md]] | 93.7 | Factorized NC/DAC/EP/TTC/Comfort heads → utility, from simulator labels |
@@ -452,6 +532,7 @@ With [[sources/lwdrive.md]] ingested, this is now a complete statement about the
 | 9 | [[sources/hybriddriveVLA.md]] | 92.1 | Component-wise BCE/regression on PDMS sub-scores |
 | 10= | [[sources/lwdrive.md]] | 92.0 | BCE against per-candidate PDMS from log simulation |
 | 10= | [[sources/drivereferee.md]] | 92.0 | No scorer needed at inference; the generator is trained on winner/loser pairs labelled by the evaluator's collision and drivable-area gates |
+| 10= *(2026-10-14)* | [[sources/sparsedrivev2.md]] (ResNet-34, three cameras) | 92.0 | Hydra-style BCE heads on rule-based-teacher sub-scores of the 400 composed trajectories that its imitation-trained filter keeps per scene, labelled during training |
 
 **Every entry above 92.0 in this wiki trains against the benchmark's own scoring function**, whether as a ranking head, as an RL reward (WCog-VLA) or as preference labels for the generator (DriveReferee). *(Table extended on 2026-09-30 with MM-Future and DriveReferee. 2026-10-06: World4Scorer enters first at 94.0, trained on navtrain, and on v2 it also runs the metric's extended-comfort check at inference. The ranks below it shift by one.)* The highest-scoring method that does *not* is [[sources/wa-jepa.md]] at 91.8.
 
@@ -500,7 +581,7 @@ The last row is the one that matters for deployment, and the paper says so: *"pa
 
 **One caution about the 64-proposal result.** Adaptive-WAM's auxiliary 92.6 PDMS model belongs in this table rather than on the single-trajectory ladder: fixed block-22 exit, 64 proposals, no adaptive routing, and **CLOVER-derived pseudo-expert targets scored with the true NAVSIM evaluator using training-time map and future occupancy** — the same privileged-supervision caveat that applies to Hydra-MDP distillation, Auto-JEPA, and DA-WAM. Against DriveSuprim's 93.5 and CLEAR's 93.7 it does not lead.
 
-**And one measurement that complicates encoder comparisons made through selection.** In the same paper, Wan intermediate features beat ViT-Large by **1.74 PDMS** for a single trajectory but by only **0.28** with 64 proposals. Multi-proposal scoring compensates for a weaker representation, so a selection-based leaderboard is a poor instrument for comparing encoders.
+**And one measurement that complicates encoder comparisons made through selection.** In the same paper, Wan intermediate features beat ViT-Large by **1.74 PDMS** for a single trajectory but by only **0.28** with 64 proposals. Multi-proposal scoring compensates for a weaker representation, so a selection-based leaderboard is a poor instrument for comparing encoders. *(2026-10-14: [[sources/clover.md]], same first author, finds the same on fixed 64-candidate pools: five scorer backbones from DINOv2-S to Wan2.2-5B features span 92.4–92.8 navtest PDMS.)*
 
 ---
 

@@ -2,9 +2,9 @@
 title: "Curious-VLA: Devil is in Narrow Policy"
 type: source-summary
 sources: [raw/papers/Devil is in Narrow Policy_ Unleashing Exploration in Driving VLA Models.md]
-related: [concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, sources/recogdrive.md]
+related: [sources/clover.md, concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, sources/recogdrive.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-10-14
 confidence: high
 ---
 
@@ -219,3 +219,7 @@ The focal term $(1-(1-m)^{\gamma_m})$ compresses high-scoring metrics (reducing 
 4. **Single camera**: 1xC constraint limits perception of side/rear agents; DriveVLA-W0 achieves 90.2 with 1xC but uses a different (non-text-waypoint) paradigm
 5. **No closed-loop evaluation**: open-loop NAVSIM may not capture all benefits of diversity (reaction to other agents not modeled)
 6. **nuScenes RL reward differs**: uses ADE-based reward rather than PDMS — reward design is task-specific, not universal
+
+## Later Connections
+
+- *(2026-10-14)* [[sources/clover.md]] shares three authors (Canyu Chen, Yuguang Yang, Yan Wang; AIR Tsinghua) and uses this paper's proposal-diversity protocol (pairwise ADE/FDE and quality-filtered cluster counts) to show that evaluator-filtered pseudo-experts widen a DrivoR-style 64-candidate pool (pairwise ADE 1.80 → 5.97) and that its self-distillation keeps most of that width (5.20). Both papers argue that imitating one logged trajectory collapses the candidate distribution. CLOVER also finds the cost on NAVSIM-v2: its diverse pool scores extended comfort 35.0 without an anchor reranking.
