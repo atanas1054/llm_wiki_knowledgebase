@@ -1,10 +1,10 @@
 ---
 title: Inference-Time Safety for Trajectory Planning
 type: concept
-sources: ["raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md]
-related: [sources/drivereferee.md, sources/reflectdrive.md, sources/drivefine.md, sources/diffusiondrive.md, sources/feaxdrive.md, sources/plan-r1.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/rl-for-ad.md, research-directions.md]
+sources: ["raw/papers/Test-Time Trajectory Optimization for Autonomous Driving.md", "raw/papers/DriveReferee_ Geometric Safety Verdicts Need Not Be Learned for Driving World-Action Models.md", raw/papers/Discrete Diffusion for Reflective Vision-Language-Action Models in Autonomous Driving.md, raw/papers/DriveFine_ Refining-Augmented Masked Diffusion VLA for Precise and Robust Driving.md, raw/papers/FeaXDrive_ Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving.md, raw/papers/Plan-R1_ Safe and Feasible Trajectory Planning as Language Modeling.md]
+related: [sources/toad.md, sources/drivereferee.md, sources/reflectdrive.md, sources/drivefine.md, sources/diffusiondrive.md, sources/feaxdrive.md, sources/plan-r1.md, concepts/diffusion-planner.md, concepts/discrete-flow-matching.md, concepts/rl-for-ad.md, research-directions.md]
 created: 2026-04-05
-updated: 2026-09-30
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -151,6 +151,21 @@ GRPO-based methods are superior for deployment (no inference overhead, no runtim
 3. **A computed rule is only as good as its discretization.** On ground-truth maps the raster rule finds 63% of the official drivable-area violations and 79% of the collisions.
 
 **Against the other map-based entry here.** [[sources/feaxdrive.md]] also queries a drivable-area distance field at the vehicle's corners, but it takes the local map as given and uses the gradient to steer a diffusion sample. DriveReferee predicts the map and only chooses between samples. Neither paper tests the other's combination (steering on a predicted map).
+
+## TOAD: Gradient-Free Search Against the Planner's Own Scorer {#toad}
+
+*(2026-10-19)* [[sources/toad.md]] is the continuous-space member of this family. ReflectDrive searches discrete tokens and repairs by inpainting; DriveReferee picks between two samples by an analytic rule. TOAD runs a Cross-Entropy Method search over control sequences (acceleration and yaw rate through a bicycle model, so every sample is feasible). The objective is a *learned* scorer, DrivoR's sub-score heads, plus a closed-form comfort penalty and an anchor to the base plan. The output is guarded: it replaces the base plan only if it scores higher.
+
+| Property | ReflectDrive | DriveReferee | **TOAD** |
+|---|---|---|---|
+| Search space | Discrete action tokens | Two policy samples | Continuous controls |
+| Verdict | Global, safety and local scorers | Analytic rule on a predicted map | Learned trajectory scorer + analytic comfort |
+| Applies to other planners | No | No | **Yes, six tested** |
+| Effect on its own base | – | +0.30 EPDMS untrained, ≈0 once the rule is distilled | +0.1 PDMS (DrivoR, v1); +1.7 EPDMS (navhard) |
+
+Two lessons carry across the family.
+- **The verdict is the ceiling.** Searching against a scorer that is inaccurate off its training proposals makes things worse: GTRS's and SparseDriveV2's scorers drive iPad to 23.9 and 34.6 navhard EPDMS from 34.7.
+- **Searching longer exploits the verdict.** TOAD's EPDMS peaks at 5 iterations and falls by 11 points at 50, while the scorer's reward saturates. As with DriveReferee, a check that the policy was already trained on adds little to that policy (TOAD on DrivoR, v1). It helps most when lent to a weaker planner.
 
 ## Open Questions
 

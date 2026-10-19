@@ -2,9 +2,9 @@
 title: "WA-JEPA: Rethinking the Video JEPA Paradigm for World-Action Modeling in Autonomous Driving"
 type: source-summary
 sources: [raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md]
-related: [sources/sparsedrivev2.md, sources/clover.md, sources/drivor.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, concepts/best-of-n.md, sources/drive-jepa.md, sources/auto-jepa.md, sources/latent-wam.md, sources/simwam.md, sources/drivelaw.md, sources/deepsight.md, sources/flare.md, sources/had.md, sources/drivevla-w0.md, sources/wam-diff.md, sources/drivefine.md, sources/ad-e2e-jepa.md, sources/physwam.md, sources/redrive.md]
+related: [sources/drivewla.md, sources/chainflow-vla.md, sources/sparsedrivev2.md, sources/clover.md, sources/drivor.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/hugsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, concepts/best-of-n.md, sources/drive-jepa.md, sources/auto-jepa.md, sources/latent-wam.md, sources/simwam.md, sources/drivelaw.md, sources/deepsight.md, sources/flare.md, sources/had.md, sources/drivevla-w0.md, sources/wam-diff.md, sources/drivefine.md, sources/ad-e2e-jepa.md, sources/physwam.md, sources/redrive.md]
 created: 2026-09-02
-updated: 2026-10-14
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -385,6 +385,8 @@ That contrast is the most useful thing to take from putting the three side by si
 
 ## Relationships
 
+- **[[sources/drivewla.md]]** *(2026-10-19)* — uses this paper's 436-scenario HUGSIM protocol and copies its VAD, UniAD, LTF and DrivoR rows, then leaves out WA-JEPA's own 44.62. DriveWLA scores 41.47, second on the set, with a higher Extreme tier (15.87 against 13.62) and lower Easy and Medium.
+- **[[sources/chainflow-vla.md]]** *(2026-10-19)* — the same lab's May 2026 planner (eight of its ten authors are on this paper). WA-JEPA cites it in related work as "VLM-guided trajectory refinement" but not in its v1 table, where ChainFlow-VLA's 94.8 (trainval) would sit 3.0 above WA-JEPA's 91.8. ChainFlow-VLA reports no v2 number, so the v2 claim is unaffected.
 - **[[sources/simwam.md]] / [[sources/drivelaw.md]]** — the two papers that established no benefit from conditioning on generated futures at inference. **WA-JEPA does not contradict them, and does not test them.** Its Table 4(c) removes the future-prediction *training objective and* the inference-time generation together; SimWAM's isolated mask removed only the inference dependency while keeping the objective. So WA-JEPA is evidence for the objective — which SimWAM also supports — and silent on the inference path. The control it does not run is the one SimWAM ran.
 - **[[sources/latent-wam.md]]** — the closest architectural neighbor: multi-camera, no pixel decoder, compact latent future prediction, no VLM. Latent-WAM compresses to 16 scene queries per view and predicts future latent *world status* with a causal Transformer under a deterministic objective, plus WorldMirror geometric distillation. WA-JEPA keeps full ViT-L token grids, predicts with flow matching, and couples action into the same predictor. Latent-WAM reaches 89.3 corrected EPDMS at 104M params / 107 ms; WA-JEPA reaches 91.7 with no reported latency and 96 A800s of training.
 - **[[sources/deepsight.md]]** — the other multi-frame parallel latent predictor. DeepSight regresses DINOv3 features for five future BEV frames in one pass; that is exactly the deterministic-regression setup WA-JEPA's Table 4(c) finds harmful. The targets differ (frozen DINOv3 features vs. EMA JEPA latents) and the architectures differ, so this is a hypothesis rather than a refutation — but it is a directly testable one, and DeepSight's horizon-dependence result becomes more interesting in that light.

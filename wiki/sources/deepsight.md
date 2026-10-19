@@ -2,9 +2,9 @@
 title: "DeepSight: Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
-related: [sources/law.md, sources/think2drive.md, concepts/world-model-for-ad.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/pdm-lite.md, sources/futuresightdrive.md, sources/dynvla.md, sources/flare.md, sources/adathinkdrive.md, sources/orion.md, sources/autovla.md]
+related: [sources/raf-vla.md, sources/lvdrive.md, sources/law.md, sources/think2drive.md, concepts/world-model-for-ad.md, concepts/bench2drive.md, concepts/chain-of-thought-for-ad.md, concepts/foundation-backbones-for-ad.md, concepts/pdm-lite.md, sources/futuresightdrive.md, sources/dynvla.md, sources/flare.md, sources/adathinkdrive.md, sources/orion.md, sources/autovla.md]
 created: 2026-07-01
-updated: 2026-10-15
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -254,6 +254,8 @@ Non-monotonic: performance peaks at 1.0 and drops at 2.0 (over-weighting the amb
 
 ## Key Cross-References
 
+- [[sources/raf-vla.md]] *(2026-10-19)*: on NAVSIM, also uses "world queries" in a VLM regressed (MSE) onto a frozen encoder's future-frame features (Cosmos, front view, +1 s and +4 s); +1.21 PDMS in SFT, +1.18 after GRPO.
+- **Concurrent near-twin with the opposite target verdict** *(2026-10-19)*: [[sources/lvdrive.md]], about two weeks later, also predicts several future latents in one VLA forward pass on Bench2Drive's base set and ablates on Dev10. Its best target is a pixel-reconstruction codebook, VQGAN-ImageNet code embeddings (82.39 DS), 10.7 above DINOv3-L (71.72), both on the front view; DeepSight's DINOv3 beats its VAE target by 47–72 DS. LVDrive's future loss alone is worth +1.1 Dev10 DS and its refiner, which reads the prediction, +16. DeepSight's latents are only an internal state. 80.71 against DeepSight's 86.23 on all 220 routes. See [[concepts/bench2drive.md#lvdrive]].
 - **World-model pattern**: [[concepts/world-model-for-ad.md]] — DeepSight adds parallel multi-frame **DINOv3 latent-feature** prediction in BEV; contrast with FLARE (single-frame DINOv2 auxiliary loss), FSDrive (VQ-VAE pixel CoT), and Latent-WAM (latent world-status, no VLM).
 - **Bench2Drive standing & expert protocol**: [[concepts/bench2drive.md]], [[concepts/pdm-lite.md]] — Think2Drive vs. PDM-Lite *expert-data* distinction.
 - **Adaptive CoT**: [[concepts/chain-of-thought-for-ad.md]] — scene-gated reasoning like [[sources/adathinkdrive.md]], here with a Qwen3-VL-235B annotation pipeline.

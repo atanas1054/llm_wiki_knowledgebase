@@ -2,9 +2,9 @@
 title: "ReCogDrive: A Reinforced Cognitive Framework for End-to-End Autonomous Driving"
 type: source-summary
 sources: [raw/papers/ReCogDrive_ A Reinforced Cognitive Framework for End-to-End Autonomous Driving.md]
-related: [sources/hydra-mdp-pp.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, sources/wam-flow.md, sources/uniugp.md]
+related: [sources/drivewla.md, sources/lvdrive.md, sources/chainflow-vla.md, sources/hydra-mdp-pp.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, sources/wam-flow.md, sources/uniugp.md]
 created: 2026-04-05
-updated: 2026-09-27
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -12,6 +12,7 @@ confidence: high
 
 Yongkang Li, Kaixin Xiong, et al. (Huazhong University of Science and Technology + Xiaomi EV)
 arXiv: https://arxiv.org/abs/2506.08052
+*(lint 2026-10-19: published at ICLR 2026, per the reference lists of [[sources/raf-vla.md]] and [[sources/drivewla.md]]. Later tables print 90.8 PDMS for the camera-ready version against 89.6 here. [[sources/drivewla.md]] labels the 90.8 row InternVL3-2B, and [[sources/lvdrive.md]] prints a Bench2Drive result, 71.36 DS.)*
 Project: https://xiaomi-research.github.io/recogdrive
 
 ## One-Line Summary
@@ -208,3 +209,6 @@ Clipping noise variance to a nonzero minimum encourages trajectory diversity; to
 - [[concepts/navsim-benchmark.md]] — PDMS metric definition; ReCogDrive held NAVSIM-v1 SOTA until WAM-Flow
 - [[sources/wam-flow.md]] — WAM-Flow (DFM, 90.3 PDMS) supersedes ReCogDrive; uses ReCogDrive's VQA data in stage 2 pretraining
 - [[sources/uniugp.md]] — UniUGP uses MoT (tighter VLM-planner coupling) vs. ReCogDrive's cross-attention; adds video generation
+- [[sources/drivewla.md]] *(2026-10-19)*: uses ReCogDrive's driving-pretrained InternVL3-2B, frozen, as its Language Expert; its last-layer hidden states feed a trainable adapter in shared attention with a video DiT (+1.7 PDMS over no VLM). Its table prints ReCogDrive at 90.8 under an InternVL3-2B label.
+- [[sources/lvdrive.md]] *(2026-10-19)* — prints a ReCogDrive **Bench2Drive** row (RL): 71.36 DS / 45.45 SR, efficiency 138.18, comfort 17.45, abilities 29.73 / 20.00 / 69.09 / 20.00 / 71.34 (mean 42.03). This page, from the arXiv v1, records no Bench2Drive result. World4Scorer's table carries the same 71.36 DS, equal to Raw2Drive's, but every other column differs from Raw2Drive's row, so it is ReCogDrive's own figure (probably from a later version of the paper)
+- [[sources/chainflow-vla.md]] *(2026-10-19)* — reuses ReCogDrive's 2B driving VLM, frozen, and the same DiT design (AdaLN on ego status, pooled VLM states in the input, cross-attention to the full sequence), but as a **residual refiner** of a DrivoR-family planner's proposals. Residual targets score 94.72 PDMS; whole-trajectory targets, ReCogDrive's own setting, 92.89, below the 94.0 of the proposals alone. A VLM fine-tuned on environment and trajectory QA helps the refiner (+0.6); one fine-tuned on action QA does not

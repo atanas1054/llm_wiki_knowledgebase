@@ -2,9 +2,9 @@
 title: "FLARE: Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/FLARE_ Learning Future-Aware Latent Representations from Vision-Language Models for Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/drivevla-w0.md, sources/futuresightdrive.md, sources/recogdrive.md]
+related: [sources/raf-vla.md, concepts/world-model-for-ad.md, concepts/rl-for-ad.md, concepts/vlm-domain-adaptation.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/drivevla-w0.md, sources/futuresightdrive.md, sources/recogdrive.md]
 created: 2026-04-07
-updated: 2026-04-07
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -201,3 +201,7 @@ MAP fusion vs. global avg pool: +1.9 PDMS. State injection: +2.1 PDMS. Both are 
 6. **SFT to RFT transfer**: only the fusion module and DiT planner are updated in Stage 2 (VLM frozen). Whether unfreezing the VLM backbone during RFT could further improve is not explored.
 
 7. **BC regularization untested against KL**: the paper asserts BC regularization prevents collapse better than KL divergence for diffusion planners (citing DriveFine's reward hacking finding), but provides no ablation comparing the two regularization strategies.
+
+## Later Related Work
+
+- [[sources/raf-vla.md]] *(2026-10-19)* (KAIST, September 2026) is a near-twin that does not cite FLARE. It regresses world-query hidden states of a front-camera VLA (Qwen2.5-VL-7B) onto a frozen Cosmos encoder's representation of the frame 1 s and 4 s ahead, then runs GRPO on PDMS. Its future auxiliary is worth +1.21 PDMS in SFT (against FLARE's +3.5 for spatial DINO targets) and survives GRPO (+1.18). It ends at 90.0 against FLARE's 91.4. Unlike FLARE, it has a 2×2 of the auxiliary with and without RL; it has no target-type comparison.

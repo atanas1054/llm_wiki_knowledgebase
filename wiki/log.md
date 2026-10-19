@@ -4316,3 +4316,366 @@ The wiki cites no component effect size from this paper on any concept page.
 - *Added* (section 2, after "What happens when a planner that consumes a predicted future is given a wrong one?"): "Does training a planner on its own multi-step latent rollouts make it robust to its own deviations?", with evidence from Think2Drive, Raw2Drive, Learning to Drive from a World Model, DreamerAD, IDOL, ReDrive, DriveLaW, DriveFuture, ForeDrive and SimScale. Frontmatter `related` gains DriveLaW, DriveFuture, DreamerAD, ReDrive and `rl-for-ad.md`.
 
 **Pages updated**: `wiki/concepts/world-model-for-ad.md` (matching page-level Open Question, linking Patterns 40, 44, 46 and 47).
+
+## 2026-10-19 - Ingest: ChainFlow-VLA (Causal Flow Planning with Vision-Language Models)
+
+**Source**: `raw/papers/ChainFlow-VLA_ Causal Flow Planning with Vision-Language Models.md` (arXiv 2605.23270v1, May 2026)
+**Orgs**: Afari Intelligent Drive, Tianjin University, University of Macau (Xiyang Wang, Xinlin Wang, Tingguang Zhou, Gong Chen, Xingtai Gui, Zhi Xu, Xiaolei Wu, Feiyang Tan, Hangning Zhou, Mu Yang). Code released (AFARI-Research). Eight authors are on WA-JEPA and five on CoWorld-VLA.
+**Pages created**: `wiki/sources/chainflow-vla.md`
+**Pages updated**:
+- `concepts/navsim-benchmark.md`: ladder row; new `#chainflow` section before "## Navhard Benchmark"; DrivoR's "highest single-pass" and CLOVER's "highest without synthetic data" annotated as passed.
+- `concepts/selection-based-planning.md`: methods-table row; new `#chainflow` section; top-of-leaderboard row and annotation (scorer labels unstated).
+- `concepts/diffusion-planner.md`: new `#residual-refiner` section.
+- `concepts/dual-system-vla.md`: new `#chainflow` section; new open question (early fusion or late conditioning with one VLM).
+- `concepts/vlm-domain-adaptation.md`: new `#chainflow` section (fine-tuning data read off a downstream refiner).
+- `concepts/best-of-n.md`: saturation note (a single pass ties the human).
+- `concepts/evaluation-variance.md`: step-sweep selection effect.
+- `concepts/inference-latency.md`: no-latency entry.
+- Source pages: `sources/drivor.md`, `sources/recogdrive.md`, `sources/coworld-vla.md`, `sources/wa-jepa.md` (relations).
+- `research-directions.md`, `index.md`, `README.md` (104 papers; leader list; papers row; open thread 2; iPad, LatentVLA and ResAD in Known Gaps).
+
+**Confidence**: **medium**. All 31 table rows pass the closed-form check and code is released. But it reports NAVSIM-v1 only, every number is a single run, the headline is probably the best of a step sweep on navtest, and the VLM's effect is not separated from a second encoder (one arm partly controls it).
+
+**What it is**: DrivoR's DINOv2 backbone. An autoregressive decoder (acceleration and yaw rate through a bicycle model, fed-back state detached) proposes $K$ trajectories. A DiT, ReCogDrive's design, denoises a residual for each proposal, conditioned on the frozen hidden states of ReCogDrive's 2B InternVL (front camera plus prompt), 4 DDIM steps. A scorer "following iPad" picks one refined candidate. Stage I: AR plus scorer, WTA. Stage II: diffusion on the expert-closest proposal only, trajectory regression on refined outputs at twice its weight, scorer.
+
+**Reported results**: NAVSIM-v1 93.6 PDMS (navtrain), 94.8 (trainval; 94.85 at 12 steps, 94.72 at the default 4). On other bases without a VLM: DiffusionDrive 88.1 → 88.9 (6 proposals for 20 anchors), iPad 91.7 → 92.7. Nothing on v2, navhard, closed loop or latency.
+
+**Finding 1 - the highest single-pass v1 number, and a tie with the human in PDMS only.** 94.8 trainval passes DrivoR + SimScale 94.6, CLOVER 94.5 and MM-Future 94.0. The human has NC/DAC/TTC 100 and EP 87.5; ChainFlow-VLA has NC 99.2, DAC 99.0, TTC 97.2 and EP 91.9. Closed forms 94.77 and 93.73. On navtrain the lead over prior work is +0.1 (DriveSuprim).
+
+**Finding 2 - the headline is probably a test-split sweep maximum.** The default is 94.72 in Tables 3 and 4; the 12-step run is 94.85 (abstract), and Tables 1–2 print 94.8. The sweep across 2/4/8/12/16 steps is 94.68/94.72/94.74/94.85/94.67.
+
+**Finding 3 - the Flow gain is the VLM.** Table 2 on DrivoR trainval: AR +0.3, residual DiT on DrivoR's scene tokens +0.1, VLM conditioning +0.7, with EP 90.0 → 91.9. An action-QA VLM gives 94.11 (= the scene-token arm) and an environment-and-trajectory-QA VLM 94.72. So the fine-tuning content matters, a partial control for "just a second encoder".
+
+**Finding 4 - refining beats regenerating.** A whole-trajectory DiT scores 92.89, below the AR proposals alone (94.0) and DrivoR (93.7). ReCogDrive's planner design helps only as a residual refiner.
+
+**Finding 5 - one residual target per scene, K refined.** Only the expert-closest proposal gets a diffusion target; all are refined at inference and then scored. No oracle is reported.
+
+**Finding 6 - one codebase holds the v1 top.** World4Scorer 94.0, MM-Future 94.0, CLOVER 94.5 and ChainFlow-VLA 94.8 are all DrivoR descendants, +0.3 to +1.1 over the DrivoR model trained on the same split.
+
+**Table and text problems found**:
+- "Significantly outperforming prior end-to-end (93.8)" is against RAP-DINO (10× data); +1.1 over its own base. DrivoR's SimScale rows and the same lab's CoWorld-VLA (90.0) are omitted. CLOVER (94.5) appeared about a week earlier.
+- VADv2 (80.9) is cited to VAD's ICCV paper. ReCogDrive's 90.8 is labelled ICLR'26 (NeurIPS camera-ready in DreamerAD's table).
+- The main model's $K$ and the scorer's labels are not stated. The probabilistic mixture is never estimated: the AR stage is deterministic and selection is an argmax.
+- WA-JEPA (same lab, three months later) cites ChainFlow-VLA in related work and leaves its 94.8 out of its own v1 table.
+
+**Research directions** (`wiki/research-directions.md`): now 65 questions (52 open, 13 partially answered) and 2 answered.
+- *Evidence added*:
+  - Error bars: the step-sweep headline; single-run component effects.
+  - Is NAVSIM-v1 saturated?: a single pass ties the human, with a different profile; four DrivoR descendants at 94.0–94.8.
+  - Advisory VLM or VLM in the action path?: a third arrangement, a frozen silent VLM conditioning a residual refiner (+0.7).
+  - Do learned scorers overfit the benchmark's metric?: the top entry's scorer labels are unstated; v1 only; the gain is mostly EP.
+  - Dense vocabulary vs generated proposals: 6 AR proposals replace DiffusionDrive's 20 anchors (+0.8, confounded with the refiner).
+  - Inference cost: none reported for the top v1 entry.
+- *Added*:
+  - "Where should a VLM enter a strong E2E planner: proposing, fusing, scoring or refining?" (section 4; ReCogDrive, LWDrive, CLEAR, ChainFlow-VLA, DriveWAM).
+  - "When every candidate is refined but only the expert-closest one has a target, does refinement help selection?" (section 5; ChainFlow-VLA, ManeuverFlow, MomWorld, CLOVER).
+- *Answered*: none.
+
+**Not reported**: NAVSIM-v2, navhard, closed loop, latency, $K$, the scorer's labels, the 2B VLM's fine-tuning data, seed repeats, sample diversity of the refiner, an oracle over refined candidates, a same-VLM early-fusion arm.
+
+**New gaps**: iPad (scorer design, Table 5 base; already listed), LatentVLA (the feature-fusion foil), ResAD (the residual idea).
+
+**Figure note**: all four figures are in the clipping and in `raw/assets/` (`p1.png`, `overview 2.png`, `3_methods_5x4.png`, `vlm_bev_5_3.png`; untracked until this ingest, used by no other page). All four are embedded, and all five tables are reproduced (Table 3's three sub-tables included). `raw/` was not modified.
+
+## 2026-10-19 - Ingest: LVDrive (Latent Visual Representation Enhanced Vision-Language-Action Autonomous Driving Model)
+
+**Source**: `raw/papers/LVDrive_ Latent Visual Representation Enhanced Vision-Language-Action Autonomous Driving Model.md` (arXiv 2605.22089v1, May 2026)
+**Orgs**: Xiaomi EV (Hongwei Xie, Guang Chen, Hangjun Ye) and HKUST (Dan Xu; Xiaodong Mei presumably). No code stated. Xie is an ORION author; Xie and Chen are on MindDrive; Xie, Chen and Ye are on DriveVA.
+**Pages created**: `wiki/sources/lvdrive.md`
+**Pages updated**:
+- `concepts/bench2drive.md`: ladder row; new `#lvdrive` section (ability profile against ORION and DeepSight, Give Way's ten routes, the target contradiction, provenance, expert gap); the World4Scorer row's ReCogDrive note resolved; new open question on ten-route ability scores; MomAD question annotated.
+- `concepts/world-model-for-ad.md`: new Pattern 56 `#vqgan-latent-refiner`; objective table row; a contrary note under Pattern 17 (DeepSight); new open question (semantic features or tokenizer codes).
+- `concepts/foundation-backbones-for-ad.md`: encoder-by-job row (target extractor for future-latent regression).
+- `concepts/diffusion-planner.md`: new `#lvdrive-vae` section (KL removed, ground truth concatenated, refiner).
+- `concepts/evaluation-variance.md`: Bench2Drive ten-route paragraph.
+- `concepts/inference-latency.md`: LVDrive row (2.03 s, H20).
+- Source pages: `sources/orion.md` (built-on note), `sources/deepsight.md` (concurrent twin), `sources/recogdrive.md` (Bench2Drive row).
+- `research-directions.md`, `index.md`, `README.md` (105 papers; papers row; UniDrive-WM, MindDrive and DriveMoE in Known Gaps).
+
+**Confidence**: **low**. The headline is an ordinary single run on all 220 routes. Every mechanism result is on Dev10 (ten routes, SR as counts, no repeats stated). There is no matched full-benchmark baseline. The VAE planner's training input includes the ground truth with the KL term removed. Text and table disagree on speed.
+
+**What it is**: ORION (EVA-02-L + QT-Former + Vicuna-7B LoRA + VAE/GRU planner), initialized from ORION's Stage-1 weights, trained in one end-to-end stage of 6 epochs without VQA. Six blocks of 256 pre-filled placeholder tokens: their last-layer hidden states pass through one linear layer and are regressed (cosine + L1) onto layer-normalized VQGAN-ImageNet code embeddings (256-d) of the future front image at 256×256. The planning token follows the placeholders. A two-layer refiner cross-attends from the GRU motion states to the placeholder hidden states; base + offset MLPs give the final six command-conditioned trajectories.
+
+**Reported results**: Bench2Drive base set 80.71 DS / 58.26 SR, efficiency 155.77, comfort 14.34, mean ability 54.90, open-loop L2 0.63; 2.03 s per frame (H20).
+
+**Finding 1 - the loss is null until something reads it.** Dev10: base 65.25 (4/10); + future loss 66.31 (3/10); one-stage reader 60.43; full model coarse output 73.22 (5/10); refined 82.39 (7/10).
+
+**Finding 2 - a pixel codebook beats DINOv3.** With the same refiner: VQGAN 82.39, DINOv3-L 71.72, own encoder 65.42 (= none, 65.25), MoVQGAN 4-d 59.91. This contradicts its "semantic, not pixel" framing and the concurrent DeepSight (DINOv3 86.57 against VAE 14.66, BEV renders).
+
+**Finding 3 - the ability gain is narrow.** Against ORION: merging +14.7, traffic sign +5.1; overtaking −2.2, emergency brake −6.7, give way −10. Means 54.90 vs 54.72, below UniDrive-WM (59.23) and MindDrive (56.94).
+
+**Finding 4 - Give Way is ten routes.** Its Table 7 gives two Give Way scenarios out of 44, so every give-way score is a multiple of 10. LVDrive scores 2/10. In its failure figure the ambulance is visible in the rear camera input.
+
+**Finding 5 - slower, not faster.** 2.03 s against 0.93 s for the base; the text says "inference speed approximately twice" the base. A matched autoregressive variant: 36.62 s.
+
+**Table and text problems found**:
+- Its table omits earlier entries above it: LinkVLA 91.01, SparseDriveV2 89.15, DynVLA 88.34, AutoMoT 87.34, SimLingo 85.07 (cited); also AutoVLA and UniDriveVLA. DeepSight (86.23) was two weeks earlier.
+- MomAD is printed with SparseDrive's 44.54 / 16.71 (the third table after ORION and DeepSight).
+- A ReCogDrive Bench2Drive row (71.36 / 45.45 / 138.18 / 17.45) whose DS equals Raw2Drive's but whose other columns do not, which resolves the note left by the World4Scorer ingest.
+- Printed ability means for DiffAD (38.79 vs 39.71) and UniDrive-WM-AR (59.00 vs 58.80) do not match their rows.
+- Ablation tables are cited one number off in the text. SR values are not whole numbers of routes out of 220 (as for ORION and Raw2Drive).
+
+**Research directions** (`wiki/research-directions.md`): now 67 questions (54 open, 13 partially answered) and 2 answered.
+- *Evidence added*:
+  - Expert bound: a stated base-set student 11.1 below; give way at 20 on ten routes.
+  - Open-loop vs closed-loop: a closed-loop VLA in which the future loss alone is null.
+  - Test-time futures: a refiner reading predicted latents in closed loop, +16 Dev10 DS over the loss alone, at twice the latency.
+  - Composing supervision rules: a target-dimension window.
+  - Pixels, geometry or flow: a pixel codebook above DINOv3, against DeepSight.
+  - World-model-shaped representations: a target-content control with fixed reader.
+  - Inference cost: 2.03 s.
+- *Added*:
+  - "How noisy are Bench2Drive scores, and can 10-route Dev10 ablations be trusted?" (section 1; Think2Drive, LAW, Raw2Drive, LVDrive, DeepSight).
+  - "Semantic features or tokenizer codes as a VLA's future target: why do DeepSight and LVDrive disagree?" (section 2).
+- *Answered*: none.
+
+**Not reported**: the coarse planner's inference input, the future-step interval, the loss weights, repeats on Dev10, a matched full-benchmark baseline, a current-frame target, surround-view targets, code.
+
+**New gaps**: UniDrive-WM (its closest comparison), MindDrive, DriveMoE / Drive π0, DriveWorld-VLA, GenAD (the VAE planner's origin).
+
+**Figure note**: all eight figures are in the clipping and in `raw/assets/` (`nips_intro_0.png`, `nips_model_0.png`, `nips_vis_2.png`, `nips_vis_a1.png` to `nips_vis_a5.png`; untracked, used by no other page). All eight are embedded, and all seven tables are reproduced. `raw/` was not modified. `log.md` line endings were normalized to CRLF; the previous entry had been appended with LF.
+
+## 2026-10-19 - Ingest: TOAD (Test-Time Trajectory Optimization for Autonomous Driving)
+
+**Source**: `raw/papers/Test-Time Trajectory Optimization for Autonomous Driving.md` (arXiv 2606.07170v1, 5 June 2026)
+**Orgs**: valeo.ai and Sorbonne Université (Yihong Xu, Éloi Zablocki, Yuan Yin, Elias Ramzi, Ellington Kirby, Alexandre Boulch, Matthieu Cord); six of the seven are DrivoR authors. Code promised.
+**Pages created**: `wiki/sources/toad.md`
+**Pages updated**:
+- `concepts/selection-based-planning.md`: methods-table row; new `#toad` section; top-of-leaderboard row.
+- `concepts/navhard-ood-evaluation.md`: scorer-cohort row (56.3); new `#toad` section (compression of six planners, the scorer's share, the SimScale base, the evaluator mix, PDM-Closed 56.6).
+- `concepts/inference-time-safety.md`: new `#toad` section with a three-way comparison against ReflectDrive and DriveReferee.
+- `concepts/navsim-benchmark.md`: ladder row; new `#toad` section.
+- `concepts/hugsim-benchmark.md`: new `#toad` section (per-dataset table, GTRS-Dense ahead of DrivoR).
+- `concepts/best-of-n.md`: new `#search-beyond-pool` section.
+- `concepts/evaluation-variance.md`: 7-scene tuning entry under selection effects.
+- `concepts/inference-latency.md`: TOAD row.
+- Source pages: `sources/drivor.md`, `sources/clover.md`, `sources/world4scorer.md`, `sources/sparsedrivev2.md`, `sources/drivefuture.md`, `sources/chainflow-vla.md` (relations).
+- `research-directions.md`, `index.md`, `README.md` (106 papers; papers row; navhard leader and open-thread notes; Known Gaps annotation).
+
+**Confidence**: **medium**. A consistent effect over six planners and two benchmarks, all v1 rows pass the closed-form check, and the search is timed. But the DrivoR base rows are the +134k-SimScale model (unlabelled), the scorer checkpoint is unstated, hyperparameters were tuned on 7 scenes, every number is a single run, the navhard table mixes evaluators, and the HUGSIM protocol is unstated.
+
+**What it is**: CEM in control space (acceleration and yaw rate through an invertible bicycle model), warm-started at the base planner's pick with a spread set by its proposals. The objective is DrivoR's frozen scorer minus $\lambda_a\lVert u-u_\text{base}\rVert^2$ and a closed-form comfort penalty. $M=64$, $E=8$; $K=5$ for generated proposals, 100 for vocabularies. The final output is the CEM mean or the base pick, whichever scores higher.
+
+**Reported results**: navtest PDMS: ZTRS 86.9 → 89.0, GTRS 90.4 → 90.9, Hydra-MDP 90.9 → 91.4, iPad 91.7 → 93.4, RAP-DINO 93.8 → 93.9, DrivoR 94.6 → 94.7. navhard EPDMS: iPad 34.7 → 49.8, RAP-DINO 39.6 → 49.0, Hydra-MDP 40.9 → 49.7, GTRS 45.4 → 51.7, ZTRS 48.1 → 49.2, DrivoR 54.6 → 56.3. HUGSIM HD-Score per dataset for DrivoR: 17.7 / 39.7 / 35.1 / 44.2 → 18.4 / 49.9 / 38.0 / 42.8. Search 1.9–20.4 ms (A100).
+
+**Finding 1 - the "DrivoR" base is DrivoR + 134k SimScale.** Both rows match DrivoR's SimScale rows digit for digit (v1 99.1 / 99.2 / 96.9 / 100 / 91.6; navhard stage closed forms 84.1 / 62.7). Without synthetic data: 93.7 / 48.3.
+
+**Finding 2 - much of a weak planner's gain is the better scorer.** iPad: re-ranking with DrivoR's scorer 45.6 (72% of the gain), search 49.8. Hydra-MDP: re-ranking 37.3 (worse), search 49.7. Non-DrivoR planners also run DrivoR's ~100 ms encoder.
+
+**Finding 3 - vocabulary scorers fail as rewards and as foreign re-rankers.** GTRS-scorer search: iPad 23.9, Hydra-MDP 38.1. SparseDriveV2: 34.6, 29.6; SparseDriveV2 re-ranking Hydra-MDP: 9.5 (Stage-1 DAC 52.9), possibly an interface mismatch.
+
+**Finding 4 - over-optimization.** On 7 scenes: K = 5 48.5, K = 50 37.2. In Figure 5 the reward reaches 1.000 / 0.996 while scene EPDMS moves 0.871 → 0.894 / 0.781 → 0.789. Anchor term +4.1, warm start +5.8.
+
+**Finding 5 - at the top of v1, search adds +0.1.** DrivoR's pools already contain an oracle at 99.33, so the paper's "the set, not the scorer, is the bottleneck" fits its weak planners, not its strongest.
+
+**Table and text problems found**:
+- Unlabelled SimScale base rows (above).
+- Its "GTRS (V2-99)" navhard base is DrivoR's suspect GTRS-Aug row (Stage-2 EP 98.9; product check +0.55).
+- Nine of its thirteen external navhard rows (copied from DriveFuture's leaderboard) are pre-fix-like. Its own rows are corrected-like.
+- PDM-Closed is printed at a new 56.6 (product check −4.4; Stage-1 HC 87.7 as in IDOL's copy), against 51.3 pre-fix elsewhere; source not given.
+- Figure 4's 7-scene "Vanilla iPad 34.7" equals iPad's navhard test score exactly.
+- Its v1 "top entry" claim omits ChainFlow-VLA (94.8) and CLOVER (94.5), both earlier.
+- HUGSIM has no average, scenario set or commit (unweighted means of the baselines fit DrivoR's 345-scenario averages). GTRS-Dense leads DrivoR on 3 of 4 datasets.
+- "Table 3 and Table 3"; "We splut"; "TransFuser" for DrivoR's pre-fix LTF row.
+
+**Research directions** (`wiki/research-directions.md`): now 68 questions (55 open, 13 partially answered) and 2 answered.
+- *Evidence added*:
+  - Error bars: 7-scene tuning and no CEM seed spread.
+  - v2 comparability: a copied mixed block, a suspect base row, a new PDM-Closed value.
+  - v1 saturation: +0.1 from search at the top.
+  - Reactive closed loop: GTRS-Dense ahead of DrivoR on HUGSIM datasets.
+  - Generator vs selector on navhard: one scorer compresses six generators to 49.0–56.3.
+  - 3DGS familiarity: a possibly SimScale-trained scorer lent to other planners.
+  - HUGSIM tables: a fourth presentation.
+  - Metric overfitting: direct over-optimization.
+  - Generator-on-its-scorer: a test-time version with the contradiction noted.
+  - Fixed vocabulary vs generated: vocabulary scorers do not transfer off grid.
+  - Inference-time check on a trained policy: +0.1 on its own base, more when lent.
+  - Inference cost.
+  - Refinement targets: a target-free refinement.
+- *Added*: "How hard can a planner optimize against its own learned scorer before it exploits it?" (section 5; TOAD, Qwen-Drive, DreamerAD).
+- *Answered*: none.
+
+**Not reported**: the scorer checkpoint, CEM seed spread, true score against reward over a full split, HUGSIM protocol and average, latency of the base planners' own scorers.
+
+**New gaps**: iPad, Hydra-MDP, GTRS / GTRS-Dense, ZTRS, RAP (all base planners, none ingested); Centaur.
+
+**Figure note**: the clipping has `drivor-cem.png`, `DrivorMPC_success_TOAD.png` and `iter_0000.png`; Figure 3 is inline SVG (timings transcribed). Added to `raw/assets/` (new files only; nothing existing changed):
+- `DrivorMPC_failure_TOAD.png` (Figure 2b, arXiv HTML).
+- `toad_evo1_strip.png` and `toad_evo2_strip.png` (Figure 5's eight frames from the HTML, composed into two strips; the HTML's first scene frame is byte-identical to the clipping's `iter_0000.png`).
+- `toad_fig4.png` (Figure 4, cropped from page 8 of the arXiv PDF at 300 dpi, since the HTML lacks panels b–d).
+
+All figures are embedded, and all tables are reproduced (Tables 6 and 7 summarized with product checks; full sub-scores remain in the clipping).
+
+## 2026-10-19 - Ingest: RAF-VLA (Representation Alignment with the Future for End-to-End Autonomous Driving)
+
+**Source**: `raw/papers/RAF-VLA_ Representation Alignment with the Future for End-to-End Autonomous Driving.md` (arXiv 2609.17728v1, September 2026)
+**Orgs**: KAIST, Graduate School of Mobility and Robotics Program (Dogun Kim, Yongjae Lee, Joonhee Lim, Yeina Lee, Junhyeok Park, Moogeun Park, Dongsuk Kum). No code stated.
+**Pages created**: `wiki/sources/raf-vla.md`
+**Pages updated**:
+- `concepts/world-model-for-ad.md`: new Pattern 57 `#future-aligned-world-queries`; objective table row; a note under Pattern 8 (FLARE); new open question (does an SFT auxiliary gain survive RL).
+- `concepts/navsim-benchmark.md`: ladder row; new `#raf-vla` section (three-convention v2 table).
+- `concepts/rl-for-ad.md`: new `#raf-vla` section (the 2×2 of alignment and GRPO).
+- `concepts/best-of-n.md`: v1 table row (94.2).
+- `concepts/action-tokenization.md`: alignment row in the WALT comparison table.
+- `concepts/inference-latency.md`: RAF-VLA row (153 ms, H200).
+- `concepts/evaluation-variance.md`: navtest-selected horizons and query count.
+- Source pages: `sources/flare.md` (new "Later Related Work" section), `sources/drivevla-w0.md`, `sources/hyworldvla.md`, `sources/lvdrive.md`, `sources/deepsight.md`.
+- `research-directions.md`, `index.md`, `README.md` (107 papers; papers row).
+
+**Confidence**: **medium**. A controlled 2×2 (alignment × RL), a sign that holds over every alignment setting tried, and clean v1 tables. But single runs, hyperparameters chosen on navtest, a baseline that removes the world queries too, a three-convention v2 table, and self-estimated sample counts.
+
+**What it is**: DriveVLA-W0's Mixture-of-Transformers layout (Qwen2.5-VL-7B VL expert, a width-1024 action expert, a query-based anchor head and DriveVLA-W0's action loss), with a front-camera image sequence, an instruction and an ego-status token. $K=4$ world queries for each of +1 s and +4 s follow the image and language tokens. Their states are mapped by a two-layer MLP onto a frozen Cosmos encoder's representation of the future front frame (MSE, $\lambda=1$). The action expert reads the queries through joint attention, also at inference. GRPO follows ($G=8$, KL 0.04, PDMS reward), with the vision encoder, queries and action head frozen.
+
+**Reported results**: NAVSIM v1 90.0 PDMS (best-of-6 94.2); v2 86.2 EPDMS for the SFT model; 153 ms (H200, batch 1); SFT 10.96 h and RFT 7 h on 4 × H200.
+
+**Finding 1 - the auxiliary and RL add.** Alignment +1.21 after SFT (87.92 → 89.13) and +1.18 after GRPO (88.85 → 90.03); GRPO +0.93 / +0.90. Every alignment setting beats none by +0.68 to +1.21. With alignment, RL no longer costs NC and TTC.
+
+**Finding 2 - a consumed latent future in all but name.** The world queries are regressed onto future representations and read by the planner at inference (1 ms). The baseline removes them along with the loss, so tokens and supervision are priced together.
+
+**Finding 3 - the nearest method is uncited and stronger.** FLARE: front-camera VLA plus future DINOv2 regression plus GRPO, +3.5 in SFT, 91.4 after RFT, against RAF-VLA's +1.2 and 90.0.
+
+**Finding 4 - the v2 claim crosses three conventions.** Pre-fix-like TransFuser / Hydra-MDP++ / ReCogDrive / DiffusionDrive (+1.3 to +2.7); Hydra-MDP++'s own formula for VADv2 76.6 and Hydra-MDP 79.8; corrected-like DriveVLA-W0, SGDrive and RAF-VLA. DiffusionDrive's corrected 88.2 is above RAF-VLA's 86.2.
+
+**Table and text problems found**:
+- All 34 v1 rows pass the closed-form check.
+- The v2 table mixes conventions (above).
+- "Highest overall" best-of-6 holds only in its table (Curious-VLA 94.8, TransDiffuser 94.9).
+- Its v1 table omits DriveFine, WAM-Diff, DiffusionDriveV2, FLARE, LWDrive, WCog-VLA and CLEAR, all earlier.
+- Its ReCogDrive row is the arXiv 89.6 under the ICLR'26 label.
+- Both ablation tables are called "Table VI" in the text.
+- "Training samples seen" are the authors' estimates.
+
+**Research directions** (`wiki/research-directions.md`): now 69 questions (55 open, 14 partially answered) and 2 answered.
+- *Evidence added*:
+  - World-model-shaped representations: +1.2 with tokens and loss confounded and no content control.
+  - Supervision rules: MSE regression helps; 1 s + 4 s best, intermediate horizons do not add.
+  - Test-time futures: shared feature-space futures now +0.3 / +0.4–0.6 / +1.2 / −0.5.
+  - Semantic vs tokenizer targets: a probably reconstruction-trained Cosmos target that helps, with no comparison.
+  - v2 comparability: another three-convention table.
+  - Inference cost: 153 ms.
+  - v1 saturation: best-of-6 94.2.
+- *Added*: "Does a world-model auxiliary gain made in SFT survive RL fine-tuning?" (section 2; partially answered by RAF-VLA's 2×2; SimVTA, FLARE, WorldRFT).
+- *Answered*: none.
+
+**Not reported**: which Cosmos encoder and the target's shape; the GRPO sampler for an anchor head; whether $\mathcal L_\text{act}$ includes metric targets; navhard; v2 after RFT; seeds; code.
+
+**New gaps**: REPA / REPA-E / iREPA / ARRA (representation alignment in generative models), Cosmos (tokenizer and world-model platform), WoTE.
+
+**Figure note**: the clipping has `RAF-VLA_Figure_2.png`. Figure 1 was only an external arXiv link, and Figure 3 is absent from both the clipping and the arXiv HTML. Added to `raw/assets/` (new files only): `RAF-VLA_Main_figure1.png` (arXiv HTML) and `raf_vla_fig3.png` (cropped from page 6 of the arXiv PDF at 300 dpi). All three figures are embedded and all six tables reproduced.
+
+## 2026-10-19 - Ingest: DriveWLA (Unifying Future Dynamics and Scene Semantics through World-Language-Action Modeling)
+
+**Source**: `raw/papers/DriveWLA_ Unifying Future Dynamics and Scene Semantics throughWorld-Language-Action Modeling for Autonomous Driving.md` (arXiv 2610.17903v1, October 2026)
+**Orgs**: Huazhong University of Science and Technology (Xinggang Wang, corresponding; Wenyu Liu) and Yinwang Intelligent Technology (Shuzheng Wang, Haoxuan Li, Shengzhen Li, Chenxi Wu, Yajing Sun, Lu Hou). No code stated.
+**Pages created**: `wiki/sources/drivewla.md`
+**Pages updated**:
+- `concepts/world-model-for-ad.md`: new Pattern 58 `#single-pass-world-expert`; objective table row; a counter-result note under Pattern 27 (BrainWAM); new open question.
+- `concepts/wam-attention-masks.md`: new `#drivewla` section (three-stream mask table).
+- `concepts/hugsim-benchmark.md`: new `#drivewla` section (436 scenarios, second; Extreme 15.87).
+- `concepts/navsim-benchmark.md`: ladder row; new `#drivewla` section ("all corrected" caption over two pre-fix rows).
+- `concepts/nuscenes-waymo-evals.md`: new `#drivewla` section (zero-shot with ego state).
+- `concepts/rl-for-ad.md`: new `#drivewla` section (factorized advantages, hard-scene RL).
+- `concepts/dual-system-vla.md`: new `#drivewla` section.
+- `concepts/bench2drive.md`: note that NAVSIM models' Bench2Drive numbers are open-loop.
+- `concepts/inference-latency.md`: DriveWLA row.
+- Source pages: `sources/drivelaw.md`, `sources/brainwam.md`, `sources/recogdrive.md`, `sources/wa-jepa.md`, `sources/raf-vla.md`.
+- `research-directions.md`, `index.md`, `README.md` (108 papers; papers row; HUGSIM leader note).
+
+**Confidence**: **medium**. Clean v1 tables, ablations on one checkpoint, and a stated, reproducible HUGSIM protocol. But single runs; a "world" expert with no future objective; a v2 caption that is wrong for two rows; SOTA claims that hold only within its tables; latency with no hardware; Bench2Drive open-loop only.
+
+**What it is**: a three-expert Mixture-of-Transformers.
+- **World**: DriveLaW-Video on LTX-2B, a frozen VAE over four 768×1344 front frames, Gaussian-noise future positions, and a trainable 28-block DiT run once.
+- **Language**: ReCogDrive's frozen InternVL3-2B plus a trainable 28-block adapter over its last-layer states.
+- **Action**: a 28-block flow-matching DiT, eight $(x,y,\theta)$ waypoints, 10 Euler steps.
+
+The fixed mask lets World and Language see each other and Action read both. Imitation trains World, adapter and Action with the trajectory flow-matching loss only, for 30 epochs on 16 A100s. Flow-GRPO then refines the action LoRA on training scenes below 90 PDMS, with factorized sub-score advantages (NC, DAC, C 2; EP, TTC 5) and variance shrinkage.
+
+**Reported results**: navtest 92.3 PDMS (90.8 imitation) and 90.1 EPDMS. HUGSIM 436 scenarios zero-shot: 41.47 HD-Score (Easy 73.87, Medium 47.91, Hard 31.41, Extreme 15.87). nuScenes zero-shot 0.94 m / 0.09%. Bench2Drive recorded frames 1.61 m / 1.06%. 970 ms at 10 steps.
+
+**Finding 1 - without the VLM it is DriveLaW.** World + Action 89.1 (DriveLaW's published score); + VLM 90.8; + Flow-GRPO 92.3; without World 86.2; World frozen 88.0.
+
+**Finding 2 - the "World Expert" has no world-model objective.** No video loss; future positions start from noise; one pass; the PCA future latents for the first and second 2 s are nearly identical. Its +4.6 is a video-pretrained encoder fine-tuned for planning; prediction is untested.
+
+**Finding 3 - a frozen VLM in shared attention with the video stream helps.** World↔Language exchange is +2.4 over none, and Action writing back costs 0.4. This is the counterpoint to BrainWAM's Tri-MoT, whose video stream is iterated.
+
+**Finding 4 - HUGSIM: second on the 436 set, and the best Extreme tier.** 41.47 against WA-JEPA's 44.62 (omitted from its table, though its baselines and protocol come from WA-JEPA). Extreme 15.87 against a previous best of 14.07. The tier weights reproduce the average exactly.
+
+**Finding 5 - the RL recipe adds little over plain Flow-GRPO.** +1.3 for Flow-GRPO, +0.2 for factorized advantages and shrinkage.
+
+**Table and text problems found**:
+- The v2 caption "all results use the corrected official evaluator" is wrong for DiffusionDrive 84.5 (+2.48) and DriveWorld-VLA 86.8 (+2.64).
+- "SOTA among VLM- and world-model-based planners" omits WCog-VLA 92.9 (same InternVL3-2B), CLEAR, DA-WAM, Drive-HWM, MM-Future, World4Scorer and ChainFlow-VLA. On v2 it omits WA-JEPA, MM-Future, SUV, ReDrive and CLOVER.
+- WA-JEPA's HUGSIM row is omitted.
+- ReCogDrive's 90.8 is labelled InternVL3-2B.
+- The text calls Table 5 "Tab. 6" and Table 7 "Tab. 8".
+- The abstract lists open-loop nuScenes and Bench2Drive alongside HUGSIM as closed-loop zero-shot evidence.
+- Latency is given without hardware.
+
+**Research directions** (`wiki/research-directions.md`): now 70 questions (56 open, 14 partially answered) and 2 answered.
+- *Evidence added*:
+  - Attention masks: a three-stream table.
+  - VLM suppressing an iterated stream: a non-iterated counter-case.
+  - Reading a video prior: another single-pass reader.
+  - World-model-shaped representations: a world expert with no future loss.
+  - Prior scale: a cross-paper hint.
+  - Reactive closed loop: HUGSIM order vs NAVSIM order.
+  - HUGSIM tables and the Extreme tier: it moves slightly.
+  - v2 comparability: a contradicted caption.
+  - RL recipe: factorized sub-score advantages.
+  - Inference cost.
+  - VLM in the action path, and where a VLM should enter: fusing, measured.
+  - Cross-dataset planning: held-out nuScenes and Bench2Drive, open loop.
+- *Added*: "Is a single-pass video backbone, trained only by the trajectory loss, predicting the future?" (section 2; DriveWLA, DriveLaW, Adaptive-WAM, SimWAM).
+- *Answered*: none.
+
+**Not reported**: hardware for latency; HUGSIM for the imitation checkpoint; seeds; any probe of the future positions; code.
+
+**New gaps**: DriveWorld-VLA (91.3 / 86.8, in two recent tables), UNIVERSE, OpenDriveVLA, Flow-GRPO, EponaV2.
+
+**Figure note**: the clipping has four figures (`drivewla_overview.png`, `attention_mask.png`, `expert_ablation_vis.png`, `representation_pca_vis.png`). Figure 3(b) was missing and was added from the arXiv HTML as `raw/assets/il_rl_vis.png` (a new file). All five are embedded and all eight tables reproduced.
+
+## 2026-10-19 - Lint
+
+**Structural checks**: 151 pages (108 sources, 40 concepts, index, log, research directions). No broken wiki links, anchors, embeds or relative image links; the one hit is a literal `concepts/...` example in this log. Every page has at least two inbound links. All 108 raw papers have a source page. Every page is in `index.md` and in README's tables. All frontmatter parses, and every `sources` and `related` entry exists. Five papers were ingested since the last lint: ChainFlow-VLA, LVDrive, TOAD, RAF-VLA, DriveWLA. *(Correction to the DriveWLA ingest note: the `#protocol` anchor on `sources/brainwam.md` is not broken. It is defined inline, and that ingest's checker did not read inline anchors.)*
+
+**Stale claims fixed** (annotated in place, dated):
+- *Highest single-pass v1*: CLOVER's "94.5, highest without synthetic data" and DrivoR's "94.6, highest single-pass" are passed by ChainFlow-VLA's 94.8 (trainval). Fixed in `sources/clover.md`, `sources/drivor.md` and both `index.md` rows.
+- *HUGSIM Extreme tier "0.06–0.14 for every method"*: DriveWLA scores 15.87 on the 436-scenario set. Annotated in two places on `hugsim-benchmark.md` and corrected at the start of the research-directions entry.
+- *navhard "best combined score 55.5"*: now 56.3 (DrivoR + 134k SimScale + TOAD's search), with a new corrected-like PDM-Closed at 56.6 (`navhard-ood-evaluation.md`).
+- *Top-of-leaderboard table* (`selection-based-planning.md`): DriveWLA 92.3 added. It has no scorer, but its RL advantages are built from the evaluator's sub-scores, so the "everything above 92 trains against the metric" statement still holds.
+- *Counts*: README "55 world-model patterns" → 58; `general-capability-retention.md` 103 → 108 papers (none of the five new papers measures general capability).
+- *v2 recount* (37 of 53 tables mixing, 2026-10-14): not recounted. Five later ingests added navtest v2 tables: DVGT-2, RAF-VLA and DriveWLA mix conventions (DriveWLA under an "all corrected" caption); CLOVER and SparseDriveV2 print both columns consistently. Annotated in `navsim-benchmark.md#v2-recount` and research directions.
+- *README*: at-a-glance (">92 PDMS" bullet and leader list) and open threads 1 (test-time futures), 4 (closed-loop transfer) and 7 (comparison-scope inflation).
+
+**Contradictions fixed or recorded**:
+- *ReCogDrive's venue*: the wiki carried "90.8 (NeurIPS camera-ready)" from DreamerAD's table. RAF-VLA's and DriveWLA's reference lists give ICLR 2026, and ChainFlow-VLA and RAF-VLA label its rows ICLR'26 (RAF-VLA's at the arXiv 89.6). Annotated in `navsim-benchmark.md` and `sources/recogdrive.md`. DriveWLA labels the 90.8 row InternVL3-2B; which model size scores 90.8 is still unsettled.
+- *A fourth Hydra-MDP v1 value*: TOAD's 90.9 (98.5 / 98.7 / 94.9 / 100 / 85.5), against 86.5, 90.3 and 91.0 elsewhere. Recorded in TOAD's table audit.
+- Recorded at ingest, both sides cross-linked:
+  - DeepSight vs LVDrive on DINOv3 against reconstruction-tokenizer targets.
+  - BrainWAM vs DriveWLA on a VLM sharing attention with a video stream.
+  - TOAD vs CLOVER / World4Scorer / ManeuverFlow on whether the candidate set or the ranking is the bottleneck.
+  - TOAD's PDM-Closed 56.6 against 51.3 pre-fix.
+  - TOAD's "GTRS" base being DrivoR's suspect GTRS-Aug row.
+  - LVDrive's ReCogDrive Bench2Drive row being distinct from Raw2Drive's, which resolves World4Scorer's 71.36.
+- Carried over: Drive-HWM 93.8 / 93.3; three VADv2 values; DiffusionDrive 84.5 / 88.2 (now also labelled "corrected" by DriveWLA's table); the navhard split size; regression on future latents; bidirectional attention; DINOv3 vs V-JEPA 2; HUGSIM commits.
+
+**Research directions** (`wiki/research-directions.md`): 70 questions (56 open, 14 partially answered) and 2 answered.
+- *Corrected*: "Can HUGSIM results be put on one table, and does anything move its Extreme tier?" (the 0.06–0.14 claim); "Can NAVSIM-v2 EPDMS be compared across papers at all?" (recount annotated).
+- *Status*: no changes. The Extreme tier moved by 1.8 points in one run, which is too little to mark the question partially answered.
+- *Page-level Open Questions checked* for the five new source pages and the concept pages they touched: all represented. Still on its page only: velocity versus x-prediction for flow-matching planners (`diffusion-planner.md`).
+- *Answered*: none.
+
+**Concept pages suggested** (none has its own page):
+- **Trajectory refinement after generation or selection.** Now ChainFlow-VLA (residual diffusion), TOAD (test-time search against the scorer), LVDrive (refiner reading future latents), ManeuverFlow, MomWorld, IDOL, PaIR-Drive, LWDrive, GeoWorldAD. Several research-directions entries depend on comparing them (refinement targets, selection vs candidates).
+- **Future-representation auxiliaries in VLAs**: FLARE, RAF-VLA, HyWorldVLA, LVDrive, DeepSight, plus the REPA-style alignments in ReWorld and WALT. The target-choice disagreement (DINOv3 vs tokenizer codes vs Cosmos) has no single home.
+- Carried over: baseline-row provenance (35 pages), ego status in open-loop evaluation, extended comfort and frame-to-frame consistency (32), Mixture-of-Transformers layouts (29; partly on `mixture-of-experts.md`), JEPA for driving, one-step generative planners, CARLA Driving Score, sensor configuration, distillation.
+- **Entities** (`wiki/entities/` still empty): VAD (52 pages), Hydra-MDP (original, 50), WoTE (49), GTRS (31), World4Drive (31), iPad (27, TOAD's base and ChainFlow-VLA's scorer design), EponaV2 (20), DriveWorld-VLA (18, in DriveWLA's and HyWorldVLA's tables).
+
+**Questions to investigate next**:
+- Run a VQGAN target inside **DeepSight** (code released), at matched dimension and view. It is the cheapest test of the LVDrive / DeepSight disagreement.
+- Run **TOAD** (code promised) on DrivoR's 48.3-navhard checkpoint without SimScale data, to separate search from synthetic data.
+- Probe a **single-pass video expert's future tokens** against logged future latents (DriveWLA, DriveLaW). This answers the new "is it predicting the future?" question.
+- **ChainFlow-VLA** (code released): the oracle over refined candidates and the refiner's sampler spread. That would place it in the candidates-vs-ranking question.
+- **Repeat one full Bench2Drive evaluation three times.** No ingested paper has, and the leaders are 1–2 DS apart.
+- Ingest **iPad** (TOAD's main beneficiary and ChainFlow-VLA's scorer design), **World4Drive** (31 pages; the LAW → WorldRFT link) and **DriveWorld-VLA** (two recent tables).

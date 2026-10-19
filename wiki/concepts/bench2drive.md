@@ -1,10 +1,10 @@
 ---
 title: Bench2Drive Benchmark
 type: concept
-sources: ["raw/papers/SparseDriveV2_ Scoring is All You Need for End-to-End Autonomous Driving.md", "raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/Think2Drive_ Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2).md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
-related: [sources/sparsedrivev2.md, sources/idol.md, sources/world4scorer.md, sources/raw2drive.md, sources/think2drive.md, sources/momworld.md, sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, sources/deepsight.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md, concepts/pdm-lite.md, research-directions.md]
+sources: ["raw/papers/DriveWLA_ Unifying Future Dynamics and Scene Semantics throughWorld-Language-Action Modeling for Autonomous Driving.md", "raw/papers/LVDrive_ Latent Visual Representation Enhanced Vision-Language-Action Autonomous Driving Model.md", "raw/papers/SparseDriveV2_ Scoring is All You Need for End-to-End Autonomous Driving.md", "raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/Think2Drive_ Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2).md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
+related: [sources/drivewla.md, sources/lvdrive.md, sources/sparsedrivev2.md, sources/idol.md, sources/world4scorer.md, sources/raw2drive.md, sources/think2drive.md, sources/momworld.md, sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, sources/deepsight.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md, concepts/pdm-lite.md, research-directions.md]
 created: 2026-04-15
-updated: 2026-10-14
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -75,12 +75,13 @@ Five standardized scenario categories; reported separately by ORION and LinkVLA:
 | DriveTransformer | 63.46 | 35.01 | 100.64 | 20.78 | — |
 | Drive-JEPA | 64.52 | 36.82 | 157.85 | 30.24 | V-JEPA + MTD proposal planner; improves over iPad/DriveTransformer but is far below current VLA leaders |
 | Raw2Drive | 71.36 | 50.24 | 214.17 | 22.42 | **The only camera-input RL entry**: model-based RL in a camera world model aligned to a privileged one (Think2Drive), with privileged reward heads and a privileged policy as initialization; its table stops at DriveAdapter 64.22 and omits ORION. See [[sources/raw2drive.md]] |
-| World4Scorer | 73.27 | 46.36 | – | – | **A NAVSIM generator–scorer adapted to CARLA** (94.0 PDMS on NAVSIM): adds a route point 20 m ahead, uses CARLA's ground-truth ego pose / velocity / acceleration (the reference agents estimate them from GNSS and IMU), keeps turn commands through intersections and re-ranks by route agreement at weight 4σ; none of these ablated. Trained on the 1000-clip base set. Its table stops at "ReCogDrive 71.36", a value identical to Raw2Drive's DS that the wiki's ReCogDrive page does not record. SR is below Raw2Drive's. See [[sources/world4scorer.md#bench2drive]] |
+| World4Scorer | 73.27 | 46.36 | – | – | **A NAVSIM generator–scorer adapted to CARLA** (94.0 PDMS on NAVSIM): adds a route point 20 m ahead, uses CARLA's ground-truth ego pose / velocity / acceleration (the reference agents estimate them from GNSS and IMU), keeps turn commands through intersections and re-ranks by route agreement at weight 4σ; none of these ablated. Trained on the 1000-clip base set. Its table stops at "ReCogDrive 71.36", a value identical to Raw2Drive's DS that the wiki's ReCogDrive page does not record *(2026-10-19: [[sources/lvdrive.md]]'s table prints ReCogDrive at 71.36 DS with SR 45.45, efficiency 138.18, comfort 17.45 and its own ability scores, all different from Raw2Drive's row, so it is a separate result, not a copy)*. SR is below Raw2Drive's. See [[sources/world4scorer.md#bench2drive]] |
 | Hydra-NeXt *(not ingested)* | 73.86 | 50.00 | 197.76 | 20.68 | From [[sources/momworld.md]]'s table |
 | MomWorld | 74.07 | 50.00 | 198.87 | 20.43 | Momentum latent world model; base planner unstated and the row is Hydra-NeXt's within about a point on most columns; see [below](#momworld) |
 | ORION | 77.74 | 54.62 | 151.48 | 17.38 | VLM + VAE planner; +14.28 DS vs. prior SOTA at time |
 | AutoVLA | 78.84 | 57.73 | 146.93 | 39.33 | Physical codebook; higher comfort than ORION |
 | UniDriveVLA | 78.37 | — | — | — | Best result without PDM-Lite oracle; MoT 3-expert |
+| **LVDrive** ([[sources/lvdrive.md]]) | 80.71 | 58.26 | 155.77 | 14.34 | ORION with VQA co-training replaced by regression of six future **front-view VQGAN code embeddings** from LLM placeholder tokens (one forward pass) and a refiner that cross-attends to them; base set (Think2Drive data). Mean ability 54.90, level with ORION; lowest comfort reported in its table; 2.03 s per frame on an H20. All mechanism evidence on Dev10. See [below](#lvdrive) |
 | SimLingo | 85.07 | 67.27 | 259.23 | 33.67 | Fast MLP head (34ms) |
 | AutoMoT | 87.34 | — | — | — | Frozen Qwen3-VL-4B + 1.6B AE; async MoT (7.6× speedup) |
 | DeepSight (Think2Drive) | 86.23 | 71.36 | 201.71 | 16.11 | Parallel 5-frame DINOv3 latent world model in BEV + adaptive CoT; strongest Think2Drive-protocol VLM in its own table (see expert caveat below) |
@@ -165,9 +166,46 @@ Two non-VLM entries in that table are near the top of this page. **SparseDriveV2
   - Comfort 18.32 is among the lowest here; efficiency is 199.84.
 - **Attributions.** Its table prints SparseDrive at 44.54 / 16.71 (from SparseDrive's own first author) and SimLingo at 86.02, as [[sources/momworld.md]] does six months later. MomWorld's SparseDriveV2, HiP-AD and Hydra-NeXt rows are this table's rows. That settles the [MomAD row](#momworld): 44.54 / 16.71 belongs to SparseDrive.
 
+### LVDrive: a Refiner Reading Predicted Future Latents, and a Target Choice That Contradicts DeepSight {#lvdrive}
+
+*(2026-10-19)* [[sources/lvdrive.md]] (Xiaomi EV and HKUST, May 2026) keeps [[sources/orion.md]]'s QT-Former, Vicuna and VAE + GRU planner, starts from ORION's Stage-1 weights, and replaces its VQA co-training with two additions: regression of six future front-view latents from LLM placeholder tokens, and a refiner that cross-attends to them. **80.71 DS / 58.26 SR** on the base set, one run.
+
+**1. The ability profile against ORION and DeepSight.**
+
+| | DS | SR | Merging | Overtaking | Em. Brake | Give Way | Traffic Sign | Mean |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| ORION | 77.74 | 54.62 | 25.00 | 71.11 | 78.33 | 30.00 | 69.15 | 54.72 |
+| **LVDrive** | **80.71** | **58.26** | **39.74** | 68.89 | 71.67 | 20.00 | **74.21** | 54.90 |
+| [[sources/deepsight.md]] | 86.23 | 71.36 | 60.00 | 91.11 | 78.33 | 50.00 | 71.58 | 70.20 |
+
+LVDrive gains on merging and traffic sign, the two abilities with the most scenarios, and loses on the other three. Its comfort (14.34) is the lowest reported in its table.
+
+**2. Give Way is ten routes.** LVDrive's appendix gives scenarios per ability: Traffic Sign 18, Merging 16, Emergency Brake 12, Overtaking 9, **Give Way 2**. At five routes per scenario, Give Way is decided on ten routes, so every method's give-way score is a multiple of 10 (every row on this page is). The pattern recorded [above](#expert), with every student at 0–50 and the expert at 90, is a statement about ten routes per run.
+
+**3. Two concurrent designs, opposite target verdicts, both on Dev10.**
+
+| Paper | Target (frozen extractor) | Dev10 DS |
+|---|---|---:|
+| [[sources/deepsight.md]] | DINOv3 on BEV renders, five frames | 86.57 |
+| DeepSight | DINOv3, front view | 77.77 |
+| DeepSight | "VAE", five frames | 14.66 |
+| **LVDrive** | **VQGAN-ImageNet codes (256-d), front view, six frames** | **82.39** |
+| LVDrive | DINOv3-L (1024-d), front view | 71.72 |
+| LVDrive | its own vision encoder | 65.42 |
+| LVDrive | MoVQGAN codes (4-d) | 59.91 |
+| LVDrive | none | 65.25 |
+
+DeepSight concludes semantic features beat reconstruction targets; LVDrive's best target is a pixel-reconstruction codebook, 10.7 DS above DINOv3. The papers differ in VLM (Qwen2.5-VL-3B vs Vicuna via ORION), target view, objective (MSE vs cosine + L1) and in whether a refiner reads the prediction (LVDrive's loss alone is worth +1.1 Dev10 DS; with the refiner, +17.1). Each cell is ten routes.
+
+**4. Table provenance.** It is the third ingested table to print SparseDrive's 44.54 / 16.71 under MomAD's name, after ORION's and DeepSight's ([above](#momworld)). It prints a separate ReCogDrive row at 71.36 DS (see the World4Scorer row). Two printed ability means do not match their rows (DiffAD, UniDrive-WM-AR).
+
+**5. The expert gap.** LVDrive states it trains on the official base set, so it is a Think2Drive-protocol student 11.1 DS below the [expert](#expert), with give way at 20 against the expert's 90.
+
 ---
 
 ## Relationship to NAVSIM
+
+*(2026-10-19)* NAVSIM-trained models are now also reported on Bench2Drive's **recorded validation frames, open loop**: [[sources/drivewla.md]] 1.61 m / 1.06% collision, beside DriveVA, UNIVERSE, PWM and DriveVLA-W0 from DriveVA's table. These are not Driving Scores and should not be placed on the ladder above.
 
 Most NAVSIM SOTA methods — FLARE (91.4 PDMS), DriveFine (90.7), WAM-Flow (90.3), Curious-VLA (90.3) — **do not evaluate on Bench2Drive**. Most Bench2Drive methods — ORION, LinkVLA, AutoMoT — **do not evaluate on NAVSIM**. Cross-benchmark comparison is generally not possible.
 
@@ -190,5 +228,6 @@ Drive-JEPA ([[sources/drive-jepa.md]]) also reports both NAVSIM and Bench2Drive,
 - Are the GRPO-optimized NAVSIM methods (FLARE, DriveFine) competitive on Bench2Drive's interactive scenarios, or does their non-reactive training regime limit reactive behavior?
 - Can PDM-Lite usage be standardized across papers, or should the benchmark track PDM-Lite and non-PDM-Lite leaderboards separately?
 - **What do SparseDriveV2 (89.15 DS) and HiP-AD (86.77) do?** Both are non-VLM planners that match the VLA leaders here, and both are known to this wiki only through [[sources/momworld.md]]'s table. *(2026-10-14: SparseDriveV2 answered. It is a factorized fixed-vocabulary scorer trained by imitation alone, on SparseDrive's perception; see [above](#sparsedrivev2). HiP-AD remains un-ingested.)*
-- **Which Bench2Drive row is MomAD's?** Two ingested tables give it SparseDrive's numbers. *(2026-10-14: SparseDrive's own first author prints 44.54 / 16.71 as SparseDrive's in [[sources/sparsedrivev2.md]], agreeing with MomWorld; the ORION and DeepSight attribution to MomAD is the outlier.)*
+- **Which Bench2Drive row is MomAD's?** Two ingested tables give it SparseDrive's numbers. *(2026-10-14: SparseDrive's own first author prints 44.54 / 16.71 as SparseDrive's in [[sources/sparsedrivev2.md]], agreeing with MomWorld; the ORION and DeepSight attribution to MomAD is the outlier.)* *(2026-10-19: [[sources/lvdrive.md]] repeats the ORION attribution, a third table.)*
+- **Does a ten-route ability score mean anything?** Give Way covers two scenarios, ten routes ([[sources/lvdrive.md]]'s Table 7), so one run moves it in steps of 10. No paper reports repeated full-benchmark runs; the multi-ability columns would need them before per-ability gaps of 10–20 points can be read.
 - **Does the expert bound the leaderboard?** The best Think2Drive-protocol student is 5.6 DS below its 91.85-DS teacher and LinkVLA (protocol undisclosed) is 0.84 below it. Whether any student trained only on the base set can pass the expert, and whether PDM-Lite-protocol gains are simply the stronger teacher, is untested. See [above](#expert). *(2026-10-14: [[sources/sparsedrivev2.md]] is 2.7 DS below the expert (89.15) and states no training data.)*

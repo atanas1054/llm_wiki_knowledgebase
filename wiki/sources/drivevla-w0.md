@@ -2,9 +2,9 @@
 title: "DriveVLA-W0: World Models Amplify Data Scaling Law in Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DriveVLA-W0_ World Models Amplify Data Scaling Law in Autonomous Driving.md]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/hyworldvla.md]
+related: [sources/raf-vla.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/diffusion-planner.md, sources/hyworldvla.md]
 created: 2026-04-07
-updated: 2026-10-14
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -230,6 +230,7 @@ MoE reduces latency to 63.1% of baseline (74ms vs. 118ms for query-based).
 
 ## Key Cross-References
 
+- [[sources/raf-vla.md]] *(2026-10-19)*: reuses this paper's Mixture-of-Transformers layout, query-based anchor head and action loss on Qwen2.5-VL-7B. It replaces future-image generation with regression of eight world-query states onto a frozen Cosmos encoder's future-frame representation, then adds GRPO: 90.0 PDMS against this paper's 90.2★, at 153 ms on an H200.
 - **Supervision deficit + world model for VLA scaling**: [[concepts/world-model-for-ad.md]] — Pattern 7: training-time-only world modeling for data scaling
 - **NAVSIM standings**: [[concepts/navsim-benchmark.md]] — 90.2★ (anchors), 93.0 BoN-6 (1 cam); 86.1 EPDMS v2 (EC=58.9)
 - **Action decoder scaling reversal (FM vs. AR)**: [[concepts/diffusion-planner.md]] — FM loses to AR at massive scale

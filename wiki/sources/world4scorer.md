@@ -2,9 +2,9 @@
 title: "World4Scorer: Outcome-Grounded World Modeling for Autonomous Driving"
 type: source-summary
 sources: ["raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md"]
-related: [sources/clover.md, sources/drivor.md, concepts/selection-based-planning.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/counterfactual-prediction.md, concepts/teacher-pseudo-labels.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/da-wam.md, sources/mm-future.md, sources/drive-jepa.md, sources/adaptive-wam.md, sources/auto-jepa.md, sources/hydra-mdp-pp.md, sources/drivesuprim.md, sources/geowam.md, sources/foredrive.md, sources/ad-e2e-jepa.md, sources/raw2drive.md, sources/recogdrive.md, sources/wa-jepa.md, sources/drivereferee.md, research-directions.md]
+related: [sources/toad.md, sources/clover.md, sources/drivor.md, concepts/selection-based-planning.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/counterfactual-prediction.md, concepts/teacher-pseudo-labels.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/da-wam.md, sources/mm-future.md, sources/drive-jepa.md, sources/adaptive-wam.md, sources/auto-jepa.md, sources/hydra-mdp-pp.md, sources/drivesuprim.md, sources/geowam.md, sources/foredrive.md, sources/ad-e2e-jepa.md, sources/raw2drive.md, sources/recogdrive.md, sources/wa-jepa.md, sources/drivereferee.md, research-directions.md]
 created: 2026-10-06
-updated: 2026-10-14
+updated: 2026-10-19
 confidence: medium
 ---
 
@@ -462,6 +462,7 @@ So a single checkpoint cannot be optimal on both ladders, and the per-benchmark 
 
 ## Relationships
 
+- **[[sources/toad.md]]** *(2026-10-19)*: a third way to improve DrivoR's output without changing its encoder, after this paper's scorer swap (+0.50 at fixed candidates) and CLOVER's retraining: search beyond the pool with DrivoR's own scorer as the reward (+0.1 PDMS, +1.7 navhard EPDMS on the +SimScale model). Like this paper's inertial re-ranking, it adds a closed-form comfort term the learned scorer does not predict.
 - **[[sources/drivor.md]]**: the base system. Same encoder, generator, candidate count and software stack; World4Scorer replaces its scorer. Also the encoder source of [[sources/mm-future.md]] and second on navhard (54.6).
 - **CLOVER** ([[sources/clover.md]], ingested 2026-10-14): the bank and the simulator-label protocol. Same group (Sining Ang, Yan Wang). CLOVER is now load-bearing in three wiki papers: [[sources/auto-jepa.md]] (scorer initialization), [[sources/adaptive-wam.md]] (pseudo-expert targets) and this one (bank).
 - **[[sources/da-wam.md]]**, **[[sources/mm-future.md]]**: per-candidate futures read by a scorer, supervised only for the expert. World4Scorer is the third per-candidate design and the first to supervise every candidate's state, with outcomes rather than futures.

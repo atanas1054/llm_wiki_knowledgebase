@@ -2,9 +2,9 @@
 title: "BrainWAM: Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md]
-related: [sources/adaptive-wam.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/mixture-of-experts.md, concepts/dual-system-vla.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, sources/foresight.md, sources/drivelaw.md, sources/simwam.md, sources/drivewam.md, sources/driveva.md, sources/hybriddriveVLA.md, sources/drivevla-w0.md, sources/dynvla.md, sources/drivedreamer-policy.md, sources/da-wam.md, sources/wa-jepa.md, sources/drivesuprim.md, sources/automot.md, sources/unidrivevla.md, sources/recogdrive.md, sources/autovla.md, sources/epona.md]
+related: [sources/drivewla.md, sources/adaptive-wam.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/mixture-of-experts.md, concepts/dual-system-vla.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, sources/foresight.md, sources/drivelaw.md, sources/simwam.md, sources/drivewam.md, sources/driveva.md, sources/hybriddriveVLA.md, sources/drivevla-w0.md, sources/dynvla.md, sources/drivedreamer-policy.md, sources/da-wam.md, sources/wa-jepa.md, sources/drivesuprim.md, sources/automot.md, sources/unidrivevla.md, sources/recogdrive.md, sources/autovla.md, sources/epona.md]
 created: 2026-09-04
-updated: 2026-09-04
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -289,6 +289,7 @@ Appendix ablations use **10-step joint denoising** rather than the asynchronous 
 
 ## Key Cross-References {#crossrefs}
 
+- [[sources/drivewla.md]] *(2026-10-19)*: the counter-result to this paper's Tri-MoT diagnosis. DriveWLA puts a frozen VLM (through an adapter), a video DiT and an action DiT in one shared attention, and bidirectional VLM↔video exchange helps (90.8 against 88.4 without, 89.1 without the VLM). Its video stream is one pass at full noise, not denoised iteratively, which is the most likely reason the two results differ. 92.3 against BrainWAM's 89.5 on navtest.
 - **The denoising-depth question, now 2–1**: three papers have measured how much denoising a planner's conditioning latent needs, and BrainWAM breaks the tie in DriveLaW's favor.
 
   | Paper | What it varies | Result |

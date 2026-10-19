@@ -2,9 +2,9 @@
 title: "DriveFuture: Future-Aware Latent World Models for Autonomous Driving"
 type: source-summary
 sources: [raw/papers/DriveFuture_ Future-Aware Latent World Models for Autonomous Driving.md]
-related: [sources/law.md, sources/sparsedrivev2.md, sources/drivor.md, sources/simscale.md, sources/mm-future.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/diffusion-planner.md, concepts/intent-conditioned-planning.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/wa-jepa.md, sources/da-wam.md, sources/drivelaw.md, sources/geowam.md, sources/geoworldad.md, sources/latent-wam.md, sources/adaptive-wam.md, sources/reworld.md, sources/drivesuprim.md, sources/spanvla.md, sources/drivefine.md, sources/auto-jepa.md, sources/drivevla-w0.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/dial.md, sources/elf-vla.md, sources/lwdrive.md, sources/simwam.md, sources/physwam.md, sources/momworld.md]
+related: [sources/toad.md, sources/law.md, sources/sparsedrivev2.md, sources/drivor.md, sources/simscale.md, sources/mm-future.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/diffusion-planner.md, concepts/intent-conditioned-planning.md, concepts/selection-based-planning.md, concepts/best-of-n.md, concepts/foundation-backbones-for-ad.md, sources/wa-jepa.md, sources/da-wam.md, sources/drivelaw.md, sources/geowam.md, sources/geoworldad.md, sources/latent-wam.md, sources/adaptive-wam.md, sources/reworld.md, sources/drivesuprim.md, sources/spanvla.md, sources/drivefine.md, sources/auto-jepa.md, sources/drivevla-w0.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/dial.md, sources/elf-vla.md, sources/lwdrive.md, sources/simwam.md, sources/physwam.md, sources/momworld.md]
 created: 2026-09-11
-updated: 2026-10-15
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -351,6 +351,7 @@ Neither figure carries quantitative annotation, and the failure-category claim i
 
 ## Key Cross-References
 
+- [[sources/toad.md]] *(2026-10-19)*: passes DriveFuture on navhard (56.3 against 55.5), both corrected-like, with DrivoR + 134k SimScale plus a test-time search against DrivoR's scorer. Its navhard table copies this paper's leaderboard, including its mix of pre-fix-like rows (GTRS-E 49.4, DiffVLA 45.0, DriveSuprim 42.1 and the lineage-B baselines), and adds a privileged PDM-Closed at 56.6.
 - [[concepts/world-model-for-ad.md]] — Pattern 33 (future latent as planning **condition** with a training-time oracle annealed away); the [objective-form](../concepts/world-model-for-ad.md#objective-form) discussion gains a third arm (no prediction loss at all); the [shared-future](../concepts/world-model-for-ad.md#shared-future-reopened) thread gains a per-candidate branch inside a generator.
 - [[concepts/navhard-ood-evaluation.md]] — the combined leaderboard is rebuilt from this paper's Table 1; SpanVLA's 40.1 convention ambiguity is resolved; the "Stage-2 lane keeping collapses to ~48 for everyone" claim now has five counterexamples.
 - [[concepts/navsim-benchmark.md]] — second paper reporting both EPDMS columns; verifies two of WA-JEPA's correction deltas and contradicts two of its cohort assignments.

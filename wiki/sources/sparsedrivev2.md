@@ -2,9 +2,9 @@
 title: "SparseDriveV2: Scoring is All You Need for End-to-End Autonomous Driving"
 type: source-summary
 sources: ["raw/papers/SparseDriveV2_ Scoring is All You Need for End-to-End Autonomous Driving.md"]
-related: [sources/hydra-mdp-pp.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/diffusiondrive.md, sources/clover.md, sources/da-wam.md, sources/wa-jepa.md, sources/drivefuture.md, sources/coworld-vla.md, sources/momworld.md, sources/drivor.md, sources/auto-jepa.md, sources/ad-e2e-jepa.md, sources/idol.md, sources/maneuverflow.md, sources/world4scorer.md, sources/drivereferee.md, sources/linkvla.md, sources/think2drive.md, sources/deepsight.md, sources/latent-wam.md, sources/wam-diff.md, sources/drivefine.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/best-of-n.md, concepts/inference-latency.md, concepts/teacher-pseudo-labels.md, concepts/diffusion-planner.md, research-directions.md]
+related: [sources/toad.md, sources/hydra-mdp-pp.md, sources/drivesuprim.md, sources/diffusiondrive-v2.md, sources/diffusiondrive.md, sources/clover.md, sources/da-wam.md, sources/wa-jepa.md, sources/drivefuture.md, sources/coworld-vla.md, sources/momworld.md, sources/drivor.md, sources/auto-jepa.md, sources/ad-e2e-jepa.md, sources/idol.md, sources/maneuverflow.md, sources/world4scorer.md, sources/drivereferee.md, sources/linkvla.md, sources/think2drive.md, sources/deepsight.md, sources/latent-wam.md, sources/wam-diff.md, sources/drivefine.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/bench2drive.md, concepts/best-of-n.md, concepts/inference-latency.md, concepts/teacher-pseudo-labels.md, concepts/diffusion-planner.md, research-directions.md]
 created: 2026-10-14
-updated: 2026-10-14
+updated: 2026-10-19
 confidence: medium
 ---
 
@@ -292,6 +292,7 @@ Each figure shows three picked scenes, with no counts. The Bench2Drive videos ar
 
 ## Relation to Other Wiki Pages
 
+- [[sources/toad.md]] *(2026-10-19)*: uses this paper's NAVSIM scorer as a test-time search reward and as a re-ranker of other planners' proposals. As a reward it leaves iPad at 34.6 navhard EPDMS (base 34.7) and drops Hydra-MDP to 29.6 (from 40.9). As a re-ranker of Hydra-MDP's proposals it gives 9.5 (Stage-1 DAC 52.9). TOAD reads this as a vocabulary-trained scorer being inaccurate off its grid; an interface mismatch with the factorized, re-conditioned candidates it was trained on is not ruled out.
 - [[sources/hydra-mdp-pp.md]], [[sources/drivesuprim.md]]: the Hydra lineage it scales. DriveSuprim's 8,192 → 256 filter is the template for the two-layer filter; DriveSuprim's oracle study is the counter-evidence on coverage.
 - [[sources/diffusiondrive-v2.md]]: the dynamic-generation rival in both tables. Its corrected 87.5 first appears in this paper's Table 3.
 - [[sources/clover.md]], [[sources/da-wam.md]]: their v2 baseline rows are this paper's Table 3 rows. [[sources/wa-jepa.md]], [[sources/drivefuture.md]] and [[sources/coworld-vla.md]] later print the DiffusionDriveV2 pair (WA-JEPA also this paper's pair); [[sources/redrive.md]] and [[sources/suv.md]] print the corrected values only.

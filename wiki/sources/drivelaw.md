@@ -2,9 +2,9 @@
 title: "DriveLaW: Unifying Planning and Video Generation in a Latent Driving World"
 type: source-summary
 sources: [raw/papers/DriveLaW_ Unifying Planning and Video Generation in a Latent Driving World.md]
-related: [sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, concepts/nuscenes-waymo-evals.md, sources/simwam.md, sources/drivewam.md, sources/driveva.md, sources/epona.md, sources/policy-world-model.md, sources/drivevla-w0.md, sources/recogdrive.md, sources/sgdrive.md, sources/uniugp.md, sources/futuresightdrive.md, sources/dreameraD.md, sources/driving-wm-counterfactuals.md, concepts/counterfactual-prediction.md]
+related: [sources/drivewla.md, sources/adaptive-wam.md, sources/brainwam.md, sources/foresight.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/diffusion-planner.md, concepts/nuscenes-waymo-evals.md, sources/simwam.md, sources/drivewam.md, sources/driveva.md, sources/epona.md, sources/policy-world-model.md, sources/drivevla-w0.md, sources/recogdrive.md, sources/sgdrive.md, sources/uniugp.md, sources/futuresightdrive.md, sources/dreameraD.md, sources/driving-wm-counterfactuals.md, concepts/counterfactual-prediction.md]
 created: 2026-08-17
-updated: 2026-10-14
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -256,6 +256,7 @@ Video generation is ~5× faster than Epona at matched resolution, but **trajecto
 
 ## Key Cross-References
 
+- [[sources/drivewla.md]] *(2026-10-19)*: uses DriveLaW-Video (LTX-2B) as its "World Expert", read in a single forward pass from noisy future positions and fine-tuned only by the trajectory loss. The world-plus-action model alone scores 89.1, exactly this paper's result. Adding a frozen InternVL3-2B through shared attention gives 90.8, and Flow-GRPO 92.3.
 - **World-model pattern**: [[concepts/world-model-for-ad.md]] — DriveLaW is the wiki's only method that uses a video generator's *mid-denoising internal features* as the planning state, and its Table 6 is directly relevant to whether test-time imagination helps.
 - **Representation choice**: Table 5 (video latents 89.1 > VLM hidden state 86.5 > BEV 84.1 under a fixed planner) is the wiki's first controlled comparison of conditioning representations. See [[concepts/foundation-backbones-for-ad.md]].
 - **Scaling axis**: Table 4 varies *pretraining data* at fixed model size (+3.2 PDMS from 0 → 7.6M), complementing [[sources/simwam.md]]'s finding that *model size* barely matters and [[sources/drivewam.md]]'s 4k → 100k clip study.

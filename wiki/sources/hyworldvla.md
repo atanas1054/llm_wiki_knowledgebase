@@ -2,9 +2,9 @@
 title: "HyWorldVLA: A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving"
 type: source-summary
 sources: ["raw/papers/HyWorldVLA_ A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving.md"]
-related: [concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/evaluation-variance.md, concepts/foundation-backbones-for-ad.md, concepts/visual-tokenization.md, concepts/action-tokenization.md, concepts/inference-latency.md, concepts/teacher-pseudo-labels.md, concepts/navhard-ood-evaluation.md, sources/drivevla-w0.md, sources/drive-hwm.md, sources/coworld-vla.md, sources/onevl.md, sources/latent-wam.md, sources/dreameraD.md, sources/drivelaw.md, sources/explorevla.md, sources/epona.md, sources/resworld.md, sources/foredrive.md, sources/wa-jepa.md, sources/redrive.md, sources/world4scorer.md, sources/momworld.md, sources/hydra-mdp-pp.md, sources/recogdrive.md, sources/futuresightdrive.md, sources/policy-world-model.md, sources/autovla.md, sources/suv.md, sources/geowam.md, research-directions.md, sources/idol.md]
+related: [sources/raf-vla.md, concepts/world-model-for-ad.md, concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/evaluation-variance.md, concepts/foundation-backbones-for-ad.md, concepts/visual-tokenization.md, concepts/action-tokenization.md, concepts/inference-latency.md, concepts/teacher-pseudo-labels.md, concepts/navhard-ood-evaluation.md, sources/drivevla-w0.md, sources/drive-hwm.md, sources/coworld-vla.md, sources/onevl.md, sources/latent-wam.md, sources/dreameraD.md, sources/drivelaw.md, sources/explorevla.md, sources/epona.md, sources/resworld.md, sources/foredrive.md, sources/wa-jepa.md, sources/redrive.md, sources/world4scorer.md, sources/momworld.md, sources/hydra-mdp-pp.md, sources/recogdrive.md, sources/futuresightdrive.md, sources/policy-world-model.md, sources/autovla.md, sources/suv.md, sources/geowam.md, research-directions.md, sources/idol.md]
 created: 2026-10-12
-updated: 2026-10-14
+updated: 2026-10-19
 confidence: medium
 ---
 
@@ -345,6 +345,7 @@ In all three failures the generated future and the plan fail together, which is 
 
 ## Relation to Other Wiki Pages
 
+- [[sources/raf-vla.md]] *(2026-10-19)*: the same arrangement on a different backbone. A VLM regresses future-frame representations through query tokens (a frozen Cosmos encoder, MSE) that the action expert reads at inference. RAF-VLA prices queries and loss together at +1.21 PDMS (SFT) and +1.18 after GRPO; here reading the latent is worth +0.30.
 - [[sources/drivevla-w0.md]]: the base stack and the main baseline (anchor head 90.2★, FM 87.2, v2 86.1 with EC 58.9). HyWorldVLA's EC 77.4 is +18.5 over it.
 - [[sources/drive-hwm.md]]: the other Emu3-8B derivative with two future targets (a V-JEPA flow latent and next-frame RGB), posted in September 2026. Drive-HWM runs the two at two rates and fuses by FiLM; HyWorldVLA drops the pixel target after pre-training. Neither cites the other (Drive-HWM is later).
 - [[sources/coworld-vla.md]], [[sources/onevl.md]]: earlier mixed-target designs (four parallel targets; latent tokens with a visual decoder), both cited here but filed as single-paradigm methods.

@@ -2,9 +2,9 @@
 title: "ORION: A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation"
 type: source-summary
 sources: [raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md]
-related: [concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/dual-system-vla.md, sources/linkvla.md]
+related: [sources/lvdrive.md, concepts/diffusion-planner.md, concepts/vlm-domain-adaptation.md, concepts/dual-system-vla.md, sources/linkvla.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -13,6 +13,8 @@ confidence: high
 **Benchmark**: Bench2Drive (CARLA V2), nuScenes open-loop
 
 > **Superseded on Bench2Drive**: LinkVLA ([[sources/linkvla.md]]) subsequently achieves 91.01 DS / 74.55% SR, surpassing ORION's 77.74 DS / 54.62% SR by +13.27 DS and +19.93% SR.
+
+> **Built on by LVDrive** *(2026-10-19)*: [[sources/lvdrive.md]] (Xiaomi EV and HKUST; Hongwei Xie is on both papers) starts from ORION's Stage-1 weights and replaces the VQA co-training of Stage 3 with regression of six future front-view VQGAN code embeddings from LLM placeholder tokens, plus a refiner reading them. It also removes the KL term from this page's VAE planner and feeds the ground-truth trajectory into its distribution generator during training. 80.71 DS / 58.26 SR (+2.97 / +3.64 over ORION). Its planning-only base ($\mathcal M_{base}$, "analogous to" ORION's Stage 2) is run only on Dev10. On 220 routes the nearest reference is ORION's own planning-only row in Table 6 below (74.10 / 44.66).
 
 ---
 

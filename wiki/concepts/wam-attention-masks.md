@@ -1,10 +1,10 @@
 ---
 title: Attention Masks in World-Action Models
 type: concept
-sources: ["raw/papers/ForeDrive_ Foresight-Guided End-to-End Autonomous Driving with a Planning-Relevant Latent World Model.md", "raw/papers/Learning to Drive from a World Model.md", "raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, "raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md", raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md]
-related: [sources/foredrive.md, sources/learning-to-drive-from-a-world-model.md, sources/mm-future.md, sources/redrive.md, sources/physwam.md, sources/simwam.md, sources/metis.md, sources/suv.md, sources/wa-jepa.md, sources/brainwam.md, sources/unidrivevla.md, sources/sgdrive.md, sources/drivedreamer-policy.md, sources/uniugp.md, sources/driveva.md, sources/latent-wam.md, sources/alpamayo-r1.md, concepts/world-model-for-ad.md, concepts/mixture-of-experts.md, concepts/navhard-ood-evaluation.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/perception-for-planning.md, research-directions.md]
+sources: ["raw/papers/DriveWLA_ Unifying Future Dynamics and Scene Semantics throughWorld-Language-Action Modeling for Autonomous Driving.md", "raw/papers/ForeDrive_ Foresight-Guided End-to-End Autonomous Driving with a Planning-Relevant Latent World Model.md", "raw/papers/Learning to Drive from a World Model.md", "raw/papers/MM-Future_ Multi-Mode Joint World–Action Modeling for Autonomous Driving.md", "raw/papers/ReDrive_ Shaping Representations with World Modeling for End-to-End Driving.md", "raw/papers/PhysWAM_ Physically Consistent World Action Model for Autonomous Driving.md", raw/papers/SimWAM_ A Simple World Action Model for End-to-End Autonomous Driving.md, "raw/papers/Metis_ A Generalizable and Efficient World-Action Model for Autonomous Driving and Urban Navigation.md", "raw/papers/SUV_ Future Scene Understanding as Video Generation for End-to-End Driving.md", raw/papers/WA-JEPA_ Rethinking the Video JEPA Paradigm forWorld-Action Modeling in Autonomous Driving.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/SGDrive_ Scene-to-Goal Hierarchical World Cognition for Autonomous Driving.md, raw/papers/DriveDreamer-Policy_ A Geometry-Grounded World–Action Model for Unified Generation and Planning.md, "raw/papers/UniUGP_ Unifying Understanding, Generation, and Planing For End-to-end Autonomous Driving.md", raw/papers/DriveVA_ Video Action Models are Zero-Shot Drivers.md, raw/papers/Latent-WAM_ Latent World Action Modeling for End-to-End Autonomous Driving.md, raw/papers/Alpamayo-R1_ Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail.md]
+related: [sources/drivewla.md, sources/foredrive.md, sources/learning-to-drive-from-a-world-model.md, sources/mm-future.md, sources/redrive.md, sources/physwam.md, sources/simwam.md, sources/metis.md, sources/suv.md, sources/wa-jepa.md, sources/brainwam.md, sources/unidrivevla.md, sources/sgdrive.md, sources/drivedreamer-policy.md, sources/uniugp.md, sources/driveva.md, sources/latent-wam.md, sources/alpamayo-r1.md, concepts/world-model-for-ad.md, concepts/mixture-of-experts.md, concepts/navhard-ood-evaluation.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/perception-for-planning.md, research-directions.md]
 created: 2026-09-27
-updated: 2026-10-06
+updated: 2026-10-19
 confidence: medium
 ---
 
@@ -89,6 +89,22 @@ So ReDrive contains a clean instance of each of the two mechanisms Metis's mask 
 - Not measured on navhard or HUGSIM per variant.
 
 ---
+
+## DriveWLA: World, Language and Action Under One Mask {#drivewla}
+
+*(2026-10-19)* [[sources/drivewla.md]] runs a mask ablation over three streams instead of two: a single-pass video DiT (World, LTX-2B), a frozen VLM behind an adapter (Language), and a flow-matching action DiT. Imitation checkpoint, navtest, single runs:
+
+| W → L | L → W | W/L → A | A → W/L | PDMS |
+|:-:|:-:|:-:|:-:|---:|
+| ✓ | ✓ | ✓ | ✗ | **90.8** |
+| ✓ | ✗ | ✓ | ✗ | 90.1 |
+| ✗ | ✓ | ✓ | ✗ | 89.8 |
+| ✓ | ✓ | ✓ | ✓ | 90.4 |
+| ✗ | ✗ | ✓ | ✗ | 88.4 |
+
+- **Action reading but not written to is best again**, as in the [mask family](#mask-family). Letting the action write back costs 0.4.
+- **The two context streams should see each other** (+2.4 over none). That contradicts [[sources/brainwam.md]]'s Tri-MoT, where a VLM sharing attention with a video stream hurt. DriveWLA's video stream is not denoised at inference (future positions are noise, one pass), so this mask never meets iterative refinement.
+- None of these streams has a future target, so "future" here is a position, not a supervised prediction.
 
 ## Why It Matters
 

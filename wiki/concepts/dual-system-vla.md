@@ -1,10 +1,10 @@
 ---
 title: Dual-System VLA for Autonomous Driving
 type: concept
-sources: ["raw/papers/Driving on Registers.md", "raw/papers/RAD_ Training an End-to-End Driving Policy via Large-Scale 3DGS-based Reinforcement Learning.md", raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
-related: [sources/drivor.md, sources/rad.md, sources/drive-hwm.md, sources/lwdrive.md, sources/brainwam.md, sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md, research-directions.md]
+sources: ["raw/papers/DriveWLA_ Unifying Future Dynamics and Scene Semantics throughWorld-Language-Action Modeling for Autonomous Driving.md", "raw/papers/ChainFlow-VLA_ Causal Flow Planning with Vision-Language Models.md", "raw/papers/Driving on Registers.md", "raw/papers/RAD_ Training an End-to-End Driving Policy via Large-Scale 3DGS-based Reinforcement Learning.md", raw/papers/Drive-HWM_ Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving.md, raw/papers/LWDrive_ Layer-Wise World-Model-Guided Vision-Language ModelPlanning for Autonomous Driving.md, raw/papers/BrainWAM_ Action-Space Coordination of Semantic Priors and Predictive Dynamics for Autonomous Driving.md, raw/papers/Senna-2_ Aligning VLM and End-to-End Driving Policy for Consistent Decision Making and Planning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/From Representational Complementarity to Dual Systems_ Synergizing VLM and Vision-Only Backbones for End-to-End Driving.md, raw/papers/OneDrive_ Unified Multi-Paradigm Driving with Vision-Language-Action Models.md, raw/papers/DriveWAM_ Video Generative Priors Enable Scalable World-Action Modeling for Autonomous Driving.md]
+related: [sources/drivewla.md, sources/chainflow-vla.md, sources/drivor.md, sources/rad.md, sources/drive-hwm.md, sources/lwdrive.md, sources/brainwam.md, sources/senna2.md, sources/recogdrive.md, sources/automot.md, sources/unidrivevla.md, sources/hybriddriveVLA.md, sources/onedrive.md, sources/drivewam.md, concepts/vlm-domain-adaptation.md, concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/perception-for-planning.md, concepts/best-of-n.md, concepts/world-model-for-ad.md, research-directions.md]
 created: 2026-04-05
-updated: 2026-10-14
+updated: 2026-10-19
 confidence: high
 ---
 
@@ -321,6 +321,10 @@ The supporting datum is the useful part: **the VLA branch reaches 86.1 PDMS afte
 
 BrainWAM's interface is the narrowest that still carries gradients in both directions; DriveWAM's is narrower still (two sentences of text) but one-way and gradient-free. **The trend across all four is toward deliberately constricted interfaces**, and BrainWAM is the first to give an explicit reason why widening them hurts.
 
+## DriveWLA: a Frozen VLM Sharing Attention With a Video Stream {#drivewla}
+
+*(2026-10-19)* [[sources/drivewla.md]] keeps ReCogDrive's InternVL3-2B frozen, reads its last-layer hidden states through a trainable 28-block adapter, and lets the adapter exchange attention with a video DiT in every block. The action DiT reads both. The VLM is worth +1.7 PDMS (89.1 → 90.8), and bidirectional exchange with the video stream +2.4 over none. This is the configuration [BrainWAM](#brainwam) argues against, with one difference that may matter: DriveWLA's video stream is a single forward pass, not an iteratively denoised one. Like [[sources/chainflow-vla.md]], the VLM emits nothing and never decides; unlike it, the VLM shapes the whole context rather than only a refiner.
+
 ## LWDrive: One Interface, Consumed Six Times {#lwdrive}
 
 [[sources/lwdrive.md]] names the pathology this page has been circling and gives it a taxonomy. Its Figure 1 splits prior work into **(a) direct VLM-to-trajectory decoding** and **(b) single-stage fusion**, where "VLM semantics are usually injected only once and remain weakly coupled with subsequent trajectory correction," and proposes (c): the VLM output is an *intent anchor*, and refinement consumes VLM representations repeatedly at increasing depth.
@@ -371,9 +375,27 @@ Three axes now exist on this page, and they are independent:
 
 **The caveat is large and belongs here rather than on the world-model page.** The temporal-role split is a claim about *deployment*, and NAVSIM cannot test it: the benchmark is single-shot, so with $N=8$ at its 8-pose convention the slow model fires exactly once per scenario and the fast model never receives a second observation. See [[concepts/navsim-benchmark.md]]. **What Table IV measures is a conditioning stream, not a schedule** — and it is worth +0.3 or +0.8 PDMS depending on which of the paper's [two result sets](../sources/drive-hwm.md#two-result-sets) is correct, against 1.3 for the conditioning mechanism alone. The rate hierarchy is the least-supported part of a paper whose other measurements are clean.
 
+## ChainFlow-VLA: a Frozen VLM as the Condition of a Residual Refiner {#chainflow}
+
+[[sources/chainflow-vla.md]] (Afari, May 2026) is a fourth arrangement next to the dual-system, MoT and advisory designs on this page. The VLM emits nothing at inference. Its hidden states, from ReCogDrive's 2B InternVL model, frozen and reading only the front camera, condition a DiT that corrects the proposals of a separate E2E planner (DrivoR's backbone plus an autoregressive decoder). The planner decides where to go; the VLM only shapes how each proposal is adjusted.
+
+| What conditions the residual refiner (trainval, navtest) | PDMS |
+|---|---:|
+| Nothing (no refiner) | 94.0 |
+| DrivoR's own scene tokens | 94.1 |
+| VLM fine-tuned on action QA | 94.11 |
+| VLM fine-tuned on environment-understanding and trajectory QA | 94.72 (4 steps) / 94.8 (printed) |
+
+- **The gain depends on what the VLM was fine-tuned on.** An action-QA VLM adds nothing over the planner's own tokens, while environment and trajectory QA add +0.6. That makes "a second, larger encoder" an incomplete explanation, though "action QA" is not defined and each row is one run.
+- **There is no consistency problem to solve,** because the VLM never states a decision the planner could contradict. That removes Senna-2's alignment stage. The cost is that nothing the VLM "reasons" is inspectable at inference.
+- **The paper's thesis, that a VLM is more useful as a late conditioner of refinement than as an early fused feature, is argued, not measured.** No arm feeds the same VLM into the backbone or the proposal stage. The comparison it rests on is across papers: LatentVLA (feature fusion, 92.4) and ReCogDrive (the same VLM and DiT generating whole trajectories, 90.8).
+- Its nearest relative here is [[sources/drivewam.md]]'s advisory VLM, also frozen and also outside the action path, which passes text guidance rather than hidden states.
+
 ## Open Questions
 
 *Wiki-wide open questions are collected in [[research-directions.md]].*
+
+- **Early fusion or late conditioning, with one VLM?** [[sources/chainflow-vla.md]] conditions only a residual refiner on frozen VLM states (+0.7 over the planner's own tokens) and argues that this beats fusing VLM features early. Feeding the same VLM into the backbone, into the proposal stage and into the refiner, at matched data, would test it.
 
 - Can the kinematic mapping $f_K$ be learned (soft/continuous) rather than rule-based, to avoid category-boundary noise?
 - Does DriveWAM's advisory arrangement need a consistency mechanism? Senna-2's evidence suggests unaligned VLM guidance under-delivers; DriveWAM reports aggregate gains but no VLM-action agreement rate.
