@@ -4679,3 +4679,23 @@ The fixed mask lets World and Language see each other and Action read both. Imit
 - **ChainFlow-VLA** (code released): the oracle over refined candidates and the refiner's sampler spread. That would place it in the candidates-vs-ranking question.
 - **Repeat one full Bench2Drive evaluation three times.** No ingested paper has, and the leaders are 1–2 DS apart.
 - Ingest **iPad** (TOAD's main beneficiary and ChainFlow-VLA's scorer design), **World4Drive** (31 pages; the LAW → WorldRFT link) and **DriveWorld-VLA** (two recent tables).
+
+## 2026-10-25 - Query: basic controls the wiki has not tackled
+
+**Question**: what simple but fundamental research directions has this wiki not tackled? Follow-up: add them to `research-directions.md` under "Basic controls".
+
+**Answer**: eight controls. Each was checked by grep against the wiki, and each already has evidence on a page: ego status alone on NAVSIM; history length and copying past motion; metric agreement with human judgment; shared failure scenes across planners; cameras vs. cameras + LiDAR at a matched planner; camera failure and calibration shift; latency in a closed loop that does not wait; a held-out city inside NAVSIM. Checked and already covered: seed variance, data and model scaling, open- vs. closed-loop rankings, weather robustness, teacher-label quality, filtering demonstrations by score.
+
+**Research directions** (`wiki/research-directions.md`): now 78 questions (64 open, 14 partially answered) and 2 answered.
+- *Added* a new section 7, "Basic controls", with eight open questions: "How much of a NAVSIM score comes from ego status alone?"; "How much history does a planner need, and does more of it make the planner copy past motion?"; "Do PDMS and EPDMS agree with human judgment of which trajectory is better?"; "Do different planners fail on the same scenes?"; "How much of the NAVSIM ordering is the sensor set (cameras vs. cameras + LiDAR)?"; "Does a planner degrade gracefully when a camera fails or its calibration shifts?"; "Does inference latency change closed-loop driving when the simulator does not wait?"; "Does a NAVSIM planner generalize to a city held out of training?". Frontmatter `related` gains 23 pages.
+- *Answered*: none.
+
+**Pages updated** (matching page-level Open Questions):
+- `concepts/navsim-benchmark.md`: new "Open Questions" section (ego status, human judgment, held-out city); `related` gains `research-directions.md`.
+- `concepts/perception-for-planning.md`: items 10–12 (history, sensor set, camera failure).
+- `concepts/evaluation-variance.md`: shared failure scenes.
+- `concepts/inference-latency.md`: latency in a closed loop that does not wait.
+
+**For the next lint**:
+- The wiki disagrees on which cities NAVSIM covers: Las Vegas only in `sources/reasoning-vla.md` and `concepts/vlm-domain-adaptation.md`, four cities in `sources/spanvla.md`. `concepts/navsim-benchmark.md` states none.
+- Two of the new questions overlap concept pages the 2026-10-19 lint suggested: "ego status in open-loop evaluation" and "sensor configuration".
