@@ -1,10 +1,10 @@
 ---
 title: Bench2Drive Benchmark
 type: concept
-sources: ["raw/papers/DriveWLA_ Unifying Future Dynamics and Scene Semantics throughWorld-Language-Action Modeling for Autonomous Driving.md", "raw/papers/LVDrive_ Latent Visual Representation Enhanced Vision-Language-Action Autonomous Driving Model.md", "raw/papers/SparseDriveV2_ Scoring is All You Need for End-to-End Autonomous Driving.md", "raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/Think2Drive_ Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2).md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
-related: [sources/drivewla.md, sources/lvdrive.md, sources/sparsedrivev2.md, sources/idol.md, sources/world4scorer.md, sources/raw2drive.md, sources/think2drive.md, sources/momworld.md, sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, sources/deepsight.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md, concepts/pdm-lite.md, research-directions.md]
+sources: ["raw/papers/RoG-DAgger_ Rollout-Guided Post-Training for End-to-End Driving.md", "raw/papers/DriveWLA_ Unifying Future Dynamics and Scene Semantics throughWorld-Language-Action Modeling for Autonomous Driving.md", "raw/papers/LVDrive_ Latent Visual Representation Enhanced Vision-Language-Action Autonomous Driving Model.md", "raw/papers/SparseDriveV2_ Scoring is All You Need for End-to-End Autonomous Driving.md", "raw/papers/IDOL_ Inverse-Dynamics-Guided Future Prediction for End-to-End Autonomous Driving.md", "raw/papers/Outcome-Grounded World Modeling for Autonomous Driving.md", "raw/papers/Raw2Drive_ Reinforcement Learning with Aligned World Models for End-to-End Autonomous Driving(in CARLA v2).md", "raw/papers/Think2Drive_ Efficient Reinforcement Learning by Thinking with Latent World Model for Autonomous Driving (in CARLA-v2).md", "raw/papers/MomWorld_ Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving.md", raw/papers/ORION_ A Holistic End-to-End Autonomous Driving Framework by Vision-Language Instructed Action Generation.md, raw/papers/Unifying Language-Action Understanding and Generation for Autonomous Driving.md, raw/papers/AutoVLA_ A Vision-Language-Action Model for End-to-End Autonomous Driving with Adaptive Reasoning and Reinforcement Fine-Tuning.md, raw/papers/AutoMoT_ A Unified Vision-Language-Action Model with Asynchronous Mixture-of-Transformers for End-to-End Autonomous Driving.md, "raw/papers/UniDriveVLA_ Unifying Understanding, Perception, and Action Planning for Autonomous Driving.md", raw/papers/DynVLA_ Learning World Dynamics for Action Reasoning in Autonomous Driving.md, raw/papers/Drive-JEPA_ Video JEPA Meets Multimodal Trajectory Distillation for End-to-End Driving.md, raw/papers/DeepSight_ Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving.md]
+related: [sources/rog-dagger.md, sources/drivewla.md, sources/lvdrive.md, sources/sparsedrivev2.md, sources/idol.md, sources/world4scorer.md, sources/raw2drive.md, sources/think2drive.md, sources/momworld.md, sources/orion.md, sources/linkvla.md, sources/autovla.md, sources/automot.md, sources/unidrivevla.md, sources/dynvla.md, sources/drive-jepa.md, sources/deepsight.md, concepts/navsim-benchmark.md, concepts/dual-system-vla.md, concepts/diffusion-planner.md, concepts/pdm-lite.md, research-directions.md]
 created: 2026-04-15
-updated: 2026-10-19
+updated: 2026-10-28
 confidence: high
 ---
 
@@ -88,9 +88,12 @@ Five standardized scenario categories; reported separately by ORION and LinkVLA:
 | HiP-AD *(not ingested)* | 86.77 | 69.09 | 203.12 | 19.36 | Non-VLM; from [[sources/momworld.md]]'s table |
 | DynVLA | 88.34 | 72.73 | — | — | Dynamics CoT with ego/environment VQ dynamics tokens; below LinkVLA, above AutoMoT; table omits LinkVLA |
 | **SparseDriveV2** ([[sources/sparsedrivev2.md]]) | 89.15 | 70.00 | 199.84 | 18.32 | **The highest non-VLM entry here.** A 262,144-combination factorized vocabulary scored in two passes; ResNet-50, six cameras, SparseDrive's auxiliary perception, **pure imitation (no metric supervision)**; training data unstated. Verified at the primary source; see [below](#sparsedrivev2) |
+| TakeVLA *(not ingested)* | 89.72 | 73.73 | 249.01 | 30.27 | DAgger-style post-training of SimLingo on expert-takeover data, with warning-style language labels on pre-takeover frames, plus RL in reconstructed scenarios. From [[sources/rog-dagger.md]]'s table |
+| **RoG-DAgger** ([[sources/rog-dagger.md]]) | 90.34 | 73.51 | 242.84 | 35.10 | **The first DAgger entry, and no reward.** SimLingo (the authors' Qwen3-VL-2B re-implementation, 86.59 / 66.36) post-trained once on about 51K on-policy CARLA samples labelled by a modified PDM-Lite expert. PDM-Lite protocol. +3.75 DS over its actual base; the paper's "+5.3" uses the published SimLingo row. Its table omits LinkVLA. See [below](#rog-dagger) |
 | **LinkVLA** | **91.01** | **74.55** | **255.84** | **34.62** | **Shared codebook + C2F; current SOTA** |
 | *Think2Drive (privileged expert)* | *91.85* | *85.41* | *269.14* | *25.97* | *Reference, not a leaderboard entry: ground-truth BEV input; generated the base-set training data. From [[sources/raw2drive.md]]'s and [[sources/dynvla.md]]'s tables; see [below](#expert) and [[sources/think2drive.md]]* |
-| *PDM-Lite (privileged expert)* | *97.02* | *92.27* | – | – | *Reference: rule-based; the alternative expert-data protocol. From [[sources/dynvla.md]]'s table* |
+| *PDM-Lite (privileged expert)* | *97.02* | *92.27* | – | – | *Reference: rule-based; the alternative expert-data protocol. From [[sources/dynvla.md]]'s table (efficiency 213.47, comfort 22.33 in [[sources/rog-dagger.md]]'s)* |
+| *RoG-Expert (privileged expert)* | *93.41* | *81.81* | *196.89* | *14.13* | *Reference: PDM-Lite with rollout-checked lateral-shift replanning and junction speeds, restricted to the student's front field of view; [[sources/rog-dagger.md]]'s post-training expert* |
 
 **PDM-Lite caveat**: PDM-Lite is a privileged oracle planner (uses ground-truth waypoints or HD map access) that some Bench2Drive methods use as a fallback or auxiliary module. UniDriveVLA (78.37) is explicitly noted as the best result *without* PDM-Lite. Methods that use PDM-Lite score higher but are not fairly comparable to methods that do not. The precise PDM-Lite usage for each method above is not always disclosed.
 
@@ -111,7 +114,7 @@ Five standardized scenario categories; reported separately by ORION and LinkVLA:
 
 ---
 
-## Multi-Ability Breakdown (LinkVLA vs. ORION vs. SimLingo)
+## Multi-Ability Breakdown (LinkVLA vs. ORION vs. SimLingo) {#multi-ability}
 
 | Scenario | SimLingo | ORION | **LinkVLA** |
 |----------|---------|-------|------------|
@@ -121,6 +124,8 @@ Five standardized scenario categories; reported separately by ORION and LinkVLA:
 | Give-Way | 50.00 | 30.00 | **50.00** |
 | Traffic-Sign | 82.11 | 69.15 | **83.68** |
 | **Mean** | 67.28 | 54.72 | **73.40** |
+
+*(2026-10-28: [[sources/rog-dagger.md]]'s table prints a different SimLingo ability row with the same DS, SR, efficiency and comfort: 54.01 / 57.04 / 88.33 / 53.33 / 82.45, mean 67.03. Its overtaking and give-way values fit an average of three runs; see [RoG-DAgger](#rog-dagger).)*
 
 Braking (+11.7 vs. SimLingo) and overtaking (+11.1) drive LinkVLA's gains. ORION's give-way (30.00) is the weakest result — the VAE planner may not handle reactive yielding well.
 
@@ -180,7 +185,7 @@ Two non-VLM entries in that table are near the top of this page. **SparseDriveV2
 
 LVDrive gains on merging and traffic sign, the two abilities with the most scenarios, and loses on the other three. Its comfort (14.34) is the lowest reported in its table.
 
-**2. Give Way is ten routes.** LVDrive's appendix gives scenarios per ability: Traffic Sign 18, Merging 16, Emergency Brake 12, Overtaking 9, **Give Way 2**. At five routes per scenario, Give Way is decided on ten routes, so every method's give-way score is a multiple of 10 (every row on this page is). The pattern recorded [above](#expert), with every student at 0–50 and the expert at 90, is a statement about ten routes per run.
+**2. Give Way is ten routes.** LVDrive's appendix gives scenarios per ability: Traffic Sign 18, Merging 16, Emergency Brake 12, Overtaking 9, **Give Way 2**. At five routes per scenario, Give Way is decided on ten routes, so every method's give-way score is a multiple of 10 (every row on this page is). *(2026-10-28: per run. [[sources/rog-dagger.md]]'s table prints SimLingo's give way at 53.33 and overtaking at 57.04, which fit three-run averages (16 / 30, 77 / 135); see [RoG-DAgger](#rog-dagger).)* The pattern recorded [above](#expert), with every student at 0–50 and the expert at 90, is a statement about ten routes per run.
 
 **3. Two concurrent designs, opposite target verdicts, both on Dev10.**
 
@@ -200,6 +205,66 @@ DeepSight concludes semantic features beat reconstruction targets; LVDrive's bes
 **4. Table provenance.** It is the third ingested table to print SparseDrive's 44.54 / 16.71 under MomAD's name, after ORION's and DeepSight's ([above](#momworld)). It prints a separate ReCogDrive row at 71.36 DS (see the World4Scorer row). Two printed ability means do not match their rows (DiffAD, UniDrive-WM-AR).
 
 **5. The expert gap.** LVDrive states it trains on the official base set, so it is a Think2Drive-protocol student 11.1 DS below the [expert](#expert), with give way at 20 against the expert's 90.
+
+### RoG-DAgger: DAgger Post-Training, a Weaker Expert as a Better Teacher, and Two More CARLA Benchmarks {#rog-dagger}
+
+*(2026-10-28)* [[sources/rog-dagger.md]] (CARIAD and TU Berlin, August 2026) post-trains SimLingo once by DAgger in CARLA. The privileged expert is PDM-Lite with three changes: rollout-checked lateral-shift replanning, a takeover trigger timed near the last solvable state, and blinding to actors outside the student's front camera. There is no reward. **90.34 DS / 73.51 SR**, second on this page, single runs.
+
+**1. Which SimLingo is the baseline.**
+
+| | DS | SR |
+|---|---:|---:|
+| SimLingo, published (InternVL-2; the row in its Table 1) | 85.07 | 67.27 |
+| SimLingo-Qwen3-VL-2B (the checkpoint actually post-trained) | 86.59 | 66.36 |
+| Conventional DAgger: PDM-Lite expert, infraction and restart triggers | 87.85 | 66.66 |
+| **RoG-DAgger** | **90.34** | 73.51 |
+| TakeVLA (SimLingo + takeover data + RL; not ingested) | 89.72 | **73.73** |
+
+- Against its own base the gain is +3.75 DS / +7.15 SR. The SimLingo DS now has four values in the wiki (85.07, 85.94, 86.02, and this re-implementation's 86.59).
+- Conventional DAgger with the stronger expert buys +1.26 DS / +0.30 SR.
+
+**2. The expert ladder.** PDM-Lite scores 97.02 / 92.27, RoG-Expert 93.41 / 81.81 and the student 90.34 / 73.51. The student is 3.1 DS below its post-training expert and 6.7 below PDM-Lite, the expert that generated its pre-training data. For the [expert question](#expert), this is a PDM-Lite-protocol student, and the weaker but student-compatible expert produced the better student. The paper says that comparison also changes the takeover trigger.
+
+**3. Abilities.**
+
+| | Merging | Overtaking | Em. Brake | Give Way | Traffic Sign | Mean |
+|---|---:|---:|---:|---:|---:|---:|
+| SimLingo (this paper's print) | 54.01 | 57.04 | 88.33 | 53.33 | 82.45 | 67.03 |
+| TakeVLA | 63.64 | 64.44 | **91.67** | 50.00 | **85.48** | **71.05** |
+| **RoG-DAgger** | **67.09** | 64.44 | 85.00 | 50.00 | 84.74 | 70.25 |
+| *RoG-Expert* | *75.00* | *84.44* | *93.33* | *40.00* | *88.95* | *76.35* |
+| *PDM-Lite* | *82.05* | *91.11* | *81.67* | *80.00* | *70.97* | *81.16* |
+
+- Merging is +13.1 over SimLingo; emergency brake and give way are −3.3 each.
+- The FoV-blinded expert scores 40 on give way, half of PDM-Lite's 80, so the student's give-way ceiling is partly set by its expert.
+- **SimLingo's row is not one run.** Every ability column differs from the SimLingo row [above](#multi-ability) (from LinkVLA's table), with DS, SR, efficiency and comfort identical. Overtaking 57.04 is not a count out of 45 routes and give way 53.33 not one out of 10, but both fit three-run averages (77 / 135, 16 / 30). The RoG-DAgger and TakeVLA rows fit single runs (64.44 = 29 / 45; 50.00).
+
+**4. Two CARLA benchmarks new to the wiki.**
+
+*Longest6 v2* has routes about 10× longer than Bench2Drive's and an extra penalty for driving much slower than local traffic. It reports DS and route completion (RC). DS multiplies infraction penalties along a route, so long routes punish the per-kilometre rate harder (see the Think2Drive note [above](#expert)).
+
+| | PDM-Lite | RoG-Expert | TF++ | SimLingo | HiP-AD | **RoG-DAgger** |
+|---|---:|---:|---:|---:|---:|---:|
+| DS | 73 | 55 | 23 | 22 | 7 | **44** |
+| RC | 100 | 100 | 70 | 70 | 56 | **88** |
+
+HiP-AD, 86.77 DS on Bench2Drive, scores 7 here. The order of strong Bench2Drive methods does not carry over to long routes.
+
+*Fail2Drive* tests out-of-distribution generalization: unseen assets and novel configurations of scenarios, in a base and a generalization split, scored by DS, SR and their harmonic mean (HM).
+
+| | Base DS | Base SR | Gen. DS | Gen. SR | Gen. HM |
+|---|---:|---:|---:|---:|---:|
+| TF++ (LiDAR) | **83.3** | 78.5 | **75.4** | 61.1 | 67.5 |
+| SimLingo | 82.6 | 79.3 | 71.7 | 55.0 | 62.2 |
+| HiP-AD | 74.1 | 70.7 | 67.1 | 56.7 | 61.5 |
+| ORION | 53.0 | 52.0 | 51.2 | 46.0 | 48.5 |
+| UniAD | 47.5 | 36.3 | 44.0 | 27.6 | 33.9 |
+| **RoG-DAgger** | 80.2 | **80.0** | 74.7 | **66.0** | **70.1** |
+
+- ORION, 77.74 DS on Bench2Drive, falls to 53.0 on Fail2Drive's base split, below HiP-AD.
+- Post-training lifts generalization SR by 11 points and DS by 3. The base split's DS falls 2.4.
+- By scenario class, behaviour scenarios gain +30.8 HM and robustness scenarios lose 6.1.
+- The source of the baseline rows, and whether SimLingo's is the published or the re-implemented model, is not stated.
 
 ---
 
@@ -229,5 +294,6 @@ Drive-JEPA ([[sources/drive-jepa.md]]) also reports both NAVSIM and Bench2Drive,
 - Can PDM-Lite usage be standardized across papers, or should the benchmark track PDM-Lite and non-PDM-Lite leaderboards separately?
 - **What do SparseDriveV2 (89.15 DS) and HiP-AD (86.77) do?** Both are non-VLM planners that match the VLA leaders here, and both are known to this wiki only through [[sources/momworld.md]]'s table. *(2026-10-14: SparseDriveV2 answered. It is a factorized fixed-vocabulary scorer trained by imitation alone, on SparseDrive's perception; see [above](#sparsedrivev2). HiP-AD remains un-ingested.)*
 - **Which Bench2Drive row is MomAD's?** Two ingested tables give it SparseDrive's numbers. *(2026-10-14: SparseDrive's own first author prints 44.54 / 16.71 as SparseDrive's in [[sources/sparsedrivev2.md]], agreeing with MomWorld; the ORION and DeepSight attribution to MomAD is the outlier.)* *(2026-10-19: [[sources/lvdrive.md]] repeats the ORION attribution, a third table.)*
-- **Does a ten-route ability score mean anything?** Give Way covers two scenarios, ten routes ([[sources/lvdrive.md]]'s Table 7), so one run moves it in steps of 10. No paper reports repeated full-benchmark runs; the multi-ability columns would need them before per-ability gaps of 10–20 points can be read.
-- **Does the expert bound the leaderboard?** The best Think2Drive-protocol student is 5.6 DS below its 91.85-DS teacher and LinkVLA (protocol undisclosed) is 0.84 below it. Whether any student trained only on the base set can pass the expert, and whether PDM-Lite-protocol gains are simply the stronger teacher, is untested. See [above](#expert). *(2026-10-14: [[sources/sparsedrivev2.md]] is 2.7 DS below the expert (89.15) and states no training data.)*
+- **Does a ten-route ability score mean anything?** Give Way covers two scenarios, ten routes ([[sources/lvdrive.md]]'s Table 7), so one run moves it in steps of 10. No paper reports repeated full-benchmark runs; the multi-ability columns would need them before per-ability gaps of 10–20 points can be read. *(2026-10-28: [[sources/rog-dagger.md]]'s SimLingo ability row fits a three-run average (give way 53.33 = 16 / 30), so at least one source averages runs, without saying so. Its own rows and its five ablations, 1.4–2.5 DS apart, are single runs.)*
+- **Do Bench2Drive rankings survive long routes and out-of-distribution scenarios?** In [[sources/rog-dagger.md]]'s tables HiP-AD scores 86.77 on Bench2Drive and 7 DS on Longest6 v2, and ORION 77.74 on Bench2Drive and 53.0 on Fail2Drive's base split, while TF++ (84.21) is level with SimLingo on Longest6 and ahead on Fail2Drive DS. Only five methods have rows on Fail2Drive in the wiki and four on Longest6 v2, all from one paper's tables of unstated provenance. See [above](#rog-dagger).
+- **Does the expert bound the leaderboard?** The best Think2Drive-protocol student is 5.6 DS below its 91.85-DS teacher and LinkVLA (protocol undisclosed) is 0.84 below it. Whether any student trained only on the base set can pass the expert, and whether PDM-Lite-protocol gains are simply the stronger teacher, is untested. See [above](#expert). *(2026-10-14: [[sources/sparsedrivev2.md]] is 2.7 DS below the expert (89.15) and states no training data.)* *(2026-10-28: on the PDM-Lite side, [[sources/rog-dagger.md]] is 6.7 DS below PDM-Lite (90.34 vs 97.02) after DAgger post-training with a weaker, field-of-view-blinded version of it (93.41). Conventional DAgger with PDM-Lite itself gives 87.85. So the expert's own score is not what limits the student here; the usability of its labels does. See [above](#rog-dagger).)*

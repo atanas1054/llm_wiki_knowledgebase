@@ -4699,3 +4699,83 @@ The fixed mask lets World and Language see each other and Action read both. Imit
 **For the next lint**:
 - The wiki disagrees on which cities NAVSIM covers: Las Vegas only in `sources/reasoning-vla.md` and `concepts/vlm-domain-adaptation.md`, four cities in `sources/spanvla.md`. `concepts/navsim-benchmark.md` states none.
 - Two of the new questions overlap concept pages the 2026-10-19 lint suggested: "ego status in open-loop evaluation" and "sensor configuration".
+
+## 2026-10-28 - Ingest: RoG-DAgger (Rollout-Guided Post-Training for End-to-End Driving)
+
+**Source**: `raw/papers/RoG-DAgger_ Rollout-Guided Post-Training for End-to-End Driving.md` (arXiv 2608.24525v1, August 2026)
+**Orgs**: CARIAD SE (Volkswagen Group) and the Institute of Mathematics, TU Berlin (Liangyu Zhong, Joachim Sicking, Fabian Hueger, Hanno Gottschalk; per-author affiliations not marked). No code stated.
+**Pages created**: `wiki/sources/rog-dagger.md`
+**Pages updated**:
+- `concepts/bench2drive.md`: ladder rows for RoG-DAgger (90.34) and TakeVLA (89.72, not ingested); a RoG-Expert reference row; new `#rog-dagger` section (baseline choice, expert ladder, abilities, Longest6 v2 and Fail2Drive tables); an explicit `#multi-ability` anchor; annotations on the give-way "multiple of 10" claim and on two open questions; a new open question on long routes and OOD scenarios.
+- `concepts/pdm-lite.md`: new `#rog-dagger` section (how PDM-Lite plans; 29.6% of its pre-takeover labels collide under the rollout; experts and students on one table; lint rule extended).
+- `concepts/rl-for-ad.md`: new `#rog-dagger` section (DAgger without reward, against openpilot and SimScale).
+- `concepts/teacher-pseudo-labels.md`: table row; new problem 5 `#teacher-score` ("Four Recurring Problems" → "Five"); new open question.
+- `concepts/evaluation-variance.md`: full-Bench2Drive single-run ablations and an averaged baseline row, under "Outside NAVSIM".
+- `concepts/data-driven-simulators.md`: the game-engine version of the on-policy argument, under `#why-on-policy`.
+- `research-directions.md`, `index.md`, `README.md` (109 papers; papers row; at-a-glance bullet; Bench2Drive concept row; known-gaps rows).
+
+**Confidence**: **medium**. The method is fully specified (both algorithms, all thresholds, filters), and the paper reports three closed-loop benchmarks and five ablations. But the headline is against a different model than the one post-trained, every number is a single run, the new expert's own label-failure rate is not reported, and there is no code.
+
+**What it is**: one round of DAgger in CARLA on SimLingo (re-implemented on Qwen3-VL-2B; front camera; MLP path and speed heads). The expert is PDM-Lite with three changes, each checked by a controller-in-the-loop kinematic bicycle rollout with non-reactive actors:
+- **Expanded solution space**: when braking along the route still collides, lateral shifts of the colliding segment (0.2 m steps to 3 m, cosine ease, lane-bounded) and, in junctions, 25% / 50% of current speed.
+- **Solvability-aware takeover**: R-TTC < 1 s with a successful replan, or 1–1.5 s with replans succeeding in two of four frames, to take over near the estimated point of no return.
+- **Field-of-view alignment**: the expert plans only around actors in the student's 110° view, and pre-takeover samples caused by unseen actors are dropped.
+
+There are two separate collection runs (infraction-triggered, keeping 2 s before and 2 s after; solvability-triggered, keeping 2 s after) plus restarts. About 51K samples are mixed 3:1 with pre-training data, then L1 imitation for five epochs. No reward.
+
+**Reported results**:
+- Bench2Drive 90.34 DS / 73.51 SR (published SimLingo 85.07 / 67.27; TakeVLA 89.72 / 73.73).
+- Longest6 v2 44 DS / 88 RC (SimLingo 22 / 70).
+- Fail2Drive base 80.2 / 80.0, generalization 74.7 / 66.0 (SimLingo 82.6 / 79.3 and 71.7 / 55.0).
+- Cost on 4× A100: about 15 h collection and 3–4 h fine-tuning, against 35 h pre-training.
+
+**Finding 1 - the gain over the actual base is +3.75 DS / +7.15 SR.** The post-trained checkpoint is the Qwen3-VL re-implementation (86.59 / 66.36, Table 4). The "+5.3 / +6.2" in the abstract uses the published InternVL row. The backbone swap the paper calls insignificant is itself 1.52 DS.
+
+**Finding 2 - a worse expert made the better teacher.** RoG-Expert drives worse than PDM-Lite (93.41 vs 97.02 DS on Bench2Drive; 55 vs 73 on Longest6; give way 40 vs 80), yet its student scores 90.34 against 87.85 for conventional DAgger with PDM-Lite. That baseline is only +1.26 DS / +0.30 SR over the base. The trigger also changes between the two runs, as the paper notes.
+
+**Finding 3 - expert labels from the student's states are often unsafe.** Re-executed under the rollout, PDM-Lite's plans collide in 29.6% of 40-frame pre-takeover samples and 43.2% of 20-frame ones, against 0.47% after takeover.
+
+**Finding 4 - pre-takeover supervision drives success rate.** Post-takeover only costs −2.29 DS / −5.47 SR. Removing the expansion, the trigger or FoV alignment costs −1.38 to −1.69 DS and −3.65 to −4.57 SR each. Those three sum to 4.70 DS, against 2.49 for the baseline lacking all three.
+
+**Finding 5 - long-horizon and OOD.** Longest6 v2 doubles. On Fail2Drive, generalization SR rises 11 points and DS 3, base DS falls 2.4, behaviour scenarios gain +30.8 HM and robustness scenarios lose 6.1. TF++ (LiDAR) keeps the best DS on both splits.
+
+**Table and text problems found**:
+- The headline baseline (Finding 1). The Longest6 v2 and Fail2Drive SimLingo rows have no stated source.
+- Table 10's SimLingo ability row differs from LinkVLA's print in all five abilities with identical DS, SR, efficiency and comfort. Overtaking 57.04 and give way 53.33 are not single-run fractions (of 45 and 10 routes) but fit three-run averages (77 / 135, 16 / 30). This qualifies the Bench2Drive page's "every give-way score is a multiple of 10" (annotated).
+- Table 11's unweighted scenario means (82.1 / 84.1 base, 75.6 / 67.6 generalization) do not reproduce Table 2 (80.2 / 80.0, 74.7 / 66.0); route weights are not given. Table 9's class HMs reproduce for three of four classes (visual-lateral 50.4 vs 51.3). Every Table 2 HM reproduces.
+- Comparison scope: LinkVLA (91.01), SparseDriveV2, DynVLA, AutoMoT and DeepSight are absent.
+- Slips: "DoG-DAgger"; "Figs. 7 and 7", "Figs. 10 and 10"; Table 10 cited as Tab. 11; Table 1's "RS" for route completion.
+
+**Limitations discussed**: the paper's own (non-reactive actor rollout, an incomplete candidate set, PONR not a physical boundary, CARLA dependence). The wiki adds:
+- The baseline choice.
+- Single runs.
+- Expert and trigger confounded.
+- No label-failure rate for RoG-Expert.
+- One aggregation round only.
+- The front camera bounds both expert and student (give way; a rear-left collision).
+- Fail2Drive trade-offs.
+- Figure 1 is normalized within TTC ≤ 2 s.
+- Restart (21.6%) and Replan Failure (8.7%) data are unablated.
+
+**Research directions** (`wiki/research-directions.md`):
+- *Updated with RoG-DAgger's evidence*:
+  - Does the expert that generated Bench2Drive's data bound its leaderboard? The first PDM-Lite-protocol evidence: 6.7 DS below PDM-Lite, and a weaker expert gives the better student.
+  - How noisy are Bench2Drive scores? Single-run full-benchmark ablations, a backbone swap of 1.52, and an averaged baseline row.
+  - Do teacher pseudo-labels cap what the student can learn?
+  - Does RL buy OOD robustness? Closed-loop labels without RL: Fail2Drive generalization SR +11.
+  - Is a reward needed for closed-loop training? Labels without reward, level with TakeVLA's labels plus RL; not matched.
+  - Should a pseudo-expert be conservative or exploratory? Expansion is worth −4.57 SR when removed.
+  - Does training a planner on its own rollouts make it robust? The game-engine baseline: Longest6 v2 22 → 44.
+- *Added*:
+  - "Do Bench2Drive rankings survive long routes and out-of-distribution CARLA scenarios?" (section 1; HiP-AD 86.77 → 7 on Longest6 v2).
+  - "What makes a privileged expert a good on-policy teacher: its driving score, or the feasibility, timing and observability of its labels?" (section 5).
+- *Status changes*: none. *Answered*: none.
+- *Section 7 (Basic controls, added 2026-10-25)*: checked; no evidence. The paper is CARLA-only and reports no latency, sensor-failure, history-length or cross-planner per-scene data.
+- Now 80 questions (66 open, 14 partially answered) and 2 answered.
+- Both new entries are mirrored in page-level Open Questions (`bench2drive.md`, `teacher-pseudo-labels.md`).
+
+**Not reported**: RoG-Expert's own pre-takeover collision rate; repeated runs; a second DAgger round; the 3:1 mix and window lengths ablated; PDM-Lite with the new trigger; the source of the Longest6 and Fail2Drive baseline rows; code.
+
+**New gaps**: SimLingo (32 mentions; now a base model here), TakeVLA, TakeAD, MindDrive, LEAD, Fail2Drive, "Hidden biases of end-to-end driving datasets" (PDM-Lite, TF++), HiP-AD.
+
+**Figure note**: the clipping links eight figures (`teaser 5.png` is Figure 2, `overall.png`, `expert_comparison_main_text.png`, `qua_example_final.png`, `no_replan.png`, `lb2_et.png`, `h2h_pede.png`, `b2d.png`). Figures 1, 7, 10 and 12 were missing. They were downloaded from the arXiv HTML into `raw/assets/` as new files: `ttc_compare.svg` (scanned, no scripts; values read from a headless-Edge rendering), `replan.png`, `h2h_blocked.png`, `f2d.png`. All twelve figures are embedded, both algorithms and all eleven tables reproduced, with Δ columns computed for Table 3. `raw/papers/` was not modified.
