@@ -4779,3 +4779,143 @@ There are two separate collection runs (infraction-triggered, keeping 2 s before
 **New gaps**: SimLingo (32 mentions; now a base model here), TakeVLA, TakeAD, MindDrive, LEAD, Fail2Drive, "Hidden biases of end-to-end driving datasets" (PDM-Lite, TF++), HiP-AD.
 
 **Figure note**: the clipping links eight figures (`teaser 5.png` is Figure 2, `overall.png`, `expert_comparison_main_text.png`, `qua_example_final.png`, `no_replan.png`, `lb2_et.png`, `h2h_pede.png`, `b2d.png`). Figures 1, 7, 10 and 12 were missing. They were downloaded from the arXiv HTML into `raw/assets/` as new files: `ttc_compare.svg` (scanned, no scripts; values read from a headless-Edge rendering), `replan.png`, `h2h_blocked.png`, `f2d.png`. All twelve figures are embedded, both algorithms and all eleven tables reproduced, with Δ columns computed for Table 3. `raw/papers/` was not modified.
+
+## 2026-11-12 - Ingest: RiSE-Drive (Risk-Sensitive Long-Horizon Candidate Evaluation for End-to-End Autonomous Driving)
+
+**Source**: `raw/papers/RiSE-Drive_ Risk-Sensitive Long-Horizon Candidate Evaluation for End-to-End Autonomous Driving.md` (arXiv 2611.13790v1, November 2026; ACM MM 2026)
+**Orgs**: School of Software Technology, Zhejiang University (Yu Zhao, Hongyi Duan, Ming Yin, Hongyuan Zhang, Fan Yang, Hongzhi Wang, Xiubo Liang). No code, no project page.
+**Pages created**: `wiki/sources/rise-drive.md`
+**Pages updated**:
+- `concepts/selection-based-planning.md`: methods-table row; new `#rise-drive` section (four scorers on DrivoR's stack compared; labels from perturbed agents; worst-of-four ranking; a scorer without per-candidate scene access; the label-augmentation pattern shared with SimScale and World4Scorer).
+- `concepts/navhard-ood-evaluation.md`: cohort row (51.3); new `#rise-drive` section (same corrected scale, Stage-2 gains, a within-stack table of changes to DrivoR, a mixed-evaluator table, a "reproduced" DiffusionDrive row that matches DriveFuture's and IDOL's prints); new open question.
+- `concepts/navsim-benchmark.md`: ladder row; new `#rise-drive` section (clean v1 table, label slips, comparison scope, a safety-side gain).
+- `concepts/hugsim-benchmark.md`: era table; new `#rise-drive` section (345-scenario weighting fits; the Easy-RC correction checks out; highest HD-Score and Extreme there; RC below SimVTA's).
+- `concepts/counterfactual-prediction.md`: sense-D table entry; new section 8 `#rise-drive` (an intervention on other agents that lives in the labels).
+- `concepts/world-model-for-ad.md`: new Pattern 59 `#consequence-propagation` (a "latent future rollout" that predicts only scores).
+- `concepts/evaluation-variance.md`: selection-effects bullet (single-run ladder on test splits; announced sensitivity study missing).
+- `sources/drivor.md`, `sources/world4scorer.md`, `sources/clover.md`: relation entries.
+- `research-directions.md`, `index.md`, `README.md` (110 papers; papers row; at-a-glance bullet; leaders note; known-gaps rows for Centaur's NavSafe split and MindDrive / MeanFuser / NSF-HRPT).
+
+**Confidence**: **low**. The tables are internally consistent (every v1 row passes the closed-form check; the navhard row is on the corrected scale; the HUGSIM averages fit the 345-scenario weights). But the supervision that defines the method is in the appendix only and is underspecified (no target metric, no description of how other agents are moved in NAVSIM). The training split is not stated. The ablations are single test-split runs, and the announced sensitivity study, navtest EPDMS and NavSafe results are missing. No code.
+
+**What it is**: DrivoR's encoder and 64-query generator, with the scoring decoder replaced by a new evaluator. Four heads on the **mean** of the 64 register tokens give four branch codes. For each candidate and branch, a gated recurrence over the candidate's own 8 poses decodes a discounted outcome sum; a quantile head (10 levels) reads the state averaged over steps and branches. Ranking: mean − 0.5 × (mean − CVaR₀.₂) − 0.1 × branch spread. Losses: Huber per branch, pinball, pairwise hinge on a target built the same way. The four branches (Appendix A.2) are fixed scripted motions applied in the benchmark rollout: a lead vehicle's longitudinal acceleration (low/high) × an adjacent vehicle's lateral velocity toward the ego corridor (low/high). Each motion is the logged pair nearest its quadrant's median, and the four are weighted equally.
+
+**Reported results**:
+- NAVSIM-v1 94.2 PDMS (DrivoR navtrain 93.1; NC +0.6, TTC +2.2, EP −0.4).
+- navhard two-stage 51.3 (DrivoR 48.3; Stage-2 NC, DDC, TTC, LK up, EP −1.3).
+- HUGSIM 50.1 RC / 39.5 HD-Score (DrivoR 49.8 / 35.7; HD gains +1.3 / +2.6 / +3.9 / +6.7 from Easy to Extreme, Easy RC −4.4).
+- Parameters: 18.9M trainable / 42.3M total. No latency.
+
+**Finding 1 - the new ingredient is the labels.** Every earlier scorer on DrivoR's stack learns the oracle's score in the logged scene. RiSE-Drive learns it under four scripted behaviours of other vehicles: rung-2 interventions on agents, with no rendering.
+
+**Finding 2 - "tail risk" is the worst of four moderate conditions.** With four equally weighted atoms the lower-20% CVaR is the minimum, so the target is 0.5 × mean + 0.5 × worst − 0.1 × spread. The "high" conditions sit near the 75th percentile of the logs. In scenes without a lead or adjacent vehicle the four branches coincide.
+
+**Finding 3 - nothing long-horizon or predictive.** The recurrence runs over the candidate's own 4 s with γ = 0.99. Only per-branch score sums are supervised, and the scene enters as one mean vector, so the evaluator has no per-candidate access to the scene.
+
+**Finding 4 - on navhard, an evaluator change on DrivoR's architecture is worth +3.0 on the same scale**, against +0.0 for CLOVER's retraining. A direct score head (B-II) gives 45.6, so the scorer spans 5.7 points on one architecture. The stack is retrained and each row is one run.
+
+**Finding 5 - the titular mechanism is the smallest step.** Ladder from B-II: +0.7 / +0.3 / +0.6 / +0.4 / +0.3 PDMS and +1.2 / +0.7 / +1.7 / +1.4 / +0.7 EPDMS, the last step being risk-sensitive ranking. The labels enter in the first step, together with the branch generator.
+
+**Table and text problems found**:
+- v1: all 28 rows pass (−0.02 to −4.26; RiSE-Drive −1.46). "VADv2" 83.0 is the Hydra-MDP-𝒱8192 row (Hydra-MDP++'s VADv2†), so the wiki's VADv2 values stay at three. Hydra-MDP++ 86.6 is marked camera + LiDAR (image-only in its paper). iPad 91.7 is marked ResNet-34. DriveSuprim is shown at its ResNet-34 89.9.
+- navhard: DrivoR's after-fix block beside DriveFuture's pre-fix-like rows (LTF, DiffusionDrive, GuideFlow, DriveSuprim, DiffVLA: +0.5 to +2.3). The DiffusionDrive∗ "reproduced" row equals DriveFuture's and IDOL's prints in all 18 sub-scores. GTRS-Aug carries the suspect Stage-2 EP 98.9. "+3.2 over the strongest previous result in the table" is the margin over ZTRS (48.1), not DrivoR (48.3).
+- HUGSIM: baselines copied from DrivoR; RiSE-Drive's averages fit 49 / 126 / 86 / 84 (50.10 / 39.38); the appendix's Easy-RC correction (79.5 → 76.5) agrees with the printed average (79.5 would give 50.5).
+- Table 5: frozen parameters (total − optimized) differ across three configurations with the same frozen backbone (23.0 / 22.7 / 23.4M).
+- Comparison scope: v1 omits DrivoR's trainval / SimScale rows, World4Scorer, MM-Future, CLOVER, ChainFlow-VLA and TOAD; navhard omits DriveFuture, DrivoR + SimScale, SimScale and TOAD; HUGSIM omits SimVTA (51.5 RC, above RiSE-Drive's 50.1).
+- §5.2's "candidate evaluation yields larger gains than backbone scaling alone" has no backbone-scaling experiment.
+
+**Limitations discussed**: the paper states none. The wiki adds:
+- The supervision is underspecified.
+- The framing (a scene-conditional distribution, catastrophic branches) does not match the construction (four fixed, equally weighted medians).
+- Labels and architecture are confounded in the ladder.
+- The named mechanism is +0.3, and no hyperparameter is varied.
+- Single runs on the test splits.
+- The training split is unstated (+0.5 against DrivoR's trainval model).
+- Only two kinds of agent behaviour.
+- The scene enters as a mean vector.
+- "Long-horizon" is 4 s.
+- No latency, oracle or per-branch accuracy.
+
+**Research directions** (`wiki/research-directions.md`):
+- *Updated with RiSE-Drive's evidence*:
+  - How large are the error bars? (single-run ladder on test splits).
+  - Can NAVSIM-v2 EPDMS be compared across papers? (another mixed navhard table; a copied row marked reproduced).
+  - Is NAVSIM-v1 saturated? (94.2 from a safety-side gain).
+  - Do NAVSIM rankings survive a reactive closed loop? (the 94.2-PDMS entry also leads HD-Score on the 345 set, but not RC).
+  - How much of a navhard score is the generator and how much the selector? (45.6 / 48.3 / 51.3 on one architecture).
+  - Can HUGSIM results be put on one table? (a third method on the 345 protocol; Extreme 39.2).
+  - How much of a "world-model-shaped" representation is world modeling? (a rollout that predicts only scores).
+  - Are per-candidate futures really futures? (no future target at all).
+  - Can a driving world model predict counterfactuals? (rung-2 agent interventions in the labels).
+  - Do learned scorers overfit the benchmark's own metric? (labels off the log, gains on all three benchmarks).
+  - Can re-weighting change behaviour without retraining? (two more untried inference weights).
+  - What does each method cost? (parameters only).
+- *Added*: "Do scorer labels under perturbed agent behaviour buy robustness, and does ranking by the worst case add anything to them?" (section 5), mirrored in `concepts/navhard-ood-evaluation.md` Open Questions and on the source page.
+- *Status changes*: none. *Answered*: none.
+- *Section 7 (Basic controls)*: checked; no evidence. No ego-status, history, sensor, latency or per-scene data.
+- Now 81 questions (67 open, 14 partially answered) and 2 answered.
+
+**Not reported**: training split, epochs and initialization; the branch-target metric; the perturbation values and the agent-motion code; quantile levels; the sensitivity study; navtest EPDMS; NavSafe numbers; the HUGSIM checkpoint and protocol; latency; per-branch accuracy; an oracle over its pools; code.
+
+**New gaps**: Centaur's NavSafe split; MindDrive (arXiv 2512.04441; possibly distinct from the CARLA MindDrive); MeanFuser; NSF-HRPT (the authors' own).
+
+**Figure note**: the clipping links all three figures (`rise-teaser.png`, `risepipeline.png`, `syb.png`, already in `raw/assets/`); all are embedded. All five tables and Table A.1 are reproduced, with closed-form residuals, stage products, Δ columns and HUGSIM weighting computed here. Two text passages the clipper dropped (the contributions list and the §5.2 NAVSIM-v2 paragraph) were read from the arXiv HTML and are summarized on the source page. `raw/papers/` was not modified.
+
+## 2026-11-12 - Lint
+
+**Structural checks**: 153 pages (110 sources, 40 concepts, index, log, research directions).
+- No broken wiki links, anchors, embeds or relative links. The checker was tested by injecting four broken links, and it caught all four.
+- Every page has at least two inbound links besides the index and log.
+- All frontmatter parses, and every `sources` and `related` entry exists.
+- Every page is in `index.md`, and every source and concept page is in README's tables.
+- Every raw paper has a source page. **Three non-paper files sit in `raw/papers/`**: two rustdesk installers and a TikTok live-studio downloader (`.exe`). They are not wiki sources and were left out of the commit.
+- Since the last lint: two ingests (RoG-DAgger, RiSE-Drive) and one query (basic controls, section 7).
+
+**Stale claims fixed** (annotated in place, dated):
+- *"NC 99.0 / TTC 96.7 highest in wiki"* (DriveLaW, `navsim-benchmark.md` ladder and `index.md`): it was already stale before this ingest, since Centaur scores 99.5 / 98.0 and AutoVLA TTC 98.0 in DrivoR's table. RiSE-Drive scores 99.5 / 98.4.
+- *World4Scorer "highest navtrain-trained single-pass"* (`navsim-benchmark.md`, `sources/world4scorer.md`, `index.md`): RiSE-Drive reports 94.2 with its training split unstated, so this may no longer hold.
+- *"Four DrivoR descendants at 94.0–94.8"* (`navsim-benchmark.md#chainflow`): five with RiSE-Drive, six counting TOAD.
+- *HUGSIM 345-scenario Extreme tier, "DrivoR leads at 32.5"*: RiSE-Drive 39.2. *HUGSIM adoption, "six papers"*: now ten (adding DrivoR, TOAD, DriveWLA, RiSE-Drive).
+- *Top-of-leaderboard table* (`selection-based-planning.md`): RiSE-Drive 94.2 added. It trains against the benchmark's scores, so "every entry above 92 trains against the metric" still holds.
+- *Research directions, "Of the entries above 92 PDMS, two have a closed-loop number"*: now seven.
+- *README*: open threads 4 (RiSE-Drive tops both PDMS and HD-Score on the 345-scenario set, by caution) and 7 (comparison-scope cases from both new papers).
+
+**Contradictions fixed or recorded**:
+- *NAVSIM's cities* (left for this lint by the 2026-10-25 query). **Resolved: nuPlan's four cities.** SpanVLA states navtrain's logs come from Las Vegas, Boston, Pittsburgh and Singapore. ReDrive's and CoWorld-VLA's dataset sections give nuPlan's four cities. PaIR-Drive's Figure 1 shows NAVSIM scenes from Singapore and Las Vegas. Reasoning-VLA's "US (Las Vegas)" is too narrow.
+  - Fixed: a Cities line in `navsim-benchmark.md`'s Dataset section, its open question annotated, and the rows annotated in `sources/reasoning-vla.md` and `concepts/vlm-domain-adaptation.md`.
+  - Research-directions entry corrected. Per-split city counts are still unstated.
+- *HAD's "VADv2" 83.0 row* (`sources/had.md`) is the Hydra-MDP-𝒱8192 row, as RiSE-Drive's table also shows; annotated. The wiki's VADv2 values stay at three.
+- Recorded at the RiSE-Drive ingest, both sides cross-linked:
+  - iPad 91.7 labelled ResNet-34 (Drive-JEPA has ResNet-34 at 91.1 on other sub-scores).
+  - Hydra-MDP++ 86.6 labelled camera + LiDAR (image-only in its paper).
+  - A DiffusionDrive navhard row marked "reproduced" that equals DriveFuture's and IDOL's prints.
+  - MindDrive's name used by two possibly different papers.
+  - CLOVER (+0.0) against RiSE-Drive (+3.0) on navhard for retraining DrivoR's stack.
+- Carried over: Drive-HWM 93.8 / 93.3; three VADv2 values; DiffusionDrive 84.5 / 88.2; the navhard split size; regression on future latents; bidirectional attention; DINOv3 vs V-JEPA 2; HUGSIM commits; ReCogDrive's 90.8 model size.
+
+**Research directions** (`wiki/research-directions.md`): 81 questions (67 open, 14 partially answered) and 2 answered.
+- *Corrected*: "Does a NAVSIM planner generalize to a city held out of training?" (city coverage); "Do NAVSIM rankings survive a reactive closed loop?" (count of >92 entries with closed-loop numbers).
+- *Evidence added*: "How many visual tokens does a planner need, and from which cameras?" (RiSE-Drive's scorer reads one mean token and still beats DrivoR's, confounded with new labels); "How much of the NAVSIM ordering is the sensor set?" (more modality mislabels in RiSE-Drive's table).
+- *Status*: no changes. *Answered*: none.
+- *Page-level Open Questions checked* for RoG-DAgger, RiSE-Drive and the concept pages they touched: all of wiki-wide interest are represented. RiSE-Drive's "does the evaluator need the scene?" now sits under the visual-token question. Its per-branch accuracy and training-split questions stay on the source page. Still on its page only: velocity versus x-prediction for flow-matching planners (`diffusion-planner.md`).
+
+**Concept pages suggested** (none has its own page):
+- **Scorer labels the log never contained.** SimScale (off-log ego states, 3DGS), World4Scorer (perturbed-trajectory bank), CLOVER (evaluator-filtered pseudo-experts), RiSE-Drive (scripted perturbations of other agents), DA-WAM (retrieved negatives), ReWorld (simulator-mined negatives). The navhard evidence that label content matters is spread over four pages; the hard-negatives section of `selection-based-planning.md` is the nearest home.
+- **On-policy imitation (DAgger and relatives)**: RoG-DAgger, openpilot's future-anchored world model, SimScale's perturbation sampler, TakeVLA (not ingested). Partly on `data-driven-simulators.md` and `rl-for-ad.md`.
+- Carried over:
+  - Trajectory refinement after generation or selection.
+  - Future-representation auxiliaries in VLAs.
+  - Baseline-row provenance.
+  - Ego status in open-loop evaluation (overlaps section 7's first question).
+  - Extended comfort and frame-to-frame consistency.
+  - Mixture-of-Transformers layouts.
+  - JEPA for driving; one-step generative planners; CARLA Driving Score.
+  - Sensor configuration (overlaps section 7's sensor-set question).
+  - Distillation.
+- **Entities** (`wiki/entities/` still empty; pages mentioning each): Hydra-MDP (65), VAD (55), WoTE (50), GTRS (32), World4Drive (32), iPad (28), EponaV2 (20), DriveWorld-VLA (18), SimLingo (18), Centaur (10, now also NavSafe's source), MeanFuser (10), MindDrive (9, possibly two papers).
+
+**Questions to investigate next**:
+- **Train DrivoR's unchanged scorer on RiSE-Drive's four perturbed-agent labels**, aggregated by mean and by worst case. It separates labels, architecture and risk sensitivity, the question behind RiSE-Drive's +3.0 on navhard. It needs the agent-perturbation code, which the paper does not release.
+- **Give RiSE-Drive's evaluator cross-attention to the scene tokens.** That would show whether a scorer needs per-candidate scene access on NAVSIM at all.
+- Carried over: run TOAD on DrivoR's 48.3 checkpoint without SimScale data; a VQGAN target inside DeepSight; probe a single-pass video expert's future tokens; the oracle over ChainFlow-VLA's refined candidates; three full Bench2Drive repeats.
+- Ingest **iPad** (TOAD's base, ChainFlow-VLA's scorer design, mislabelled in RiSE-Drive's table), **Centaur** (test-time training, NavSafe), **World4Drive** and **DriveWorld-VLA**.

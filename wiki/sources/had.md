@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/HAD_ Combining Hierarchical Diffusion with Metric-Decoupled RL for End-to-End Driving.md]
 related: [concepts/diffusion-planner.md, concepts/rl-for-ad.md, concepts/navsim-benchmark.md, concepts/selection-based-planning.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, sources/diffusiondrive.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md, sources/momworld.md]
 created: 2026-05-01
-updated: 2026-09-30
+updated: 2026-11-12
 confidence: high
 ---
 
@@ -108,7 +108,7 @@ The cached scores for $\tau_{ref,j^*}$ approximate simulator rewards. Reported r
 | Human | - | 100 | 100 | 87.5 | 100 | 99.9 | 94.8 |
 | Transfuser | C+L | 97.7 | 92.8 | 79.2 | 92.8 | 100 | 84.0 |
 | UniAD | C | 97.8 | 91.9 | 78.8 | 92.9 | 100 | 83.4 |
-| VADv2 | C | 97.9 | 91.7 | 77.6 | 92.9 | 100 | 83.0 |
+| VADv2 ⚠ *(lint 2026-11-12: the Hydra-MDP-𝒱8192 row, marked VADv2† and camera + LiDAR in [[sources/hydra-mdp-pp.md]])* | C | 97.9 | 91.7 | 77.6 | 92.9 | 100 | 83.0 |
 | LAW | C | 96.4 | 95.4 | 81.7 | 88.7 | 99.9 | 84.6 |
 | DRAMA | C+L | 98.0 | 93.1 | 80.1 | 94.8 | 100 | 85.5 |
 | GoalFlow | C+L | 98.3 | 93.8 | 79.8 | 94.3 | 100 | 85.7 |

@@ -2,9 +2,9 @@
 title: "CLOVER: Closed-Loop Value Estimation & Ranking for End-to-End Autonomous Driving Planning"
 type: source-summary
 sources: ["raw/papers/CLOVER_ Closed-Loop Value Estimation & Ranking for End-to-End Autonomous Driving Planning.md"]
-related: [sources/toad.md, sources/sparsedrivev2.md, sources/drivor.md, sources/world4scorer.md, sources/adaptive-wam.md, sources/auto-jepa.md, sources/curious-vla.md, sources/maneuverflow.md, sources/drive-jepa.md, sources/wa-jepa.md, sources/da-wam.md, sources/coworld-vla.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md, sources/hydra-mdp-pp.md, sources/simscale.md, sources/drivefuture.md, sources/dvgt-2.md, sources/ad-e2e-jepa.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/best-of-n.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/teacher-pseudo-labels.md, concepts/nuscenes-waymo-evals.md, research-directions.md]
+related: [sources/rise-drive.md, sources/toad.md, sources/sparsedrivev2.md, sources/drivor.md, sources/world4scorer.md, sources/adaptive-wam.md, sources/auto-jepa.md, sources/curious-vla.md, sources/maneuverflow.md, sources/drive-jepa.md, sources/wa-jepa.md, sources/da-wam.md, sources/coworld-vla.md, sources/diffusiondrive-v2.md, sources/drivesuprim.md, sources/hydra-mdp-pp.md, sources/simscale.md, sources/drivefuture.md, sources/dvgt-2.md, sources/ad-e2e-jepa.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/best-of-n.md, concepts/evaluation-variance.md, concepts/inference-latency.md, concepts/teacher-pseudo-labels.md, concepts/nuscenes-waymo-evals.md, research-directions.md]
 created: 2026-10-14
-updated: 2026-10-19
+updated: 2026-11-12
 confidence: medium
 ---
 
@@ -617,6 +617,7 @@ Each navtrain and navtest scene gets 64 candidates from the trained CLOVER gener
 ## Relation to Other Wiki Pages
 
 - [[sources/toad.md]] *(2026-10-19)*: searches beyond DrivoR's pool at test time with DrivoR's scorer and gains +0.1 PDMS on v1 (on the +SimScale model). That fits this paper's decomposition, in which the pool already holds a near-perfect candidate (oracle 99.33) and the gain is ranking. TOAD concludes the opposite, that the set is the bottleneck, from its weaker planners. It omits CLOVER's 94.5 from its v1 table.
+- [[sources/rise-drive.md]] *(2026-11-12)*: also retrains DrivoR's stack, with a new evaluator trained on the benchmark's scores under four scripted behaviours of other vehicles. +1.1 PDMS on navtest (split unstated) and **+3.0 on navhard**, where this paper gains +0.0. The two papers' navtest gains are similar; their navhard gains are not, which points at the labels (perturbed agents against evaluator labels on the generator's own proposals) rather than at retraining as such. One run each.
 - [[sources/drivor.md]]: the architecture, the baseline and most of the comparison rows. CLOVER changes only training; its v1 and navhard tables copy DrivoR's (v1 camera-only block, navhard corrected block).
 - [[sources/world4scorer.md]] (same group, September 2026): keeps DrivoR's generator and replaces the scorer, uses a candidate bank "following CLOVER", measures DrivoR's released model at 93.69 / 90.66 with the same pool statistics CLOVER prints, and leaves CLOVER out of its tables. On v1 its scorer-only gain on DrivoR's pools (+0.50) and CLOVER's regret reduction on its own (+0.69) are the two measurements of where a DrivoR-stack gain comes from. On v2 its inertial re-ranking (+1.6) and CLOVER's anchor (+1.1) are the two continuity fixes on the same stack.
 - [[sources/adaptive-wam.md]] (same authors, August 2026): its auxiliary 92.6 PDMS model uses CLOVER's pseudo-expert targets; its "tie problem" analysis is on 12,146 scenes, the same navtest set.

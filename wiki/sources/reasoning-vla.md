@@ -4,7 +4,7 @@ type: source-summary
 sources: [raw/papers/Reasoning-VLA_ A Fast and General Vision-Language-Action Reasoning Model for Autonomous Driving.md]
 related: [concepts/vlm-domain-adaptation.md, concepts/rl-for-ad.md, concepts/diffusion-planner.md, concepts/navsim-benchmark.md]
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-11-12
 confidence: high
 ---
 
@@ -116,7 +116,7 @@ $$r_{\text{total}} = \theta_1 r_{\text{traj}} + \theta_2 r_{\text{steer}} + \the
 
 | Dataset | Region | Vehicle type |
 |---------|--------|-------------|
-| NAVSIM | US (Las Vegas) | Standard sedan |
+| NAVSIM | US (Las Vegas) *(lint 2026-11-12: as printed; NAVSIM's nuPlan logs span Las Vegas, Boston, Pittsburgh and Singapore, see [[concepts/navsim-benchmark.md]])* | Standard sedan |
 | nuScenes | Singapore + Boston | Standard sedan |
 | Waymo | US (multiple cities) | Waymo vehicle |
 | Argoverse-V2 | US (Pittsburgh, Miami) | AV platform |

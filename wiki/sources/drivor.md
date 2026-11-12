@@ -2,9 +2,9 @@
 title: "Driving on Registers (DrivoR)"
 type: source-summary
 sources: ["raw/papers/Driving on Registers.md"]
-related: [sources/toad.md, sources/chainflow-vla.md, sources/clover.md, sources/dvgt-2.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/perception-for-planning.md, concepts/visual-tokenization.md, concepts/inference-latency.md, concepts/best-of-n.md, concepts/evaluation-variance.md, concepts/data-driven-simulators.md, sources/world4scorer.md, sources/mm-future.md, sources/simscale.md, sources/drivefuture.md, sources/drivesuprim.md, sources/hydra-mdp-pp.md, sources/wa-jepa.md, sources/simvta.md, sources/idol.md, sources/maneuverflow.md, sources/hybriddriveVLA.md, sources/da-wam.md, research-directions.md]
+related: [sources/rise-drive.md, sources/toad.md, sources/chainflow-vla.md, sources/clover.md, sources/dvgt-2.md, concepts/selection-based-planning.md, concepts/navsim-benchmark.md, concepts/navhard-ood-evaluation.md, concepts/hugsim-benchmark.md, concepts/foundation-backbones-for-ad.md, concepts/perception-for-planning.md, concepts/visual-tokenization.md, concepts/inference-latency.md, concepts/best-of-n.md, concepts/evaluation-variance.md, concepts/data-driven-simulators.md, sources/world4scorer.md, sources/mm-future.md, sources/simscale.md, sources/drivefuture.md, sources/drivesuprim.md, sources/hydra-mdp-pp.md, sources/wa-jepa.md, sources/simvta.md, sources/idol.md, sources/maneuverflow.md, sources/hybriddriveVLA.md, sources/da-wam.md, research-directions.md]
 created: 2026-10-14
-updated: 2026-10-19
+updated: 2026-11-12
 confidence: medium
 ---
 
@@ -367,6 +367,7 @@ The wiki adds:
 ## Relation to Other Wiki Pages
 
 - [[sources/toad.md]] *(2026-10-19)*: DrivoR's group uses its scorer as the reward of a test-time CEM search around any planner's pick. On DrivoR it adds +0.1 PDMS (94.6 → 94.7) and +1.7 navhard EPDMS (54.6 → 56.3); on five other planners, +0.1 to +2.1 PDMS and +1.1 to +15.1 EPDMS. TOAD's "DrivoR" rows are this page's +134k-SimScale rows, unlabelled. Scorers trained on fixed vocabularies (GTRS, SparseDriveV2) fail as search rewards. The paper credits DrivoR's gradient-stopped scorer on freely decoded proposals for generalizing off the proposal set.
+- [[sources/rise-drive.md]] *(2026-11-12)*: keeps DrivoR's encoder and generator architecture and replaces the scorer with an evaluator that reads only the mean of the 64 register tokens and is trained on the benchmark's scores of every candidate under four scripted behaviours of other vehicles (a braking lead, a merging neighbour), ranking by mean and worst case. 94.2 PDMS (+1.1; split unstated), **navhard 51.3 (+3.0, same corrected scale)**, HUGSIM 39.5 HD-Score (+3.8) on this page's 345-scenario protocol. Its reduced baseline, DrivoR with a direct score head instead of the scoring decoder, scores 91.9 / 45.6, a navtest and navhard price for DrivoR's scorer design. All of DrivoR's rows in its tables are copied from here.
 - [[sources/world4scorer.md]]: built on DrivoR's released encoder, generator and stack, and replaces its scorer. On DrivoR's own 64-candidate pools its scorer reaches 94.19 against DrivoR's 93.69 (oracle 99.33), and its inertial re-ranking lifts DrivoR from 90.66 to 92.27 EPDMS on navtest.
 - [[sources/clover.md]]: keeps DrivoR's inference graph and retrains it against the evaluator (pseudo-experts, alternating scorer refits): 94.5 PDMS, 90.4 EPDMS, navhard 48.3 (equal to DrivoR's). Its baseline pools are DrivoR's released ones (oracle 99.33, selected 93.69), and its v1 and navhard tables copy DrivoR's camera-only and corrected blocks, including the suspect GTRS-Aug row. On its own decomposition +0.69 of its +0.74 is better ranking.
 - [[sources/mm-future.md]]: takes DrivoR's register-token encoder, 93.4 / 94.0 against DrivoR's 93.1 / 93.7 on navtrain / trainval.
